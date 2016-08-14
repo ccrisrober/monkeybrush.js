@@ -62,6 +62,15 @@ declare class Texture {
     deactivateTexture(): void;
     protected _processLoadedImage(textureName: string, img: any): void;
 }
+declare class Color {
+    protected _color: any[];
+    constructor(r: number, g: number, b: number);
+    r: number;
+    g: number;
+    b: number;
+    setRGB(r: number, g: number, b: number): void;
+    toHSL(): Color;
+}
 declare module extensions {
     function get(name: string): any;
 }
@@ -103,14 +112,23 @@ declare function resize(gl: WebGLRenderingContext): void;
 declare var url: string;
 declare var request: XMLHttpRequest;
 declare abstract class Light {
-}
-declare class AmbientLight extends Light {
+    protected _intensity: number;
+    protected _color: Color;
+    constructor();
+    intensity: number;
+    color: Color;
 }
 declare class DirectionalLight extends Light {
+    protected _direction: Float32Array;
 }
 declare class PointLight extends Light {
+    protected _position: Float32Array;
+    constructor(position?: Float32Array);
+    position: Float32Array;
 }
 declare class SpotLight extends Light {
+    protected _position: Float32Array;
+    protected _direction: Float32Array;
 }
 declare abstract class Material {
 }

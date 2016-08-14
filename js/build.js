@@ -323,6 +323,60 @@ var Texture = (function () {
     };
     return Texture;
 })();
+var Color = (function () {
+    function Color(r, g, b) {
+        this._color = new Array(3);
+        this.setRGB(r, g, b);
+    }
+    Object.defineProperty(Color.prototype, "r", {
+        get: function () { return this._color[0]; },
+        set: function (r) { this._color[0] = r; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Color.prototype, "g", {
+        get: function () { return this._color[1]; },
+        set: function (g) { this._color[1] = g; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Color.prototype, "b", {
+        get: function () { return this._color[2]; },
+        set: function (b) { this._color[2] = b; },
+        enumerable: true,
+        configurable: true
+    });
+    Color.prototype.setRGB = function (r, g, b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    };
+    Color.prototype.toHSL = function () {
+        var max = Math.max(this.r, this.g, this.b), min = Math.min(this.r, this.g, this.b);
+        var h, s, l = (max + min) / 2;
+        if (max === min) {
+            h = s = 0; // achromatic
+        }
+        else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case this.r:
+                    h = (this.g - this.b) / d + (this.g < this.b ? 6 : 0);
+                    break;
+                case this.g:
+                    h = (this.b - this.r) / d + 2;
+                    break;
+                case this.b:
+                    h = (this.r - this.g) / d + 4;
+                    break;
+            }
+            h /= 6;
+        }
+        return new Color(h, s, l);
+    };
+    return Color;
+})();
 /// <reference path="../core/core.ts" />
 var extensions;
 (function (extensions) {
@@ -517,24 +571,37 @@ request.onload = function () {
     }
 };
 request.send();
+/// <reference path="../extras/color.ts" />
 var Light = (function () {
     function Light() {
+        this.intensity = 1.0;
+        this.color = new Color(1.0, 1.0, 1.0);
     }
+    Object.defineProperty(Light.prototype, "intensity", {
+        get: function () { return this._intensity; },
+        set: function (intensity) { this._intensity = intensity; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Light.prototype, "color", {
+        get: function () { return this._color; },
+        set: function (color) { this._color = color; },
+        enumerable: true,
+        configurable: true
+    });
     return Light;
 })();
+/**
+ * TODO:
+ *	- [] Attenuation (constant, linear, cuadratic)
+ *	- [] http://www.learnopengl.com/code_viewer.php?code=lighting/multiple_lights-exercise1
+ *
+**/ 
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="light.ts" />
-var AmbientLight = (function (_super) {
-    __extends(AmbientLight, _super);
-    function AmbientLight() {
-        _super.apply(this, arguments);
-    }
-    return AmbientLight;
-})(Light);
 /// <reference path="light.ts" />
 var DirectionalLight = (function (_super) {
     __extends(DirectionalLight, _super);
@@ -546,9 +613,17 @@ var DirectionalLight = (function (_super) {
 /// <reference path="light.ts" />
 var PointLight = (function (_super) {
     __extends(PointLight, _super);
-    function PointLight() {
-        _super.apply(this, arguments);
+    function PointLight(position) {
+        if (position === void 0) { position = new Float32Array([0.0, 0.0, 0.0]); }
+        _super.call(this);
+        this.position = position;
     }
+    Object.defineProperty(PointLight.prototype, "position", {
+        get: function () { return this._position; },
+        set: function (position) { this._position = position; },
+        enumerable: true,
+        configurable: true
+    });
     return PointLight;
 })(Light);
 /// <reference path="light.ts" />
