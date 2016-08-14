@@ -1,3 +1,5 @@
+"use strict";
+
 class ResourceMap {
     // Number of outstanding load operations
     protected _numOutstandingLoads = 0;
@@ -7,6 +9,19 @@ class ResourceMap {
 
     // Resource storage
     protected _resourceMap: { [ key:string ] : ResourceMap.MapEntry; };
+
+    private static _instance: ResourceMap = new ResourceMap();
+
+    constructor() {
+        if(ResourceMap._instance) {
+            throw new Error("Error: Instantiation failed: Use ResourceMap.getInstance() instead of new.");
+        }
+        ResourceMap._instance = this;
+    }
+
+    public static getInstance() : ResourceMap {
+        return ResourceMap._instance;
+    }
 
     public asyncLoadRequested(resName: string) {
     	this._resourceMap[resName] = new ResourceMap.MapEntry(resName);

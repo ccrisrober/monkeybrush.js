@@ -9,11 +9,13 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "bluebird": "^3.4.1",
     "grunt": "^1.0.1",
     "grunt-contrib-connect": "^1.0.2",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-open": "^0.2.3",
     "grunt-typescript": "^0.8.0",
+    "parse-obj": "0.0.0",
     "typescript": "^1.8.10"
   }
 }

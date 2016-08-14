@@ -1,5 +1,7 @@
 /// <reference path="core.ts" />
 
+"use strict";
+
 class Texture {
 	public loadTexture(textureName: string) {
 		// Create texture object

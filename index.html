@@ -7,15 +7,19 @@
 			margin: 0;
 			background-color: white;
 		}
-		canvas {
-			display: block;  /* prevents scrollbar */
+		/*canvas {
+			display: block;
 			width: 100vw;
 			height: 100vh;
-		}
+		}*/
 	</style>
 </head>
 <body>
-	<canvas id="canvas"></canvas>
+	<div id="stats"></div>
+	<canvas id="canvas" width="480" height="480"></canvas>
+	<script type="text/javascript" src="js/stats.min.js"></script>
+	<script type="text/javascript" src="js/dat.gui.min.js"></script>
+	<script type="text/javascript" src="js/gl-matrix-min.js"></script>
 	<script type="text/javascript" src="js/build.js"></script>
 </body>
 </html>

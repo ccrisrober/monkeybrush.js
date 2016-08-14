@@ -1,3 +1,5 @@
+"use strict";
+
 class Core {
 	private static _instance: Core = new Core();
 
