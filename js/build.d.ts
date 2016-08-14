@@ -5,7 +5,7 @@ interface ICamera {
 }
 declare class OrthoCamera implements ICamera {
 }
-declare class ProjCamera implements ICamera {
+declare class ProjectiveCamera implements ICamera {
 }
 declare class Core {
     private static _instance;
@@ -62,6 +62,22 @@ declare class Texture {
     deactivateTexture(): void;
     protected _processLoadedImage(textureName: string, img: any): void;
 }
+declare module extensions {
+    function get(name: string): any;
+}
+declare class Timer {
+    protected running: boolean;
+    protected start_clock: number;
+    protected start_time: number;
+    protected acc_time: number;
+    constructor();
+    elapsed_time(): number;
+    start(msg?: string): void;
+    SetToZero(): void;
+    restart(): void;
+    stop(): void;
+    check(): number;
+}
 declare var vertexCode: string;
 declare module ToneMap {
     function init(gl: WebGLRenderingContext): void;
@@ -86,6 +102,30 @@ declare function drawScene(dt: number): void;
 declare function resize(gl: WebGLRenderingContext): void;
 declare var url: string;
 declare var request: XMLHttpRequest;
+declare abstract class Light {
+}
+declare class AmbientLight extends Light {
+}
+declare class DirectionalLight extends Light {
+}
+declare class PointLight extends Light {
+}
+declare class SpotLight extends Light {
+}
+declare abstract class Material {
+}
+declare class DepthMat extends Material {
+    static ss: ShaderProgram;
+    static initialize(): void;
+}
+declare class LambertMat extends Material {
+}
+declare class NormalMat extends Material {
+}
+declare class PhongMat extends Material {
+}
+declare class ShaderMat extends Material {
+}
 declare class AudioClip {
     protected _audioCtx: any;
     protected _bgAudioNode: any;

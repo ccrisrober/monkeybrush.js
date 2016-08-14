@@ -6,10 +6,10 @@ var OrthoCamera = (function () {
     return OrthoCamera;
 })();
 /// <reference path="icamera.ts" />
-var ProjCamera = (function () {
-    function ProjCamera() {
+var ProjectiveCamera = (function () {
+    function ProjectiveCamera() {
     }
-    return ProjCamera;
+    return ProjectiveCamera;
 })();
 "use strict";
 var Core = (function () {
@@ -39,7 +39,7 @@ var Core = (function () {
         return this._gl;
     };
     Core.prototype._getContext = function (canvas) {
-        var contexts = "webgl,webgl2,experimental-webgl2".split(",");
+        var contexts = "webgl2,experimental-webgl2".split(",");
         var gl;
         var ctx;
         for (var i = 0; i < contexts.length; i++) {
@@ -323,6 +323,63 @@ var Texture = (function () {
     };
     return Texture;
 })();
+/// <reference path="../core/core.ts" />
+var extensions;
+(function (extensions) {
+    var _extensions = {};
+    function get(name) {
+        if (name in _extensions) {
+            return _extensions[name];
+        }
+        var gl = Core.getInstance().getGL();
+        var ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
+        if (ext === null) {
+            console.warn(name + " extension not supported.");
+            return;
+        }
+        _extensions[name] = ext;
+        return ext;
+    }
+    extensions.get = get;
+})(extensions || (extensions = {}));
+;
+var Timer = (function () {
+    function Timer() {
+        this.running = false;
+        this.start_clock = 0;
+        this.start_time = 0;
+        this.acc_time = 0;
+    }
+    Timer.prototype.elapsed_time = function () {
+        var acc_sec = (performance || Date).now();
+        return -1;
+    };
+    Timer.prototype.start = function (msg) {
+        if (msg === void 0) { msg = ""; }
+    };
+    Timer.prototype.SetToZero = function () {
+        this.acc_time = 0;
+    };
+    Timer.prototype.restart = function () {
+        // Set timer status to running, reset accumulated time, and set start time
+        this.running = true;
+        this.acc_time = 0;
+        this.start_clock =
+            this.start_time = (performance || Date).now();
+    };
+    Timer.prototype.stop = function () {
+        // Compute accumulated running time and set timer status to not running
+        if (this.running)
+            this.acc_time += this.elapsed_time();
+        this.running = false;
+    };
+    Timer.prototype.check = function () {
+        return -1;
+    };
+    return Timer;
+})();
+// newTime = ( performance || Date ).now()
+// https://bitbucket.org/masterurjc/practica1/src/1b9cfa67f4b68e8c6a570ce58cfdb2c02d9ee32e/RenderingAvanzado1/Timer.h?at=master&fileviewer=file-view-default 
 /// <reference path="../core/shaderProgram.ts" />
 var vertexCode = "#version 300 es\nin vec3 vertex;\nout vec2 texCoord;\nvoid main() {\n  texCoord = vertex.xy * 0.5 + 0.5;\n  gl_Position = vec4( vertex, 1 );\n}";
 var ToneMap;
@@ -460,6 +517,99 @@ request.onload = function () {
     }
 };
 request.send();
+var Light = (function () {
+    function Light() {
+    }
+    return Light;
+})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/// <reference path="light.ts" />
+var AmbientLight = (function (_super) {
+    __extends(AmbientLight, _super);
+    function AmbientLight() {
+        _super.apply(this, arguments);
+    }
+    return AmbientLight;
+})(Light);
+/// <reference path="light.ts" />
+var DirectionalLight = (function (_super) {
+    __extends(DirectionalLight, _super);
+    function DirectionalLight() {
+        _super.apply(this, arguments);
+    }
+    return DirectionalLight;
+})(Light);
+/// <reference path="light.ts" />
+var PointLight = (function (_super) {
+    __extends(PointLight, _super);
+    function PointLight() {
+        _super.apply(this, arguments);
+    }
+    return PointLight;
+})(Light);
+/// <reference path="light.ts" />
+var SpotLight = (function (_super) {
+    __extends(SpotLight, _super);
+    function SpotLight() {
+        _super.apply(this, arguments);
+    }
+    return SpotLight;
+})(Light);
+var Material = (function () {
+    function Material() {
+    }
+    return Material;
+})();
+/// <reference path="material.ts" />
+/// <reference path="../core/shaderProgram.ts" />
+var DepthMat = (function (_super) {
+    __extends(DepthMat, _super);
+    function DepthMat() {
+        _super.apply(this, arguments);
+    }
+    DepthMat.initialize = function () {
+        DepthMat.ss.addShader("shaders/depthShader.vert", gl.VERTEX_SHADER, mode.read_file);
+    };
+    DepthMat.ss = new ShaderProgram();
+    return DepthMat;
+})(Material);
+//DepthMat.initialize(); 
+/// <reference path="material.ts" />
+var LambertMat = (function (_super) {
+    __extends(LambertMat, _super);
+    function LambertMat() {
+        _super.apply(this, arguments);
+    }
+    return LambertMat;
+})(Material);
+/// <reference path="material.ts" />
+var NormalMat = (function (_super) {
+    __extends(NormalMat, _super);
+    function NormalMat() {
+        _super.apply(this, arguments);
+    }
+    return NormalMat;
+})(Material);
+/// <reference path="material.ts" />
+var PhongMat = (function (_super) {
+    __extends(PhongMat, _super);
+    function PhongMat() {
+        _super.apply(this, arguments);
+    }
+    return PhongMat;
+})(Material);
+/// <reference path="material.ts" />
+var ShaderMat = (function (_super) {
+    __extends(ShaderMat, _super);
+    function ShaderMat() {
+        _super.apply(this, arguments);
+    }
+    return ShaderMat;
+})(Material);
 var AudioClip = (function () {
     function AudioClip() {
         this._audioCtx = null;

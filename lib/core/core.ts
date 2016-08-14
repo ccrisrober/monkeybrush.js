@@ -36,7 +36,7 @@ class Core {
 	}
 
 	protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
-		var contexts: string[] = "webgl,webgl2,experimental-webgl2".split(",");
+		var contexts: string[] = "webgl2,experimental-webgl2".split(",");
 		var gl: WebGLRenderingContext;
 		var ctx;
 		for (var i = 0; i < contexts.length; i++) {
