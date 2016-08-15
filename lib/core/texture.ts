@@ -2,7 +2,7 @@
 
 "use strict";
 
-class Texture {
+class _Texture {
 	public loadTexture(textureName: string) {
 		// Create texture object
 		var img = new Image();

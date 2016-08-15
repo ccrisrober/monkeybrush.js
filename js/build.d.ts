@@ -8,14 +8,25 @@ declare abstract class ICamera {
 }
 declare class OrthoCamera extends ICamera {
 }
-declare class ProjectiveCamera extends ICamera {
+declare class PerspectiveCamera extends ICamera {
 }
+/**
+* This class get WebGL2 context and animationFrame for your navigator.
+*
+* @class core.Core
+*/
 declare class Core {
     private static _instance;
     private _gl;
     constructor();
     protected init(): void;
     static getInstance(): Core;
+    /**
+    * Return global WebGL2 context
+    *
+    * @method getGL
+    * @return {WebGLRenderingContext} Returns WebGL rendering context
+    */
     getGL(): WebGLRenderingContext;
     protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
     protected _getVendors(): void;
@@ -60,31 +71,46 @@ declare class Model {
     private loadJSON(url);
     private _calculateTangents(vertices, normals);
 }
+declare abstract class Scene {
+    abstract initScene(): any;
+    abstract update(t: number): any;
+    abstract render(): any;
+    abstract resize(width: number, height: number): any;
+    constructor();
+    animate(value: boolean): void;
+    animating(): boolean;
+    protected _animate: boolean;
+}
 declare enum mode {
     read_file = 0,
     read_script = 1,
     read_text = 2,
 }
 declare class ShaderProgram {
-    private mCompiledShader;
-    private shaders;
-    private fragmentShader;
-    vertexSource: string;
-    fragmentSource: string;
-    uniformLocations: any;
-    attribLocations: any;
+    constructor();
+    private _compiledShader;
+    private _shaders;
+    _vertexSource: string;
+    _fragmentSource: string;
+    uniformLocations: {
+        [key: string]: WebGLUniformLocation;
+    };
+    attribLocations: {
+        [key: string]: number;
+    };
     addAttributes(attrs: Array<string>): void;
     addUniforms(unifs: Array<string>): void;
     program(): WebGLProgram;
-    constructor();
     addShader(shader_: string, type: number, _mode: mode): void;
-    compile_and_link(): boolean;
+    compile(): boolean;
     private loadAndCompileWithFile(filePath, shaderType);
     private loadAndCompileFromText(shaderSource, shaderType);
     private loadAndCompile(id, shaderType);
     private compileShader(shaderSource, shaderType);
     use(): void;
-    dispose(): void;
+    destroy(): void;
+    getPropSetter(path: any, location: any, type: any): string;
+    sendUniform(uniform: any, type: any): any;
 }
 declare class _Texture {
     loadTexture(textureName: string): void;
@@ -170,6 +196,7 @@ declare var FizzyText: () => {
     explode: () => void;
 };
 declare var quad: any, cube: any;
+declare var ss: ShaderProgram;
 declare function drawScene(dt: number): void;
 declare function resize(gl: WebGLRenderingContext): void;
 declare var url: string;
@@ -220,7 +247,7 @@ declare class Sphere extends Drawable {
 }
 declare class Teaspot extends Drawable {
     protected _handle: Array<WebGLBuffer>;
-    protected _elements: number;
+    protected _faces: number;
     constructor();
     render(): void;
 }

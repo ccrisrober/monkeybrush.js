@@ -4,7 +4,7 @@
 - [ ] Add glTF (https://github.com/KhronosGroup/glTF)
 - [x] Add quad/plane model
 - [x] Add cube model
-- [-] Add sphere model
+- [ ] Add sphere model
 - [ ] Add object parser
 - [ ] Finish Perspective Camera
 - [ ] Finish Orthographic Camera

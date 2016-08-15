@@ -25,14 +25,19 @@ var OrthoCamera = (function (_super) {
     return OrthoCamera;
 })(ICamera);
 /// <reference path="icamera.ts" />
-var ProjectiveCamera = (function (_super) {
-    __extends(ProjectiveCamera, _super);
-    function ProjectiveCamera() {
+var PerspectiveCamera = (function (_super) {
+    __extends(PerspectiveCamera, _super);
+    function PerspectiveCamera() {
         _super.apply(this, arguments);
     }
-    return ProjectiveCamera;
+    return PerspectiveCamera;
 })(ICamera);
 "use strict";
+/**
+* This class get WebGL2 context and animationFrame for your navigator.
+*
+* @class core.Core
+*/
 var Core = (function () {
     function Core() {
         if (Core._instance) {
@@ -56,6 +61,12 @@ var Core = (function () {
     Core.getInstance = function () {
         return Core._instance;
     };
+    /**
+    * Return global WebGL2 context
+    *
+    * @method getGL
+    * @return {WebGLRenderingContext} Returns WebGL rendering context
+    */
     Core.prototype.getGL = function () {
         return this._gl;
     };
@@ -305,8 +316,19 @@ var Model = (function () {
     return Model;
 })();
 ;
+var Scene = (function () {
+    function Scene() {
+        this._animate = false;
+    }
+    Scene.prototype.animate = function (value) {
+        this._animate = value;
+    };
+    Scene.prototype.animating = function () {
+        return this._animate;
+    };
+    return Scene;
+})();
 /// <reference path="core.ts" />
-// TODO: Add this https://github.com/mattdesl/gl-shader-extract!!
 "use strict";
 var mode;
 (function (mode) {
@@ -317,15 +339,16 @@ var mode;
 ;
 var ShaderProgram = (function () {
     function ShaderProgram() {
-        this.uniformLocations = {}; //Array<WebGLUniformLocation>;
-        this.attribLocations = {}; //Array<number>;
-        this.shaders = [];
+        this.uniformLocations = {};
+        this.attribLocations = {};
+        this._shaders = [];
     }
+    //public addAttributes(..attrs: string) {
     ShaderProgram.prototype.addAttributes = function (attrs) {
         var gl = Core.getInstance().getGL();
         for (var attr in attrs) {
             attr = attrs[attr];
-            var attrID = gl.getAttribLocation(this.mCompiledShader, attr);
+            var attrID = gl.getAttribLocation(this._compiledShader, attr);
             if (attrID < 0) {
                 console.error(attr + " undefined");
                 continue;
@@ -333,11 +356,12 @@ var ShaderProgram = (function () {
             this.attribLocations[attr] = attrID;
         }
     };
+    //public addUniforms(..attrs: string) {
     ShaderProgram.prototype.addUniforms = function (unifs) {
         var gl = Core.getInstance().getGL();
         for (var unif in unifs) {
             unif = unifs[unif];
-            var unifID = gl.getUniformLocation(this.mCompiledShader, unif);
+            var unifID = gl.getUniformLocation(this._compiledShader, unif);
             if (unifID < 0) {
                 console.error(unif + " undefined");
                 continue;
@@ -346,7 +370,7 @@ var ShaderProgram = (function () {
         }
     };
     ShaderProgram.prototype.program = function () {
-        return this.mCompiledShader;
+        return this._compiledShader;
     };
     ShaderProgram.prototype.addShader = function (shader_, type, _mode) {
         var shader;
@@ -359,21 +383,21 @@ var ShaderProgram = (function () {
         else if (_mode == mode.read_text) {
             shader = this.loadAndCompileFromText(shader_, type);
         }
-        this.shaders.push(shader);
+        this._shaders.push(shader);
     };
-    ShaderProgram.prototype.compile_and_link = function () {
+    ShaderProgram.prototype.compile = function () {
         var gl = Core.getInstance().getGL();
-        // Creamos y linkamos shaders
-        this.mCompiledShader = gl.createProgram();
-        for (var i = 0; i < this.shaders.length; i++) {
-            gl.attachShader(this.mCompiledShader, this.shaders[i]);
+        // Create and compile shader
+        this._compiledShader = gl.createProgram();
+        for (var i = 0; i < this._shaders.length; i++) {
+            gl.attachShader(this._compiledShader, this._shaders[i]);
         }
-        gl.linkProgram(this.mCompiledShader);
-        // Consultamos errores
-        if (!gl.getProgramParameter(this.mCompiledShader, gl.LINK_STATUS)) {
+        gl.linkProgram(this._compiledShader);
+        // Checkin errors
+        if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
             alert("ERROR");
-            console.warn("Error in program linking:" + gl.getProgramInfoLog(this.mCompiledShader));
-            console.log(this.fragmentSource);
+            console.warn("Error in program linking:" + gl.getProgramInfoLog(this._compiledShader));
+            console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
         return true;
@@ -392,28 +416,27 @@ var ShaderProgram = (function () {
         var shaderSource = request.responseText;
         if (shaderSource === null) {
             alert("WARNING: " + filePath + " failed");
-            console.log(this.fragmentSource);
+            console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
-        "SHADER ERROR";
         return this.compileShader(shaderSource, shaderType);
     };
     ShaderProgram.prototype.loadAndCompileFromText = function (shaderSource, shaderType) {
         if (shaderSource === null) {
             alert("WARNING: " + shaderSource + " failed");
-            console.log(this.fragmentSource);
+            console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
         return this.compileShader(shaderSource, shaderType);
     };
     ShaderProgram.prototype.loadAndCompile = function (id, shaderType) {
         var shaderText, shaderSource;
-        // Obtenemos el shader del index.html
+        // Get shader from index.html
         shaderText = document.getElementById(id);
         shaderSource = shaderText.firstChild.textContent;
         if (shaderSource === null) {
             alert("WARNING: " + id + " failed");
-            console.log(this.fragmentSource);
+            console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
         return this.compileShader(shaderSource, shaderType);
@@ -422,33 +445,90 @@ var ShaderProgram = (function () {
         var gl = Core.getInstance().getGL();
         var compiledShader;
         if (shaderType == gl.VERTEX_SHADER) {
-            this.vertexSource = shaderSource;
+            this._vertexSource = shaderSource;
         }
         else if (shaderType == gl.FRAGMENT_SHADER) {
-            this.fragmentSource = shaderSource;
+            this._fragmentSource = shaderSource;
         }
-        // Creamos el shader
+        // Create shader
         compiledShader = gl.createShader(shaderType);
-        // Compilamos el shader
+        // Compilate shader
         gl.shaderSource(compiledShader, shaderSource);
         gl.compileShader(compiledShader);
-        // Consultamos si hay errores
+        // Check errors
         if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
             alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
             console.log("ERROR: " + gl.getShaderInfoLog(compiledShader));
-            console.log(this.fragmentSource);
+            console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
         return compiledShader;
     };
     ShaderProgram.prototype.use = function () {
-        gl.useProgram(this.mCompiledShader);
+        var gl = Core.getInstance().getGL();
+        gl.useProgram(this._compiledShader);
     };
-    ShaderProgram.prototype.dispose = function () {
-        /*this.shaders.forEach(function(s) {
-            gl.detachShader(this.mCompiledShader, s);
+    ShaderProgram.prototype.destroy = function () {
+        var _this = this;
+        var gl = Core.getInstance().getGL();
+        this._shaders.forEach(function (shader) {
+            gl.detachShader(_this.compileShader, shader);
         });
-        gl.deleteShader(this.mCompiledShader);*/
+        gl.deleteShader(this._compiledShader);
+    };
+    ShaderProgram.prototype.getPropSetter = function (path, location, type) {
+        // Check primitive types
+        switch (type) {
+            case "bool":
+            case "int":
+                return "gl.uniform1i(location, value)";
+            case "float":
+                return "gl.uniform1f(location, value)";
+            case "uint":
+                return "gl.uniform1ui(location, value)";
+        }
+        // Check sampler type
+        if (/^(u|i)?sampler(2D|3D|Cube|2DArray)$/.test(type)) {
+            return 'gl.uniform1i(location, value)';
+        }
+        // Check complex matrix type
+        if (/^mat[0-9]x[0-9]$/.test(type)) {
+            var dims = type.substring(type.length - 3);
+            return 'gl.uniformMatrix' + dims + 'fv(location, Boolean(transposed), value)';
+        }
+        // Checksimple type
+        var vecIdx = type.indexOf('vec');
+        var count = parseInt(type.charAt(type.length - 1), 10) || -1;
+        if ((vecIdx === 0 || vecIdx === 1) && (count >= 1 && count <= 4)) {
+            var vtype = type.charAt('0');
+            switch (vtype) {
+                case 'b':
+                case 'i':
+                    return 'gl.uniform' + count + 'iv(location, value)';
+                case 'u':
+                    return 'gl.uniform' + count + 'uiv(locaiton, value)';
+                case 'v':
+                    return 'gl.uniform' + count + 'fv(location, value)';
+                default:
+                    throw new Error('unrecognized uniform type ' + type + ' for ' + path);
+            }
+        }
+        var matIdx = type.indexOf('mat');
+        count = parseInt(type.charAt(type.length - 1), 10) || -1;
+        console.log(count);
+        if ((matIdx === 0 || matIdx === 1) && (count >= 2 && count <= 4)) {
+            return 'gl.uniformMatrix' + count + 'fv(location, Boolean(transposed), value)';
+        }
+        throw new Error('unrecognized uniform type ' + type + ' for ' + path);
+    };
+    ShaderProgram.prototype.sendUniform = function (uniform, type) {
+        var path = uniform;
+        var location = ss.uniformLocations[path];
+        var setter = ss.getPropSetter(path, location, type);
+        var srcfn = "\n        return function uniformGetSet (value, transposed) {\n            transposed = typeof transposed !== 'undefined' ? transposed : false;\n            location = prog.uniformLocations[name];\n                if (!location) {\n                    prog.addUniforms([name]);\n                    location = prog.uniformLocations[name];\n                }\n                if (location) {\n                    " + setter + "\n                    console.log(\"SENDED\");\n                } else {\n                    console.error(\"ERROR\");\n                }\n        }";
+        var generated = new Function('prog', 'gl', 'name', 'location', srcfn);
+        var gl = Core.getInstance().getGL();
+        return generated(ss, gl, uniform, location);
     };
     return ShaderProgram;
 })();
@@ -623,32 +703,32 @@ var ToneMap;
     function init(gl) {
         ToneMap.textureQuadSimpleProgram.addShader(vertexCode, gl.VERTEX_SHADER, mode.read_text);
         ToneMap.textureQuadSimpleProgram.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      out vec4 fragColor;\n      void main() {\n        fragColor = texture( texture_, texCoord );\n      }", gl.FRAGMENT_SHADER, mode.read_text);
-        ToneMap.textureQuadSimpleProgram.compile_and_link();
+        ToneMap.textureQuadSimpleProgram.compile();
         ToneMap.textureQuadSimpleProgram.addAttributes(["vertex"]);
         ToneMap.textureQuadSimpleProgram.addUniforms(["texture_"]);
         ToneMap.textureQuadGammaProgram.addShader(vertexCode, gl.VERTEX_SHADER, mode.read_text);
         ToneMap.textureQuadGammaProgram.addShader("#version 300 es\n\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      uniform float brightness;\n      out vec4 fragColor;\n      void main() {\n        fragColor = texture( texture_, texCoord );\n        fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction\n      }", gl.FRAGMENT_SHADER, mode.read_text);
-        ToneMap.textureQuadGammaProgram.compile_and_link();
+        ToneMap.textureQuadGammaProgram.compile();
         ToneMap.textureQuadGammaProgram.addAttributes(["vertex"]);
         ToneMap.textureQuadGammaProgram.addUniforms(["texture_", "brightness"]);
         ToneMap.textureQuadReinhardProgram.addShader(vertexCode, gl.VERTEX_SHADER, mode.read_text);
         ToneMap.textureQuadReinhardProgram.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      uniform float brightness;\n      out vec4 fragColor;\n      void main() {\n        fragColor = texture( texture_, texCoord );\n        fragColor.rgb = fragColor.rgb / ( 1.0 + fragColor.rgb );\n        fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction\n      }", gl.FRAGMENT_SHADER, mode.read_text);
-        ToneMap.textureQuadReinhardProgram.compile_and_link();
+        ToneMap.textureQuadReinhardProgram.compile();
         ToneMap.textureQuadReinhardProgram.addAttributes(["vertex"]);
         ToneMap.textureQuadReinhardProgram.addUniforms(["texture_", "brightness"]);
         ToneMap.textureQuadFilmicProgram.addShader(vertexCode, gl.VERTEX_SHADER, mode.read_text);
         ToneMap.textureQuadFilmicProgram.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      uniform float brightness;\n      out vec4 fragColor;\n      void main() {\n        vec3 color = texture( texture_, texCoord ).rgb * pow( abs( brightness ), 2.2 );\n        color = max(vec3(0.), color - vec3(0.004));\n        color = (color * (6.2 * color + .5)) / (color * (6.2 * color + 1.7) + 0.06);\n        fragColor = vec4( color, 1.0 );\n      }", gl.FRAGMENT_SHADER, mode.read_text);
-        ToneMap.textureQuadFilmicProgram.compile_and_link();
+        ToneMap.textureQuadFilmicProgram.compile();
         ToneMap.textureQuadFilmicProgram.addAttributes(["vertex"]);
         ToneMap.textureQuadFilmicProgram.addUniforms(["texture_", "brightness"]);
         ToneMap.textureQuadsRGBProgram.addShader(vertexCode, gl.VERTEX_SHADER, mode.read_text);
         ToneMap.textureQuadsRGBProgram.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      out vec4 fragColor;\n      float sRGB_gamma_correct(float c) {\n       const float a = 0.055;\n       if(c < 0.0031308) return 12.92*c;\n       else return (1.0+a)*pow(c, 1.0/2.4) - a;\n      }\n      void main() {\n        fragColor = texture( texture_, texCoord );\n        fragColor.r = sRGB_gamma_correct(fragColor.r);\n        fragColor.g = sRGB_gamma_correct(fragColor.g);\n        fragColor.b = sRGB_gamma_correct(fragColor.b);\n      }", gl.FRAGMENT_SHADER, mode.read_text);
-        ToneMap.textureQuadsRGBProgram.compile_and_link();
+        ToneMap.textureQuadsRGBProgram.compile();
         ToneMap.textureQuadsRGBProgram.addAttributes(["vertex"]);
         ToneMap.textureQuadsRGBProgram.addUniforms(["texture_", "brightness"]);
         ToneMap.textureQuadUncharted2Program.addShader(vertexCode, gl.VERTEX_SHADER, mode.read_text);
         ToneMap.textureQuadUncharted2Program.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      uniform float brightness;\n      out vec4 fragColor;\n      void main() {\n        fragColor = texture( texture_, texCoord );\n        float A = 0.15;\n        float B = 0.50;\n        float C = 0.10;\n        float D = 0.20;\n        float E = 0.02;\n        float F = 0.30;\n        float W = 11.2;\n        float exposure = brightness;//2.;\n        fragColor.rgb *= exposure;\n        fragColor.rgb = ((fragColor.rgb * \n          (A * fragColor.rgb + C * B) + D * E) / (fragColor.rgb * \n          (A * fragColor.rgb + B) + D * F)) - E / F;\n        float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;\n        fragColor.rgb /= white;\n        fragColor.rgb = pow(fragColor.rgb, vec3(1. / 2.2));\n      }", gl.FRAGMENT_SHADER, mode.read_text);
-        ToneMap.textureQuadUncharted2Program.compile_and_link();
+        ToneMap.textureQuadUncharted2Program.compile();
         ToneMap.textureQuadUncharted2Program.addAttributes(["vertex"]);
         ToneMap.textureQuadUncharted2Program.addUniforms(["texture_", "brightness"]);
     }
@@ -902,6 +982,7 @@ var Cube = (function (_super) {
 /// <reference path="dat-gui.d.ts" />
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
+/// <reference path="core/shaderProgram.ts" />
 function getContext(canvas) {
     var contexts = "webgl,webgl2,experimental-webgl2".split(",");
     var gl;
@@ -942,6 +1023,7 @@ var FizzyText = function () {
     };
 };
 var quad, cube;
+var ss;
 window.onload = function () {
     gl = Core.getInstance().getGL();
     ToneMap.init(gl);
@@ -953,6 +1035,14 @@ window.onload = function () {
     }
     quad = new Quad(1.0, 1.0, 1, 1);
     quad = new Cube(1.0);
+    ss = new ShaderProgram();
+    ss.addShader("./shaders/normalShader.vert", gl.VERTEX_SHADER, mode.read_file);
+    ss.addShader("./shaders/normalShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
+    ss.compile();
+    ss.addAttributes(["position", "normal"]);
+    ss.addUniforms(["projection", "view", "model", "normalMatrix"]); //, "demo"]);
+    ss.use();
+    ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
     requestAnimationFrame(drawScene);
 };
 function drawScene(dt) {
@@ -1149,7 +1239,7 @@ var Teaspot = (function (_super) {
     Teaspot.prototype.render = function () {
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._handle);
-        gl.drawElements(gl.TRIANGLES, this._elements, gl.UNSIGNED_INT, 0);
+        gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
     };
     return Teaspot;
 })(Drawable);
@@ -1330,7 +1420,7 @@ var Skybox = (function () {
         this.ss.addShader(vs, gl.VERTEX_SHADER, mode.read_text);
         var fg = "#version 300 es\n    \tprecision highp float;\n\t\tin vec3 TexCoords;\n\t\tout vec4 color;\n\t\tuniform samplerCube skybox;\n\t\tvoid main() { \n\t\t\tcolor = texture(skybox, TexCoords);\n\t\t}";
         this.ss.addShader(fg, gl.FRAGMENT_SHADER, mode.read_text);
-        this.ss.compile_and_link();
+        this.ss.compile();
         var skyboxVertices = new Float32Array([
             // Positions          
             -1.0, 1.0, -1.0,

@@ -4,7 +4,7 @@
 
 class Model {
     public indices;
-    public vao;
+    public vao: any; // TODO: WebGLVertexArrayObject;
     constructor(fileRoute: string) {
         console.log("Loading file");
         this.loadJSON(fileRoute);
