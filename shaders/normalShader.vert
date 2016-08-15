@@ -10,7 +10,11 @@ uniform mat4 view;
 uniform mat4 model;
 uniform mat3 normalMatrix;
 
+uniform vec2 demo;
+
 void main() {
-	outNormal = normalize(normalMatrix * normal);
+	vec3 nor = normal;
+	nor.xy += demo;
+	outNormal = normalize(normalMatrix * nor);
 	gl_Position = projection * view * model * vec4(position, 1.0);
 }

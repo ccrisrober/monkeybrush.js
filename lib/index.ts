@@ -2,6 +2,9 @@
 /// <reference path="resources/quadToneMap.ts" />
 /// <reference path="stats.d.ts" />
 /// <reference path="dat-gui.d.ts" />
+/// <reference path="models/quad.ts" />
+/// <reference path="models/cube.ts" />
+/// <reference path="core/shaderProgram.ts" />
 
 function getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
 	var contexts: string[] = "webgl,webgl2,experimental-webgl2".split(",");
@@ -46,6 +49,11 @@ var FizzyText = function() {
 	};
 };
 
+
+var quad, cube;
+var ss : ShaderProgram;
+
+
 window.onload = () => {
 	gl = Core.getInstance().getGL();
 	ToneMap.init(gl);
@@ -58,6 +66,21 @@ window.onload = () => {
 	for(var index in text) { 
 	    gui.add(text, index);
 	}
+
+	quad = new Quad(1.0, 1.0, 1, 1);
+	quad = new Cube(1.0);
+
+	ss = new ShaderProgram();
+	ss.addShader("./shaders/normalShader.vert", gl.VERTEX_SHADER, mode.read_file);
+	ss.addShader("./shaders/normalShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
+	ss.compile();
+
+	ss.addAttributes(["position", "normal"]);
+	ss.addUniforms(["projection", "view", "model", "normalMatrix"]);//, "demo"]);
+
+	ss.use();
+
+	ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
 
 	requestAnimationFrame(drawScene);
 }

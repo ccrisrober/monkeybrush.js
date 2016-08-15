@@ -1,5 +1,9 @@
 "use strict";
-
+/**
+* This class get WebGL2 context and animationFrame for your navigator.
+*
+* @class core.Core
+*/
 class Core {
 	private static _instance: Core = new Core();
 
@@ -31,6 +35,12 @@ class Core {
 		return Core._instance;
 	}
 
+	/**
+	* Return global WebGL2 context
+	*
+	* @method getGL
+	* @return {WebGLRenderingContext} Returns WebGL rendering context
+	*/
 	public getGL() : WebGLRenderingContext {
 		return this._gl;
 	}

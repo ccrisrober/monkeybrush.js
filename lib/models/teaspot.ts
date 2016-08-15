@@ -3,7 +3,7 @@
 class Teaspot extends Drawable {
 	protected _handle: Array<WebGLBuffer>;
 
-	protected _elements: number;
+	protected _faces: number;
 
 	constructor() {
 		super();
@@ -11,6 +11,6 @@ class Teaspot extends Drawable {
 	public render() {
 		var gl = Core.getInstance().getGL();
 		(<any>gl).bindVertexArray(this._handle);
-		gl.drawElements(gl.TRIANGLES, this._elements, gl.UNSIGNED_INT, 0);
+		gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
 	}
 }

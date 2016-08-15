@@ -1,5 +1,5 @@
 /// <reference path="icamera.ts" />
 
-class OrthoCamera implements ICamera {
+class OrthoCamera extends ICamera {
 	
 }

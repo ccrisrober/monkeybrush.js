@@ -18,7 +18,7 @@ module ToneMap {
       void main() {
         fragColor = texture( texture_, texCoord );
       }`, gl.FRAGMENT_SHADER, mode.read_text);
-    textureQuadSimpleProgram.compile_and_link();
+    textureQuadSimpleProgram.compile();
     textureQuadSimpleProgram.addAttributes(["vertex"]);
     textureQuadSimpleProgram.addUniforms(["texture_"]);
 
@@ -34,7 +34,7 @@ module ToneMap {
         fragColor = texture( texture_, texCoord );
         fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction
       }`, gl.FRAGMENT_SHADER, mode.read_text);
-    textureQuadGammaProgram.compile_and_link();
+    textureQuadGammaProgram.compile();
     textureQuadGammaProgram.addAttributes(["vertex"]);
     textureQuadGammaProgram.addUniforms(["texture_", "brightness"]);
 
@@ -51,7 +51,7 @@ module ToneMap {
         fragColor.rgb = fragColor.rgb / ( 1.0 + fragColor.rgb );
         fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction
       }`, gl.FRAGMENT_SHADER, mode.read_text);
-    textureQuadReinhardProgram.compile_and_link();
+    textureQuadReinhardProgram.compile();
     textureQuadReinhardProgram.addAttributes(["vertex"]);
     textureQuadReinhardProgram.addUniforms(["texture_", "brightness"]);
 
@@ -69,7 +69,7 @@ module ToneMap {
         color = (color * (6.2 * color + .5)) / (color * (6.2 * color + 1.7) + 0.06);
         fragColor = vec4( color, 1.0 );
       }`, gl.FRAGMENT_SHADER, mode.read_text);
-    textureQuadFilmicProgram.compile_and_link();
+    textureQuadFilmicProgram.compile();
     textureQuadFilmicProgram.addAttributes(["vertex"]);
     textureQuadFilmicProgram.addUniforms(["texture_", "brightness"]);
 
@@ -91,7 +91,7 @@ module ToneMap {
         fragColor.g = sRGB_gamma_correct(fragColor.g);
         fragColor.b = sRGB_gamma_correct(fragColor.b);
       }`, gl.FRAGMENT_SHADER, mode.read_text);
-    textureQuadsRGBProgram.compile_and_link();
+    textureQuadsRGBProgram.compile();
     textureQuadsRGBProgram.addAttributes(["vertex"]);
     textureQuadsRGBProgram.addUniforms(["texture_", "brightness"]);
 
@@ -121,7 +121,7 @@ module ToneMap {
         fragColor.rgb /= white;
         fragColor.rgb = pow(fragColor.rgb, vec3(1. / 2.2));
       }`, gl.FRAGMENT_SHADER, mode.read_text);
-    textureQuadUncharted2Program.compile_and_link();
+    textureQuadUncharted2Program.compile();
     textureQuadUncharted2Program.addAttributes(["vertex"]);
     textureQuadUncharted2Program.addUniforms(["texture_", "brightness"]);
   }

@@ -40,7 +40,7 @@ class Skybox {
 		}`;
 
 		this.ss.addShader(fg, gl.FRAGMENT_SHADER, mode.read_text);
-		this.ss.compile_and_link();
+		this.ss.compile();
 
 		var skyboxVertices = new Float32Array([
 			// Positions          
