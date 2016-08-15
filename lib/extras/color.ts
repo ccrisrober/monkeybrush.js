@@ -1,3 +1,4 @@
+// TODO: Change _color to vec3
 class Color {
 	protected _color = new Array(3);
 	constructor(r: number, g: number, b: number) {

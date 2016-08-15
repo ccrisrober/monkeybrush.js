@@ -1,11 +1,14 @@
 /// <reference path="../lib/stats.d.ts" />
 /// <reference path="../lib/dat-gui.d.ts" />
 /// <reference path="../lib/gl-matrix.d.ts" />
-interface ICamera {
+declare abstract class ICamera {
+    protected _position: Float32Array;
+    constructor(pos: Float32Array);
+    position: Float32Array;
 }
-declare class OrthoCamera implements ICamera {
+declare class OrthoCamera extends ICamera {
 }
-declare class ProjectiveCamera implements ICamera {
+declare class ProjectiveCamera extends ICamera {
 }
 declare class Core {
     private static _instance;
@@ -16,6 +19,34 @@ declare class Core {
     getGL(): WebGLRenderingContext;
     protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
     protected _getVendors(): void;
+}
+declare class vec2<T> {
+    x: T;
+    y: T;
+    constructor(x: T, y: T);
+    isEqual(other: vec2<T>): boolean;
+}
+declare abstract class Texture {
+    protected _target: number;
+    protected _size: vec2<number>;
+    constructor(target: number);
+    target: number;
+    abstract destroy(): void;
+}
+declare class Framebuffer {
+    protected _size: vec2<number>;
+    protected _handle: WebGLFramebuffer;
+    protected _attachments: Array<number>;
+    protected _depth: Texture;
+    protected _renderBuffer: any;
+    protected _colors: Array<Texture>;
+    constructor(textures: Array<Texture>, size: vec2<number>, depth?: boolean, stencil?: boolean, options?: {});
+    private _throwFBOError(status);
+    bind(): void;
+    unbind(): void;
+    rebuild(size: vec2<number>): void;
+    destroy(): void;
+    protected createRenderBuffer(size: vec2<number>, format: number, attachment: number): WebGLRenderbuffer;
 }
 declare class Model {
     indices: any;
@@ -55,7 +86,7 @@ declare class ShaderProgram {
     use(): void;
     dispose(): void;
 }
-declare class Texture {
+declare class _Texture {
     loadTexture(textureName: string): void;
     unloadTexture(textureName: string): void;
     activateTexture(): void;
@@ -87,6 +118,21 @@ declare class Timer {
     stop(): void;
     check(): number;
 }
+declare class vec3<T> {
+    x: T;
+    y: T;
+    z: T;
+    constructor(x: T, y: T, z: T);
+    isEqual(other: vec3<T>): boolean;
+}
+declare class vec4<T> {
+    x: T;
+    y: T;
+    z: T;
+    w: T;
+    constructor(x: T, y: T, z: T, w: T);
+    isEqual(other: vec4<T>): boolean;
+}
 declare var vertexCode: string;
 declare module ToneMap {
     function init(gl: WebGLRenderingContext): void;
@@ -96,6 +142,22 @@ declare module ToneMap {
     var textureQuadFilmicProgram: ShaderProgram;
     var textureQuadsRGBProgram: ShaderProgram;
     var textureQuadUncharted2Program: ShaderProgram;
+}
+declare abstract class Drawable {
+    protected _vao: any;
+    abstract render(): any;
+    protected addAttrib(attribLocation: any, buffer: any, data: any, numElems: any): void;
+}
+declare class Quad extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    protected _faces: number;
+    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
+    render(): void;
+}
+declare class Cube extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    constructor(side?: number);
+    render(): void;
 }
 declare function getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
 declare function getVendors(): void;
@@ -107,6 +169,7 @@ declare var FizzyText: () => {
     displayOutline: boolean;
     explode: () => void;
 };
+declare var quad: any, cube: any;
 declare function drawScene(dt: number): void;
 declare function resize(gl: WebGLRenderingContext): void;
 declare var url: string;
@@ -120,6 +183,8 @@ declare abstract class Light {
 }
 declare class DirectionalLight extends Light {
     protected _direction: Float32Array;
+    constructor(direction?: Float32Array);
+    direction: Float32Array;
 }
 declare class PointLight extends Light {
     protected _position: Float32Array;
@@ -129,6 +194,9 @@ declare class PointLight extends Light {
 declare class SpotLight extends Light {
     protected _position: Float32Array;
     protected _direction: Float32Array;
+    constructor(position?: Float32Array, direction?: Float32Array);
+    position: Float32Array;
+    direction: Float32Array;
 }
 declare abstract class Material {
 }
@@ -143,6 +211,24 @@ declare class NormalMat extends Material {
 declare class PhongMat extends Material {
 }
 declare class ShaderMat extends Material {
+}
+declare class Sphere extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    protected _elements: number;
+    constructor();
+    render(): void;
+}
+declare class Teaspot extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    protected _elements: number;
+    constructor();
+    render(): void;
+}
+declare class Torus extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    protected _faces: number;
+    constructor();
+    render(): void;
 }
 declare class AudioClip {
     protected _audioCtx: any;
@@ -206,4 +292,26 @@ declare class Skybox {
     protected model: Float32Array;
     protected tex: Texture;
     protected _loadCubemap(faces: Array<string>): void;
+}
+declare class RenderBufferTexture {
+    protected _handle: WebGLRenderbuffer;
+    constructor(size: vec2<number>, format: number, attachment: number);
+}
+declare class Texture2D extends Texture {
+    protected _handle: WebGLTexture;
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    constructor(element: any, size: vec2<number>, options?: {});
+    genMipMap(): void;
+    wrap(modes: Array<number>): void;
+    minFilter(filter: number): void;
+    magFilter(filter: number): void;
+    bind(slot?: number): void;
+    unbind(): void;
+    destroy(): void;
+    setPixelStorage(): void;
+}
+declare class Texture3D {
 }
