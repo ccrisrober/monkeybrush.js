@@ -1083,6 +1083,9 @@ var Texture2D = (function (_super) {
         // TODO: REplace gl.TEXTURE_2D TO this.target = gl.TEXTURE_2D;
         this._flipY = options["flipY"] === true;
         this._handle = gl.createTexture();
+        var _internalformat = options["internalformat"] || gl.RGBA;
+        var _format = options["format"] || gl.RGBA;
+        var _type = options["type"] || gl.UNSIGNED_BYTE;
         this._minFilter = options["minFilter"] || gl.NEAREST;
         this._magFilter = options["magFilter"] || gl.NEAREST;
         var wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
@@ -1097,12 +1100,20 @@ var Texture2D = (function (_super) {
         //this.wrap();
         this.bind();
         gl.texImage2D(gl.TEXTURE_2D, 0, // Level of details
-        gl.RGBA, // Format
-        gl.RGBA, gl.UNSIGNED_BYTE, // Size of each channel
+        _internalformat, // Internal format
+        _format, // Format
+        _type, // Size of each channel
         image);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this._minFilter);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this._magFilter);
         this.wrap(wraps);
+        /*// Prevent NPOT textures
+        // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        // Prevents s-coordinate wrapping (repeating).
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        // Prevents t-coordinate wrapping (repeating).
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
     }
     Texture2D.prototype.genMipMap = function () {
         var gl = Core.getInstance().getGL();
@@ -1282,7 +1293,12 @@ function initTexture(str) {
     var cubeImage = new Image();
     cubeImage.onload = function () {
         var size = new vector2(1000.0, 1000.0);
-        tex2d = new Texture2D(cubeImage, size);
+        tex2d = new Texture2D(cubeImage, size, {
+            flipY: true,
+            minFilter: gl.LINEAR,
+            magFilter: gl.LINEAR,
+            wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
+        });
         counterTextures--;
     };
     cubeImage.src = str;
@@ -1305,7 +1321,7 @@ function drawScene(dt) {
     dt *= 0.001; // convert to seconds
     dt = deltaTime;
     //console.log(dt);
-    camera.timeElapsed = dt;
+    camera.timeElapsed = dt / 10.0;
     //resize(gl);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LESS);
@@ -1314,15 +1330,21 @@ function drawScene(dt) {
     if (angle >= 180.0) {
         angle = -180.0;
     }
-    mat4.translate(model, identityMatrix, vec3.fromValues(0.0, -1.0, 0.0));
-    mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-    mat4.rotateY(model, model, angle);
-    mat4.scale(model, model, vec3.fromValues(2.35, 2.35, 2.35));
-    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
     ss.use();
     tex2d.bind(0);
     gl.uniform1i(ss.uniformLocations["texSampler"], 0);
-    cc.render();
+    var dd = 1;
+    for (var i = -7; i < 7; i += 5.0) {
+        for (var j = -7; j < 7; j += 5.0) {
+            dd *= -1;
+            mat4.translate(model, identityMatrix, vec3.fromValues(j + 0.0, i * 1.0, 0.0));
+            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+            mat4.rotateY(model, model, angle * dd);
+            mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+            gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+            cc.render();
+        }
+    }
     stats.end();
     requestAnimationFrame(drawScene);
 }

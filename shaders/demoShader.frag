@@ -10,11 +10,11 @@ out vec4 fragColor;
 uniform sampler2D texSampler;
 
 void main() {
-	//fragColor = vec4(normalize(outNormal), 1.0);
+	fragColor = vec4(normalize(outNormal), 1.0);
 	//fragColor = vec4(normalize(outPosition), 1.0);
 	//fragColor = vec4(outPosition, 1.0);
-	//fragColor = vec4(outUV, 0.0, 1.0);
+	fragColor = vec4(outUV, 0.0, 1.0);
 
-	vec3 color = texture(texSampler, outUV).rgb;
+	vec3 color = texture(texSampler, normalize(outNormal).xy).rgb;
 	fragColor = vec4(color, 1.0);
 }

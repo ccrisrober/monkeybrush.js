@@ -160,7 +160,12 @@ function initTexture(str: string) {
     var cubeImage = new Image();
     cubeImage.onload = function () { 
         var size: vector2<number> = new vector2<number>(1000.0, 1000.0);
-        tex2d = new Texture2D(cubeImage, size);
+        tex2d = new Texture2D(cubeImage, size, {
+            flipY: true,
+            minFilter: gl.LINEAR,
+            magFilter: gl.LINEAR,
+            wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
+        });
         counterTextures--;
     }
     cubeImage.src = str;
@@ -191,7 +196,7 @@ function drawScene(dt: number) {
 
 	dt = deltaTime;
     //console.log(dt);
-    camera.timeElapsed = dt;
+    camera.timeElapsed = dt / 10.0;
 
 	//resize(gl);
 
@@ -206,23 +211,27 @@ function drawScene(dt: number) {
 	}
 
 
-	mat4.translate(model,identityMatrix, vec3.fromValues(0.0, -1.0, 0.0));
-	mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-	mat4.rotateY(model, model, angle);
-	mat4.scale(model, model, vec3.fromValues(2.35, 2.35, 2.35));
-
-    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
-
-
-
-	ss.use();
+    ss.use();
 
 
     tex2d.bind(0);
     gl.uniform1i(ss.uniformLocations["texSampler"], 0);
 
+    var dd = 1;
 
-	cc.render();
+    for(var i = -7; i < 7; i += 5.0) {
+        for(var j = -7; j < 7; j += 5.0) {
+            dd *= -1;
+            mat4.translate(model,identityMatrix, vec3.fromValues(j + 0.0, i * 1.0, 0.0));
+            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+            mat4.rotateY(model, model, angle * dd);
+            mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+
+            gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+
+            cc.render();
+        }
+    }
 
 	stats.end();
 
