@@ -18,8 +18,8 @@ class Core {
 		//var canvas = <HTMLCanvasElement>document.getElementById("canvas");
 		
 	    var canvas = document.createElement('canvas');
-	    canvas.width = 1000;
-	    canvas.height = 1000;
+	    canvas.width = 800;
+	    canvas.height = 800;
 
 		document.body.appendChild(canvas);
 
@@ -32,6 +32,10 @@ class Core {
 		this.init();
 
 		Core._instance = this;
+	}
+
+	public clearColorAndDepth() {
+		this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
 	}
 
 	protected init() {

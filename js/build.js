@@ -196,8 +196,8 @@ var Camera = (function () {
         }
     };
     Camera.prototype.processMouseMovement = function (xOffset, yOffset) {
-        xOffset *= this.movSpeed * this.timeElapsed;
-        yOffset *= this.movSpeed * this.timeElapsed;
+        xOffset *= this.movSpeed * 2.0 * this.timeElapsed;
+        yOffset *= this.movSpeed * 2.0 * this.timeElapsed;
         this.yaw += xOffset;
         this.pitch += yOffset;
         if (this.pitch > 89.0) {
@@ -324,8 +324,8 @@ var Core = (function () {
         }
         //var canvas = <HTMLCanvasElement>document.getElementById("canvas");
         var canvas = document.createElement('canvas');
-        canvas.width = 1000;
-        canvas.height = 1000;
+        canvas.width = 800;
+        canvas.height = 800;
         document.body.appendChild(canvas);
         this._gl = this._getContext(canvas);
         if (!this._gl) {
@@ -336,6 +336,9 @@ var Core = (function () {
         this.init();
         Core._instance = this;
     }
+    Core.prototype.clearColorAndDepth = function () {
+        this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
+    };
     Core.prototype.init = function () {
         var gl = this._gl;
         gl.enable(gl.DEPTH_TEST);
@@ -403,6 +406,7 @@ var vector2 = (function () {
 /// <reference path="../extras/vector2.ts" />
 var Texture = (function () {
     function Texture(target) {
+        this._target = target;
     }
     Object.defineProperty(Texture.prototype, "target", {
         get: function () { return this._target; },
@@ -1388,7 +1392,7 @@ var Texture2D = (function (_super) {
         var gl = Core.getInstance().getGL();
         _super.call(this, gl.TEXTURE_2D);
         options = options || {};
-        // TODO: REplace gl.TEXTURE_2D TO this.target = gl.TEXTURE_2D;
+        console.log(this.target);
         this._flipY = options["flipY"] === true;
         this._handle = gl.createTexture();
         var _internalformat = options["internalformat"] || gl.RGBA;
@@ -1407,27 +1411,27 @@ var Texture2D = (function (_super) {
         //this.magFilter();
         //this.wrap();
         this.bind();
-        gl.texImage2D(gl.TEXTURE_2D, 0, // Level of details
+        gl.texImage2D(this.target, 0, // Level of details
         _internalformat, // Internal format
         _format, // Format
         _type, // Size of each channel
         image);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this._minFilter);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this._magFilter);
+        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this._minFilter);
+        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this._magFilter);
         this.wrap(wraps);
         /*// Prevent NPOT textures
         // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         // Prevents s-coordinate wrapping (repeating).
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         // Prevents t-coordinate wrapping (repeating).
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
     }
     Texture2D.prototype.genMipMap = function () {
         var gl = Core.getInstance().getGL();
         this.bind();
         // TODO: Check NPOT??
-        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.generateMipmap(this.target);
     };
     Texture2D.prototype.wrap = function (modes) {
         if (modes.length !== 2) {
@@ -1435,20 +1439,20 @@ var Texture2D = (function (_super) {
         }
         var gl = Core.getInstance().getGL();
         this.bind();
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, modes[0]);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, modes[1]);
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, modes[0]);
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, modes[1]);
         this._wraps = modes;
     };
     Texture2D.prototype.minFilter = function (filter) {
         var gl = Core.getInstance().getGL();
         this.bind();
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, filter);
         this._minFilter = filter;
     };
     Texture2D.prototype.magFilter = function (filter) {
         var gl = Core.getInstance().getGL();
         this.bind();
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, filter);
         this._magFilter = filter;
     };
     Texture2D.prototype.bind = function (slot) {
@@ -1456,11 +1460,11 @@ var Texture2D = (function (_super) {
         if (typeof slot === "number") {
             gl.activeTexture(gl.TEXTURE0 + slot);
         }
-        gl.bindTexture(gl.TEXTURE_2D, this._handle);
+        gl.bindTexture(this.target, this._handle);
     };
     Texture2D.prototype.unbind = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.bindTexture(this.target, null);
     };
     Texture2D.prototype.destroy = function () {
         var gl = Core.getInstance().getGL();
@@ -1475,6 +1479,56 @@ var Texture2D = (function (_super) {
     };
     return Texture2D;
 })(Texture);
+/// <reference path="../extras/color.ts" />
+var Light = (function () {
+    function Light() {
+        this.intensity = 1.0;
+        this.color = new Color(1.0, 1.0, 1.0);
+    }
+    Object.defineProperty(Light.prototype, "intensity", {
+        get: function () { return this._intensity; },
+        set: function (intensity) { this._intensity = intensity; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Light.prototype, "color", {
+        get: function () { return this._color; },
+        set: function (color) { this._color = color; },
+        enumerable: true,
+        configurable: true
+    });
+    return Light;
+})();
+/**
+ * TODO:
+ *	- [] Attenuation (constant, linear, cuadratic)
+ *	- [] http://www.learnopengl.com/code_viewer.php?code=lighting/multiple_lights-exercise1
+ *
+**/ 
+/// <reference path="light.ts" />
+var PointLight = (function (_super) {
+    __extends(PointLight, _super);
+    function PointLight(position) {
+        if (position === void 0) { position = new Float32Array([0.0, 0.0, 0.0]); }
+        _super.call(this);
+        this.position = position;
+    }
+    Object.defineProperty(PointLight.prototype, "position", {
+        get: function () { return this._position; },
+        set: function (position) { this._position = position; },
+        enumerable: true,
+        configurable: true
+    });
+    PointLight.prototype.addTransform = function (x, y, z) {
+        if (x === void 0) { x = 0.0; }
+        if (y === void 0) { y = 0.0; }
+        if (z === void 0) { z = 0.0; }
+        this._position[0] += x;
+        this._position[1] += y;
+        this._position[2] += z;
+    };
+    return PointLight;
+})(Light);
 /// <reference path="core/core.ts" />
 /// <reference path="resources/quadToneMap.ts" />
 /// <reference path="stats.d.ts" />
@@ -1482,11 +1536,13 @@ var Texture2D = (function (_super) {
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
 /// <reference path="models/sphere.ts" />
+/// <reference path="core/model.ts" />
 /// <reference path="core/shaderProgram.ts" />
 /// <reference path="textures/texture2d.ts" />
-/// <reference path="core/model.ts" />
+/// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
-var camera = new Camera(new Float32Array([0.2082894891500473, 1.0681922435760498, 8.870955467224121]));
+var camera = new Camera(new Float32Array([
+    -0.8767104148864746, -2.766807794570923, 68.27084350585938]));
 var gl;
 var stats = new Stats();
 stats.setMode(0);
@@ -1585,7 +1641,7 @@ function initTexture(str) {
     //return tex2d_;
 }
 var tex2d;
-var lightPos = [0.5, 0.5, -1.0];
+var light = new PointLight(new Float32Array([0.5, 0.5, -1.0]));
 var lastTime = Date.now();
 var deltaTime = 0.0;
 var identityMatrix = mat4.create();
@@ -1611,24 +1667,22 @@ function drawScene(dt) {
     dt = deltaTime;
     //console.log(dt);
     camera.timeElapsed = dt / 10.0;
-    lightPos[0] += Math.cos(angle) * 0.05;
-    lightPos[1] += Math.cos(angle) * 0.05;
-    lightPos[2] += Math.sin(angle) * 0.05;
+    light.addTransform(Math.cos(angle) * 0.05, Math.cos(angle) * 0.05, Math.sin(angle) * 0.05);
     camera.update(cameraUpdateCb);
     //resize(gl);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    Core.getInstance().clearColorAndDepth();
     //console.log("LEFT: " + Input.getInstance().isKeyPressed(Input.keys["Left"]));
     angle += dt * 0.001;
     /*if(angle >= 180.0) {
         angle = -180.0;
     }*/
     ss.use();
-    gl.uniform3f(ss.uniformLocations["lightPosition"], lightPos[0], lightPos[1], lightPos[2]);
+    gl.uniform3fv(ss.uniformLocations["lightPosition"], light.position);
     tex2d.bind(0);
     gl.uniform1i(ss.uniformLocations["texSampler"], 0);
     var dd = 1;
     var i = 0, j = 0;
-    mat4.translate(model, identityMatrix, new Float32Array(lightPos));
+    mat4.translate(model, identityMatrix, new Float32Array(light.position));
     mat4.rotateY(model, model, 90.0 * Math.PI / 180);
     //mat4.rotateY(model, model, angle * dd);
     mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
@@ -1637,8 +1691,9 @@ function drawScene(dt) {
     //cubito.render();
     //planito.render();
     esferita.render();
-    for (i = -7; i < 7; i += 5.0) {
-        for (j = -7; j < 7; j += 5.0) {
+    var varvar = 35;
+    for (i = -varvar; i < varvar; i += 5.0) {
+        for (j = -varvar; j < varvar; j += 5.0) {
             dd *= -1;
             mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
@@ -1667,8 +1722,10 @@ function resize(gl) {
         gl.canvas.height = displayHeight;
         // Set the viewport to match
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        cameraUpdateCb();
     }
 }
+/**
 var url = "config.json";
 var request = new XMLHttpRequest();
 request.open('GET', url, false);
@@ -1676,39 +1733,13 @@ request.onload = function () {
     if (request.status < 200 || request.status > 299) {
         console.log('Error: HTTP Status ' + request.status + ' on resource ' + url);
         return {};
-    }
-    else {
+    } else {
         var json = JSON.parse(request.responseText);
         console.log(json);
     }
 };
 request.send();
-/// <reference path="../extras/color.ts" />
-var Light = (function () {
-    function Light() {
-        this.intensity = 1.0;
-        this.color = new Color(1.0, 1.0, 1.0);
-    }
-    Object.defineProperty(Light.prototype, "intensity", {
-        get: function () { return this._intensity; },
-        set: function (intensity) { this._intensity = intensity; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Light.prototype, "color", {
-        get: function () { return this._color; },
-        set: function (color) { this._color = color; },
-        enumerable: true,
-        configurable: true
-    });
-    return Light;
-})();
-/**
- * TODO:
- *	- [] Attenuation (constant, linear, cuadratic)
- *	- [] http://www.learnopengl.com/code_viewer.php?code=lighting/multiple_lights-exercise1
- *
-**/ 
+/**/ 
 /// <reference path="light.ts" />
 var DirectionalLight = (function (_super) {
     __extends(DirectionalLight, _super);
@@ -1724,22 +1755,6 @@ var DirectionalLight = (function (_super) {
         configurable: true
     });
     return DirectionalLight;
-})(Light);
-/// <reference path="light.ts" />
-var PointLight = (function (_super) {
-    __extends(PointLight, _super);
-    function PointLight(position) {
-        if (position === void 0) { position = new Float32Array([0.0, 0.0, 0.0]); }
-        _super.call(this);
-        this.position = position;
-    }
-    Object.defineProperty(PointLight.prototype, "position", {
-        get: function () { return this._position; },
-        set: function (position) { this._position = position; },
-        enumerable: true,
-        configurable: true
-    });
-    return PointLight;
 })(Light);
 /// <reference path="light.ts" />
 var SpotLight = (function (_super) {
@@ -1842,13 +1857,6 @@ var Torus = (function (_super) {
     };
     return Torus;
 })(Drawable);
-var AudioClip = (function () {
-    function AudioClip() {
-        this._audioCtx = null;
-        this._bgAudioNode = null;
-    }
-    return AudioClip;
-})();
 "use strict";
 var ResourceMap = (function () {
     function ResourceMap() {
@@ -1944,6 +1952,71 @@ var ResourceMap;
     })();
     ResourceMap.MapEntry = MapEntry;
 })(ResourceMap || (ResourceMap = {}));
+/// <reference path="resourceMap.ts" />
+var AudioClip = (function () {
+    function AudioClip() {
+        this._audioCtx = null;
+        this._bgAudioNode = null;
+        this.initAudioContext();
+    }
+    AudioClip.prototype.initAudioContext = function () {
+        this._audioContext = new (window["AudioContext"] || window["webkitAudioContext"])();
+    };
+    AudioClip.prototype.loadAudio = function (clipName) {
+        var rs = ResourceMap.getInstance();
+        if (!(rs.isAssetLoaded(clipName))) {
+            // Update resources in load counter
+            rs.asyncLoadRequested(clipName);
+            // Async request the data from server
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (request.status < 200 || request.status > 299) {
+                    alert(clipName + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
+                        "The index.html file must be loaded by a web-server.]");
+                }
+            };
+            request.open("GET", clipName, true);
+            // Specify that the request retrieves binary data.
+            request.responseType = "arraybuffer";
+            request.onload = function () {
+                // Asynchronously decode, then call the function in parameter.
+                this._audioContext.decodeAudioData(request.response, function (buffer) {
+                    rs.asyncLoadCompleted(clipName, buffer);
+                });
+            };
+            request.send();
+        }
+    };
+    AudioClip.prototype.unloadAudio = function (clipName) {
+        ResourceMap.getInstance().unloadAsset(clipName);
+    };
+    AudioClip.prototype.playACue = function () {
+    };
+    AudioClip.prototype.playBackgroundAudio = function (clipName) {
+        var clipInfo = ResourceMap.getInstance().retrieveAsset(clipName);
+        if (clipInfo !== null) {
+            // Stop audio if playing.
+            this._stopBackgroundAudio();
+            this._bgAudioNode = this._audioContext.createBufferSource();
+            this._bgAudioNode.buffer = clipInfo;
+            this._bgAudioNode.connect(this._audioContext.destination);
+            this._bgAudioNode.loop = true;
+            this._bgAudioNode.start(0);
+        }
+    };
+    AudioClip.prototype.stopBackgroundAudio = function () {
+    };
+    AudioClip.prototype.isBackgroundAudioPlaying = function () {
+    };
+    AudioClip.prototype._stopBackgroundAudio = function () {
+        // Check if audio is playing
+        if (this._bgAudioNode !== null) {
+            this._bgAudioNode.stop(0);
+            this._bgAudioNode = null;
+        }
+    };
+    return AudioClip;
+})();
 /// <reference path="resourceMap.ts" />
 var Font = (function () {
     function Font(fontName) {
@@ -2074,6 +2147,17 @@ var Skybox = (function () {
     };
     return Skybox;
 })();
+/// <reference path="texture2d.ts" />
+var FloatTexture = (function (_super) {
+    __extends(FloatTexture, _super);
+    function FloatTexture(image, size, options) {
+        if (options === void 0) { options = {}; }
+        options = options || {};
+        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texWidth, texHeight, 0, gl.RGBA, gl.FLOAT, null);
+        _super.call(this, image, size, options);
+    }
+    return FloatTexture;
+})(Texture2D);
 /// <reference path="../extras/vector2.ts" />
 /// <reference path="../core/Core.ts" />
 var RenderBufferTexture = (function () {

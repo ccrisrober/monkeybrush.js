@@ -114,6 +114,7 @@ declare class Core {
     private static _instance;
     private _gl;
     constructor();
+    clearColorAndDepth(): void;
     protected init(): void;
     static getInstance(): Core;
     /**
@@ -304,6 +305,19 @@ declare class Texture2D extends Texture {
     destroy(): void;
     setPixelStorage(): void;
 }
+declare abstract class Light {
+    protected _intensity: number;
+    protected _color: Color;
+    constructor();
+    intensity: number;
+    color: Color;
+}
+declare class PointLight extends Light {
+    protected _position: Float32Array;
+    constructor(position?: Float32Array);
+    position: Float32Array;
+    addTransform(x?: number, y?: number, z?: number): void;
+}
 declare var camera: Camera;
 declare var gl: WebGLRenderingContext;
 declare var stats: Stats;
@@ -323,7 +337,7 @@ declare var projection: any;
 declare var counterTextures: number;
 declare function initTexture(str: string): void;
 declare var tex2d: Texture2D;
-declare var lightPos: number[];
+declare var light: PointLight;
 declare var lastTime: number;
 declare var deltaTime: number;
 declare var identityMatrix: Float32Array;
@@ -332,24 +346,10 @@ declare var angle: number;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
 declare function resize(gl: WebGLRenderingContext): void;
-declare var url: string;
-declare var request: XMLHttpRequest;
-declare abstract class Light {
-    protected _intensity: number;
-    protected _color: Color;
-    constructor();
-    intensity: number;
-    color: Color;
-}
 declare class DirectionalLight extends Light {
     protected _direction: Float32Array;
     constructor(direction?: Float32Array);
     direction: Float32Array;
-}
-declare class PointLight extends Light {
-    protected _position: Float32Array;
-    constructor(position?: Float32Array);
-    position: Float32Array;
 }
 declare class SpotLight extends Light {
     protected _position: Float32Array;
@@ -384,10 +384,6 @@ declare class Torus extends Drawable {
     constructor();
     render(): void;
 }
-declare class AudioClip {
-    protected _audioCtx: any;
-    protected _bgAudioNode: any;
-}
 declare class ResourceMap {
     protected _numOutstandingLoads: number;
     protected _loadCompleteCallback: Function;
@@ -418,6 +414,20 @@ declare module ResourceMap {
         decCount(): void;
     }
 }
+declare class AudioClip {
+    protected _audioCtx: any;
+    protected _bgAudioNode: any;
+    protected _audioContext: AudioContext;
+    constructor();
+    initAudioContext(): void;
+    loadAudio(clipName: string): void;
+    unloadAudio(clipName: string): void;
+    playACue(): void;
+    playBackgroundAudio(clipName: string): void;
+    stopBackgroundAudio(): void;
+    isBackgroundAudioPlaying(): void;
+    protected _stopBackgroundAudio(): void;
+}
 declare class Font {
     constructor(fontName: string);
     unloadFont(fontName: string): void;
@@ -446,6 +456,9 @@ declare class Skybox {
     protected model: Float32Array;
     protected tex: Texture;
     protected _loadCubemap(faces: Array<string>): void;
+}
+declare class FloatTexture extends Texture2D {
+    constructor(image: any, size: vector2<number>, options?: {});
 }
 declare class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;

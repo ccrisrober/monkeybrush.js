@@ -109,8 +109,8 @@ class Camera {
     }
 
     public processMouseMovement(xOffset: number, yOffset: number) {
-        xOffset *= this.movSpeed * this.timeElapsed;
-        yOffset *= this.movSpeed * this.timeElapsed;
+        xOffset *= this.movSpeed * 2.0 * this.timeElapsed;
+        yOffset *= this.movSpeed * 2.0 * this.timeElapsed;
 
         this.yaw += xOffset;
         this.pitch += yOffset;

@@ -5,14 +5,16 @@
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
 /// <reference path="models/sphere.ts" />
+/// <reference path="core/model.ts" />
 /// <reference path="core/shaderProgram.ts" />
 /// <reference path="textures/texture2d.ts" />
 
 
 
-/// <reference path="core/model.ts" />
+/// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
-var camera = new Camera(new Float32Array([0.2082894891500473, 1.0681922435760498, 8.870955467224121]));
+var camera = new Camera(new Float32Array([
+    -0.8767104148864746, -2.766807794570923, 68.27084350585938]));
 
 var gl: WebGLRenderingContext;
 var stats: Stats = new Stats();
@@ -141,9 +143,7 @@ function initTexture(str: string) {
 }
 var tex2d: Texture2D;
 
-
-var lightPos = [0.5, 0.5, -1.0];
-
+var light = new PointLight(new Float32Array( [0.5, 0.5, -1.0] ));
 
 var lastTime = Date.now();
 var deltaTime = 0.0;
@@ -179,16 +179,17 @@ function drawScene(dt: number) {
     //console.log(dt);
     camera.timeElapsed = dt / 10.0;
 
-
-    lightPos[0] += Math.cos(angle) * 0.05;
-    lightPos[1] += Math.cos(angle) * 0.05;
-    lightPos[2] += Math.sin(angle) * 0.05;
+    light.addTransform(
+        Math.cos(angle) * 0.05,
+        Math.cos(angle) * 0.05,
+        Math.sin(angle) * 0.05
+    );
 
     camera.update(cameraUpdateCb);
 
 	//resize(gl);
 
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	Core.getInstance().clearColorAndDepth();
 
     //console.log("LEFT: " + Input.getInstance().isKeyPressed(Input.keys["Left"]));
 
@@ -200,7 +201,7 @@ function drawScene(dt: number) {
 
     ss.use();
 
-    gl.uniform3f(ss.uniformLocations["lightPosition"], lightPos[0], lightPos[1], lightPos[2]);
+    gl.uniform3fv(ss.uniformLocations["lightPosition"], light.position);
 
 
     tex2d.bind(0);
@@ -210,7 +211,7 @@ function drawScene(dt: number) {
 
     var i = 0, j = 0;
 
-    mat4.translate(model,identityMatrix, new Float32Array(lightPos));
+    mat4.translate(model,identityMatrix, new Float32Array(light.position));
     mat4.rotateY(model, model, 90.0 * Math.PI / 180);
     //mat4.rotateY(model, model, angle * dd);
     mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
@@ -222,8 +223,9 @@ function drawScene(dt: number) {
     //planito.render();
     esferita.render();
 
-    for(i = -7; i < 7; i += 5.0) {
-        for(j = -7; j < 7; j += 5.0) {
+    var varvar = 35;
+    for(i = -varvar; i <varvar; i += 5.0) {
+        for(j = -varvar; j < varvar; j += 5.0) {
             dd *= -1;
             mat4.translate(model,identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
@@ -263,9 +265,11 @@ function resize(gl: WebGLRenderingContext) {
 
 		// Set the viewport to match
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        cameraUpdateCb();
 	}
 }
-
+/**
 var url = "config.json";
 var request = new XMLHttpRequest();
 request.open('GET', url, false);
@@ -279,3 +283,4 @@ request.onload = function () {
     }
 };
 request.send();
+/**/

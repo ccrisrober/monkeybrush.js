@@ -22,7 +22,7 @@ void main() {
 	fragColor = vec4(color, 1.0);*/
 
 	vec3 ambColor = vec3(0.24725, 0.1995, 0.0745);
-	vec3 objectColor = vec3(0.75164, 0.60648, 0.22648);
+	vec3 objectColor =  texture(texSampler, outUV).rgb; //vec3(0.75164, 0.60648, 0.22648);
 	vec3 specColor = vec3(0.628281, 0.555802, 0.366065);
 	float shininess = 0.4;
 
@@ -49,9 +49,9 @@ void main() {
     float linear = 0.14;
     float quadratic = 0.07;
 
-    float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));    
+    float attenuation = 1.0 / (constant + linear * dist + quadratic * (dist * dist));    
 
-
+    attenuation = 1.0;
 
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
