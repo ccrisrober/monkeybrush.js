@@ -331,18 +331,6 @@ var Model = (function () {
         console.log("Loading file");
         this.loadJSON(fileRoute);
     }
-    Model.prototype.render = function () {
-        var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this.vao);
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-        gl.bindVertexArray(null);
-    };
-    Model.prototype.renderArrayInstance = function (numInstances) {
-        var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this.vao);
-        gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 100);
-        gl.bindVertexArray(null);
-    };
     Model.prototype.createBuffer = function (data) {
         var gl = Core.getInstance().getGL();
         var buffer = gl.createBuffer();
@@ -396,13 +384,17 @@ var Model = (function () {
         };
         request.send();
     };
-    Model.prototype._calculateTangents = function (vertices, normals) {
-        var ts = [];
-        for (var i = 0, size = vertices.length / 3; i < size; i++) {
-            ts[i] = [0.0, 0.0, 0.0];
-        }
-        // Not finished
-        return ts;
+    Model.prototype.render = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(this.vao);
+        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.bindVertexArray(null);
+    };
+    Model.prototype.renderArrayInstance = function (numInstances) {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(this.vao);
+        gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 100);
+        gl.bindVertexArray(null);
     };
     return Model;
 })();
@@ -835,10 +827,28 @@ var ToneMap;
 var Drawable = (function () {
     function Drawable() {
     }
+    // TODO: unused DELETE PLS
     Drawable.prototype.addAttrib = function (attribLocation, buffer, data, numElems) {
         var gl = Core.getInstance().getGL();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(attribLocation, // Attribute location
+        numElems, // Number of elements per attribute
+        gl.FLOAT, // Type of elements
+        false, numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
+        0 // Offset from the beginning of a single vertex to this attribute
+        );
+        gl.enableVertexAttribArray(attribLocation);
+    };
+    Drawable.prototype.createBuffer = function (data, handle) {
+        var gl = Core.getInstance().getGL();
+        gl.bindBuffer(gl.ARRAY_BUFFER, handle);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+        return handle;
+    };
+    Drawable.prototype.addAttrib_ = function (attribLocation, buffer, numElems) {
+        var gl = Core.getInstance().getGL();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.vertexAttribPointer(attribLocation, // Attribute location
         numElems, // Number of elements per attribute
         gl.FLOAT, // Type of elements
@@ -856,7 +866,6 @@ var Quad = (function (_super) {
         if (smax === void 0) { smax = 1.0; }
         if (tmax === void 0) { tmax = 1.0; }
         _super.call(this);
-        this._faces = xdivs * zdivs;
         var v = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
         var n = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
         var tex = new Array(2.0 * (xdivs + 1.0) * (zdivs + 1.0));
@@ -907,12 +916,12 @@ var Quad = (function (_super) {
         }
         this._vao = gl.createVertexArray();
         gl.bindVertexArray(this._vao);
-        this.addAttrib(0, this._handle[0], v, 3);
-        this.addAttrib(1, this._handle[1], n, 3);
-        this.addAttrib(2, this._handle[2], tex, 2);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[3]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
-        gl.bindVertexArray(null);
+        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this._indicesLen = el.length;
         // TODO: Clear v, n, tex and el
         console.log({
             vertices: v,
@@ -924,7 +933,8 @@ var Quad = (function (_super) {
     Quad.prototype.render = function () {
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._vao);
-        gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
+        //gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);	// TODO: UNSIGNED_INT => https://developer.mozilla.org/en-US/docs/Web/API/OES_element_index_uint
+        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     return Quad;
 })(Drawable);
@@ -1041,20 +1051,17 @@ var Cube = (function (_super) {
         ];
         var gl = Core.getInstance().getGL();
         this._handle = new Array(4);
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0, size = this._handle.length; i < size; i++) {
             this._handle[i] = gl.createBuffer();
         }
         this._vao = gl.createVertexArray();
         gl.bindVertexArray(this._vao);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._handle[0]);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STATIC_DRAW);
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(0); // Vertex position
-        //this.addAttrib(0, this._handle[0], v, 3);
-        //this.addAttrib(1, this._handle[1], n, 3);
-        //this.addAttrib(2, this._handle[2], tex, 2);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[3]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
+        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this._indicesLen = el.length;
         gl.bindVertexArray(null);
         // TODO: Clear v, n, tex and el
         console.log({
@@ -1068,9 +1075,109 @@ var Cube = (function (_super) {
     Cube.prototype.render = function () {
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._vao);
-        gl.drawElements(gl.TRIANGLES, 24, gl.UNSIGNED_INT, 0);
+        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     return Cube;
+})(Drawable);
+/// <reference path="drawable.ts" />
+var Sphere = (function (_super) {
+    __extends(Sphere, _super);
+    function Sphere(radius, slices, stacks) {
+        _super.call(this);
+        var nv = (slices + 1) * (stacks + 1);
+        var elements = (slices * 2 * (stacks - 1)) * 3;
+        // v
+        var v = new Array(3 * nv);
+        // Normals
+        var n = new Array(3 * nv);
+        // Tex coords
+        var tex = new Array(2 * nv);
+        // Elements
+        var el = new Array(elements);
+        // Generate the vertex data
+        // Generate positions and normals
+        var theta, phi;
+        var thetaFac = Math.PI * 2.0 / slices;
+        var phiFac = Math.PI / stacks;
+        var nx, ny, nz, s, t;
+        var idx = 0, tIdx = 0;
+        for (var i = 0; i <= slices; i++) {
+            theta = i * thetaFac;
+            s = i / slices;
+            for (var j = 0; j <= stacks; j++) {
+                phi = j * phiFac;
+                t = j / stacks;
+                nx = Math.sin(phi) * Math.cos(theta);
+                ny = Math.sin(phi) * Math.sin(theta);
+                nz = Math.cos(phi);
+                v[idx] = radius * nx;
+                v[idx + 1] = radius * ny;
+                v[idx + 2] = radius * nz;
+                n[idx] = nx;
+                n[idx + 1] = ny;
+                n[idx + 2] = nz;
+                idx += 3;
+                tex[tIdx] = s;
+                tex[tIdx + 1] = t;
+                tIdx += 2;
+            }
+        }
+        // Generate the element list
+        idx = 0;
+        for (var i = 0; i < slices; i++) {
+            var stackStart = i * (stacks + 1);
+            var nextStackStart = (i + 1) * (stacks + 1);
+            for (var j = 0; j < stacks; j++) {
+                if (j == 0) {
+                    el[idx] = stackStart;
+                    el[idx + 1] = stackStart + 1;
+                    el[idx + 2] = nextStackStart + 1;
+                    idx += 3;
+                }
+                else if (j == stacks - 1) {
+                    el[idx] = stackStart + j;
+                    el[idx + 1] = stackStart + j + 1;
+                    el[idx + 2] = nextStackStart + j;
+                    idx += 3;
+                }
+                else {
+                    el[idx] = stackStart + j;
+                    el[idx + 1] = stackStart + j + 1;
+                    el[idx + 2] = nextStackStart + j + 1;
+                    el[idx + 3] = nextStackStart + j;
+                    el[idx + 4] = stackStart + j;
+                    el[idx + 5] = nextStackStart + j + 1;
+                    idx += 6;
+                }
+            }
+        }
+        var gl = Core.getInstance().getGL();
+        this._handle = new Array(4);
+        for (var i = 0; i < 4; i++) {
+            this._handle[i] = gl.createBuffer();
+        }
+        this._vao = gl.createVertexArray();
+        gl.bindVertexArray(this._vao);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
+        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this._indicesLen = el.length;
+        // TODO: Clear v, n, tex and el
+        console.log({
+            vertices: v,
+            normal: n,
+            textureCoords: tex,
+            indices: el
+        });
+    }
+    Sphere.prototype.render = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(this._vao);
+        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    };
+    return Sphere;
 })(Drawable);
 /// <reference path="texture.ts" />
 var Texture2D = (function (_super) {
@@ -1173,6 +1280,7 @@ var Texture2D = (function (_super) {
 /// <reference path="dat-gui.d.ts" />
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
+/// <reference path="models/sphere.ts" />
 /// <reference path="core/shaderProgram.ts" />
 /// <reference path="textures/texture2d.ts" />
 /// <reference path="core/model.ts" />
@@ -1192,6 +1300,9 @@ var FizzyText = function () {
 };
 var cc;
 var ss;
+var cubito;
+var planito;
+var esferita;
 var view;
 var projection;
 window.onload = function () {
@@ -1203,21 +1314,23 @@ window.onload = function () {
     for (var index in text) {
         gui.add(text, index);
     }
-    //cc = new Quad(1.0, 1.0, 1, 1);
-    //cc = new Cube(1.0);
-    cc = new Model("omg.json");
+    esferita = new Sphere(1.0, 20, 20);
+    //planito = new Quad(1.0, 1.0, 1, 1);
+    //cubito = new Cube(5.0);
+    //cc = new Model("omg.json");
     ss = new ShaderProgram();
     ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
     ss.addShader("./shaders/demoShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
     ss.compile();
     ss.addAttributes(["position", "normal", "uv"]); //, "normal"]);
-    ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler"]); //, "demo"]);
+    ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler", "viewPos", "lightPosition"]); //, "demo"]);
     ss.use();
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
     //console.log(view, projection);
     gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
     gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+    gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
     //ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
@@ -1271,14 +1384,14 @@ window.onload = function () {
         //console.log(view, projection);
         gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
         gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
-        //gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+        gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
     });
     initTexture("example.png");
     //tex2d = initTexture("example.png");
     var itv = setInterval(function () {
-        console.log(counterTextures);
+        //console.log(counterTextures);
         if (counterTextures === 0) {
-            console.log(tex2d);
+            //console.log(tex2d);
             clearInterval(itv);
             requestAnimationFrame(drawScene);
         }
@@ -1305,6 +1418,7 @@ function initTexture(str) {
     //return tex2d_;
 }
 var tex2d;
+var lightPos = [0.0, 0.0, 0.0];
 var lastTime = Date.now();
 var deltaTime = 0.0;
 var identityMatrix = mat4.create();
@@ -1322,29 +1436,37 @@ function drawScene(dt) {
     dt = deltaTime;
     //console.log(dt);
     camera.timeElapsed = dt / 10.0;
+    lightPos[0] += Math.cos(angle) * 0.6;
+    //lightPos[1] += Math.cos(angle) * 0.1;
+    lightPos[2] += Math.sin(angle) * 0.6;
     //resize(gl);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LESS);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     angle += dt * 0.001;
-    if (angle >= 180.0) {
+    /*if(angle >= 180.0) {
         angle = -180.0;
-    }
+    }*/
     ss.use();
+    gl.uniform3f(ss.uniformLocations["lightPosition"], lightPos[0], lightPos[1], lightPos[2]);
     tex2d.bind(0);
     gl.uniform1i(ss.uniformLocations["texSampler"], 0);
     var dd = 1;
-    for (var i = -7; i < 7; i += 5.0) {
-        for (var j = -7; j < 7; j += 5.0) {
-            dd *= -1;
-            mat4.translate(model, identityMatrix, vec3.fromValues(j + 0.0, i * 1.0, 0.0));
-            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-            mat4.rotateY(model, model, angle * dd);
-            mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
-            gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
-            cc.render();
-        }
-    }
+    var i = 0, j = 0;
+    //for(i = -7; i < 7; i += 5.0) {
+    //    for(j = -7; j < 7; j += 5.0) {
+    dd *= -1;
+    mat4.translate(model, identityMatrix, vec3.fromValues(j + 0.0, i * 1.0, 0.0));
+    mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+    //mat4.rotateY(model, model, angle * dd);
+    mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+    //cc.render();
+    //cubito.render();
+    //planito.render();
+    esferita.render();
+    //    }
+    //}
     stats.end();
     requestAnimationFrame(drawScene);
 }
@@ -1512,19 +1634,6 @@ var ShaderMat = (function (_super) {
     }
     return ShaderMat;
 })(Material);
-/// <reference path="drawable.ts" />
-var Sphere = (function (_super) {
-    __extends(Sphere, _super);
-    function Sphere() {
-        _super.call(this);
-    }
-    Sphere.prototype.render = function () {
-        var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
-        gl.drawElements(gl.TRIANGLES, this._elements, gl.UNSIGNED_INT, 0);
-    };
-    return Sphere;
-})(Drawable);
 /// <reference path="drawable.ts" />
 var Teaspot = (function (_super) {
     __extends(Teaspot, _super);

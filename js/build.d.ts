@@ -84,13 +84,12 @@ declare class Model {
     indices: any;
     vao: any;
     constructor(fileRoute: string);
-    render(): void;
-    renderArrayInstance(numInstances: any): void;
     private createBuffer(data);
     private addAttrib(attribLocation, buffer, numElems);
     private createVAO(model, indicesArray);
     private loadJSON(url);
-    private _calculateTangents(vertices, normals);
+    render(): void;
+    renderArrayInstance(numInstances: any): void;
 }
 declare abstract class Scene {
     abstract initScene(): any;
@@ -194,16 +193,25 @@ declare abstract class Drawable {
     protected _vao: any;
     abstract render(): any;
     protected addAttrib(attribLocation: any, buffer: any, data: any, numElems: any): void;
+    protected createBuffer(data: any, handle: any): any;
+    protected addAttrib_(attribLocation: any, buffer: any, numElems: any): void;
 }
 declare class Quad extends Drawable {
     protected _handle: Array<WebGLBuffer>;
-    protected _faces: number;
     constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
+    protected _indicesLen: any;
     render(): void;
 }
 declare class Cube extends Drawable {
     protected _handle: Array<WebGLBuffer>;
     constructor(side?: number);
+    protected _indicesLen: any;
+    render(): void;
+}
+declare class Sphere extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    constructor(radius: number, slices: number, stacks: number);
+    protected _indicesLen: any;
     render(): void;
 }
 declare class Texture2D extends Texture {
@@ -233,11 +241,15 @@ declare var FizzyText: () => {
 };
 declare var cc: Model;
 declare var ss: ShaderProgram;
+declare var cubito: Cube;
+declare var planito: Quad;
+declare var esferita: Sphere;
 declare var view: any;
 declare var projection: any;
 declare var counterTextures: number;
 declare function initTexture(str: string): void;
 declare var tex2d: Texture2D;
+declare var lightPos: number[];
 declare var lastTime: number;
 declare var deltaTime: number;
 declare var identityMatrix: Float32Array;
@@ -284,12 +296,6 @@ declare class NormalMat extends Material {
 declare class PhongMat extends Material {
 }
 declare class ShaderMat extends Material {
-}
-declare class Sphere extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    protected _elements: number;
-    constructor();
-    render(): void;
 }
 declare class Teaspot extends Drawable {
     protected _handle: Array<WebGLBuffer>;

@@ -117,28 +117,22 @@ class Cube extends Drawable {
 	    var gl = Core.getInstance().getGL();
 
 		this._handle = new Array(4);
-		for(var i = 0; i < 4; i++) {
+		for(var i = 0, size = this._handle.length; i < size; i++) {
 			this._handle[i] = gl.createBuffer();
 		}
 
 		this._vao = (<any>gl).createVertexArray();
         (<any>gl).bindVertexArray(this._vao);
 
-
-	    gl.bindBuffer(gl.ARRAY_BUFFER, this._handle[0]);
-	    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STATIC_DRAW);
-	    gl.vertexAttribPointer( 0, 3, gl.FLOAT, false, 0, 0 );
-	    gl.enableVertexAttribArray(0);  // Vertex position
-
-
-		//this.addAttrib(0, this._handle[0], v, 3);
-		//this.addAttrib(1, this._handle[1], n, 3);
-		//this.addAttrib(2, this._handle[2], tex, 2);
-
-
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[3]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
+
+        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+
+        this._indicesLen = el.length;
+
         (<any>gl).bindVertexArray(null);
         
 		// TODO: Clear v, n, tex and el
@@ -150,9 +144,12 @@ class Cube extends Drawable {
 			vao: this._handle
 		});
 	}
+
+
+	protected _indicesLen;
 	public render() {
 		var gl = Core.getInstance().getGL();
 		(<any>gl).bindVertexArray(this._vao);
-		gl.drawElements(gl.TRIANGLES, 24, gl.UNSIGNED_INT, 0);
+		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 }

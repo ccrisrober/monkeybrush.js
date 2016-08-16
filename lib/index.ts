@@ -4,6 +4,7 @@
 /// <reference path="dat-gui.d.ts" />
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
+/// <reference path="models/sphere.ts" />
 /// <reference path="core/shaderProgram.ts" />
 /// <reference path="textures/texture2d.ts" />
 
@@ -32,6 +33,9 @@ var FizzyText = function() {
 var cc: Model;
 var ss : ShaderProgram;
 
+var cubito: Cube;
+var planito: Quad;
+var esferita: Sphere;
 
 var view;
 var projection;
@@ -50,9 +54,10 @@ window.onload = () => {
 	    gui.add(text, index);
 	}
 
-	//cc = new Quad(1.0, 1.0, 1, 1);
-	//cc = new Cube(1.0);
-	cc = new Model("omg.json");
+    esferita = new Sphere(1.0, 20, 20);
+	//planito = new Quad(1.0, 1.0, 1, 1);
+	//cubito = new Cube(5.0);
+	//cc = new Model("omg.json");
 
 	ss = new ShaderProgram();
 	ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
@@ -60,7 +65,7 @@ window.onload = () => {
 	ss.compile();
 
 	ss.addAttributes(["position", "normal", "uv"]); //, "normal"]);
-	ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler"]);//, "demo"]);
+	ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler", "viewPos", "lightPosition"]);//, "demo"]);
 
 	ss.use();
 
@@ -71,6 +76,7 @@ window.onload = () => {
 
     gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
     gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+        gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
 	//ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
 
 
@@ -131,16 +137,16 @@ window.onload = () => {
 
         gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
         gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
-        //gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+        gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
     });
 
     initTexture("example.png");
 	//tex2d = initTexture("example.png");
 
     var itv = setInterval(function() {
-        console.log(counterTextures);
+        //console.log(counterTextures);
         if(counterTextures === 0) {
-            console.log(tex2d);
+            //console.log(tex2d);
             clearInterval(itv);
             requestAnimationFrame(drawScene);
         }        
@@ -174,6 +180,7 @@ function initTexture(str: string) {
 var tex2d: Texture2D;
 
 
+var lightPos = [0.0, 0.0, 0.0];
 
 
 var lastTime = Date.now();
@@ -198,6 +205,12 @@ function drawScene(dt: number) {
     //console.log(dt);
     camera.timeElapsed = dt / 10.0;
 
+
+    lightPos[0] += Math.cos(angle) * 0.6;
+    //lightPos[1] += Math.cos(angle) * 0.1;
+    lightPos[2] += Math.sin(angle) * 0.6;
+
+
 	//resize(gl);
 
 	gl.enable(gl.DEPTH_TEST);
@@ -206,12 +219,14 @@ function drawScene(dt: number) {
 
 
 	angle += dt * 0.001;
-	if(angle >= 180.0) {
+	/*if(angle >= 180.0) {
 		angle = -180.0;
-	}
+	}*/
 
 
     ss.use();
+
+    gl.uniform3f(ss.uniformLocations["lightPosition"], lightPos[0], lightPos[1], lightPos[2]);
 
 
     tex2d.bind(0);
@@ -219,19 +234,24 @@ function drawScene(dt: number) {
 
     var dd = 1;
 
-    for(var i = -7; i < 7; i += 5.0) {
-        for(var j = -7; j < 7; j += 5.0) {
+    var i = 0, j = 0;
+
+    //for(i = -7; i < 7; i += 5.0) {
+    //    for(j = -7; j < 7; j += 5.0) {
             dd *= -1;
             mat4.translate(model,identityMatrix, vec3.fromValues(j + 0.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-            mat4.rotateY(model, model, angle * dd);
+            //mat4.rotateY(model, model, angle * dd);
             mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
 
             gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
 
-            cc.render();
-        }
-    }
+            //cc.render();
+            //cubito.render();
+            //planito.render();
+            esferita.render();
+    //    }
+    //}
 
 	stats.end();
 

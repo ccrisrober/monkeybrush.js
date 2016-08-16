@@ -2,11 +2,9 @@
 
 class Quad extends Drawable {
 	protected _handle: Array<WebGLBuffer>;
-	protected _faces: number;
 
 	constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax = 1.0, tmax = 1.0) {
 		super();
-		this._faces = xdivs * zdivs;
 		var v = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
 		var n = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
 		var tex = new Array(2.0 * (xdivs + 1.0) * (zdivs + 1.0));
@@ -64,13 +62,14 @@ class Quad extends Drawable {
 		this._vao = (<any>gl).createVertexArray();
         (<any>gl).bindVertexArray(this._vao);
 
-		this.addAttrib(0, this._handle[0], v, 3);
-		this.addAttrib(1, this._handle[1], n, 3);
-		this.addAttrib(2, this._handle[2], tex, 2);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[3]);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
-        (<any>gl).bindVertexArray(null);
+
+        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+
+        this._indicesLen = el.length;
 
 		// TODO: Clear v, n, tex and el
 		console.log({
@@ -80,9 +79,11 @@ class Quad extends Drawable {
 			indices: el
 		});
 	}
+	protected _indicesLen;
 	public render() {
 		var gl = Core.getInstance().getGL();
 		(<any>gl).bindVertexArray(this._vao);
-		gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
+		//gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);	// TODO: UNSIGNED_INT => https://developer.mozilla.org/en-US/docs/Web/API/OES_element_index_uint
+		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 }

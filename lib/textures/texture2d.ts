@@ -20,6 +20,10 @@ class Texture2D extends Texture {
 		this._flipY = options["flipY"] === true;
 		this._handle = gl.createTexture();
 
+		var _internalformat = options["internalformat"] || gl.RGBA;
+		var _format = options["format"] || gl.RGBA;
+		var _type = options["type"] || gl.UNSIGNED_BYTE;
+
 		this._minFilter = options["minFilter"] || gl.NEAREST;
 		this._magFilter = options["magFilter"] || gl.NEAREST;
 		var wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
@@ -35,24 +39,27 @@ class Texture2D extends Texture {
 		//this.wrap();
 		this.bind();
 
-
-
-
 		gl.texImage2D(
 			gl.TEXTURE_2D,
 			0, // Level of details
-			gl.RGBA, // Format
-			gl.RGBA,
-			gl.UNSIGNED_BYTE, // Size of each channel
+			_internalformat, // Internal format
+			_format, // Format
+			_type, // Size of each channel
 			image
 		);
-
-
 
 
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this._minFilter);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this._magFilter);
 		this.wrap(wraps);
+		
+		/*// Prevent NPOT textures
+		// gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		// Prevents s-coordinate wrapping (repeating).
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		// Prevents t-coordinate wrapping (repeating).
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
 	}
 	public genMipMap() {
 		var gl = Core.getInstance().getGL();

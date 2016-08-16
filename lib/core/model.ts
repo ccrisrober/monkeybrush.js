@@ -9,19 +9,6 @@ class Model {
         console.log("Loading file");
         this.loadJSON(fileRoute);
     }
-
-    public render() {
-        var gl = Core.getInstance().getGL();
-        (<any>gl).bindVertexArray(this.vao);
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-        (<any>gl).bindVertexArray(null);
-    }
-    public renderArrayInstance(numInstances) {
-        var gl: any = Core.getInstance().getGL();
-        gl.bindVertexArray(this.vao);
-        gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 100);
-        gl.bindVertexArray(null);
-    }
     private createBuffer(data) {
         var gl: any = Core.getInstance().getGL();
         var buffer = gl.createBuffer();
@@ -81,13 +68,16 @@ class Model {
         request.send();
     }
 
-    private _calculateTangents(vertices: Float32Array, normals: Float32Array) {
-        var ts = [];
-        for(var i = 0, size = vertices.length/3; i < size; i++) {
-            ts[i] = [0.0, 0.0, 0.0];
-        }
-        // Not finished
-        return ts;
+    public render() {
+        var gl = Core.getInstance().getGL();
+        (<any>gl).bindVertexArray(this.vao);
+        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+        (<any>gl).bindVertexArray(null);
     }
-
+    public renderArrayInstance(numInstances) {
+        var gl: any = Core.getInstance().getGL();
+        gl.bindVertexArray(this.vao);
+        gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 100);
+        gl.bindVertexArray(null);
+    }
 };
