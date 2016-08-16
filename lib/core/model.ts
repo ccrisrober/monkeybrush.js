@@ -11,10 +11,10 @@ class Model {
     }
 
     public render() {
-        var gl: any = Core.getInstance().getGL();
-        gl.bindVertexArray(this.vao);
+        var gl = Core.getInstance().getGL();
+        (<any>gl).bindVertexArray(this.vao);
         gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-        gl.bindVertexArray(null);
+        (<any>gl).bindVertexArray(null);
     }
     public renderArrayInstance(numInstances) {
         var gl: any = Core.getInstance().getGL();
@@ -55,9 +55,9 @@ class Model {
 
         console.log(model.meshes[0]);
 
-        this.addAttrib(0, this.createBuffer(model.meshes[0].vertices), 3);
-        this.addAttrib(1, this.createBuffer(model.meshes[0].normals), 3);
-        this.addAttrib(2, this.createBuffer(model.meshes[0].texturecoords[0]), 2);
+        if (model.meshes[0].vertices) this.addAttrib(0, this.createBuffer(model.meshes[0].vertices), 3);
+        if (model.meshes[0].normals) this.addAttrib(1, this.createBuffer(model.meshes[0].normals), 3);
+        if (model.meshes[0].texturecoords) this.addAttrib(2, this.createBuffer(model.meshes[0].texturecoords[0]), 2);
 
         gl.bindVertexArray(null);
     }

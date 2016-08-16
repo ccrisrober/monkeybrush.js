@@ -13,7 +13,14 @@ class Core {
 		if(Core._instance) {
 			throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
 		}
-		var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+		//var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+		
+	    var canvas = document.createElement('canvas');
+	    canvas.width = 1000;
+	    canvas.height = 1000;
+
+		document.body.appendChild(canvas);
+
 		this._gl = this._getContext(canvas);
 		if(!this._gl) {
             document.write("<br><b>WebGL is not supported!</b>");
@@ -24,11 +31,17 @@ class Core {
 	}
 
 	protected init() {
-		this._gl.enable(this._gl.DEPTH_TEST);
-		this._gl.depthFunc(this._gl.LEQUAL);
+		var gl = this._gl;
+
+		//gl.enable(gl.DEPTH_TEST);
+		//gl.depthFunc(gl.LESS);
+		//gl.depthFunc(gl.LEQUAL);
 
         // Set images to flip y axis to match the texture coordinate space.
-        this._gl.pixelStorei(this._gl.UNPACK_FLIP_Y_WEBGL, 1);
+        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+        //gl.enable(gl.CULL_FACE);
+        //gl.disable(gl.BLEND);
 	}
 
 	public static getInstance() : Core {

@@ -17,5 +17,8 @@
     "grunt-typescript": "^0.8.0",
     "parse-obj": "0.0.0",
     "typescript": "^1.8.10"
+  },
+  "dependencies": {
+    "wavefront-obj-parser": "^0.3.0"
   }
 }

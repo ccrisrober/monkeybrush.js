@@ -1,9 +1,9 @@
-/// <reference path="../extras/vec2.ts" />
+/// <reference path="../extras/vector2.ts" />
 /// <reference path="../core/Core.ts" />
 
 class RenderBufferTexture {
 	protected _handle : WebGLRenderbuffer;
-	constructor(size: vec2<number>, format: number, attachment: number) {
+	constructor(size: vector2<number>, format: number, attachment: number) {
 		var gl = Core.getInstance().getGL();
 		this._handle = gl.createRenderbuffer();
 		gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);

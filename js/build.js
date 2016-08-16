@@ -1,3 +1,83 @@
+/// <reference path="gl-matrix.d.ts" />
+var Camera = (function () {
+    function Camera(position, up, yaw, pitch) {
+        if (position === void 0) { position = vec3.fromValues(0, 0, 0); }
+        if (up === void 0) { up = vec3.fromValues(0, 1, 0); }
+        if (yaw === void 0) { yaw = -90.0; }
+        if (pitch === void 0) { pitch = 0.0; }
+        // Camera options
+        this.movSpeed = 0.05;
+        this.mouseSensivity = 0.25;
+        this.view = mat4.create();
+        this.proj = mat4.create();
+        this.front = vec3.fromValues(0, 0, -1);
+        this.position = position;
+        this.worldUp = up;
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.right = vec3.create();
+        this.up = vec3.create();
+        this.updateCameraVectors();
+    }
+    Camera.prototype.GetPos = function () {
+        return this.position;
+    };
+    Camera.prototype.processKeyboard = function (direction, deltaTime) {
+        if (this.timeElapsed > 25) {
+            return;
+        }
+        var velocity = this.movSpeed * this.timeElapsed; //deltaTime;
+        //console.log(direction);
+        if (direction == 0) {
+            this.position = vec3.scaleAndAdd(this.position, this.position, this.front, velocity);
+        }
+        else if (direction == 1) {
+            this.position = vec3.scaleAndAdd(this.position, this.position, this.front, -velocity);
+        }
+        else if (direction == 2) {
+            this.position = vec3.scaleAndAdd(this.position, this.position, this.right, -velocity);
+        }
+        else if (direction == 3) {
+            this.position = vec3.scaleAndAdd(this.position, this.position, this.right, velocity);
+        }
+        else if (direction == 4) {
+            this.position = vec3.scaleAndAdd(this.position, this.position, this.up, velocity);
+        }
+        else if (direction == 5) {
+            this.position = vec3.scaleAndAdd(this.position, this.position, this.up, -velocity);
+        }
+    };
+    Camera.prototype.processMouseMovement = function (xOffset, yOffset) {
+        this.yaw += xOffset;
+        this.pitch += yOffset;
+        if (this.pitch > 89.0) {
+            this.pitch = 89.0;
+        }
+        if (this.pitch < -89.0) {
+            this.pitch = -89.0;
+        }
+        this.updateCameraVectors();
+    };
+    Camera.prototype.updateCameraVectors = function () {
+        var front = vec3.fromValues(Math.cos(glMatrix.toRadian(this.yaw)) * Math.cos(glMatrix.toRadian(this.pitch)), Math.sin(glMatrix.toRadian(this.pitch)), Math.sin(glMatrix.toRadian(this.yaw)) * Math.cos(glMatrix.toRadian(this.pitch)));
+        this.front = vec3.normalize(this.front, front);
+        // Recalculate right and up vector
+        this.right = vec3.cross(this.right, this.front, this.worldUp);
+        this.right = vec3.normalize(this.right, this.right);
+        this.up = vec3.cross(this.up, this.right, this.front);
+        this.up = vec3.normalize(this.up, this.up);
+    };
+    Camera.prototype.GetViewMatrix = function () {
+        var aux = vec3.create();
+        this.view = mat4.lookAt(this.view, this.position, vec3.add(aux, this.position, this.front), this.up);
+        return this.view;
+    };
+    Camera.prototype.GetProjectionMatrix = function (w, h) {
+        this.proj = mat4.perspective(this.proj, 45.0, (w * 1.0) / (h * 1.0), 0.001, 1000.0);
+        return this.proj;
+    };
+    return Camera;
+})();
 var ICamera = (function () {
     function ICamera(pos) {
         this._position = pos;
@@ -43,7 +123,11 @@ var Core = (function () {
         if (Core._instance) {
             throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
         }
-        var canvas = document.getElementById("canvas");
+        //var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+        var canvas = document.createElement('canvas');
+        canvas.width = 1000;
+        canvas.height = 1000;
+        document.body.appendChild(canvas);
         this._gl = this._getContext(canvas);
         if (!this._gl) {
             document.write("<br><b>WebGL is not supported!</b>");
@@ -53,10 +137,14 @@ var Core = (function () {
         Core._instance = this;
     }
     Core.prototype.init = function () {
-        this._gl.enable(this._gl.DEPTH_TEST);
-        this._gl.depthFunc(this._gl.LEQUAL);
+        var gl = this._gl;
+        //gl.enable(gl.DEPTH_TEST);
+        //gl.depthFunc(gl.LESS);
+        //gl.depthFunc(gl.LEQUAL);
         // Set images to flip y axis to match the texture coordinate space.
-        this._gl.pixelStorei(this._gl.UNPACK_FLIP_Y_WEBGL, 1);
+        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        //gl.enable(gl.CULL_FACE);
+        //gl.disable(gl.BLEND);
     };
     Core.getInstance = function () {
         return Core._instance;
@@ -100,18 +188,18 @@ var Core = (function () {
     Core._instance = new Core();
     return Core;
 })();
-var vec2 = (function () {
-    function vec2(x, y) {
+var vector2 = (function () {
+    function vector2(x, y) {
         this.x = x;
         this.y = y;
     }
-    vec2.prototype.isEqual = function (other) {
+    vector2.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y;
     };
-    return vec2;
+    return vector2;
 })();
 /// <reference path="../core/core.ts" />
-/// <reference path="../extras/vec2.ts" />
+/// <reference path="../extras/vector2.ts" />
 var Texture = (function () {
     function Texture(target) {
     }
@@ -124,7 +212,7 @@ var Texture = (function () {
 })();
 /// <reference path="core.ts" />
 /// <reference path="../textures/texture.ts" />
-/// <reference path="../extras/vec2.ts" />
+/// <reference path="../extras/vector2.ts" />
 // https://github.com/glo-js/glo-framebuffer
 var Framebuffer = (function () {
     function Framebuffer(textures, size, depth, stencil, options) {
@@ -281,9 +369,12 @@ var Model = (function () {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicesArray), gl.STATIC_DRAW);
         console.log(model.meshes[0]);
-        this.addAttrib(0, this.createBuffer(model.meshes[0].vertices), 3);
-        this.addAttrib(1, this.createBuffer(model.meshes[0].normals), 3);
-        this.addAttrib(2, this.createBuffer(model.meshes[0].texturecoords[0]), 2);
+        if (model.meshes[0].vertices)
+            this.addAttrib(0, this.createBuffer(model.meshes[0].vertices), 3);
+        if (model.meshes[0].normals)
+            this.addAttrib(1, this.createBuffer(model.meshes[0].normals), 3);
+        if (model.meshes[0].texturecoords)
+            this.addAttrib(2, this.createBuffer(model.meshes[0].texturecoords[0]), 2);
         gl.bindVertexArray(null);
     };
     Model.prototype.loadJSON = function (url) {
@@ -561,7 +652,7 @@ var _Texture = (function () {
     };
     return _Texture;
 })();
-// TODO: Change _color to vec3
+// TODO: Change _color to vector3
 var Color = (function () {
     function Color(r, g, b) {
         this._color = new Array(3);
@@ -673,28 +764,28 @@ var Timer = (function () {
 })();
 // newTime = ( performance || Date ).now()
 // https://bitbucket.org/masterurjc/practica1/src/1b9cfa67f4b68e8c6a570ce58cfdb2c02d9ee32e/RenderingAvanzado1/Timer.h?at=master&fileviewer=file-view-default 
-var vec3 = (function () {
-    function vec3(x, y, z) {
+var vector3 = (function () {
+    function vector3(x, y, z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
-    vec3.prototype.isEqual = function (other) {
+    vector3.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y && this.z === other.z;
     };
-    return vec3;
+    return vector3;
 })();
-var vec4 = (function () {
-    function vec4(x, y, z, w) {
+var vector4 = (function () {
+    function vector4(x, y, z, w) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = w;
     }
-    vec4.prototype.isEqual = function (other) {
+    vector4.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
     };
-    return vec4;
+    return vector4;
 })();
 /// <reference path="../core/shaderProgram.ts" />
 var vertexCode = "#version 300 es\nin vec3 vertex;\nout vec2 texCoord;\nvoid main() {\n  texCoord = vertex.xy * 0.5 + 0.5;\n  gl_Position = vec4( vertex, 1 );\n}";
@@ -832,7 +923,7 @@ var Quad = (function (_super) {
     }
     Quad.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._handle);
+        gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
     };
     return Quad;
@@ -955,9 +1046,13 @@ var Cube = (function (_super) {
         }
         this._vao = gl.createVertexArray();
         gl.bindVertexArray(this._vao);
-        this.addAttrib(0, this._handle[0], v, 3);
-        this.addAttrib(1, this._handle[1], n, 3);
-        this.addAttrib(2, this._handle[2], tex, 2);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._handle[0]);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(0); // Vertex position
+        //this.addAttrib(0, this._handle[0], v, 3);
+        //this.addAttrib(1, this._handle[1], n, 3);
+        //this.addAttrib(2, this._handle[2], tex, 2);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[3]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
         gl.bindVertexArray(null);
@@ -966,16 +1061,101 @@ var Cube = (function (_super) {
             vertices: v,
             normal: n,
             textureCoords: tex,
-            indices: el
+            indices: el,
+            vao: this._handle
         });
     }
     Cube.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._handle);
-        gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_INT, 0);
+        gl.bindVertexArray(this._vao);
+        gl.drawElements(gl.TRIANGLES, 24, gl.UNSIGNED_INT, 0);
     };
     return Cube;
 })(Drawable);
+/// <reference path="texture.ts" />
+var Texture2D = (function (_super) {
+    __extends(Texture2D, _super);
+    function Texture2D(image, size, options) {
+        if (options === void 0) { options = {}; }
+        var gl = Core.getInstance().getGL();
+        _super.call(this, gl.TEXTURE_2D);
+        options = options || {};
+        // TODO: REplace gl.TEXTURE_2D TO this.target = gl.TEXTURE_2D;
+        this._flipY = options["flipY"] === true;
+        this._handle = gl.createTexture();
+        this._minFilter = options["minFilter"] || gl.NEAREST;
+        this._magFilter = options["magFilter"] || gl.NEAREST;
+        var wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
+        if (!Array.isArray(wraps)) {
+            wraps = [wraps, wraps];
+        }
+        else {
+            this._wraps = wraps;
+        }
+        //this.minFilter();
+        //this.magFilter();
+        //this.wrap();
+        this.bind();
+        gl.texImage2D(gl.TEXTURE_2D, 0, // Level of details
+        gl.RGBA, // Format
+        gl.RGBA, gl.UNSIGNED_BYTE, // Size of each channel
+        image);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this._minFilter);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this._magFilter);
+        this.wrap(wraps);
+    }
+    Texture2D.prototype.genMipMap = function () {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        // TODO: Check NPOT??
+        gl.generateMipmap(gl.TEXTURE_2D);
+    };
+    Texture2D.prototype.wrap = function (modes) {
+        if (modes.length !== 2) {
+            throw new Error("Must specify wrapS, wrapT modes");
+        }
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, modes[0]);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, modes[1]);
+        this._wraps = modes;
+    };
+    Texture2D.prototype.minFilter = function (filter) {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+        this._minFilter = filter;
+    };
+    Texture2D.prototype.magFilter = function (filter) {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+        this._magFilter = filter;
+    };
+    Texture2D.prototype.bind = function (slot) {
+        var gl = Core.getInstance().getGL();
+        if (typeof slot === "number") {
+            gl.activeTexture(gl.TEXTURE0 + slot);
+        }
+        gl.bindTexture(gl.TEXTURE_2D, this._handle);
+    };
+    Texture2D.prototype.unbind = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+    Texture2D.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        gl.deleteTexture(this._handle);
+        this._handle = null;
+    };
+    Texture2D.prototype.setPixelStorage = function () {
+        var gl = Core.getInstance().getGL();
+        //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
+        //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
+        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
+    };
+    return Texture2D;
+})(Texture);
 /// <reference path="core/core.ts" />
 /// <reference path="resources/quadToneMap.ts" />
 /// <reference path="stats.d.ts" />
@@ -983,33 +1163,10 @@ var Cube = (function (_super) {
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
 /// <reference path="core/shaderProgram.ts" />
-function getContext(canvas) {
-    var contexts = "webgl,webgl2,experimental-webgl2".split(",");
-    var gl;
-    var ctx;
-    for (var i = 0; i < contexts.length; i++) {
-        ctx = contexts[i];
-        gl = canvas.getContext(contexts[i]);
-        if (gl) {
-            return gl;
-        }
-    }
-    return null;
-}
-function getVendors() {
-    var vendors = "ms,moz,webkit,o".split(",");
-    if (!window.requestAnimationFrame) {
-        var vendor;
-        for (var i = 0; i < vendors.length; i++) {
-            vendor = vendors[i];
-            window.requestAnimationFrame = window[vendor + 'RequestAnimationFrame'];
-            window.cancelAnimationFrame = window[vendor + 'CancelAnimationFrame'] || window[vendor + 'CancelRequestAnimationFrame'];
-            if (window.requestAnimationFrame) {
-                break;
-            }
-        }
-    }
-}
+/// <reference path="textures/texture2d.ts" />
+/// <reference path="core/model.ts" />
+/// <reference path="_demoCamera.ts" />
+var camera = new Camera(new Float32Array([0.2082894891500473, 1.0681922435760498, 8.870955467224121]));
 var gl;
 var stats = new Stats();
 stats.setMode(0);
@@ -1022,34 +1179,150 @@ var FizzyText = function () {
         explode: function () { }
     };
 };
-var quad, cube;
+var cc;
 var ss;
+var view;
+var projection;
 window.onload = function () {
     gl = Core.getInstance().getGL();
     ToneMap.init(gl);
-    gl.clearColor(1.0, 0.0, 0.0, 1.0);
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
     var text = FizzyText();
     var gui = new dat.GUI();
     for (var index in text) {
         gui.add(text, index);
     }
-    quad = new Quad(1.0, 1.0, 1, 1);
-    quad = new Cube(1.0);
+    //cc = new Quad(1.0, 1.0, 1, 1);
+    //cc = new Cube(1.0);
+    cc = new Model("omg.json");
     ss = new ShaderProgram();
-    ss.addShader("./shaders/normalShader.vert", gl.VERTEX_SHADER, mode.read_file);
-    ss.addShader("./shaders/normalShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
+    ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
+    ss.addShader("./shaders/demoShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
     ss.compile();
-    ss.addAttributes(["position", "normal"]);
-    ss.addUniforms(["projection", "view", "model", "normalMatrix"]); //, "demo"]);
+    ss.addAttributes(["position", "normal", "uv"]); //, "normal"]);
+    ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler"]); //, "demo"]);
     ss.use();
-    ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
-    requestAnimationFrame(drawScene);
+    view = camera.GetViewMatrix();
+    projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+    //console.log(view, projection);
+    gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
+    gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+    //ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
+    view = camera.GetViewMatrix();
+    projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+    document.addEventListener("keydown", function (ev) {
+        if (ev.keyCode === 40 || ev.keyCode === 38) {
+            ev.preventDefault();
+        }
+        var key = String.fromCharCode(ev.keyCode);
+        var speed = 0.05;
+        switch (key) {
+            case "W":
+                camera.processKeyboard(4, speed);
+                break;
+            case "S":
+                camera.processKeyboard(5, speed);
+                break;
+            case "A":
+                camera.processKeyboard(2, speed);
+                break;
+            case "D":
+                camera.processKeyboard(3, speed);
+                break;
+            case "E":
+                // - .
+                camera.processKeyboard(0, speed);
+                break;
+            case "Q":
+                // + .
+                camera.processKeyboard(1, speed);
+                break;
+            case "X":
+                //resetCamera();
+                break;
+        }
+        switch (ev.keyCode) {
+            case 38:
+                camera.processMouseMovement(0.0, 2.5);
+                break;
+            case 40:
+                camera.processMouseMovement(0.0, -2.5);
+                break;
+            case 37:
+                camera.processMouseMovement(2.5, 0.0);
+                break;
+            case 39:
+                camera.processMouseMovement(-2.5, 0.0);
+                break;
+        }
+        view = camera.GetViewMatrix();
+        projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+        //console.log(view, projection);
+        gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
+        gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+        //gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+    });
+    initTexture("example.png");
+    //tex2d = initTexture("example.png");
+    var itv = setInterval(function () {
+        console.log(counterTextures);
+        if (counterTextures === 0) {
+            console.log(tex2d);
+            clearInterval(itv);
+            requestAnimationFrame(drawScene);
+        }
+    }, 100);
 };
+var counterTextures = 0;
+function initTexture(str) {
+    //var tex2d_;
+    counterTextures++;
+    //gl.bindTexture(gl.TEXTURE_2D, _tex);
+    //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 0, 255]));
+    var cubeImage = new Image();
+    cubeImage.onload = function () {
+        var size = new vector2(1000.0, 1000.0);
+        tex2d = new Texture2D(cubeImage, size);
+        counterTextures--;
+    };
+    cubeImage.src = str;
+    //return tex2d_;
+}
+var tex2d;
+var lastTime = Date.now();
+var deltaTime = 0.0;
+var identityMatrix = mat4.create();
+mat4.identity(identityMatrix);
+var model = mat4.create();
+var angle = 0;
 function drawScene(dt) {
+    var currentTime = Date.now();
+    var timeElapsed = currentTime - lastTime;
+    //camera.timeElapsed = timeElapsed;
+    deltaTime = timeElapsed;
+    lastTime = currentTime;
     stats.begin();
     dt *= 0.001; // convert to seconds
+    dt = deltaTime;
+    //console.log(dt);
+    camera.timeElapsed = dt;
     //resize(gl);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LESS);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    angle += dt * 0.001;
+    if (angle >= 180.0) {
+        angle = -180.0;
+    }
+    mat4.translate(model, identityMatrix, vec3.fromValues(0.0, -1.0, 0.0));
+    mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+    mat4.rotateY(model, model, angle);
+    mat4.scale(model, model, vec3.fromValues(2.35, 2.35, 2.35));
+    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+    ss.use();
+    tex2d.bind(0);
+    gl.uniform1i(ss.uniformLocations["texSampler"], 0);
+    cc.render();
     stats.end();
     requestAnimationFrame(drawScene);
 }
@@ -1225,7 +1498,7 @@ var Sphere = (function (_super) {
     }
     Sphere.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._handle);
+        gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, this._elements, gl.UNSIGNED_INT, 0);
     };
     return Sphere;
@@ -1238,7 +1511,7 @@ var Teaspot = (function (_super) {
     }
     Teaspot.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._handle);
+        gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
     };
     return Teaspot;
@@ -1251,7 +1524,7 @@ var Torus = (function (_super) {
     }
     Torus.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._handle);
+        gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
     };
     return Torus;
@@ -1488,7 +1761,7 @@ var Skybox = (function () {
     };
     return Skybox;
 })();
-/// <reference path="../extras/vec2.ts" />
+/// <reference path="../extras/vector2.ts" />
 /// <reference path="../core/Core.ts" />
 var RenderBufferTexture = (function () {
     function RenderBufferTexture(size, format, attachment) {
@@ -1500,89 +1773,9 @@ var RenderBufferTexture = (function () {
     }
     return RenderBufferTexture;
 })();
-/// <reference path="texture.ts" />
-var Texture2D = (function (_super) {
-    __extends(Texture2D, _super);
-    function Texture2D(element, size, options) {
-        if (options === void 0) { options = {}; }
-        var gl = Core.getInstance().getGL();
-        _super.call(this, gl.TEXTURE_2D);
-        options = options || {};
-        this._flipY = options["flipY"] === true;
-        this._handle = gl.createTexture();
-        this._minFilter = options["minFilter"] || gl.NEAREST;
-        this._magFilter = options["magFilter"] || gl.NEAREST;
-        var wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
-        if (!Array.isArray(wraps)) {
-            wraps = [wraps, wraps];
-        }
-        else {
-            this._wraps = wraps;
-        }
-        //this.minFilter();
-        //this.magFilter();
-        //this.wrap();
-        this.bind();
-        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this._minFilter);
-        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this._magFilter);
-        this.wrap(wraps);
-    }
-    Texture2D.prototype.genMipMap = function () {
-        var gl = Core.getInstance().getGL();
-        this.bind();
-        // TODO: Check NPOT??
-        gl.generateMipmap(this.target);
-    };
-    Texture2D.prototype.wrap = function (modes) {
-        if (modes.length !== 2) {
-            throw new Error("Must specify wrapS, wrapT modes");
-        }
-        var gl = Core.getInstance().getGL();
-        this.bind();
-        gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, modes[0]);
-        gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, modes[1]);
-        this._wraps = modes;
-    };
-    Texture2D.prototype.minFilter = function (filter) {
-        var gl = Core.getInstance().getGL();
-        this.bind();
-        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, filter);
-        this._minFilter = filter;
-    };
-    Texture2D.prototype.magFilter = function (filter) {
-        var gl = Core.getInstance().getGL();
-        this.bind();
-        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, filter);
-        this._magFilter = filter;
-    };
-    Texture2D.prototype.bind = function (slot) {
-        var gl = Core.getInstance().getGL();
-        if (typeof slot === "number") {
-            gl.activeTexture(gl.TEXTURE0 + slot);
-        }
-        gl.bindTexture(this.target, this._handle);
-    };
-    Texture2D.prototype.unbind = function () {
-        var gl = Core.getInstance().getGL();
-        this.bind();
-        gl.generateMipmap(this.target);
-    };
-    Texture2D.prototype.destroy = function () {
-        var gl = Core.getInstance().getGL();
-        gl.deleteTexture(this._handle);
-        this._handle = null;
-    };
-    Texture2D.prototype.setPixelStorage = function () {
-        var gl = Core.getInstance().getGL();
-        //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
-        //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
-        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
-    };
-    return Texture2D;
-})(Texture);
-// https://github.com/glo-js/glo-texture/tree/master/lib 
 var Texture3D = (function () {
     function Texture3D() {
     }
     return Texture3D;
 })();
+// https://github.com/glo-js/glo-texture/tree/master/lib 

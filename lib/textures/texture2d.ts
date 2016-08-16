@@ -7,10 +7,15 @@ class Texture2D extends Texture {
 	protected _magFilter: number;
 	protected _wraps: Array<number>;
 
-	constructor(element, size: vec2<number>, options = {}) {
+	constructor(image, size: vector2<number>, options = {}) {
 		var gl = Core.getInstance().getGL();
 		super(gl.TEXTURE_2D);
 		options = options || {};
+
+
+
+		// TODO: REplace gl.TEXTURE_2D TO this.target = gl.TEXTURE_2D;
+
 
 		this._flipY = options["flipY"] === true;
 		this._handle = gl.createTexture();
@@ -29,15 +34,31 @@ class Texture2D extends Texture {
 		//this.magFilter();
 		//this.wrap();
 		this.bind();
-		gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this._minFilter);
-		gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this._magFilter);
+
+
+
+
+		gl.texImage2D(
+			gl.TEXTURE_2D,
+			0, // Level of details
+			gl.RGBA, // Format
+			gl.RGBA,
+			gl.UNSIGNED_BYTE, // Size of each channel
+			image
+		);
+
+
+
+
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this._minFilter);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this._magFilter);
 		this.wrap(wraps);
 	}
 	public genMipMap() {
 		var gl = Core.getInstance().getGL();
 		this.bind();
 		// TODO: Check NPOT??
-		gl.generateMipmap(this.target);
+		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 	public wrap(modes: Array<number>) {
 		if(modes.length !== 2) {
@@ -45,20 +66,20 @@ class Texture2D extends Texture {
 		}
 		var gl = Core.getInstance().getGL();
 		this.bind();
-		gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, modes[0]);
-		gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, modes[1]);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, modes[0]);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, modes[1]);
 		this._wraps = modes;
 	}
 	public minFilter(filter: number) {
 		var gl = Core.getInstance().getGL();
 		this.bind();
-		gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, filter);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
 		this._minFilter = filter;
 	}
 	public magFilter(filter: number) {
 		var gl = Core.getInstance().getGL();
 		this.bind();
-		gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, filter);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
 		this._magFilter = filter;
 	}
 	public bind(slot?: number) {
@@ -66,12 +87,11 @@ class Texture2D extends Texture {
 		if(typeof slot === "number") {
 			gl.activeTexture(gl.TEXTURE0 + slot);
 		}
-		gl.bindTexture(this.target, this._handle);
+		gl.bindTexture(gl.TEXTURE_2D, this._handle);
 	}
 	public unbind() {
 		var gl = Core.getInstance().getGL();
-		this.bind();
-		gl.generateMipmap(this.target);
+		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 	public destroy() {
 		var gl = Core.getInstance().getGL();
@@ -85,5 +105,3 @@ class Texture2D extends Texture {
 	    //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
 	}
 }
-
-// https://github.com/glo-js/glo-texture/tree/master/lib

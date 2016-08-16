@@ -5,34 +5,13 @@
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
 /// <reference path="core/shaderProgram.ts" />
+/// <reference path="textures/texture2d.ts" />
 
-function getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
-	var contexts: string[] = "webgl,webgl2,experimental-webgl2".split(",");
-	var gl: WebGLRenderingContext;
-	var ctx;
-	for (var i = 0; i < contexts.length; i++) {
-		ctx = contexts[i];
-		gl = <WebGLRenderingContext>canvas.getContext(contexts[i]);
-		if (gl) {
-			return gl;
-		}
-	}
-	return null;
-}
-function getVendors() {
-	var vendors: string[] = "ms,moz,webkit,o".split(",");
-	if (!window.requestAnimationFrame) {
-		var vendor;
-		for (var i = 0; i < vendors.length; i++) {
-			vendor = vendors[i];
-			window.requestAnimationFrame = window[vendor + 'RequestAnimationFrame'];
-			window.cancelAnimationFrame = window[vendor + 'CancelAnimationFrame'] || window[vendor + 'CancelRequestAnimationFrame'];
-			if (window.requestAnimationFrame) {
-				break;
-			}
-		}
-	}
-}
+
+
+/// <reference path="core/model.ts" />
+/// <reference path="_demoCamera.ts" />
+var camera = new Camera(new Float32Array([0.2082894891500473, 1.0681922435760498, 8.870955467224121]));
 
 var gl: WebGLRenderingContext;
 var stats: Stats = new Stats();
@@ -50,15 +29,19 @@ var FizzyText = function() {
 };
 
 
-var quad, cube;
+var cc: Model;
 var ss : ShaderProgram;
+
+
+var view;
+var projection;
 
 
 window.onload = () => {
 	gl = Core.getInstance().getGL();
 	ToneMap.init(gl);
 
-	gl.clearColor(1.0, 0.0, 0.0, 1.0);
+	gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
 	var text = FizzyText();
 	var gui = new dat.GUI();
@@ -67,31 +50,179 @@ window.onload = () => {
 	    gui.add(text, index);
 	}
 
-	quad = new Quad(1.0, 1.0, 1, 1);
-	quad = new Cube(1.0);
+	//cc = new Quad(1.0, 1.0, 1, 1);
+	//cc = new Cube(1.0);
+	cc = new Model("omg.json");
 
 	ss = new ShaderProgram();
-	ss.addShader("./shaders/normalShader.vert", gl.VERTEX_SHADER, mode.read_file);
-	ss.addShader("./shaders/normalShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
+	ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
+	ss.addShader("./shaders/demoShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
 	ss.compile();
 
-	ss.addAttributes(["position", "normal"]);
-	ss.addUniforms(["projection", "view", "model", "normalMatrix"]);//, "demo"]);
+	ss.addAttributes(["position", "normal", "uv"]); //, "normal"]);
+	ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler"]);//, "demo"]);
 
 	ss.use();
 
-	ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
+    view = camera.GetViewMatrix();
+    projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
 
-	requestAnimationFrame(drawScene);
+    //console.log(view, projection);
+
+    gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
+    gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+	//ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
+
+
+	view = camera.GetViewMatrix();
+	projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+
+	document.addEventListener("keydown", function (ev) {
+        if (ev.keyCode === 40 || ev.keyCode === 38) {
+            ev.preventDefault();
+        }
+        var key = String.fromCharCode(ev.keyCode);
+        var speed = 0.05;
+        switch (key) {
+            case "W":
+                camera.processKeyboard(4, speed);
+                break;
+            case "S":
+                camera.processKeyboard(5, speed);
+                break;
+            case "A":
+                camera.processKeyboard(2, speed);
+                break;
+            case "D":
+                camera.processKeyboard(3, speed);
+                break;
+            case "E":
+                // - .
+                camera.processKeyboard(0, speed);
+                break;
+            case "Q":
+                // + .
+                camera.processKeyboard(1, speed);
+                break;
+
+            case "X":
+                //resetCamera();
+                break;
+        }
+
+        switch (ev.keyCode) {
+            case 38:
+                camera.processMouseMovement(0.0, 2.5);
+                break;
+            case 40:
+                camera.processMouseMovement(0.0, -2.5);
+                break;
+            case 37:
+                camera.processMouseMovement(2.5, 0.0);
+                break;
+            case 39:
+                camera.processMouseMovement(-2.5, 0.0);
+                break;
+        }
+        view = camera.GetViewMatrix();
+        projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+
+        //console.log(view, projection);
+
+        gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
+        gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+        //gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+    });
+
+    initTexture("example.png");
+	//tex2d = initTexture("example.png");
+
+    var itv = setInterval(function() {
+        console.log(counterTextures);
+        if(counterTextures === 0) {
+            console.log(tex2d);
+            clearInterval(itv);
+            requestAnimationFrame(drawScene);
+        }        
+    }, 100);
 }
 
+var counterTextures = 0;
+
+function initTexture(str: string) {
+    //var tex2d_;
+
+    counterTextures++;
+
+    //gl.bindTexture(gl.TEXTURE_2D, _tex);
+    //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 0, 255]));
+
+    var cubeImage = new Image();
+    cubeImage.onload = function () { 
+        var size: vector2<number> = new vector2<number>(1000.0, 1000.0);
+        tex2d = new Texture2D(cubeImage, size);
+        counterTextures--;
+    }
+    cubeImage.src = str;
+    //return tex2d_;
+}
+var tex2d: Texture2D;
+
+
+
+
+var lastTime = Date.now();
+var deltaTime = 0.0;
+var identityMatrix = mat4.create();
+mat4.identity(identityMatrix);
+var model = mat4.create();
+var angle = 0;
 function drawScene(dt: number) {
+    var currentTime = Date.now();
+    var timeElapsed = currentTime - lastTime;
+
+    //camera.timeElapsed = timeElapsed;
+    deltaTime = timeElapsed;
+
+    lastTime = currentTime;
+
 	stats.begin();
 	dt *= 0.001; // convert to seconds
 
+	dt = deltaTime;
+    //console.log(dt);
+    camera.timeElapsed = dt;
+
 	//resize(gl);
 
-	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.enable(gl.DEPTH_TEST);
+	gl.depthFunc(gl.LESS);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+
+	angle += dt * 0.001;
+	if(angle >= 180.0) {
+		angle = -180.0;
+	}
+
+
+	mat4.translate(model,identityMatrix, vec3.fromValues(0.0, -1.0, 0.0));
+	mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+	mat4.rotateY(model, model, angle);
+	mat4.scale(model, model, vec3.fromValues(2.35, 2.35, 2.35));
+
+    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+
+
+
+	ss.use();
+
+
+    tex2d.bind(0);
+    gl.uniform1i(ss.uniformLocations["texSampler"], 0);
+
+
+	cc.render();
 
 	stats.end();
 

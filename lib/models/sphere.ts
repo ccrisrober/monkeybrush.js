@@ -10,7 +10,7 @@ class Sphere extends Drawable {
 	}
 	public render() {
 		var gl = Core.getInstance().getGL();
-		(<any>gl).bindVertexArray(this._handle);
+		(<any>gl).bindVertexArray(this._vao);
 		gl.drawElements(gl.TRIANGLES, this._elements, gl.UNSIGNED_INT, 0);
 	}
 }

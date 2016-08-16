@@ -124,9 +124,18 @@ class Cube extends Drawable {
 		this._vao = (<any>gl).createVertexArray();
         (<any>gl).bindVertexArray(this._vao);
 
-		this.addAttrib(0, this._handle[0], v, 3);
-		this.addAttrib(1, this._handle[1], n, 3);
-		this.addAttrib(2, this._handle[2], tex, 2);
+
+	    gl.bindBuffer(gl.ARRAY_BUFFER, this._handle[0]);
+	    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STATIC_DRAW);
+	    gl.vertexAttribPointer( 0, 3, gl.FLOAT, false, 0, 0 );
+	    gl.enableVertexAttribArray(0);  // Vertex position
+
+
+		//this.addAttrib(0, this._handle[0], v, 3);
+		//this.addAttrib(1, this._handle[1], n, 3);
+		//this.addAttrib(2, this._handle[2], tex, 2);
+
+
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[3]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
@@ -137,12 +146,13 @@ class Cube extends Drawable {
 			vertices: v,
 			normal: n,
 			textureCoords: tex,
-			indices: el
+			indices: el,
+			vao: this._handle
 		});
 	}
 	public render() {
 		var gl = Core.getInstance().getGL();
-		(<any>gl).bindVertexArray(this._handle);
-		gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_INT, 0);
+		(<any>gl).bindVertexArray(this._vao);
+		gl.drawElements(gl.TRIANGLES, 24, gl.UNSIGNED_INT, 0);
 	}
 }

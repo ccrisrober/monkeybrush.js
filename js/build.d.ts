@@ -1,6 +1,27 @@
+/// <reference path="../lib/gl-matrix.d.ts" />
 /// <reference path="../lib/stats.d.ts" />
 /// <reference path="../lib/dat-gui.d.ts" />
-/// <reference path="../lib/gl-matrix.d.ts" />
+declare class Camera {
+    position: Float32Array;
+    protected front: Float32Array;
+    protected up: Float32Array;
+    protected right: Float32Array;
+    protected worldUp: Float32Array;
+    protected yaw: number;
+    protected pitch: number;
+    protected movSpeed: number;
+    protected mouseSensivity: number;
+    GetPos(): Float32Array;
+    timeElapsed: number;
+    constructor(position?: Float32Array, up?: Float32Array, yaw?: number, pitch?: number);
+    processKeyboard(direction: number, deltaTime: number): void;
+    processMouseMovement(xOffset: number, yOffset: number): void;
+    updateCameraVectors(): void;
+    private view;
+    private proj;
+    GetViewMatrix(): Float32Array;
+    GetProjectionMatrix(w: any, h: any): Float32Array;
+}
 declare abstract class ICamera {
     protected _position: Float32Array;
     constructor(pos: Float32Array);
@@ -31,33 +52,33 @@ declare class Core {
     protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
     protected _getVendors(): void;
 }
-declare class vec2<T> {
+declare class vector2<T> {
     x: T;
     y: T;
     constructor(x: T, y: T);
-    isEqual(other: vec2<T>): boolean;
+    isEqual(other: vector2<T>): boolean;
 }
 declare abstract class Texture {
     protected _target: number;
-    protected _size: vec2<number>;
+    protected _size: vector2<number>;
     constructor(target: number);
     target: number;
     abstract destroy(): void;
 }
 declare class Framebuffer {
-    protected _size: vec2<number>;
+    protected _size: vector2<number>;
     protected _handle: WebGLFramebuffer;
     protected _attachments: Array<number>;
     protected _depth: Texture;
     protected _renderBuffer: any;
     protected _colors: Array<Texture>;
-    constructor(textures: Array<Texture>, size: vec2<number>, depth?: boolean, stencil?: boolean, options?: {});
+    constructor(textures: Array<Texture>, size: vector2<number>, depth?: boolean, stencil?: boolean, options?: {});
     private _throwFBOError(status);
     bind(): void;
     unbind(): void;
-    rebuild(size: vec2<number>): void;
+    rebuild(size: vector2<number>): void;
     destroy(): void;
-    protected createRenderBuffer(size: vec2<number>, format: number, attachment: number): WebGLRenderbuffer;
+    protected createRenderBuffer(size: vector2<number>, format: number, attachment: number): WebGLRenderbuffer;
 }
 declare class Model {
     indices: any;
@@ -144,20 +165,20 @@ declare class Timer {
     stop(): void;
     check(): number;
 }
-declare class vec3<T> {
+declare class vector3<T> {
     x: T;
     y: T;
     z: T;
     constructor(x: T, y: T, z: T);
-    isEqual(other: vec3<T>): boolean;
+    isEqual(other: vector3<T>): boolean;
 }
-declare class vec4<T> {
+declare class vector4<T> {
     x: T;
     y: T;
     z: T;
     w: T;
     constructor(x: T, y: T, z: T, w: T);
-    isEqual(other: vec4<T>): boolean;
+    isEqual(other: vector4<T>): boolean;
 }
 declare var vertexCode: string;
 declare module ToneMap {
@@ -185,8 +206,23 @@ declare class Cube extends Drawable {
     constructor(side?: number);
     render(): void;
 }
-declare function getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
-declare function getVendors(): void;
+declare class Texture2D extends Texture {
+    protected _handle: WebGLTexture;
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    constructor(image: any, size: vector2<number>, options?: {});
+    genMipMap(): void;
+    wrap(modes: Array<number>): void;
+    minFilter(filter: number): void;
+    magFilter(filter: number): void;
+    bind(slot?: number): void;
+    unbind(): void;
+    destroy(): void;
+    setPixelStorage(): void;
+}
+declare var camera: Camera;
 declare var gl: WebGLRenderingContext;
 declare var stats: Stats;
 declare var FizzyText: () => {
@@ -195,8 +231,18 @@ declare var FizzyText: () => {
     displayOutline: boolean;
     explode: () => void;
 };
-declare var quad: any, cube: any;
+declare var cc: Model;
 declare var ss: ShaderProgram;
+declare var view: any;
+declare var projection: any;
+declare var counterTextures: number;
+declare function initTexture(str: string): void;
+declare var tex2d: Texture2D;
+declare var lastTime: number;
+declare var deltaTime: number;
+declare var identityMatrix: Float32Array;
+declare var model: Float32Array;
+declare var angle: number;
 declare function drawScene(dt: number): void;
 declare function resize(gl: WebGLRenderingContext): void;
 declare var url: string;
@@ -322,23 +368,7 @@ declare class Skybox {
 }
 declare class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
-    constructor(size: vec2<number>, format: number, attachment: number);
-}
-declare class Texture2D extends Texture {
-    protected _handle: WebGLTexture;
-    protected _flipY: boolean;
-    protected _minFilter: number;
-    protected _magFilter: number;
-    protected _wraps: Array<number>;
-    constructor(element: any, size: vec2<number>, options?: {});
-    genMipMap(): void;
-    wrap(modes: Array<number>): void;
-    minFilter(filter: number): void;
-    magFilter(filter: number): void;
-    bind(slot?: number): void;
-    unbind(): void;
-    destroy(): void;
-    setPixelStorage(): void;
+    constructor(size: vector2<number>, format: number, attachment: number);
 }
 declare class Texture3D {
 }

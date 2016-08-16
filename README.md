@@ -11,3 +11,4 @@
 - [ ] Add texture 2D
 - [ ] Add texture 3D
 - [ ] Add framebuffer
+- [ ] Float texture (gl.getExtension("OES_texture_float_linear");)
