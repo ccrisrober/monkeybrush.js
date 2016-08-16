@@ -224,7 +224,7 @@ var Camera = (function () {
     };
     Camera.prototype.GetProjectionMatrix = function (w, h) {
         this.proj = mat4.perspective(this.proj, 45.0, (w * 1.0) / (h * 1.0), 0.001, 1000.0);
-        //this.proj = mat4.ortho(this.proj, -1.0, 1.0, -1.0, 1.0, 0.001, 1000.0);
+        //this.proj = mat4.ortho(this.proj, -10.0, 10.0, -10.0, 10.0, 0.001, 1000.0);
         return this.proj;
     };
     return Camera;
@@ -561,7 +561,7 @@ var Model = (function () {
         var indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicesArray), gl.STATIC_DRAW);
-        console.log(model.meshes[0]);
+        //console.log(model.meshes[0]);
         if (model.meshes[0].vertices)
             this.addAttrib(0, this.createBuffer(model.meshes[0].vertices), 3);
         if (model.meshes[0].normals)
@@ -811,12 +811,12 @@ var ShaderProgram = (function () {
     };
     ShaderProgram.prototype.sendUniform = function (uniform, type) {
         var path = uniform;
-        var location = ss.uniformLocations[path];
-        var setter = ss.getPropSetter(path, location, type);
+        var location = this.uniformLocations[path];
+        var setter = this.getPropSetter(path, location, type);
         var srcfn = "\n        return function uniformGetSet (value, transposed) {\n            transposed = typeof transposed !== 'undefined' ? transposed : false;\n            location = prog.uniformLocations[name];\n                if (!location) {\n                    prog.addUniforms([name]);\n                    location = prog.uniformLocations[name];\n                }\n                if (location) {\n                    " + setter + "\n                    console.log(\"SENDED\");\n                } else {\n                    console.error(\"ERROR\");\n                }\n        }";
         var generated = new Function('prog', 'gl', 'name', 'location', srcfn);
         var gl = Core.getInstance().getGL();
-        return generated(ss, gl, uniform, location);
+        return generated(this, gl, uniform, location);
     };
     return ShaderProgram;
 })();
@@ -1128,12 +1128,12 @@ var Quad = (function (_super) {
         this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
         this._indicesLen = el.length;
         // TODO: Clear v, n, tex and el
-        console.log({
+        /*console.log({
             vertices: v,
             normal: n,
             textureCoords: tex,
             indices: el
-        });
+        });*/
     }
     Quad.prototype.render = function () {
         var gl = Core.getInstance().getGL();
@@ -1269,13 +1269,13 @@ var Cube = (function (_super) {
         this._indicesLen = el.length;
         gl.bindVertexArray(null);
         // TODO: Clear v, n, tex and el
-        console.log({
+        /*console.log({
             vertices: v,
             normal: n,
             textureCoords: tex,
             indices: el,
             vao: this._handle
-        });
+        });*/
     }
     Cube.prototype.render = function () {
         var gl = Core.getInstance().getGL();
@@ -1370,12 +1370,12 @@ var Sphere = (function (_super) {
         this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
         this._indicesLen = el.length;
         // TODO: Clear v, n, tex and el
-        console.log({
+        /*console.log({
             vertices: v,
             normal: n,
             textureCoords: tex,
             indices: el
-        });
+        });*/
     }
     Sphere.prototype.render = function () {
         var gl = Core.getInstance().getGL();
@@ -1383,6 +1383,101 @@ var Sphere = (function (_super) {
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     return Sphere;
+})(Drawable);
+/// <reference path="drawable.ts" />
+var Torus = (function (_super) {
+    __extends(Torus, _super);
+    function Torus(outerRadius, innerRadius, sides, rings) {
+        if (outerRadius === void 0) { outerRadius = 1.0; }
+        if (innerRadius === void 0) { innerRadius = 0.5; }
+        if (sides === void 0) { sides = 4; }
+        if (rings === void 0) { rings = 10; }
+        _super.call(this);
+        var faces = sides * rings;
+        var nVerts = sides * (rings + 1); // One extra ring to duplicate first ring
+        // v
+        var verts = new Array(3 * nVerts);
+        // Normals
+        var norms = new Array(3 * nVerts);
+        // Tex coords
+        var tex = new Array(2 * nVerts);
+        // Elements
+        var el = new Array(6 * faces);
+        // Generate the vertex data
+        var ringFactor = (Math.PI * 2.0) / rings;
+        var sideFactor = (Math.PI * 2.0) / sides;
+        var idx = 0, tidx = 0;
+        for (var ring = 0; ring <= rings; ring++) {
+            var u = ring * ringFactor;
+            var cu = Math.cos(u);
+            var su = Math.sin(u);
+            for (var side = 0; side < sides; side++) {
+                var v = side * sideFactor;
+                var cv = Math.cos(v);
+                var sv = Math.sin(v);
+                var r = (outerRadius + innerRadius * cv);
+                verts[idx] = r * cu;
+                verts[idx + 1] = r * su;
+                verts[idx + 2] = innerRadius * sv;
+                norms[idx] = cv * cu * r;
+                norms[idx + 1] = cv * su * r;
+                norms[idx + 2] = sv * r;
+                tex[tidx] = u / (Math.PI * 2.0);
+                tex[tidx + 1] = v / (Math.PI * 2.0);
+                tidx += 2;
+                // Normalize
+                var len = Math.sqrt(norms[idx] * norms[idx] +
+                    norms[idx + 1] * norms[idx + 1] +
+                    norms[idx + 2] * norms[idx + 2]);
+                norms[idx] /= len;
+                norms[idx + 1] /= len;
+                norms[idx + 2] /= len;
+                idx += 3;
+            }
+        }
+        idx = 0;
+        for (var ring = 0; ring < rings; ring++) {
+            var ringStart = ring * sides;
+            var nextRingStart = (ring + 1) * sides;
+            for (var side = 0; side < sides; side++) {
+                var nextSide = (side + 1) % sides;
+                // The quad
+                el[idx] = (ringStart + side);
+                el[idx + 1] = (nextRingStart + side);
+                el[idx + 2] = (nextRingStart + nextSide);
+                el[idx + 3] = ringStart + side;
+                el[idx + 4] = nextRingStart + nextSide;
+                el[idx + 5] = (ringStart + nextSide);
+                idx += 6;
+            }
+        }
+        var gl = Core.getInstance().getGL();
+        this._handle = new Array(4);
+        for (var i = 0; i < 4; i++) {
+            this._handle[i] = gl.createBuffer();
+        }
+        this._vao = gl.createVertexArray();
+        gl.bindVertexArray(this._vao);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
+        this.addAttrib_(0, this.createBuffer(verts, this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(norms, this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this._indicesLen = el.length;
+        // TODO: Clear v, n, tex and el
+        /*console.log({
+            vertices: verts,
+            normal: norms,
+            textureCoords: tex,
+            indices: el
+        });*/
+    }
+    Torus.prototype.render = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(this._vao);
+        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    };
+    return Torus;
 })(Drawable);
 /// <reference path="texture.ts" />
 var Texture2D = (function (_super) {
@@ -1479,6 +1574,51 @@ var Texture2D = (function (_super) {
     };
     return Texture2D;
 })(Texture);
+/// <reference path="../core/shaderProgram.ts" />
+"use strict";
+/**
+class ShaderManager {
+    public static get(name: string): ShaderProgram {
+        return ShaderManager._progDictionary[name];
+    }
+    public static add(name: string, prog: ShaderProgram) {
+        //if(name in ShaderManager._progDictionary) {
+        if(ShaderManager._progDictionary.hasOwnProperty(name)) {
+            console.warn(name + " key exist ...");
+        }
+        ShaderManager._progDictionary[name] = prog;
+    }
+    public static destroy() {
+        for(var key in ShaderManager._progDictionary) {
+            ShaderManager._progDictionary[key].destroy();
+        }
+    }
+    protected static _progDictionary: { [ key:string ] : ShaderProgram; };
+};
+/**/
+var ShaderManager;
+(function (ShaderManager) {
+    function get(name) {
+        return _progDictionary[name];
+    }
+    ShaderManager.get = get;
+    function add(name, prog) {
+        //if(name in ShaderManager._progDictionary) {
+        if (_progDictionary.hasOwnProperty(name)) {
+            console.warn(name + " key exist ...");
+        }
+        _progDictionary[name] = prog;
+    }
+    ShaderManager.add = add;
+    function destroy() {
+        for (var key in _progDictionary) {
+            _progDictionary[key].destroy();
+        }
+    }
+    ShaderManager.destroy = destroy;
+    var _progDictionary = {};
+})(ShaderManager || (ShaderManager = {}));
+;
 /// <reference path="../extras/color.ts" />
 var Light = (function () {
     function Light() {
@@ -1536,13 +1676,16 @@ var PointLight = (function (_super) {
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
 /// <reference path="models/sphere.ts" />
+/// <reference path="models/torus.ts" />
 /// <reference path="core/model.ts" />
 /// <reference path="core/shaderProgram.ts" />
 /// <reference path="textures/texture2d.ts" />
+/// <reference path="resources/shaderManager.ts" />
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 var camera = new Camera(new Float32Array([
-    -0.8767104148864746, -2.766807794570923, 68.27084350585938]));
+    -2.7167108058929443, -1.4368079900741577, 11.785898208618164]));
+//-0.8767104148864746, -2.766807794570923, 68.27084350585938]));
 var gl;
 var stats = new Stats();
 stats.setMode(0);
@@ -1556,10 +1699,10 @@ var SimpleConfig = function () {
     };
 };
 var cc;
-var ss;
 var cubito;
 var planito;
 var esferita;
+var torito;
 var view;
 var projection;
 window.onload = function () {
@@ -1571,17 +1714,20 @@ window.onload = function () {
     for (var index in text) {
         gui.add(text, index);
     }
-    esferita = new Sphere(1.0, 20, 20);
+    torito = new Torus(3.7, 2.3, 25, 10);
+    esferita = new Sphere(2.5, 20, 20);
     planito = new Quad(1.0, 1.0, 1, 1);
     cubito = new Cube(5.0);
-    cc = new Model("omg.json");
-    ss = new ShaderProgram();
+    cc = new Model("teddy.json");
+    var ss = new ShaderProgram();
     ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
     ss.addShader("./shaders/demoShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
     ss.compile();
-    ss.addAttributes(["position", "normal", "uv"]); //, "normal"]);
-    ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler", "viewPos", "lightPosition"]); //, "demo"]);
+    ss.addAttributes(["position", "normal", "uv"]);
+    ss.addUniforms(["projection", "view", "model",
+        "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
     ss.use();
+    ShaderManager.add("ss", ss);
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
     //console.log(view, projection);
@@ -1591,25 +1737,9 @@ window.onload = function () {
     //ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
-    /**
-    document.addEventListener("keydown", function (ev) {
-        switch (ev.keyCode) {
-            case 38:
-                camera.processMouseMovement(0.0, 2.5);
-                break;
-            case 40:
-                camera.processMouseMovement(0.0, -2.5);
-                break;
-            case 37:
-                camera.processMouseMovement(2.5, 0.0);
-                break;
-            case 39:
-                camera.processMouseMovement(-2.5, 0.0);
-                break;
-        }
-    });
-    /**/
-    initTexture("example.png");
+    initTexture("matcap.jpg");
+    //initTexture("Crystal Ice Monochrome Glow.jpg");
+    //initTexture("example.png");
     //tex2d = initTexture("example.png");
     var itv = setInterval(function () {
         //console.log(counterTextures);
@@ -1651,9 +1781,10 @@ var angle = 0;
 function cameraUpdateCb() {
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
-    gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
-    gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
-    gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+    var prog = ShaderManager.get("ss");
+    gl.uniformMatrix4fv(prog.uniformLocations['view'], false, view);
+    gl.uniformMatrix4fv(prog.uniformLocations['projection'], false, projection);
+    gl.uniform3fv(prog.uniformLocations["viewPos"], camera.position);
 }
 function drawScene(dt) {
     var currentTime = Date.now();
@@ -1667,7 +1798,13 @@ function drawScene(dt) {
     dt = deltaTime;
     //console.log(dt);
     camera.timeElapsed = dt / 10.0;
-    light.addTransform(Math.cos(angle) * 0.05, Math.cos(angle) * 0.05, Math.sin(angle) * 0.05);
+    /**
+    light.addTransform(
+        Math.cos(angle) * 0.05,
+        Math.cos(angle) * 0.05,
+        Math.sin(angle) * 0.05
+    );
+    /**/
     camera.update(cameraUpdateCb);
     //resize(gl);
     Core.getInstance().clearColorAndDepth();
@@ -1676,32 +1813,36 @@ function drawScene(dt) {
     /*if(angle >= 180.0) {
         angle = -180.0;
     }*/
-    ss.use();
-    gl.uniform3fv(ss.uniformLocations["lightPosition"], light.position);
+    var prog = ShaderManager.get("ss");
+    prog.use();
+    gl.uniform3fv(prog.uniformLocations["lightPosition"], light.position);
     tex2d.bind(0);
-    gl.uniform1i(ss.uniformLocations["texSampler"], 0);
-    var dd = 1;
+    gl.uniform1i(prog.uniformLocations["texSampler"], 0);
+    var dd = -1;
     var i = 0, j = 0;
     mat4.translate(model, identityMatrix, new Float32Array(light.position));
     mat4.rotateY(model, model, 90.0 * Math.PI / 180);
     //mat4.rotateY(model, model, angle * dd);
     mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
-    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+    gl.uniformMatrix4fv(prog.uniformLocations['model'], false, model);
     //cc.render();
     //cubito.render();
     //planito.render();
     esferita.render();
-    var varvar = 35;
+    var varvar = 5;
     for (i = -varvar; i < varvar; i += 5.0) {
         for (j = -varvar; j < varvar; j += 5.0) {
             dd *= -1;
             mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
             mat4.rotateY(model, model, angle * dd);
-            mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
-            gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+            //mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+            //mat4.rotateX(model, model, 90.0 * Math.PI / 180);
+            //mat4.rotateZ(model, model, angle * dd);
+            mat4.scale(model, model, vec3.fromValues(0.25, 0.25, 0.25));
+            gl.uniformMatrix4fv(prog.uniformLocations['model'], false, model);
             //cc.render();
-            cubito.render();
+            torito.render();
         }
     }
     stats.end();
@@ -1739,7 +1880,19 @@ request.onload = function () {
     }
 };
 request.send();
-/**/ 
+/**/
+/*
+window.onbeforeunload = function (e) {
+  var message = "Your confirmation message goes here.",
+  e = e || window.event;
+  // For IE and Firefox
+  if (e) {
+    e.returnValue = message;
+  }
+  alert(message);
+  // For Safari
+  return message;
+};*/ 
 /// <reference path="light.ts" />
 var DirectionalLight = (function (_super) {
     __extends(DirectionalLight, _super);
@@ -1832,6 +1985,52 @@ var ShaderMat = (function (_super) {
     return ShaderMat;
 })(Material);
 /// <reference path="drawable.ts" />
+var Capsule = (function (_super) {
+    __extends(Capsule, _super);
+    function Capsule(segments, radius, length) {
+        if (segments === void 0) { segments = 0; }
+        if (radius === void 0) { radius = 0.0; }
+        if (length === void 0) { length = 0.0; }
+        _super.call(this);
+        // Ensure odd
+        segments = (segments + 1) & ~1;
+        var doubleSegments = segments * 2;
+        var halfLength = length / 2;
+        var vertices = new Array(3 * doubleSegments);
+        var normals = new Array(3 * doubleSegments);
+        var texCoords = new Array(3 * doubleSegments);
+        var el;
+        var gl = Core.getInstance().getGL();
+        this._handle = new Array(4);
+        for (var i = 0, size = this._handle.length; i < size; i++) {
+            this._handle[i] = gl.createBuffer();
+        }
+        this._vao = gl.createVertexArray();
+        gl.bindVertexArray(this._vao);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
+        this.addAttrib_(0, this.createBuffer(vertices, this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(normals, this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(texCoords, this._handle[3]), 2);
+        this._indicesLen = el.length;
+        gl.bindVertexArray(null);
+        // TODO: Clear v, n, tex and el
+        console.log({
+            vertices: vertices,
+            normal: normals,
+            textureCoords: texCoords,
+            indices: el,
+            vao: this._handle
+        });
+    }
+    Capsule.prototype.render = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(this._vao);
+        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    };
+    return Capsule;
+})(Drawable);
+/// <reference path="drawable.ts" />
 var Teaspot = (function (_super) {
     __extends(Teaspot, _super);
     function Teaspot() {
@@ -1843,19 +2042,6 @@ var Teaspot = (function (_super) {
         gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
     };
     return Teaspot;
-})(Drawable);
-/// <reference path="drawable.ts" />
-var Torus = (function (_super) {
-    __extends(Torus, _super);
-    function Torus() {
-        _super.call(this);
-    }
-    Torus.prototype.render = function () {
-        var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
-        gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
-    };
-    return Torus;
 })(Drawable);
 "use strict";
 var ResourceMap = (function () {

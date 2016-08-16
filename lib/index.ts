@@ -5,16 +5,19 @@
 /// <reference path="models/quad.ts" />
 /// <reference path="models/cube.ts" />
 /// <reference path="models/sphere.ts" />
+/// <reference path="models/torus.ts" />
 /// <reference path="core/model.ts" />
 /// <reference path="core/shaderProgram.ts" />
 /// <reference path="textures/texture2d.ts" />
+/// <reference path="resources/shaderManager.ts" />
 
 
 
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 var camera = new Camera(new Float32Array([
-    -0.8767104148864746, -2.766807794570923, 68.27084350585938]));
+    -2.7167108058929443, -1.4368079900741577, 11.785898208618164]));
+    //-0.8767104148864746, -2.766807794570923, 68.27084350585938]));
 
 var gl: WebGLRenderingContext;
 var stats: Stats = new Stats();
@@ -33,11 +36,11 @@ var SimpleConfig = function() {
 
 
 var cc: Model;
-var ss : ShaderProgram;
 
 var cubito: Cube;
 var planito: Quad;
 var esferita: Sphere;
+var torito: Torus;
 
 var view;
 var projection;
@@ -56,20 +59,24 @@ window.onload = () => {
 	    gui.add(text, index);
 	}
 
-    esferita = new Sphere(1.0, 20, 20);
+    torito = new Torus(3.7, 2.3, 25, 10);
+    esferita = new Sphere(2.5, 20, 20);
 	planito = new Quad(1.0, 1.0, 1, 1);
 	cubito = new Cube(5.0);
-	cc = new Model("omg.json");
+	cc = new Model("teddy.json");
 
-	ss = new ShaderProgram();
+    var ss : ShaderProgram = new ShaderProgram();
 	ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
 	ss.addShader("./shaders/demoShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
 	ss.compile();
 
-	ss.addAttributes(["position", "normal", "uv"]); //, "normal"]);
-	ss.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler", "viewPos", "lightPosition"]);//, "demo"]);
+	ss.addAttributes(["position", "normal", "uv"]);
+	ss.addUniforms(["projection", "view", "model", 
+        "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
 
 	ss.use();
+
+    ShaderManager.add("ss", ss);
 
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
@@ -85,26 +92,9 @@ window.onload = () => {
 	view = camera.GetViewMatrix();
 	projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
 
-	/**
-    document.addEventListener("keydown", function (ev) {
-        switch (ev.keyCode) {
-            case 38:
-                camera.processMouseMovement(0.0, 2.5);
-                break;
-            case 40:
-                camera.processMouseMovement(0.0, -2.5);
-                break;
-            case 37:
-                camera.processMouseMovement(2.5, 0.0);
-                break;
-            case 39:
-                camera.processMouseMovement(-2.5, 0.0);
-                break;
-        }
-    });
-    /**/
-
-    initTexture("example.png");
+    initTexture("matcap.jpg");
+    //initTexture("Crystal Ice Monochrome Glow.jpg");
+    //initTexture("example.png");
 	//tex2d = initTexture("example.png");
 
     var itv = setInterval(function() {
@@ -156,9 +146,10 @@ function cameraUpdateCb() {
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
 
-    gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
-    gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
-    gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+    var prog = ShaderManager.get("ss");
+    gl.uniformMatrix4fv(prog.uniformLocations['view'], false, view);
+    gl.uniformMatrix4fv(prog.uniformLocations['projection'], false, projection);
+    gl.uniform3fv(prog.uniformLocations["viewPos"], camera.position);
 }
 
 function drawScene(dt: number) {
@@ -179,11 +170,13 @@ function drawScene(dt: number) {
     //console.log(dt);
     camera.timeElapsed = dt / 10.0;
 
+    /**
     light.addTransform(
         Math.cos(angle) * 0.05,
         Math.cos(angle) * 0.05,
         Math.sin(angle) * 0.05
     );
+    /**/
 
     camera.update(cameraUpdateCb);
 
@@ -198,16 +191,16 @@ function drawScene(dt: number) {
 		angle = -180.0;
 	}*/
 
+    var prog = ShaderManager.get("ss");
+    prog.use();
 
-    ss.use();
-
-    gl.uniform3fv(ss.uniformLocations["lightPosition"], light.position);
+    gl.uniform3fv(prog.uniformLocations["lightPosition"], light.position);
 
 
     tex2d.bind(0);
-    gl.uniform1i(ss.uniformLocations["texSampler"], 0);
+    gl.uniform1i(prog.uniformLocations["texSampler"], 0);
 
-    var dd = 1;
+    var dd = -1;
 
     var i = 0, j = 0;
 
@@ -216,26 +209,30 @@ function drawScene(dt: number) {
     //mat4.rotateY(model, model, angle * dd);
     mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
 
-    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+    gl.uniformMatrix4fv(prog.uniformLocations['model'], false, model);
 
     //cc.render();
     //cubito.render();
     //planito.render();
     esferita.render();
 
-    var varvar = 35;
+    var varvar = 5;
     for(i = -varvar; i <varvar; i += 5.0) {
         for(j = -varvar; j < varvar; j += 5.0) {
             dd *= -1;
             mat4.translate(model,identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
             mat4.rotateY(model, model, angle * dd);
-            mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+            //mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+            //mat4.rotateX(model, model, 90.0 * Math.PI / 180);
+            //mat4.rotateZ(model, model, angle * dd);
+            mat4.scale(model, model, vec3.fromValues(0.25, 0.25, 0.25));
 
-            gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+            gl.uniformMatrix4fv(prog.uniformLocations['model'], false, model);
 
             //cc.render();
-            cubito.render();
+            torito.render();
+            //cubito.render();
             //planito.render();
             //esferita.render();
         }
@@ -284,3 +281,15 @@ request.onload = function () {
 };
 request.send();
 /**/
+/*
+window.onbeforeunload = function (e) {
+  var message = "Your confirmation message goes here.",
+  e = e || window.event;
+  // For IE and Firefox
+  if (e) {
+    e.returnValue = message;
+  }
+  alert(message);
+  // For Safari
+  return message;
+};*/

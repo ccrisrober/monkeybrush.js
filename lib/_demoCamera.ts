@@ -151,7 +151,7 @@ class Camera {
     public GetProjectionMatrix(w, h) : Float32Array {
         this.proj = mat4.perspective(this.proj, 45.0, (w*1.0)/(h*1.0), 0.001, 1000.0);
 
-        //this.proj = mat4.ortho(this.proj, -1.0, 1.0, -1.0, 1.0, 0.001, 1000.0);
+        //this.proj = mat4.ortho(this.proj, -10.0, 10.0, -10.0, 10.0, 0.001, 1000.0);
 
         return this.proj;
     }

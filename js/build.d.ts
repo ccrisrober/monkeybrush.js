@@ -289,6 +289,13 @@ declare class Sphere extends Drawable {
     protected _indicesLen: any;
     render(): void;
 }
+declare class Torus extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    protected _faces: number;
+    constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
+    protected _indicesLen: any;
+    render(): void;
+}
 declare class Texture2D extends Texture {
     protected _handle: WebGLTexture;
     protected _flipY: boolean;
@@ -304,6 +311,31 @@ declare class Texture2D extends Texture {
     unbind(): void;
     destroy(): void;
     setPixelStorage(): void;
+}
+/**
+class ShaderManager {
+    public static get(name: string): ShaderProgram {
+        return ShaderManager._progDictionary[name];
+    }
+    public static add(name: string, prog: ShaderProgram) {
+        //if(name in ShaderManager._progDictionary) {
+        if(ShaderManager._progDictionary.hasOwnProperty(name)) {
+            console.warn(name + " key exist ...");
+        }
+        ShaderManager._progDictionary[name] = prog;
+    }
+    public static destroy() {
+        for(var key in ShaderManager._progDictionary) {
+            ShaderManager._progDictionary[key].destroy();
+        }
+    }
+    protected static _progDictionary: { [ key:string ] : ShaderProgram; };
+};
+/**/
+declare module ShaderManager {
+    function get(name: string): ShaderProgram;
+    function add(name: string, prog: ShaderProgram): void;
+    function destroy(): void;
 }
 declare abstract class Light {
     protected _intensity: number;
@@ -328,10 +360,10 @@ declare var SimpleConfig: () => {
     explode: () => void;
 };
 declare var cc: Model;
-declare var ss: ShaderProgram;
 declare var cubito: Cube;
 declare var planito: Quad;
 declare var esferita: Sphere;
+declare var torito: Torus;
 declare var view: any;
 declare var projection: any;
 declare var counterTextures: number;
@@ -372,13 +404,13 @@ declare class PhongMat extends Material {
 }
 declare class ShaderMat extends Material {
 }
-declare class Teaspot extends Drawable {
+declare class Capsule extends Drawable {
     protected _handle: Array<WebGLBuffer>;
-    protected _faces: number;
-    constructor();
+    constructor(segments?: number, radius?: number, length?: number);
+    protected _indicesLen: any;
     render(): void;
 }
-declare class Torus extends Drawable {
+declare class Teaspot extends Drawable {
     protected _handle: Array<WebGLBuffer>;
     protected _faces: number;
     constructor();

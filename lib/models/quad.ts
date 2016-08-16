@@ -72,12 +72,12 @@ class Quad extends Drawable {
         this._indicesLen = el.length;
 
 		// TODO: Clear v, n, tex and el
-		console.log({
+		/*console.log({
 			vertices: v,
 			normal: n,
 			textureCoords: tex,
 			indices: el
-		});
+		});*/
 	}
 	protected _indicesLen;
 	public render() {

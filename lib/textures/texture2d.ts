@@ -12,10 +12,7 @@ class Texture2D extends Texture {
 		super(gl.TEXTURE_2D);
 		options = options || {};
 
-
-
-		// TODO: REplace gl.TEXTURE_2D TO this.target = gl.TEXTURE_2D;
-
+		console.log(this.target);
 
 		this._flipY = options["flipY"] === true;
 		this._handle = gl.createTexture();
@@ -40,7 +37,7 @@ class Texture2D extends Texture {
 		this.bind();
 
 		gl.texImage2D(
-			gl.TEXTURE_2D,
+			this.target,
 			0, // Level of details
 			_internalformat, // Internal format
 			_format, // Format
@@ -49,23 +46,23 @@ class Texture2D extends Texture {
 		);
 
 
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this._minFilter);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this._magFilter);
+		gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this._minFilter);
+		gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this._magFilter);
 		this.wrap(wraps);
 		
 		/*// Prevent NPOT textures
 		// gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 		// Prevents s-coordinate wrapping (repeating).
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 		// Prevents t-coordinate wrapping (repeating).
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
+		gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
 	}
 	public genMipMap() {
 		var gl = Core.getInstance().getGL();
 		this.bind();
 		// TODO: Check NPOT??
-		gl.generateMipmap(gl.TEXTURE_2D);
+		gl.generateMipmap(this.target);
 	}
 	public wrap(modes: Array<number>) {
 		if(modes.length !== 2) {
@@ -73,20 +70,20 @@ class Texture2D extends Texture {
 		}
 		var gl = Core.getInstance().getGL();
 		this.bind();
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, modes[0]);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, modes[1]);
+		gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, modes[0]);
+		gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, modes[1]);
 		this._wraps = modes;
 	}
 	public minFilter(filter: number) {
 		var gl = Core.getInstance().getGL();
 		this.bind();
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+		gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, filter);
 		this._minFilter = filter;
 	}
 	public magFilter(filter: number) {
 		var gl = Core.getInstance().getGL();
 		this.bind();
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+		gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, filter);
 		this._magFilter = filter;
 	}
 	public bind(slot?: number) {
@@ -94,11 +91,11 @@ class Texture2D extends Texture {
 		if(typeof slot === "number") {
 			gl.activeTexture(gl.TEXTURE0 + slot);
 		}
-		gl.bindTexture(gl.TEXTURE_2D, this._handle);
+		gl.bindTexture(this.target, this._handle);
 	}
 	public unbind() {
 		var gl = Core.getInstance().getGL();
-		gl.bindTexture(gl.TEXTURE_2D, null);
+		gl.bindTexture(this.target, null);
 	}
 	public destroy() {
 		var gl = Core.getInstance().getGL();

@@ -44,8 +44,8 @@ module.exports = function (grunt) {
         }
     });
  
-    grunt.registerTask("default", ["connect", "open", "watch"]);
-    grunt.registerTask("serve", ["connect", "watch"]);
+    grunt.registerTask("default", ["typescript", "connect", "open", "watch"]);
+    grunt.registerTask("serve", ["typescript", "connect", "watch"]);
     grunt.registerTask("ts", ["typescript"]);
 
     grunt.registerTask("parseobj", "", function(fileRoute) {

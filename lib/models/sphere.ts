@@ -72,8 +72,6 @@ class Sphere extends Drawable {
 			}
 		}
 
-
-
 		var gl = Core.getInstance().getGL();
 
 		this._handle = new Array(4);
@@ -94,12 +92,12 @@ class Sphere extends Drawable {
         this._indicesLen = el.length;
 
 		// TODO: Clear v, n, tex and el
-		console.log({
+		/*console.log({
 			vertices: v,
 			normal: n,
 			textureCoords: tex,
 			indices: el
-		});
+		});*/
 	}
 	protected _indicesLen;
 	public render() {

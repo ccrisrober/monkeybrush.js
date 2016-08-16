@@ -226,8 +226,8 @@ class ShaderProgram {
 
     public sendUniform(uniform, type) {
         var path = uniform;
-        var location = ss.uniformLocations[path];
-        var setter = ss.getPropSetter(path, location, type);
+        var location = this.uniformLocations[path];
+        var setter = this.getPropSetter(path, location, type);
         
         var srcfn = `
         return function uniformGetSet (value, transposed) {
@@ -247,6 +247,6 @@ class ShaderProgram {
 
         var generated = new Function('prog', 'gl', 'name', 'location', srcfn);
         var gl = Core.getInstance().getGL();
-        return generated(ss, gl, uniform, location);
+        return generated(this, gl, uniform, location);
     }
 }

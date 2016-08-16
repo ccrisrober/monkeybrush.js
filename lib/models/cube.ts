@@ -136,13 +136,13 @@ class Cube extends Drawable {
         (<any>gl).bindVertexArray(null);
         
 		// TODO: Clear v, n, tex and el
-		console.log({
+		/*console.log({
 			vertices: v,
 			normal: n,
 			textureCoords: tex,
 			indices: el,
 			vao: this._handle
-		});
+		});*/
 	}
 
 
