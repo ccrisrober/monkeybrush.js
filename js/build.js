@@ -603,6 +603,46 @@ var Model = (function () {
     return Model;
 })();
 ;
+/// <reference path="core.ts" />
+"use strict";
+/**
+* This class wrap PostProcess effects
+*
+* @class core.PostProcess
+*/
+var PostProcess = (function () {
+    function PostProcess() {
+        var gl = Core.getInstance().getGL();
+        if (!PostProcess.planeVAO) {
+            PostProcess.planeVAO = gl.createVertexArray();
+            var positions = [
+                -1.0, -1.0,
+                1.0, -1.0,
+                -1.0, 1.0,
+                1.0, 1.0
+            ];
+            PostProcess.planeVertexVBO = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, PostProcess.planeVertexVBO);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+            gl.bindVertexArray(null);
+        }
+    }
+    PostProcess.prototype.bind = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(PostProcess.planeVAO);
+    };
+    PostProcess.prototype.render = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(PostProcess.planeVAO);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        gl.bindVertexArray(null);
+    };
+    PostProcess.planeVAO = null; // TODO: WebGLVertexArrayObject
+    PostProcess.planeVertexVBO = null;
+    return PostProcess;
+})();
 var Scene = (function () {
     function Scene() {
         this._animate = false;
@@ -818,35 +858,6 @@ var ShaderProgram = (function () {
         return generated(this, gl, uniform, location);
     };
     return ShaderProgram;
-})();
-/// <reference path="core.ts" />
-"use strict";
-var _Texture = (function () {
-    function _Texture() {
-    }
-    _Texture.prototype.loadTexture = function (textureName) {
-        var _this = this;
-        // Create texture object
-        var img = new Image();
-        img.onload = function () {
-            _this._processLoadedImage(textureName, img);
-        };
-        img.src = textureName;
-    };
-    _Texture.prototype.unloadTexture = function (textureName) {
-        var gl = Core.getInstance().getGL();
-        //gl.deleteTexture()
-    };
-    _Texture.prototype.activateTexture = function () { };
-    _Texture.prototype.deactivateTexture = function () { };
-    _Texture.prototype._processLoadedImage = function (textureName, img) {
-        var gl = Core.getInstance().getGL();
-        // Generate a texture reference to webgl ctx
-        var textureID = gl.createTexture();
-        // bind the texture reference with the current texture functionality in the webGL
-        gl.bindTexture(gl.TEXTURE_2D, textureID);
-    };
-    return _Texture;
 })();
 // TODO: Change _color to vector3
 var Color = (function () {
@@ -1504,6 +1515,7 @@ var Texture2D = (function (_super) {
         _super.call(this, gl.TEXTURE_2D);
         options = options || {};
         console.log(this.target);
+        // Support compression
         this._flipY = options["flipY"] === true;
         this._handle = gl.createTexture();
         var _internalformat = options["internalformat"] || gl.RGBA;
@@ -1518,9 +1530,6 @@ var Texture2D = (function (_super) {
         else {
             this._wraps = wraps;
         }
-        //this.minFilter();
-        //this.magFilter();
-        //this.wrap();
         this.bind();
         gl.texImage2D(this.target, 0, // Level of details
         _internalformat, // Internal format
@@ -1581,12 +1590,6 @@ var Texture2D = (function (_super) {
         var gl = Core.getInstance().getGL();
         gl.deleteTexture(this._handle);
         this._handle = null;
-    };
-    Texture2D.prototype.setPixelStorage = function () {
-        var gl = Core.getInstance().getGL();
-        //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
-        //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
-        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
     };
     return Texture2D;
 })(Texture);
@@ -2278,7 +2281,7 @@ var Font;
 })(Font || (Font = {}));
 /// <reference path="../core/core.ts" />
 /// <reference path="../core/shaderProgram.ts" />
-/// <reference path="../core/texture.ts" />
+/// <reference path="../textures/texture.ts" />
 /// <reference path="../gl-matrix.d.ts" />
 var Skybox = (function () {
     function Skybox(dir) {
@@ -2386,8 +2389,47 @@ var RenderBufferTexture = (function () {
     }
     return RenderBufferTexture;
 })();
-var Texture3D = (function () {
-    function Texture3D() {
+/// <reference path="texture2d.ts" />
+var SimpleTexture2D = (function (_super) {
+    __extends(SimpleTexture2D, _super);
+    function SimpleTexture2D(size, options) {
+        if (options === void 0) { options = {}; }
+        _super.call(this, null, size, options);
     }
+    return SimpleTexture2D;
+})(Texture2D);
+/// <reference path="texture.ts" />
+/// <reference path="../extras/vector3.ts" />
+var Texture3D = (function (_super) {
+    __extends(Texture3D, _super);
+    function Texture3D(data, size, options) {
+        if (options === void 0) { options = {}; }
+        var gl = Core.getInstance().getGL();
+        _super.call(this, gl.TEXTURE_3D);
+        options = options || {};
+        console.log(this.target);
+        var compressed = options["compressed"] === true;
+        var _internalformat = options["internalformat"] || gl.RGBA;
+        var _format = options["format"] || gl.RGBA;
+        var _type = options["type"] || gl.UNSIGNED_BYTE;
+        if (compressed) {
+        }
+        else {
+            gl.texSubImage3D(this.target, 0, // level
+            _internalformat, // Internal format A GLenum specifying the format of the texel data
+            size.x, size.y, size.z, 0, _format, // Format2
+            _type, // A GLenum specifying the data type of the texel data
+            data);
+        }
+    }
+    Texture3D.prototype.bind = function (slot) {
+        var gl = Core.getInstance().getGL();
+        if (typeof slot === "number") {
+            gl.activeTexture(gl.TEXTURE0 + slot);
+        }
+        gl.bindTexture(this.target, this._handle);
+    };
+    Texture3D.prototype.destroy = function () {
+    };
     return Texture3D;
-})();
+})(Texture);

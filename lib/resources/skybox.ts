@@ -1,6 +1,6 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../core/shaderProgram.ts" />
-/// <reference path="../core/texture.ts" />
+/// <reference path="../textures/texture.ts" />
 /// <reference path="../gl-matrix.d.ts" />
 
 class Skybox {

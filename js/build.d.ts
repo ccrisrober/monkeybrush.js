@@ -166,6 +166,18 @@ declare class Model {
     render(): void;
     renderArrayInstance(numInstances: any): void;
 }
+/**
+* This class wrap PostProcess effects
+*
+* @class core.PostProcess
+*/
+declare class PostProcess {
+    constructor();
+    bind(): void;
+    render(): void;
+    static planeVAO: any;
+    static planeVertexVBO: WebGLBuffer;
+}
 declare abstract class Scene {
     abstract initScene(): any;
     abstract update(t: number): any;
@@ -206,13 +218,6 @@ declare class ShaderProgram {
     destroy(): void;
     getPropSetter(path: any, location: any, type: any): string;
     sendUniform(uniform: any, type: any): any;
-}
-declare class _Texture {
-    loadTexture(textureName: string): void;
-    unloadTexture(textureName: string): void;
-    activateTexture(): void;
-    deactivateTexture(): void;
-    protected _processLoadedImage(textureName: string, img: any): void;
 }
 declare class Color {
     protected _color: any[];
@@ -311,7 +316,6 @@ declare class Texture2D extends Texture {
     bind(slot?: number): void;
     unbind(): void;
     destroy(): void;
-    setPixelStorage(): void;
 }
 /**
 class ShaderManager {
@@ -497,5 +501,12 @@ declare class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
     constructor(size: vector2<number>, format: number, attachment: number);
 }
-declare class Texture3D {
+declare class SimpleTexture2D extends Texture2D {
+    constructor(size: vector2<number>, options?: {});
+}
+declare class Texture3D extends Texture {
+    protected _handle: WebGLTexture;
+    constructor(data: any, size: vector3<number>, options?: {});
+    bind(slot?: number): void;
+    destroy(): void;
 }

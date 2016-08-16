@@ -14,6 +14,8 @@ class Texture2D extends Texture {
 
 		console.log(this.target);
 
+		// Support compression
+
 		this._flipY = options["flipY"] === true;
 		this._handle = gl.createTexture();
 
@@ -31,9 +33,6 @@ class Texture2D extends Texture {
 			this._wraps = wraps;
 		}
 
-		//this.minFilter();
-		//this.magFilter();
-		//this.wrap();
 		this.bind();
 
 		gl.texImage2D(
@@ -102,10 +101,10 @@ class Texture2D extends Texture {
 		gl.deleteTexture(this._handle);
 		this._handle = null;
 	}
-	public setPixelStorage() {
+	/*public setPixelStorage() {
 		var gl = Core.getInstance().getGL();
 	    //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
 	    //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
 	    //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
-	}
+	}*/
 }
