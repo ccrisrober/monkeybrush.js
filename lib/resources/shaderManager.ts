@@ -29,9 +29,9 @@ module ShaderManager {
 	}
 	export function add(name: string, prog: ShaderProgram) {
 		//if(name in ShaderManager._progDictionary) {
-		if(_progDictionary.hasOwnProperty(name)) {
-			console.warn(name + " key exist ...");
-		}
+		//if(_progDictionary.hasOwnProperty(name)) {
+		//	console.warn(name + " key exist ...");
+		//}
 		_progDictionary[name] = prog;
 	}
 	export function destroy() {

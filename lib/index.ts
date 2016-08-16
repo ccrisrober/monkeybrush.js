@@ -60,7 +60,7 @@ window.onload = () => {
 	}
 
     torito = new Torus(3.7, 2.3, 25, 10);
-    esferita = new Sphere(2.5, 20, 20);
+    esferita = new Sphere(2.5, 10, 20);
 	planito = new Quad(1.0, 1.0, 1, 1);
 	cubito = new Cube(5.0);
 	cc = new Model("teddy.json");
@@ -73,6 +73,12 @@ window.onload = () => {
 	ss.addAttributes(["position", "normal", "uv"]);
 	ss.addUniforms(["projection", "view", "model", 
         "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
+
+    /*var arrShader = [];
+    for(var ii = 0; ii < 22; ii++) {
+        arrShader.push("offsets[" + (ii) + "]")
+    }
+    ss.addUniforms(arrShader);*/
 
 	ss.use();
 
@@ -133,7 +139,7 @@ function initTexture(str: string) {
 }
 var tex2d: Texture2D;
 
-var light = new PointLight(new Float32Array( [0.5, 0.5, -1.0] ));
+var light = new PointLight(new Float32Array( [-2.5, -2.5, 0.0] ));
 
 var lastTime = Date.now();
 var deltaTime = 0.0;
@@ -173,7 +179,7 @@ function drawScene(dt: number) {
     /**
     light.addTransform(
         Math.cos(angle) * 0.05,
-        Math.cos(angle) * 0.05,
+        0.0,
         Math.sin(angle) * 0.05
     );
     /**/
@@ -216,7 +222,18 @@ function drawScene(dt: number) {
     //planito.render();
     esferita.render();
 
-    var varvar = 5;
+    //var offsets = [];
+
+    var varvar = 10;
+    var index = 0;
+    for(var a = -varvar; a < varvar; a += 5.0) {
+        for(var b = -varvar; b < varvar; b += 5.0) {
+            //offsets.push([a, b]);
+            gl.uniform2f(prog.uniformLocations["offsets[" + (index++) + "]"], a*2.0, b*2.0);
+        }
+    }
+
+    varvar = 25;
     for(i = -varvar; i <varvar; i += 5.0) {
         for(j = -varvar; j < varvar; j += 5.0) {
             dd *= -1;
@@ -232,6 +249,7 @@ function drawScene(dt: number) {
 
             //cc.render();
             torito.render();
+            //torito.render2(index);
             //cubito.render();
             //planito.render();
             //esferita.render();

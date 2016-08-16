@@ -1,10 +1,9 @@
 /// <reference path="core.ts" />
 /// <reference path="../textures/texture.ts" />
-/// <reference path="../extras/vec2.ts" />
+/// <reference path="../extras/vector2.ts" />
 
-// https://github.com/glo-js/glo-framebuffer
 class Framebuffer {
-	protected _size: vec2<number>;
+	protected _size: vector2<number>;
 	protected _handle: WebGLFramebuffer;
 	protected _attachments: Array<number>;
 	protected _depth: Texture;
@@ -13,7 +12,7 @@ class Framebuffer {
 
 	protected _colors: Array<Texture>;
 
-	constructor(textures: Array<Texture>, size: vec2<number>, depth: boolean = false, stencil: boolean = false, options = {}) {
+	constructor(textures: Array<Texture>, size: vector2<number>, depth: boolean = false, stencil: boolean = false, options = {}) {
 		var gl = Core.getInstance().getGL();
 
 		var numColors = textures.length;
@@ -102,7 +101,7 @@ class Framebuffer {
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	}
 
-	public rebuild(size: vec2<number>) {
+	public rebuild(size: vector2<number>) {
 		if(!size.isEqual(this._size)) {
 
 		}
@@ -137,7 +136,7 @@ class Framebuffer {
 		// Color buffer default TODO
 	}
 
-	protected createRenderBuffer(size: vec2<number>, format: number, attachment: number): WebGLRenderbuffer {
+	protected createRenderBuffer(size: vector2<number>, format: number, attachment: number): WebGLRenderbuffer {
 		var gl = Core.getInstance().getGL();
 		var res = gl.createRenderbuffer();
 		gl.bindRenderbuffer(gl.RENDERBUFFER, res);

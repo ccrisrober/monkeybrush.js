@@ -418,7 +418,6 @@ var Texture = (function () {
 /// <reference path="core.ts" />
 /// <reference path="../textures/texture.ts" />
 /// <reference path="../extras/vector2.ts" />
-// https://github.com/glo-js/glo-framebuffer
 var Framebuffer = (function () {
     function Framebuffer(textures, size, depth, stencil, options) {
         if (depth === void 0) { depth = false; }
@@ -1381,6 +1380,9 @@ var Sphere = (function (_super) {
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        //gl.lineWidth(1.0);
+        // Puts vertices to buffer and links it to attribute variable 'ppos'
+        //gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     return Sphere;
 })(Drawable);
@@ -1476,6 +1478,20 @@ var Torus = (function (_super) {
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        // offset the filled object to avoid the stitching that can arise when the wireframe lines are drawn
+        //gl.enable(gl.POLYGON_OFFSET_FILL);
+        //gl.polygonOffset(2.0, 2.0);
+        //gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        //gl.disable(gl.POLYGON_OFFSET_FILL);
+        //Then disable the vertex colors and draw the wire frame with one constant color
+        //gl.lineWidth(1.0);
+        //gl.drawElements(gl.LINE_LOOP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    };
+    Torus.prototype.render2 = function (counter) {
+        //console.log(counter);
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(this._vao);
+        gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, counter);
     };
     return Torus;
 })(Drawable);
@@ -1604,9 +1620,9 @@ var ShaderManager;
     ShaderManager.get = get;
     function add(name, prog) {
         //if(name in ShaderManager._progDictionary) {
-        if (_progDictionary.hasOwnProperty(name)) {
-            console.warn(name + " key exist ...");
-        }
+        //if(_progDictionary.hasOwnProperty(name)) {
+        //	console.warn(name + " key exist ...");
+        //}
         _progDictionary[name] = prog;
     }
     ShaderManager.add = add;
@@ -1715,7 +1731,7 @@ window.onload = function () {
         gui.add(text, index);
     }
     torito = new Torus(3.7, 2.3, 25, 10);
-    esferita = new Sphere(2.5, 20, 20);
+    esferita = new Sphere(2.5, 10, 20);
     planito = new Quad(1.0, 1.0, 1, 1);
     cubito = new Cube(5.0);
     cc = new Model("teddy.json");
@@ -1726,6 +1742,11 @@ window.onload = function () {
     ss.addAttributes(["position", "normal", "uv"]);
     ss.addUniforms(["projection", "view", "model",
         "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
+    /*var arrShader = [];
+    for(var ii = 0; ii < 22; ii++) {
+        arrShader.push("offsets[" + (ii) + "]")
+    }
+    ss.addUniforms(arrShader);*/
     ss.use();
     ShaderManager.add("ss", ss);
     view = camera.GetViewMatrix();
@@ -1771,7 +1792,7 @@ function initTexture(str) {
     //return tex2d_;
 }
 var tex2d;
-var light = new PointLight(new Float32Array([0.5, 0.5, -1.0]));
+var light = new PointLight(new Float32Array([-2.5, -2.5, 0.0]));
 var lastTime = Date.now();
 var deltaTime = 0.0;
 var identityMatrix = mat4.create();
@@ -1801,7 +1822,7 @@ function drawScene(dt) {
     /**
     light.addTransform(
         Math.cos(angle) * 0.05,
-        Math.cos(angle) * 0.05,
+        0.0,
         Math.sin(angle) * 0.05
     );
     /**/
@@ -1829,7 +1850,16 @@ function drawScene(dt) {
     //cubito.render();
     //planito.render();
     esferita.render();
-    var varvar = 5;
+    //var offsets = [];
+    var varvar = 10;
+    var index = 0;
+    for (var a = -varvar; a < varvar; a += 5.0) {
+        for (var b = -varvar; b < varvar; b += 5.0) {
+            //offsets.push([a, b]);
+            gl.uniform2f(prog.uniformLocations["offsets[" + (index++) + "]"], a * 2.0, b * 2.0);
+        }
+    }
+    varvar = 25;
     for (i = -varvar; i < varvar; i += 5.0) {
         for (j = -varvar; j < varvar; j += 5.0) {
             dd *= -1;
@@ -2361,4 +2391,3 @@ var Texture3D = (function () {
     }
     return Texture3D;
 })();
-// https://github.com/glo-js/glo-texture/tree/master/lib 

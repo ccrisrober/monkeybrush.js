@@ -104,5 +104,9 @@ class Sphere extends Drawable {
 		var gl = Core.getInstance().getGL();
 		(<any>gl).bindVertexArray(this._vao);
 		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+		
+		//gl.lineWidth(1.0);
+		// Puts vertices to buffer and links it to attribute variable 'ppos'
+		//gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 }

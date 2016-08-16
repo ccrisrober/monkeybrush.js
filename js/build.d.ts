@@ -295,6 +295,7 @@ declare class Torus extends Drawable {
     constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
     protected _indicesLen: any;
     render(): void;
+    render2(counter: number): void;
 }
 declare class Texture2D extends Texture {
     protected _handle: WebGLTexture;
