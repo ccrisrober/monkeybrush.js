@@ -19,7 +19,7 @@ var stats: Stats = new Stats();
 stats.setMode(0);
 document.body.appendChild(stats.domElement);
 
-var FizzyText = function() {
+var SimpleConfig = function() {
 	return {
 		message: 'dat.gui',
 		speed: 0.8,
@@ -47,7 +47,7 @@ window.onload = () => {
 
 	gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
-	var text = FizzyText();
+	var text = SimpleConfig();
 	var gui = new dat.GUI();
 
 	for(var index in text) { 
@@ -55,9 +55,9 @@ window.onload = () => {
 	}
 
     esferita = new Sphere(1.0, 20, 20);
-	//planito = new Quad(1.0, 1.0, 1, 1);
-	//cubito = new Cube(5.0);
-	//cc = new Model("omg.json");
+	planito = new Quad(1.0, 1.0, 1, 1);
+	cubito = new Cube(5.0);
+	cc = new Model("omg.json");
 
 	ss = new ShaderProgram();
 	ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
@@ -83,39 +83,8 @@ window.onload = () => {
 	view = camera.GetViewMatrix();
 	projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
 
-	document.addEventListener("keydown", function (ev) {
-        if (ev.keyCode === 40 || ev.keyCode === 38) {
-            ev.preventDefault();
-        }
-        var key = String.fromCharCode(ev.keyCode);
-        var speed = 0.05;
-        switch (key) {
-            case "W":
-                camera.processKeyboard(4, speed);
-                break;
-            case "S":
-                camera.processKeyboard(5, speed);
-                break;
-            case "A":
-                camera.processKeyboard(2, speed);
-                break;
-            case "D":
-                camera.processKeyboard(3, speed);
-                break;
-            case "E":
-                // - .
-                camera.processKeyboard(0, speed);
-                break;
-            case "Q":
-                // + .
-                camera.processKeyboard(1, speed);
-                break;
-
-            case "X":
-                //resetCamera();
-                break;
-        }
-
+	/**
+    document.addEventListener("keydown", function (ev) {
         switch (ev.keyCode) {
             case 38:
                 camera.processMouseMovement(0.0, 2.5);
@@ -130,15 +99,8 @@ window.onload = () => {
                 camera.processMouseMovement(-2.5, 0.0);
                 break;
         }
-        view = camera.GetViewMatrix();
-        projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
-
-        //console.log(view, projection);
-
-        gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
-        gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
-        gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
     });
+    /**/
 
     initTexture("example.png");
 	//tex2d = initTexture("example.png");
@@ -180,7 +142,7 @@ function initTexture(str: string) {
 var tex2d: Texture2D;
 
 
-var lightPos = [0.0, 0.0, 0.0];
+var lightPos = [0.5, 0.5, -1.0];
 
 
 var lastTime = Date.now();
@@ -189,6 +151,16 @@ var identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
 var model = mat4.create();
 var angle = 0;
+
+function cameraUpdateCb() {
+    view = camera.GetViewMatrix();
+    projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+
+    gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
+    gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+    gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+}
+
 function drawScene(dt: number) {
     var currentTime = Date.now();
     var timeElapsed = currentTime - lastTime;
@@ -198,6 +170,8 @@ function drawScene(dt: number) {
 
     lastTime = currentTime;
 
+    Input.getInstance().update();
+
 	stats.begin();
 	dt *= 0.001; // convert to seconds
 
@@ -206,17 +180,17 @@ function drawScene(dt: number) {
     camera.timeElapsed = dt / 10.0;
 
 
-    lightPos[0] += Math.cos(angle) * 0.6;
-    //lightPos[1] += Math.cos(angle) * 0.1;
-    lightPos[2] += Math.sin(angle) * 0.6;
+    lightPos[0] += Math.cos(angle) * 0.05;
+    lightPos[1] += Math.cos(angle) * 0.05;
+    lightPos[2] += Math.sin(angle) * 0.05;
 
+    camera.update(cameraUpdateCb);
 
 	//resize(gl);
 
-	gl.enable(gl.DEPTH_TEST);
-	gl.depthFunc(gl.LESS);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    //console.log("LEFT: " + Input.getInstance().isKeyPressed(Input.keys["Left"]));
 
 	angle += dt * 0.001;
 	/*if(angle >= 180.0) {
@@ -236,22 +210,34 @@ function drawScene(dt: number) {
 
     var i = 0, j = 0;
 
-    //for(i = -7; i < 7; i += 5.0) {
-    //    for(j = -7; j < 7; j += 5.0) {
+    mat4.translate(model,identityMatrix, new Float32Array(lightPos));
+    mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+    //mat4.rotateY(model, model, angle * dd);
+    mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+
+    gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+
+    //cc.render();
+    //cubito.render();
+    //planito.render();
+    esferita.render();
+
+    for(i = -7; i < 7; i += 5.0) {
+        for(j = -7; j < 7; j += 5.0) {
             dd *= -1;
-            mat4.translate(model,identityMatrix, vec3.fromValues(j + 0.0, i * 1.0, 0.0));
+            mat4.translate(model,identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-            //mat4.rotateY(model, model, angle * dd);
+            mat4.rotateY(model, model, angle * dd);
             mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
 
             gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
 
             //cc.render();
-            //cubito.render();
+            cubito.render();
             //planito.render();
-            esferita.render();
-    //    }
-    //}
+            //esferita.render();
+        }
+    }
 
 	stats.end();
 

@@ -26,7 +26,7 @@ void main() {
 	vec3 specColor = vec3(0.628281, 0.555802, 0.366065);
 	float shininess = 0.4;
 
-	vec3 lightColor = vec3(0.0, 1.0, 0.0);
+	vec3 lightColor = vec3(1.0);
 
     vec3 ambient = ambColor * lightColor;
 
@@ -42,7 +42,18 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
     vec3 specular = specColor * spec * lightColor;  
 
-    vec3 result = (ambient + diffuse + specular) * objectColor;
+    // Attenuation
+    float dist    = length(lightPosition - outPosition);
+
+    float constant = 1.0;
+    float linear = 0.14;
+    float quadratic = 0.07;
+
+    float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));    
+
+
+
+    vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
     fragColor = vec4(result, 1.0);
 }

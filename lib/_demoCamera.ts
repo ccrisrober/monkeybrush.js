@@ -1,4 +1,6 @@
 /// <reference path="gl-matrix.d.ts" />
+/// <reference path="core/input.ts" />
+
 
 class Camera {
     // Camera attrs
@@ -35,8 +37,57 @@ class Camera {
 
         this.updateCameraVectors();
     }
+    protected _updateCamera = false;
+    public update(callback: Function) {
+        // TODO: Move input here
+        this._updateCamera = false;
 
-    public processKeyboard(direction: number, deltaTime: number) {
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.W)) {
+            camera.processKeyboard(4);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.S)) {
+            camera.processKeyboard(5);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.A)) {
+            camera.processKeyboard(2);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.D)) {
+            camera.processKeyboard(3);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.E)) {
+            camera.processKeyboard(0);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.Q)) {
+            camera.processKeyboard(1);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(38)) {
+            camera.processMouseMovement(0.0, 2.5);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(40)) {
+            camera.processMouseMovement(0.0, -2.5);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(37)) {
+            camera.processMouseMovement(2.5, 0.0);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(39)) {
+            camera.processMouseMovement(-2.5, 0.0);
+            this._updateCamera = true;
+        }
+        if(this._updateCamera && callback) {
+            callback();
+        }
+    }
+
+    public processKeyboard(direction: number) {
         if (this.timeElapsed > 25) {
             return;
         }
@@ -58,6 +109,9 @@ class Camera {
     }
 
     public processMouseMovement(xOffset: number, yOffset: number) {
+        xOffset *= this.movSpeed * this.timeElapsed;
+        yOffset *= this.movSpeed * this.timeElapsed;
+
         this.yaw += xOffset;
         this.pitch += yOffset;
 
@@ -96,6 +150,9 @@ class Camera {
 
     public GetProjectionMatrix(w, h) : Float32Array {
         this.proj = mat4.perspective(this.proj, 45.0, (w*1.0)/(h*1.0), 0.001, 1000.0);
+
+        //this.proj = mat4.ortho(this.proj, -1.0, 1.0, -1.0, 1.0, 0.001, 1000.0);
+
         return this.proj;
     }
 }

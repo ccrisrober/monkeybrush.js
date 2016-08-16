@@ -1,4 +1,104 @@
+"use strict"; // Force variables must be declared before used!
+var Input = (function () {
+    function Input() {
+        // Key code constants
+        this.keys = {
+            // arrows
+            Left: 37,
+            Up: 38,
+            Right: 39,
+            Down: 40,
+            // space bar
+            Space: 32,
+            // numbers
+            Zero: 48,
+            One: 49,
+            Two: 50,
+            Three: 51,
+            Four: 52,
+            Five: 53,
+            Six: 54,
+            Seven: 55,
+            Eight: 56,
+            Nine: 57,
+            // Alphabets
+            A: 65,
+            D: 68,
+            E: 69,
+            F: 70,
+            G: 71,
+            I: 73,
+            J: 74,
+            K: 75,
+            L: 76,
+            M: 77,
+            N: 78,
+            O: 79,
+            P: 80,
+            Q: 81,
+            R: 82,
+            S: 83,
+            W: 87,
+            LastKeyCode: 222
+        };
+        // Previous key state
+        this._keyPreviusState = [];
+        // Pressed keys
+        this._isKeyPressed = [];
+        // Click events: once an event is set, it will remain there until polled
+        this._isKeyClicked = [];
+        if (Input._instance) {
+            throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
+        }
+        for (var i = 0; i < this.keys["LastKeyCode"]; i++) {
+            this._isKeyPressed[i] = false;
+            this._keyPreviusState[i] = false;
+            this._isKeyClicked[i] = false;
+        }
+        var self = this;
+        // Register handles
+        window.addEventListener("keyup", function (ev) {
+            if (ev.keyCode === 40 || ev.keyCode === 38) {
+                ev.preventDefault();
+            }
+            //console.log(self);
+            self._onKeyUp(ev);
+        }); //this._onKeyUp);
+        window.addEventListener("keydown", function (ev) {
+            if (ev.keyCode === 40 || ev.keyCode === 38) {
+                ev.preventDefault();
+            }
+            //console.log(self);
+            self._onKeyDown(ev);
+        }); //this._onKeyDown);
+        Input._instance = this;
+    }
+    Input.prototype.update = function () {
+        for (var i = 0; i < this.keys["LastKeyCode"]; i++) {
+            this._isKeyClicked[i] = (!this._keyPreviusState[i]) && this._isKeyPressed[i];
+            this._keyPreviusState[i] = this._isKeyPressed[i];
+        }
+    };
+    Input.prototype.isKeyPressed = function (keycode) {
+        return this._isKeyPressed[keycode];
+    };
+    Input.prototype.isKeyClicked = function (keycode) {
+        return this._isKeyClicked[keycode];
+    };
+    Input.prototype._onKeyDown = function (ev) {
+        this._isKeyPressed[ev.keyCode] = true;
+    };
+    Input.prototype._onKeyUp = function (ev) {
+        this._isKeyPressed[ev.keyCode] = false;
+    };
+    Input.getInstance = function () {
+        return Input._instance;
+    };
+    Input._instance = new Input();
+    return Input;
+})();
 /// <reference path="gl-matrix.d.ts" />
+/// <reference path="core/input.ts" />
 var Camera = (function () {
     function Camera(position, up, yaw, pitch) {
         if (position === void 0) { position = vec3.fromValues(0, 0, 0); }
@@ -8,6 +108,7 @@ var Camera = (function () {
         // Camera options
         this.movSpeed = 0.05;
         this.mouseSensivity = 0.25;
+        this._updateCamera = false;
         this.view = mat4.create();
         this.proj = mat4.create();
         this.front = vec3.fromValues(0, 0, -1);
@@ -22,7 +123,54 @@ var Camera = (function () {
     Camera.prototype.GetPos = function () {
         return this.position;
     };
-    Camera.prototype.processKeyboard = function (direction, deltaTime) {
+    Camera.prototype.update = function (callback) {
+        // TODO: Move input here
+        this._updateCamera = false;
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.W)) {
+            camera.processKeyboard(4);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.S)) {
+            camera.processKeyboard(5);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.A)) {
+            camera.processKeyboard(2);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.D)) {
+            camera.processKeyboard(3);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.E)) {
+            camera.processKeyboard(0);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.Q)) {
+            camera.processKeyboard(1);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(38)) {
+            camera.processMouseMovement(0.0, 2.5);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(40)) {
+            camera.processMouseMovement(0.0, -2.5);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(37)) {
+            camera.processMouseMovement(2.5, 0.0);
+            this._updateCamera = true;
+        }
+        if (Input.getInstance().isKeyPressed(39)) {
+            camera.processMouseMovement(-2.5, 0.0);
+            this._updateCamera = true;
+        }
+        if (this._updateCamera && callback) {
+            callback();
+        }
+    };
+    Camera.prototype.processKeyboard = function (direction) {
         if (this.timeElapsed > 25) {
             return;
         }
@@ -48,6 +196,8 @@ var Camera = (function () {
         }
     };
     Camera.prototype.processMouseMovement = function (xOffset, yOffset) {
+        xOffset *= this.movSpeed * this.timeElapsed;
+        yOffset *= this.movSpeed * this.timeElapsed;
         this.yaw += xOffset;
         this.pitch += yOffset;
         if (this.pitch > 89.0) {
@@ -74,13 +224,18 @@ var Camera = (function () {
     };
     Camera.prototype.GetProjectionMatrix = function (w, h) {
         this.proj = mat4.perspective(this.proj, 45.0, (w * 1.0) / (h * 1.0), 0.001, 1000.0);
+        //this.proj = mat4.ortho(this.proj, -1.0, 1.0, -1.0, 1.0, 0.001, 1000.0);
         return this.proj;
     };
     return Camera;
 })();
+/// <reference path="../gl-matrix.d.ts" />
+// https://github.com/bagobor/opengl33_dev_cookbook_2013/tree/master/Chapter2/FreeCamera/FreeCamera
 var ICamera = (function () {
     function ICamera(pos) {
         this._position = pos;
+        this._projection = mat4.create();
+        this._view = mat4.create();
     }
     Object.defineProperty(ICamera.prototype, "position", {
         get: function () { return this._position; },
@@ -88,15 +243,58 @@ var ICamera = (function () {
         enumerable: true,
         configurable: true
     });
+    ICamera.prototype.getViewMatrix = function () {
+        return this._view;
+    };
+    ICamera.prototype.getProjectionMatrix = function () {
+        return this._projection;
+    };
+    ICamera.prototype.getFOV = function () {
+        return this._fov;
+    };
+    ICamera.prototype.getAspectRatio = function () {
+        return this._ar;
+    };
+    ICamera.prototype.setupProjection = function (fovy, aspRatio) {
+        this._projection = mat4.perspective(this._projection, fovy, aspRatio, 0.01, 1000.0); // TODO: near and far configurable
+        this._fov = fovy;
+        this._ar = aspRatio;
+    };
     return ICamera;
 })();
 ;
-/// <reference path="icamera.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/// <reference path="icamera.ts" />
+// https://github.com/bagobor/opengl33_dev_cookbook_2013/tree/master/Chapter2/FreeCamera/FreeCamera
+var FreeCamera = (function (_super) {
+    __extends(FreeCamera, _super);
+    function FreeCamera(pos) {
+        _super.call(this, pos);
+        this._translation = vec3.create();
+    }
+    FreeCamera.prototype.update = function () {
+        //var R = this._genMatrixUsingYawPitchRoll(
+        //		this._yaw, this._pitch, this._roll);
+        this._position = vec3.add(this._position, this._position, this._look);
+        this._translation = vec3.create();
+    };
+    FreeCamera.prototype.rotate = function (yaw, pitch, roll) { };
+    FreeCamera.prototype.walk = function (amount) {
+        this._translation = vec3.scaleAndAdd(this._translation, this._translation, this._look, amount);
+    };
+    FreeCamera.prototype.strafe = function (amount) {
+        this._translation = vec3.scaleAndAdd(this._translation, this._translation, this._right, amount);
+    };
+    FreeCamera.prototype.lift = function (amount) {
+        this._translation = vec3.scaleAndAdd(this._translation, this._translation, this._up, amount);
+    };
+    return FreeCamera;
+})(ICamera);
+/// <reference path="icamera.ts" />
 var OrthoCamera = (function (_super) {
     __extends(OrthoCamera, _super);
     function OrthoCamera() {
@@ -112,6 +310,7 @@ var PerspectiveCamera = (function (_super) {
     }
     return PerspectiveCamera;
 })(ICamera);
+/// <reference path="input.ts" />
 "use strict";
 /**
 * This class get WebGL2 context and animationFrame for your navigator.
@@ -134,17 +333,19 @@ var Core = (function () {
             return;
         }
         this._getVendors();
+        this.init();
         Core._instance = this;
     }
     Core.prototype.init = function () {
         var gl = this._gl;
-        //gl.enable(gl.DEPTH_TEST);
-        //gl.depthFunc(gl.LESS);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LESS);
         //gl.depthFunc(gl.LEQUAL);
         // Set images to flip y axis to match the texture coordinate space.
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        //gl.enable(gl.CULL_FACE);
-        //gl.disable(gl.BLEND);
+        gl.enable(gl.CULL_FACE);
+        gl.disable(gl.BLEND);
+        Input.getInstance();
     };
     Core.getInstance = function () {
         return Core._instance;
@@ -1290,7 +1491,7 @@ var gl;
 var stats = new Stats();
 stats.setMode(0);
 document.body.appendChild(stats.domElement);
-var FizzyText = function () {
+var SimpleConfig = function () {
     return {
         message: 'dat.gui',
         speed: 0.8,
@@ -1309,15 +1510,15 @@ window.onload = function () {
     gl = Core.getInstance().getGL();
     ToneMap.init(gl);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
-    var text = FizzyText();
+    var text = SimpleConfig();
     var gui = new dat.GUI();
     for (var index in text) {
         gui.add(text, index);
     }
     esferita = new Sphere(1.0, 20, 20);
-    //planito = new Quad(1.0, 1.0, 1, 1);
-    //cubito = new Cube(5.0);
-    //cc = new Model("omg.json");
+    planito = new Quad(1.0, 1.0, 1, 1);
+    cubito = new Cube(5.0);
+    cc = new Model("omg.json");
     ss = new ShaderProgram();
     ss.addShader("./shaders/demoShader.vert", gl.VERTEX_SHADER, mode.read_file);
     ss.addShader("./shaders/demoShader.frag", gl.FRAGMENT_SHADER, mode.read_file);
@@ -1334,37 +1535,8 @@ window.onload = function () {
     //ss.sendUniform("demo", "vec2")([0.0, 0.0], false);
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+    /**
     document.addEventListener("keydown", function (ev) {
-        if (ev.keyCode === 40 || ev.keyCode === 38) {
-            ev.preventDefault();
-        }
-        var key = String.fromCharCode(ev.keyCode);
-        var speed = 0.05;
-        switch (key) {
-            case "W":
-                camera.processKeyboard(4, speed);
-                break;
-            case "S":
-                camera.processKeyboard(5, speed);
-                break;
-            case "A":
-                camera.processKeyboard(2, speed);
-                break;
-            case "D":
-                camera.processKeyboard(3, speed);
-                break;
-            case "E":
-                // - .
-                camera.processKeyboard(0, speed);
-                break;
-            case "Q":
-                // + .
-                camera.processKeyboard(1, speed);
-                break;
-            case "X":
-                //resetCamera();
-                break;
-        }
         switch (ev.keyCode) {
             case 38:
                 camera.processMouseMovement(0.0, 2.5);
@@ -1379,13 +1551,8 @@ window.onload = function () {
                 camera.processMouseMovement(-2.5, 0.0);
                 break;
         }
-        view = camera.GetViewMatrix();
-        projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
-        //console.log(view, projection);
-        gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
-        gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
-        gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
     });
+    /**/
     initTexture("example.png");
     //tex2d = initTexture("example.png");
     var itv = setInterval(function () {
@@ -1418,31 +1585,39 @@ function initTexture(str) {
     //return tex2d_;
 }
 var tex2d;
-var lightPos = [0.0, 0.0, 0.0];
+var lightPos = [0.5, 0.5, -1.0];
 var lastTime = Date.now();
 var deltaTime = 0.0;
 var identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
 var model = mat4.create();
 var angle = 0;
+function cameraUpdateCb() {
+    view = camera.GetViewMatrix();
+    projection = camera.GetProjectionMatrix(gl.canvas.width, gl.canvas.height);
+    gl.uniformMatrix4fv(ss.uniformLocations['view'], false, view);
+    gl.uniformMatrix4fv(ss.uniformLocations['projection'], false, projection);
+    gl.uniform3fv(ss.uniformLocations["viewPos"], camera.position);
+}
 function drawScene(dt) {
     var currentTime = Date.now();
     var timeElapsed = currentTime - lastTime;
     //camera.timeElapsed = timeElapsed;
     deltaTime = timeElapsed;
     lastTime = currentTime;
+    Input.getInstance().update();
     stats.begin();
     dt *= 0.001; // convert to seconds
     dt = deltaTime;
     //console.log(dt);
     camera.timeElapsed = dt / 10.0;
-    lightPos[0] += Math.cos(angle) * 0.6;
-    //lightPos[1] += Math.cos(angle) * 0.1;
-    lightPos[2] += Math.sin(angle) * 0.6;
+    lightPos[0] += Math.cos(angle) * 0.05;
+    lightPos[1] += Math.cos(angle) * 0.05;
+    lightPos[2] += Math.sin(angle) * 0.05;
+    camera.update(cameraUpdateCb);
     //resize(gl);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LESS);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    //console.log("LEFT: " + Input.getInstance().isKeyPressed(Input.keys["Left"]));
     angle += dt * 0.001;
     /*if(angle >= 180.0) {
         angle = -180.0;
@@ -1453,10 +1628,7 @@ function drawScene(dt) {
     gl.uniform1i(ss.uniformLocations["texSampler"], 0);
     var dd = 1;
     var i = 0, j = 0;
-    //for(i = -7; i < 7; i += 5.0) {
-    //    for(j = -7; j < 7; j += 5.0) {
-    dd *= -1;
-    mat4.translate(model, identityMatrix, vec3.fromValues(j + 0.0, i * 1.0, 0.0));
+    mat4.translate(model, identityMatrix, new Float32Array(lightPos));
     mat4.rotateY(model, model, 90.0 * Math.PI / 180);
     //mat4.rotateY(model, model, angle * dd);
     mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
@@ -1465,8 +1637,18 @@ function drawScene(dt) {
     //cubito.render();
     //planito.render();
     esferita.render();
-    //    }
-    //}
+    for (i = -7; i < 7; i += 5.0) {
+        for (j = -7; j < 7; j += 5.0) {
+            dd *= -1;
+            mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
+            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+            mat4.rotateY(model, model, angle * dd);
+            mat4.scale(model, model, vec3.fromValues(0.335, 0.335, 0.335));
+            gl.uniformMatrix4fv(ss.uniformLocations['model'], false, model);
+            //cc.render();
+            cubito.render();
+        }
+    }
     stats.end();
     requestAnimationFrame(drawScene);
 }

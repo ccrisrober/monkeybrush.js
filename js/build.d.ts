@@ -1,6 +1,54 @@
 /// <reference path="../lib/gl-matrix.d.ts" />
 /// <reference path="../lib/stats.d.ts" />
 /// <reference path="../lib/dat-gui.d.ts" />
+declare class Input {
+    private static _instance;
+    constructor();
+    keys: {
+        Left: number;
+        Up: number;
+        Right: number;
+        Down: number;
+        Space: number;
+        Zero: number;
+        One: number;
+        Two: number;
+        Three: number;
+        Four: number;
+        Five: number;
+        Six: number;
+        Seven: number;
+        Eight: number;
+        Nine: number;
+        A: number;
+        D: number;
+        E: number;
+        F: number;
+        G: number;
+        I: number;
+        J: number;
+        K: number;
+        L: number;
+        M: number;
+        N: number;
+        O: number;
+        P: number;
+        Q: number;
+        R: number;
+        S: number;
+        W: number;
+        LastKeyCode: number;
+    };
+    update(): void;
+    isKeyPressed(keycode: number): boolean;
+    isKeyClicked(keycode: number): boolean;
+    protected _keyPreviusState: Array<boolean>;
+    protected _isKeyPressed: Array<boolean>;
+    protected _isKeyClicked: Array<boolean>;
+    protected _onKeyDown(ev: KeyboardEvent): void;
+    protected _onKeyUp(ev: KeyboardEvent): void;
+    static getInstance(): Input;
+}
 declare class Camera {
     position: Float32Array;
     protected front: Float32Array;
@@ -14,7 +62,9 @@ declare class Camera {
     GetPos(): Float32Array;
     timeElapsed: number;
     constructor(position?: Float32Array, up?: Float32Array, yaw?: number, pitch?: number);
-    processKeyboard(direction: number, deltaTime: number): void;
+    protected _updateCamera: boolean;
+    update(callback: Function): void;
+    processKeyboard(direction: number): void;
     processMouseMovement(xOffset: number, yOffset: number): void;
     updateCameraVectors(): void;
     private view;
@@ -24,8 +74,32 @@ declare class Camera {
 }
 declare abstract class ICamera {
     protected _position: Float32Array;
+    protected _view: Float32Array;
+    protected _projection: Float32Array;
+    protected _fov: number;
+    protected _ar: number;
+    protected _look: Float32Array;
+    protected _up: Float32Array;
+    protected _right: Float32Array;
     constructor(pos: Float32Array);
     position: Float32Array;
+    getViewMatrix(): Float32Array;
+    getProjectionMatrix(): Float32Array;
+    getFOV(): number;
+    getAspectRatio(): number;
+    setupProjection(fovy: number, aspRatio: number): void;
+}
+declare class FreeCamera extends ICamera {
+    constructor(pos: Float32Array);
+    update(): void;
+    rotate(yaw: number, pitch: number, roll: number): void;
+    walk(amount: number): void;
+    strafe(amount: number): void;
+    lift(amount: number): void;
+    protected _yaw: number;
+    protected _pitch: number;
+    protected _roll: number;
+    protected _translation: Float32Array;
 }
 declare class OrthoCamera extends ICamera {
 }
@@ -233,7 +307,7 @@ declare class Texture2D extends Texture {
 declare var camera: Camera;
 declare var gl: WebGLRenderingContext;
 declare var stats: Stats;
-declare var FizzyText: () => {
+declare var SimpleConfig: () => {
     message: string;
     speed: number;
     displayOutline: boolean;
@@ -255,6 +329,7 @@ declare var deltaTime: number;
 declare var identityMatrix: Float32Array;
 declare var model: Float32Array;
 declare var angle: number;
+declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
 declare function resize(gl: WebGLRenderingContext): void;
 declare var url: string;

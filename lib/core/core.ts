@@ -1,3 +1,5 @@
+/// <reference path="input.ts" />
+
 "use strict";
 /**
 * This class get WebGL2 context and animationFrame for your navigator.
@@ -27,21 +29,25 @@ class Core {
             return;
 		}
 		this._getVendors();
+		this.init();
+
 		Core._instance = this;
 	}
 
 	protected init() {
 		var gl = this._gl;
 
-		//gl.enable(gl.DEPTH_TEST);
-		//gl.depthFunc(gl.LESS);
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LESS);
 		//gl.depthFunc(gl.LEQUAL);
 
         // Set images to flip y axis to match the texture coordinate space.
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-        //gl.enable(gl.CULL_FACE);
-        //gl.disable(gl.BLEND);
+        gl.enable(gl.CULL_FACE);
+        gl.disable(gl.BLEND);
+
+        Input.getInstance();
 	}
 
 	public static getInstance() : Core {
