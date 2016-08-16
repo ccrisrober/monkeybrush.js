@@ -43,43 +43,43 @@ class Camera {
         this._updateCamera = false;
 
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.W)) {
-            camera.processKeyboard(4);
+            this.processKeyboard(4);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.S)) {
-            camera.processKeyboard(5);
+            this.processKeyboard(5);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.A)) {
-            camera.processKeyboard(2);
+            this.processKeyboard(2);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.D)) {
-            camera.processKeyboard(3);
+            this.processKeyboard(3);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.E)) {
-            camera.processKeyboard(0);
+            this.processKeyboard(0);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.Q)) {
-            camera.processKeyboard(1);
+            this.processKeyboard(1);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(38)) {
-            camera.processMouseMovement(0.0, 2.5);
+            this.processMouseMovement(0.0, 2.5);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(40)) {
-            camera.processMouseMovement(0.0, -2.5);
+            this.processMouseMovement(0.0, -2.5);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(37)) {
-            camera.processMouseMovement(2.5, 0.0);
+            this.processMouseMovement(2.5, 0.0);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(39)) {
-            camera.processMouseMovement(-2.5, 0.0);
+            this.processMouseMovement(-2.5, 0.0);
             this._updateCamera = true;
         }
         if(this._updateCamera && callback) {

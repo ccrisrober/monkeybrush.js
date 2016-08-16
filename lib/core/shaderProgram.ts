@@ -7,6 +7,11 @@ enum mode {
     read_text
 };
 
+enum shader_type {
+    vertex,
+    fragment
+}
+
 class ShaderProgram {
     constructor() {
         this._shaders = [];
@@ -55,8 +60,20 @@ class ShaderProgram {
         return this._compiledShader;
     }
     
-    public addShader(shader_: string, type: number, _mode: mode) {
+    public addShader(shader_: string, /*type: number*/ st: shader_type, _mode: mode) {
+        var gl = Core.getInstance().getGL();
         var shader: WebGLShader;
+
+        var type: number = -1;
+        if(st == shader_type.vertex) {
+            type = gl.VERTEX_SHADER;
+        } else if(st == shader_type.fragment) {
+            type = gl.FRAGMENT_SHADER;
+        }
+        if(type < 0) {
+            throw new Error("SHADER TYPE UNDEFINED");
+        }
+
         if(_mode == mode.read_file) {
             shader = this.loadAndCompileWithFile(shader_, type);
         } else if (_mode == mode.read_script) {
@@ -172,7 +189,8 @@ class ShaderProgram {
         gl.deleteShader(this._compiledShader);
     }
 
-    public getPropSetter(path, location, type) {
+    /*
+    protected getPropSetter(path, location, type) {
         // Check primitive types
         switch(type) {
             case "bool":
@@ -239,14 +257,30 @@ class ShaderProgram {
                 }
                 if (location) {
                     ${setter}
-                    console.log("SENDED");
+                    //console.log("SENDED");
                 } else {
-                    console.error("ERROR");
+                    //console.error("ERROR");
                 }
         }`;
 
         var generated = new Function('prog', 'gl', 'name', 'location', srcfn);
         var gl = Core.getInstance().getGL();
         return generated(this, gl, uniform, location);
+    }*/
+    public sendUniform1f(name: string, value: number) {
+        var gl = Core.getInstance().getGL();
+        gl.uniform1f(this.uniformLocations[name], value);
+    }
+    public sendUniform1i(name: string, value: number) {
+        var gl = Core.getInstance().getGL();
+        gl.uniform1i(this.uniformLocations[name], value);
+    }
+    public sendUniform3fv(name: string, value: Float32Array) {
+        var gl = Core.getInstance().getGL();
+        gl.uniform3fv(this.uniformLocations[name], value);
+    }
+    public sendUniformMat4(name: string, value: Float32Array, transpose: boolean = false) {
+        var gl = Core.getInstance().getGL();
+        gl.uniformMatrix4fv(this.uniformLocations[name], transpose, value);
     }
 }

@@ -41,9 +41,33 @@ module.exports = function (grunt) {
             dev: {
                 path: _path
             }
+        },
+
+        jsdoc : {
+            dist : {
+                src: ['lib/**/*.ts'],
+                options: {
+                    destination: 'doc'
+                }
+            }
+        },
+
+        typedoc: {
+            build: {
+                options: {
+                    module: 'commonjs',
+                    out: './docs',
+                    name: 'my-project',
+                    target: 'es5'
+                },
+                src: ['./lib/**/*']
+            }
         }
     });
- 
+
+    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-typedoc');
+
     grunt.registerTask("default", ["typescript", "connect", "open", "watch"]);
     grunt.registerTask("serve", ["typescript", "connect", "watch"]);
     grunt.registerTask("ts", ["typescript"]);

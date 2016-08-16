@@ -2,7 +2,6 @@
 /// <reference path="../extras/vector3.ts" />
 
 class Texture3D extends Texture {
-	protected _handle: WebGLTexture;
 	constructor(data, size: vector3<number>, options = {}) {
 		var gl = Core.getInstance().getGL();
 		super((<any>gl).TEXTURE_3D);

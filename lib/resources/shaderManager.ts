@@ -22,10 +22,15 @@ class ShaderManager {
 };
 /**/
 
-
+interface ShaderCallback {
+	(): ShaderProgram;
+}
 module ShaderManager {
 	export function get(name: string): ShaderProgram {
 		return _progDictionary[name];
+	}
+	export function addWithFun(name: string, fn: ShaderCallback) {
+		_progDictionary[name] = fn();
 	}
 	export function add(name: string, prog: ShaderProgram) {
 		//if(name in ShaderManager._progDictionary) {

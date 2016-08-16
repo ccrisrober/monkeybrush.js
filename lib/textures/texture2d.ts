@@ -1,7 +1,6 @@
 /// <reference path="texture.ts" />
 
 class Texture2D extends Texture {
-	protected _handle: WebGLTexture;
 	protected _flipY : boolean;
 	protected _minFilter: number;
 	protected _magFilter: number;

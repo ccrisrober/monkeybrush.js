@@ -32,7 +32,7 @@ class Framebuffer {
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
 
 		// Each textures to fbo
-		textures.forEach((texture: /*TODO: Texture*/any, i: number) => {
+		textures.forEach((texture: Texture, i: number) => {
 			texture.bind();
 
 			// Only supported simple textures
@@ -47,7 +47,7 @@ class Framebuffer {
 
 
 		// Attachment indices
-		this._attachments = textures.map((texture: /*TODO: Texture*/ any, i: number) => {
+		this._attachments = textures.map((texture: Texture, i: number) => {
 			return gl.COLOR_ATTACHMENT0 + i;
 		});
 
@@ -91,9 +91,6 @@ class Framebuffer {
 	public bind() {
 		var gl = Core.getInstance().getGL();
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
-		if(this._attachments.length > 1) {
-			// Draw buffers de los attachments
-		}
 	}
 
 	public unbind() {

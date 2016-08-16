@@ -105,6 +105,53 @@ declare class OrthoCamera extends ICamera {
 }
 declare class PerspectiveCamera extends ICamera {
 }
+declare enum mode {
+    read_file = 0,
+    read_script = 1,
+    read_text = 2,
+}
+declare enum shader_type {
+    vertex = 0,
+    fragment = 1,
+}
+declare class ShaderProgram {
+    constructor();
+    private _compiledShader;
+    private _shaders;
+    _vertexSource: string;
+    _fragmentSource: string;
+    uniformLocations: {
+        [key: string]: WebGLUniformLocation;
+    };
+    attribLocations: {
+        [key: string]: number;
+    };
+    addAttributes(attrs: Array<string>): void;
+    addUniforms(unifs: Array<string>): void;
+    program(): WebGLProgram;
+    addShader(shader_: string, st: shader_type, _mode: mode): void;
+    compile(): boolean;
+    private loadAndCompileWithFile(filePath, shaderType);
+    private loadAndCompileFromText(shaderSource, shaderType);
+    private loadAndCompile(id, shaderType);
+    private compileShader(shaderSource, shaderType);
+    use(): void;
+    destroy(): void;
+    sendUniform1f(name: string, value: number): void;
+    sendUniform1i(name: string, value: number): void;
+    sendUniform3fv(name: string, value: Float32Array): void;
+    sendUniformMat4(name: string, value: Float32Array, transpose?: boolean): void;
+}
+declare var vertexCode: string;
+declare module ToneMap {
+    function init(gl: WebGLRenderingContext): void;
+    var textureQuadSimpleProgram: ShaderProgram;
+    var textureQuadGammaProgram: ShaderProgram;
+    var textureQuadReinhardProgram: ShaderProgram;
+    var textureQuadFilmicProgram: ShaderProgram;
+    var textureQuadsRGBProgram: ShaderProgram;
+    var textureQuadUncharted2Program: ShaderProgram;
+}
 /**
 * This class get WebGL2 context and animationFrame for your navigator.
 *
@@ -114,7 +161,10 @@ declare class Core {
     private static _instance;
     private _gl;
     constructor();
+    initialize(color: Array<number>): void;
     clearColorAndDepth(): void;
+    changeViewport(x: number, y: number, w: number, h: number): void;
+    canvas(): HTMLCanvasElement;
     protected init(): void;
     static getInstance(): Core;
     /**
@@ -125,7 +175,7 @@ declare class Core {
     */
     getGL(): WebGLRenderingContext;
     protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
-    protected _getVendors(): void;
+    private _getVendors();
 }
 declare class vector2<T> {
     x: T;
@@ -134,11 +184,14 @@ declare class vector2<T> {
     isEqual(other: vector2<T>): boolean;
 }
 declare abstract class Texture {
+    protected _handle: WebGLTexture;
     protected _target: number;
     protected _size: vector2<number>;
     constructor(target: number);
     target: number;
     abstract destroy(): void;
+    abstract bind(slot?: number): any;
+    handle(): WebGLTexture;
 }
 declare class Framebuffer {
     protected _size: vector2<number>;
@@ -172,11 +225,11 @@ declare class Model {
 * @class core.PostProcess
 */
 declare class PostProcess {
-    constructor();
-    bind(): void;
-    render(): void;
-    static planeVAO: any;
-    static planeVertexVBO: WebGLBuffer;
+    static initialize(): void;
+    static bind(): void;
+    static render(): void;
+    static _planeVAO: any;
+    static _planeVertexVBO: WebGLBuffer;
 }
 declare abstract class Scene {
     abstract initScene(): any;
@@ -187,37 +240,6 @@ declare abstract class Scene {
     animate(value: boolean): void;
     animating(): boolean;
     protected _animate: boolean;
-}
-declare enum mode {
-    read_file = 0,
-    read_script = 1,
-    read_text = 2,
-}
-declare class ShaderProgram {
-    constructor();
-    private _compiledShader;
-    private _shaders;
-    _vertexSource: string;
-    _fragmentSource: string;
-    uniformLocations: {
-        [key: string]: WebGLUniformLocation;
-    };
-    attribLocations: {
-        [key: string]: number;
-    };
-    addAttributes(attrs: Array<string>): void;
-    addUniforms(unifs: Array<string>): void;
-    program(): WebGLProgram;
-    addShader(shader_: string, type: number, _mode: mode): void;
-    compile(): boolean;
-    private loadAndCompileWithFile(filePath, shaderType);
-    private loadAndCompileFromText(shaderSource, shaderType);
-    private loadAndCompile(id, shaderType);
-    private compileShader(shaderSource, shaderType);
-    use(): void;
-    destroy(): void;
-    getPropSetter(path: any, location: any, type: any): string;
-    sendUniform(uniform: any, type: any): any;
 }
 declare class Color {
     protected _color: any[];
@@ -231,7 +253,7 @@ declare class Color {
 declare module extensions {
     function get(name: string): any;
 }
-declare class Timer {
+declare class Timer__ {
     protected running: boolean;
     protected start_clock: number;
     protected start_time: number;
@@ -243,6 +265,10 @@ declare class Timer {
     restart(): void;
     stop(): void;
     check(): number;
+}
+declare module timer {
+    function update(): void;
+    function deltaTime(): number;
 }
 declare class vector3<T> {
     x: T;
@@ -259,63 +285,14 @@ declare class vector4<T> {
     constructor(x: T, y: T, z: T, w: T);
     isEqual(other: vector4<T>): boolean;
 }
-declare var vertexCode: string;
-declare module ToneMap {
-    function init(gl: WebGLRenderingContext): void;
-    var textureQuadSimpleProgram: ShaderProgram;
-    var textureQuadGammaProgram: ShaderProgram;
-    var textureQuadReinhardProgram: ShaderProgram;
-    var textureQuadFilmicProgram: ShaderProgram;
-    var textureQuadsRGBProgram: ShaderProgram;
-    var textureQuadUncharted2Program: ShaderProgram;
-}
-declare abstract class Drawable {
-    protected _vao: any;
-    abstract render(): any;
-    protected addAttrib(attribLocation: any, buffer: any, data: any, numElems: any): void;
-    protected createBuffer(data: any, handle: any): any;
-    protected addAttrib_(attribLocation: any, buffer: any, numElems: any): void;
-}
-declare class Quad extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
-    protected _indicesLen: any;
-    render(): void;
-}
-declare class Cube extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    constructor(side?: number);
-    protected _indicesLen: any;
-    render(): void;
-}
-declare class Sphere extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    constructor(radius: number, slices: number, stacks: number);
-    protected _indicesLen: any;
-    render(): void;
-}
-declare class Torus extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    protected _faces: number;
-    constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
-    protected _indicesLen: any;
-    render(): void;
-    render2(counter: number): void;
-}
-declare class Texture2D extends Texture {
-    protected _handle: WebGLTexture;
-    protected _flipY: boolean;
-    protected _minFilter: number;
-    protected _magFilter: number;
-    protected _wraps: Array<number>;
-    constructor(image: any, size: vector2<number>, options?: {});
-    genMipMap(): void;
-    wrap(modes: Array<number>): void;
-    minFilter(filter: number): void;
-    magFilter(filter: number): void;
-    bind(slot?: number): void;
-    unbind(): void;
+declare class VertexBuffer {
+    constructor();
+    bind(type: number): void;
+    getBufferType(): number;
+    getBuffer(): WebGLBuffer;
     destroy(): void;
+    protected _buffer: WebGLBuffer;
+    protected _type: number;
 }
 /**
 class ShaderManager {
@@ -337,10 +314,43 @@ class ShaderManager {
     protected static _progDictionary: { [ key:string ] : ShaderProgram; };
 };
 /**/
+interface ShaderCallback {
+    (): ShaderProgram;
+}
 declare module ShaderManager {
     function get(name: string): ShaderProgram;
+    function addWithFun(name: string, fn: ShaderCallback): void;
     function add(name: string, prog: ShaderProgram): void;
     function destroy(): void;
+}
+declare abstract class Drawable {
+    protected _vao: any;
+    abstract render(): any;
+    protected addAttrib(attribLocation: any, buffer: any, data: any, numElems: any): void;
+    protected createBuffer(data: any, handle: any): any;
+    protected addAttrib_(attribLocation: any, buffer: any, numElems: any): void;
+}
+declare class Torus extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    protected _faces: number;
+    constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
+    protected _indicesLen: any;
+    render(): void;
+    render2(counter: number): void;
+}
+declare class Texture2D extends Texture {
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    constructor(image: any, size: vector2<number>, options?: {});
+    genMipMap(): void;
+    wrap(modes: Array<number>): void;
+    minFilter(filter: number): void;
+    magFilter(filter: number): void;
+    bind(slot?: number): void;
+    unbind(): void;
+    destroy(): void;
 }
 declare abstract class Light {
     protected _intensity: number;
@@ -356,33 +366,23 @@ declare class PointLight extends Light {
     addTransform(x?: number, y?: number, z?: number): void;
 }
 declare var camera: Camera;
-declare var gl: WebGLRenderingContext;
 declare var stats: Stats;
-declare var SimpleConfig: () => {
-    message: string;
-    speed: number;
-    displayOutline: boolean;
-    explode: () => void;
-};
-declare var cc: Model;
-declare var cubito: Cube;
-declare var planito: Quad;
-declare var esferita: Sphere;
+declare var SimpleConfig: () => {};
+declare var gui: dat.GUI;
 declare var torito: Torus;
 declare var view: any;
 declare var projection: any;
+declare function initialize(): void;
 declare var counterTextures: number;
 declare function initTexture(str: string): void;
 declare var tex2d: Texture2D;
 declare var light: PointLight;
-declare var lastTime: number;
-declare var deltaTime: number;
 declare var identityMatrix: Float32Array;
 declare var model: Float32Array;
 declare var angle: number;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
-declare function resize(gl: WebGLRenderingContext): void;
+declare function loop(dt: number): void;
 declare class DirectionalLight extends Light {
     protected _direction: Float32Array;
     constructor(direction?: Float32Array);
@@ -412,6 +412,24 @@ declare class ShaderMat extends Material {
 declare class Capsule extends Drawable {
     protected _handle: Array<WebGLBuffer>;
     constructor(segments?: number, radius?: number, length?: number);
+    protected _indicesLen: any;
+    render(): void;
+}
+declare class Cube extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    constructor(side?: number);
+    protected _indicesLen: any;
+    render(): void;
+}
+declare class Quad extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
+    protected _indicesLen: any;
+    render(): void;
+}
+declare class Sphere extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    constructor(radius: number, slices: number, stacks: number);
     protected _indicesLen: any;
     render(): void;
 }
@@ -505,7 +523,6 @@ declare class SimpleTexture2D extends Texture2D {
     constructor(size: vector2<number>, options?: {});
 }
 declare class Texture3D extends Texture {
-    protected _handle: WebGLTexture;
     constructor(data: any, size: vector3<number>, options?: {});
     bind(slot?: number): void;
     destroy(): void;

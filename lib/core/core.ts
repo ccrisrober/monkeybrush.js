@@ -1,4 +1,6 @@
 /// <reference path="input.ts" />
+/// <reference path="../resources/quadToneMap.ts" />
+/// <reference path="../stats.d.ts" />
 
 "use strict";
 /**
@@ -34,10 +36,21 @@ class Core {
 		Core._instance = this;
 	}
 
+	public initialize(color: Array<number>) {
+		var gl = this._gl;
+		//ToneMap.init(gl);
+		gl.clearColor(color[0], color[1], color[2], color[3]);
+	}
+
 	public clearColorAndDepth() {
 		this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
 	}
-
+	public changeViewport(x: number, y: number, w: number, h: number) {
+		this._gl.viewport(x, y, w, h);
+	}
+	public canvas(): HTMLCanvasElement {
+		return this._gl.canvas;
+	}
 	protected init() {
 		var gl = this._gl;
 
@@ -50,6 +63,7 @@ class Core {
 
         gl.enable(gl.CULL_FACE);
         gl.disable(gl.BLEND);
+
 
         Input.getInstance();
 	}
@@ -81,7 +95,7 @@ class Core {
 		}
 		return null;
 	}
-	protected _getVendors() {
+	private _getVendors() {
 		var vendors: string[] = "ms,moz,webkit,o".split(",");
 		if (!window.requestAnimationFrame) {
 			var vendor;
