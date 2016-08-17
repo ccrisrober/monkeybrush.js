@@ -386,15 +386,26 @@ declare class PointLight extends Light {
     position: Float32Array;
     addTransform(x?: number, y?: number, z?: number): void;
 }
+declare class CubeMapTexture extends Texture {
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    protected finished: boolean;
+    constructor(options?: {});
+    addImage(i: number, data: any): void;
+    bind(slot?: number): void;
+    unbind(): void;
+    destroy(): void;
+    finishTex(): void;
+}
 declare class Skybox {
     constructor(dir: string);
     render(view: Float32Array, projection: Float32Array): void;
     destroy(): void;
-    protected skyboxVAO: any;
     protected skyboxVBO: WebGLBuffer;
-    protected cubeMapTexture: WebGLTexture;
-    protected ss: ShaderProgram;
-    protected model: Float32Array;
+    protected _prog: ShaderProgram;
+    protected cubeMapTexture: CubeMapTexture;
     protected _loadCubemap(faces: Array<string>): void;
 }
 declare var skybox: Skybox;

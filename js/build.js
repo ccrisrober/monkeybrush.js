@@ -1606,9 +1606,54 @@ var PointLight = (function (_super) {
     };
     return PointLight;
 })(Light);
+/// <reference path="texture.ts" />
+// TODO: Es necesario realmente el tamaño??
+var CubeMapTexture = (function (_super) {
+    __extends(CubeMapTexture, _super);
+    function CubeMapTexture(options) {
+        if (options === void 0) { options = {}; }
+        var gl = Core.getInstance().getGL();
+        _super.call(this, gl.TEXTURE_CUBE_MAP);
+        options = options || {};
+        console.log(this.target);
+        this.finished = false;
+        this._handle = gl.createTexture();
+    }
+    CubeMapTexture.prototype.addImage = function (i, data) {
+        var gl = Core.getInstance().getGL();
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    };
+    CubeMapTexture.prototype.bind = function (slot) {
+        var gl = Core.getInstance().getGL();
+        if (typeof slot === "number") {
+            gl.activeTexture(gl.TEXTURE0 + slot);
+        }
+        gl.bindTexture(this.target, this._handle);
+    };
+    CubeMapTexture.prototype.unbind = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindTexture(this.target, null);
+    };
+    CubeMapTexture.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        gl.deleteTexture(this._handle);
+        this._handle = null;
+    };
+    CubeMapTexture.prototype.finishTex = function () {
+        var gl = Core.getInstance().getGL();
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+        this.finished = true;
+    };
+    return CubeMapTexture;
+})(Texture);
 /// <reference path="../core/core.ts" />
 /// <reference path="../core/shaderProgram.ts" />
-/// <reference path="../textures/texture.ts" />
+/// <reference path="resourceMap.ts" />
+/// <reference path="../textures/cubemapTexture.ts" />
 /// <reference path="../gl-matrix.d.ts" />
 var Skybox = (function () {
     function Skybox(dir) {
@@ -1621,13 +1666,13 @@ var Skybox = (function () {
         faces.push(dir + "/back.jpg");
         faces.push(dir + "/front.jpg");
         var gl = Core.getInstance().getGL();
-        this.ss = new ShaderProgram();
+        this._prog = new ShaderProgram();
         var vs = "#version 300 es\n    \tprecision highp float;\n\t\tlayout (location = 0) in vec3 position;\n\t\tout vec3 TexCoords;\n\t\tuniform mat4 projection;\n\t\tuniform mat4 view;\n\t\tvoid main() {\n\t\t\tvec4 pos = projection * view * vec4(position, 1.0);\n\t\t\tgl_Position = pos.xyww;\n\t\t\tTexCoords = position;\n\t\t}";
-        this.ss.addShader(vs, shader_type.vertex, mode.read_text);
+        this._prog.addShader(vs, shader_type.vertex, mode.read_text);
         var fg = "#version 300 es\n    \tprecision highp float;\n\t\tin vec3 TexCoords;\n\t\tout vec4 color;\n\t\tuniform samplerCube skybox;\n\t\tvoid main() { \n\t\t\tcolor = texture(skybox, TexCoords);\n\t\t}";
-        this.ss.addShader(fg, shader_type.fragment, mode.read_text);
-        this.ss.compile();
-        this.ss.addUniforms(["view", "projection"]);
+        this._prog.addShader(fg, shader_type.fragment, mode.read_text);
+        this._prog.compile();
+        this._prog.addUniforms(["view", "projection"]);
         var skyboxVertices = new Float32Array([
             // Positions          
             -1.0, 1.0, -1.0,
@@ -1667,21 +1712,17 @@ var Skybox = (function () {
             -1.0, -1.0, 1.0,
             1.0, -1.0, 1.0
         ]);
-        // Setup vertex vao
-        //this.skyboxVAO = (<any>gl).createVertexArray();
         this.skyboxVBO = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.skyboxVBO);
         gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
-        //(<any>gl).bindVertexArray(null);
         this._loadCubemap(faces);
     }
     Skybox.prototype.render = function (view, projection) {
         var gl = Core.getInstance().getGL();
         gl.depthFunc(gl.LEQUAL);
-        this.ss.use();
-        // get projection and view from camera and send it to ss
+        this._prog.use();
         var auxView = mat3.create();
         auxView = mat3.fromMat4(auxView, view);
         // Remove any translation
@@ -1691,37 +1732,25 @@ var Skybox = (function () {
             auxView[6], auxView[7], auxView[8], 0.0,
             0.0, 0.0, 0.0, 0.0
         ]);
-        this.ss.sendUniformMat4("view", auxView);
-        this.ss.sendUniformMat4("projection", projection);
-        //(<any>gl).bindVertexArray(this.skyboxVAO);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubeMapTexture);
+        this._prog.sendUniformMat4("view", auxView);
+        this._prog.sendUniformMat4("projection", projection);
+        this.cubeMapTexture.bind(0);
         gl.drawArrays(gl.TRIANGLES, 0, 36);
-        //(<any>gl).bindVertexArray(null);
         gl.depthFunc(gl.LESS);
     };
     Skybox.prototype.destroy = function () {
         var gl = Core.getInstance().getGL();
-        //gl.bindVertexArray(0);
-        //gl.deleteVertexArrays(this.skyboxVAO);
-        gl.deleteTexture(this.cubeMapTexture);
+        this.cubeMapTexture.destroy();
     };
-    //protected textures: Array<Texture2D> = new Array(6);
-    //protected tex: Texture;
     Skybox.prototype._loadCubemap = function (faces) {
-        var gl = Core.getInstance().getGL();
-        this.cubeMapTexture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubeMapTexture);
+        this.cubeMapTexture = new CubeMapTexture();
+        this.cubeMapTexture.bind();
         faces.forEach(function (face, i) {
             var img = ResourceMap.retrieveAsset(face);
-            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        });
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+            this.cubeMapTexture.addImage(i, img);
+        }.bind(this));
+        this.cubeMapTexture.finishTex();
+        this.cubeMapTexture.unbind();
     };
     return Skybox;
 })();
