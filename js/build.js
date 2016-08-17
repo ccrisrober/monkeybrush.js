@@ -1727,6 +1727,7 @@ var PointLight = (function (_super) {
 /// <reference path="models/torus.ts" />
 /// <reference path="core/model.ts" />
 /// <reference path="textures/texture2d.ts" />
+/// <reference path="core/gbuffer.ts" />
 /// <reference path="core/postprocess.ts" />
 /// <reference path="extras/timer.ts" />
 /// <reference path="lights/pointLight.ts" />
@@ -1736,9 +1737,10 @@ var camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
 var stats = new Stats();
 stats.setMode(0);
 document.body.appendChild(stats.domElement);
+var deferred;
 var SimpleConfig = function () {
     return {
-        max: 25
+        max: 10
     };
 };
 var gui;
@@ -1756,9 +1758,27 @@ var text = SimpleConfig();
 function loadAssets() {
     myImageLoader("crystal.jpg");
 }
+var mainShader = "prepass";
 function initialize() {
     torito = new Torus(3.7, 2.3, 25, 10);
     m = new Model("teddy.json");
+    var canvas = Core.getInstance().canvas();
+    deferred = new GBuffer(new Vector2(canvas.width, canvas.height));
+    ShaderManager.addWithFun("prepass", function () {
+        var prog = new ShaderProgram();
+        prog.addShader("./shaders/gBufferShader.vert", shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/gBufferShader.frag", shader_type.fragment, mode.read_file);
+        prog.compile();
+        prog.addUniforms(["projection", "view", "model", "normalMatrix"]);
+        return prog;
+    });
+    ShaderManager.addWithFun("postpass", function () {
+        var prog = new ShaderProgram();
+        prog.addShader("./shaders/postprocessShader.vert", shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/postprocessShader.frag", shader_type.fragment, mode.read_file);
+        prog.compile();
+        return prog;
+    });
     ShaderManager.addWithFun("prog", function () {
         var prog = new ShaderProgram();
         prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
@@ -1771,9 +1791,15 @@ function initialize() {
     ShaderManager.addWithFun("pp", function () {
         var prog = new ShaderProgram();
         prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 texCoord;\n            void main(void) {\n                texCoord = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", shader_type.vertex, mode.read_text);
-        prog.addShader("#version 300 es\n            precision highp float;\n            /*uniform sampler2D dataTexture;*/\n\n            out vec4 fragColor;\n            in vec2 texCoord;\n\n            uniform float time;\n\n            void main() {\n                fragColor = vec4(texCoord, 0.0, 1.0);\n                fragColor.rgb = vec3(cos(time), 0.0, 1.0);\n            }", shader_type.fragment, mode.read_text);
+        prog.addShader("#version 300 es\n            precision highp float;\n            uniform sampler2D gPosition;\n            uniform sampler2D gNormal;\n            uniform sampler2D gAlbedoSpec;\n\n            out vec4 fragColor;\n            in vec2 texCoord;\n\n            uniform float time;\n\n            void main() {\n                vec3 outPosition = texture(gPosition, texCoord).rgb;\n                vec3 outNormal = texture(gNormal, texCoord).rgb;\n                vec4 AlbedoSpec = texture(gAlbedoSpec, texCoord);\n\n                \n                if (outNormal == vec3(0.0, 0.0, 0.0)){ discard; } \n\n                vec3 ambColor = vec3(0.24725, 0.1995, 0.0745);\n                vec3 objectColor = AlbedoSpec.rgb;\n                vec3 specColor = vec3(0.628281, 0.555802, 0.366065);\n                float shininess = 0.4;\n                vec3 lightPosition = vec3(1.0);\n\n                vec3 lightColor = vec3(0.0, 0.0, 1.0);\n\n                vec3 ambient = ambColor * lightColor;\n\n                // Diffuse \n                vec3 norm = normalize(outNormal);\n                vec3 lightDir = normalize(lightPosition - outPosition);\n                float diff = max(dot(norm, lightDir), 0.0);\n                vec3 diffuse = diff * lightColor;\n\n                // Attenuation\n                float dist    = length(lightPosition - outPosition);\n\n                float constant = 1.0;\n                float linear = 0.14;\n                float quadratic = 0.07;\n\n                float attenuation = 1.0 / (constant + linear * dist + quadratic * (dist * dist));    \n\n                attenuation = 1.0;\n\n                vec3 color = ((ambient + diffuse) * attenuation) * objectColor;\n\n\n                fragColor = vec4(color.rgb, 1.0);\n            }", shader_type.fragment, mode.read_text);
         prog.compile();
         prog.addUniforms(["time"]);
+        prog.addUniforms(["gPosition", "gNormal", "gAlbedoSpec"]);
+        prog.use();
+        prog.sendUniform1i("gPosition", 0);
+        prog.sendUniform1i("gNormal", 1);
+        prog.sendUniform1i("gAlbedoSpec", 2);
+        console.log(prog.uniformLocations);
         return prog;
     });
     var prog = ShaderManager.get("prog");
@@ -1792,7 +1818,7 @@ function cameraUpdateCb() {
     var canvas = Core.getInstance().canvas();
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(canvas.width, canvas.height);
-    var prog = ShaderManager.get("prog");
+    var prog = ShaderManager.get(mainShader);
     prog.use();
     prog.sendUniformMat4("view", view);
     prog.sendUniformMat4("projection", projection);
@@ -1803,22 +1829,19 @@ function drawScene(dt) {
     var gl = Core.getInstance().getGL();
     camera.timeElapsed = Timer.deltaTime() / 10.0;
     camera.update(cameraUpdateCb);
+    deferred.bindForWriting();
     Core.getInstance().clearColorAndDepth();
-    /**/
+    /*
     gl.depthMask(false);
     var prog2 = ShaderManager.get("pp");
     prog2.use();
     prog2.sendUniform1f("time", dt);
     PostProcess.render();
     gl.depthMask(true);
-    /**/
-    var prog = ShaderManager.get("prog");
+    */
+    var prog = ShaderManager.get(mainShader);
     prog.use();
-    prog.sendUniformVec3("lightPosition", light.position);
     angle += Timer.deltaTime() * 0.001;
-    // console.log(angle);
-    tex2d.bind(0);
-    prog.sendUniform1i("texSampler", 0);
     var varvar = text.max;
     var i = 0, j = 0, k = 0;
     var dd = -1;
@@ -1835,6 +1858,11 @@ function drawScene(dt) {
             }
         }
     }
+    deferred.bindForReading();
+    Core.getInstance().clearColorAndDepth();
+    var prog2 = ShaderManager.get("pp");
+    prog2.use();
+    PostProcess.render();
 }
 // ============================================================================================ //
 // ============================================================================================ //
@@ -1862,7 +1890,7 @@ function myImageLoader(src) {
 }
 ;
 window.onload = function () {
-    Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
+    Core.getInstance().initialize([0.0, 1.0, 0.0, 1.0]);
     if (Object.keys(text).length > 0) {
         gui = new dat.GUI();
         /*for (var index in text) {
@@ -1894,7 +1922,7 @@ function loop(dt) {
     stats.begin();
     dt *= 0.001; // convert to seconds
     Timer.update();
-    resize();
+    //resize();
     drawScene(dt); // Draw user function
     stats.end();
     requestAnimationFrame(loop);

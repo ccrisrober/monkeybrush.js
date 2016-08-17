@@ -8,6 +8,7 @@
 /// <reference path="core/model.ts" />
 /// <reference path="textures/texture2d.ts" />
 
+/// <reference path="core/gbuffer.ts" />
 /// <reference path="core/postprocess.ts" />
 /// <reference path="extras/timer.ts" />
 
@@ -21,9 +22,11 @@ let stats: Stats = new Stats();
 stats.setMode(0);
 document.body.appendChild(stats.domElement);
 
+let deferred: GBuffer;
+
 let SimpleConfig = function() {
 	return {
-        max: 25
+        max: 10
     };
 };
 let gui: dat.GUI;
@@ -47,9 +50,36 @@ function loadAssets() {
     myImageLoader("crystal.jpg");
 }
 
+const mainShader: string = "prepass";
+
 function initialize() {
     torito = new Torus(3.7, 2.3, 25, 10);
     m = new Model("teddy.json");
+
+    let canvas: HTMLCanvasElement = Core.getInstance().canvas();
+    deferred = new GBuffer(new Vector2<number>(
+        canvas.width,
+        canvas.height
+    ));
+
+    ShaderManager.addWithFun("prepass", (): ShaderProgram => {
+        let prog: ShaderProgram = new ShaderProgram();
+        prog.addShader("./shaders/gBufferShader.vert", shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/gBufferShader.frag", shader_type.fragment, mode.read_file);
+        prog.compile();
+
+        prog.addUniforms(["projection", "view", "model", "normalMatrix"]);
+
+        return prog;
+    });
+    ShaderManager.addWithFun("postpass", (): ShaderProgram => {
+        let prog: ShaderProgram = new ShaderProgram();
+        prog.addShader("./shaders/postprocessShader.vert", shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/postprocessShader.frag", shader_type.fragment, mode.read_file);
+        prog.compile();
+
+        return prog;
+    });
 
     ShaderManager.addWithFun("prog", (): ShaderProgram => {
         let prog: ShaderProgram = new ShaderProgram();
@@ -74,7 +104,9 @@ function initialize() {
             }`, shader_type.vertex, mode.read_text);
         prog.addShader(`#version 300 es
             precision highp float;
-            /*uniform sampler2D dataTexture;*/
+            uniform sampler2D gPosition;
+            uniform sampler2D gNormal;
+            uniform sampler2D gAlbedoSpec;
 
             out vec4 fragColor;
             in vec2 texCoord;
@@ -82,12 +114,56 @@ function initialize() {
             uniform float time;
 
             void main() {
-                fragColor = vec4(texCoord, 0.0, 1.0);
-                fragColor.rgb = vec3(cos(time), 0.0, 1.0);
+                vec3 outPosition = texture(gPosition, texCoord).rgb;
+                vec3 outNormal = texture(gNormal, texCoord).rgb;
+                vec4 AlbedoSpec = texture(gAlbedoSpec, texCoord);
+
+                
+                if (outNormal == vec3(0.0, 0.0, 0.0)){ discard; } 
+
+                vec3 ambColor = vec3(0.24725, 0.1995, 0.0745);
+                vec3 objectColor = AlbedoSpec.rgb;
+                vec3 specColor = vec3(0.628281, 0.555802, 0.366065);
+                float shininess = 0.4;
+                vec3 lightPosition = vec3(1.0);
+
+                vec3 lightColor = vec3(0.0, 0.0, 1.0);
+
+                vec3 ambient = ambColor * lightColor;
+
+                // Diffuse 
+                vec3 norm = normalize(outNormal);
+                vec3 lightDir = normalize(lightPosition - outPosition);
+                float diff = max(dot(norm, lightDir), 0.0);
+                vec3 diffuse = diff * lightColor;
+
+                // Attenuation
+                float dist    = length(lightPosition - outPosition);
+
+                float constant = 1.0;
+                float linear = 0.14;
+                float quadratic = 0.07;
+
+                float attenuation = 1.0 / (constant + linear * dist + quadratic * (dist * dist));    
+
+                attenuation = 1.0;
+
+                vec3 color = ((ambient + diffuse) * attenuation) * objectColor;
+
+
+                fragColor = vec4(color.rgb, 1.0);
             }`, shader_type.fragment, mode.read_text);
         prog.compile();
 
         prog.addUniforms(["time"]);
+        prog.addUniforms(["gPosition", "gNormal", "gAlbedoSpec"]);
+
+        prog.use();
+
+        prog.sendUniform1i("gPosition", 0);
+        prog.sendUniform1i("gNormal", 1);
+        prog.sendUniform1i("gAlbedoSpec", 2);
+        console.log(prog.uniformLocations);
         return prog;
     });
 
@@ -112,7 +188,7 @@ function cameraUpdateCb() {
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(canvas.width, canvas.height);
 
-    let prog = ShaderManager.get("prog");
+    let prog = ShaderManager.get(mainShader);
     prog.use();
     prog.sendUniformMat4("view", view);
     prog.sendUniformMat4("projection", projection);
@@ -126,27 +202,23 @@ function drawScene(dt: number) {
 
     camera.update(cameraUpdateCb);
 
+    deferred.bindForWriting();
+
     Core.getInstance().clearColorAndDepth();
 
-    /**/
+    /*
     gl.depthMask(false);
-    let prog2 = ShaderManager.get("pp");
+    var prog2 = ShaderManager.get("pp");
     prog2.use();
     prog2.sendUniform1f("time", dt);
     PostProcess.render();
     gl.depthMask(true);
-    /**/
+    */
 
-    const prog = ShaderManager.get("prog");
+    const prog = ShaderManager.get(mainShader);
     prog.use();
 
-    prog.sendUniformVec3("lightPosition", light.position);
-
     angle += Timer.deltaTime() * 0.001;
-    // console.log(angle);
-
-    tex2d.bind(0);
-    prog.sendUniform1i("texSampler", 0);
 
     let varvar = text.max;
     let i = 0, j = 0, k = 0;
@@ -166,6 +238,11 @@ function drawScene(dt: number) {
             }
         }
     }
+    deferred.bindForReading();
+    Core.getInstance().clearColorAndDepth();
+    var prog2 = ShaderManager.get("pp");
+    prog2.use();
+    PostProcess.render();
 }
 
 // ============================================================================================ //
@@ -194,7 +271,7 @@ function myImageLoader(src) {
 };
 
 window.onload = () => {
-    Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
+    Core.getInstance().initialize([0.0, 1.0, 0.0, 1.0]);
 
 
     if (Object.keys(text).length > 0) {
@@ -239,7 +316,7 @@ function loop(dt: number) {
     Timer.update();
     
 
-    resize();
+    //resize();
 	
 
     drawScene(dt);    // Draw user function

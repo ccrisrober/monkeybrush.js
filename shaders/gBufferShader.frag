@@ -10,8 +10,10 @@ in vec3 outNormal;
 in vec2 texCoords;
 
 void main() {
+	vec3 color = vec3(1.0, 1.0, 1.0);
+
 	gPosition = outPosition;
 	gNormal = normalize(outNormal);
-	gAlbedoSpec.rgb = vec3(1.0, 0.0, 0.0);
+	gAlbedoSpec.rgb = color;
 	gAlbedoSpec.a = 1.0;
 }

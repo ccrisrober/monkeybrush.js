@@ -14,6 +14,7 @@
 - [ ] Add texture 3D
 - [ ] Add framebuffer
 - [ ] Float texture (gl.getExtension("OES_texture_float_linear");)
+- [ ] Create "shadertoy" for desktop
 
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt

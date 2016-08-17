@@ -35,8 +35,8 @@ class PostProcess {
 	    (<any>gl).bindVertexArray(null);  
 	}
 
-	static _planeVAO: any = null; // TODO: WebGLVertexArrayObject
-	static _planeVertexVBO: WebGLBuffer = null;
+	protected static _planeVAO: any = null; // TODO: WebGLVertexArrayObject
+	protected static _planeVertexVBO: WebGLBuffer = null;
 }
 
 PostProcess.initialize();

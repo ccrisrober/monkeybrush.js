@@ -243,8 +243,8 @@ declare class PostProcess {
     static initialize(): void;
     static bind(): void;
     static render(): void;
-    static _planeVAO: any;
-    static _planeVertexVBO: WebGLBuffer;
+    protected static _planeVAO: any;
+    protected static _planeVertexVBO: WebGLBuffer;
 }
 declare abstract class Scene {
     abstract initScene(): any;
@@ -390,6 +390,7 @@ declare class PointLight extends Light {
 }
 declare let camera: Camera;
 declare let stats: Stats;
+declare let deferred: GBuffer;
 declare let SimpleConfig: () => {
     max: number;
 };
@@ -407,6 +408,7 @@ declare let text: {
     max: number;
 };
 declare function loadAssets(): void;
+declare const mainShader: string;
 declare function initialize(): void;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
