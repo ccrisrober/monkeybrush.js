@@ -15,6 +15,7 @@
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
 /// <reference path="resources/skybox.ts" />
+/// <reference path="core/gbuffer.ts" />
 
 
 Element.prototype.remove = function() {
@@ -61,6 +62,8 @@ function loadAssets() {
 function initialize() {
     torito = new Torus(3.7, 2.3, 25, 10);
     m = new Model("teddy.json");
+
+    var gb = new GBuffer(new vector2<number>(100.0, 100.0));
 
     ShaderManager.addWithFun("prog", (): ShaderProgram => {
         var prog: ShaderProgram = new ShaderProgram();
@@ -256,8 +259,12 @@ function loop(dt: number) {
     dt *= 0.001; // convert to seconds
 
     timer.update();
-    //resize();
-	drawScene(dt);    // User cliet
+    
+
+    resize();
+	
+
+    drawScene(dt);    // User cliet
 
 	stats.end();
 	requestAnimationFrame(loop);

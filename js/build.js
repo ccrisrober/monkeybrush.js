@@ -862,6 +862,111 @@ var Framebuffer = (function () {
     };
     return Framebuffer;
 })();
+/// <reference path="../extras/vector2.ts" />
+/// <reference path="core.ts" />
+var gbuffer_type;
+(function (gbuffer_type) {
+    gbuffer_type[gbuffer_type["position"] = 0] = "position";
+    gbuffer_type[gbuffer_type["normal"] = 1] = "normal";
+    gbuffer_type[gbuffer_type["diffuse"] = 2] = "diffuse";
+    gbuffer_type[gbuffer_type["num_textures"] = 3] = "num_textures";
+})(gbuffer_type || (gbuffer_type = {}));
+var GBuffer = (function () {
+    function GBuffer(size) {
+        var gl = Core.getInstance().getGL();
+        this._textures = new Array(3);
+        this._fbo = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._fbo);
+        for (var i = 0; i < gbuffer_type.num_textures; ++i) {
+            this._textures[i] = gl.createTexture();
+        }
+        var width = size.x;
+        var height = size.y;
+        // Position color buffer
+        gl.bindTexture(gl.TEXTURE_2D, this._textures[gbuffer_type.position]);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textures[gbuffer_type.position], 0);
+        // Normal color buffer
+        gl.bindTexture(gl.TEXTURE_2D, this._textures[gbuffer_type.normal]);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        /**
+        gl.texImage2D(gl.TEXTURE_2D, 0, (<any>gl).RGB16F, width, height, 0,
+            gl.RGB, gl.FLOAT, null);
+        /**/
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.FLOAT, null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, this._textures[gbuffer_type.normal], 0);
+        // Color + Specular color buffer
+        gl.bindTexture(gl.TEXTURE_2D, this._textures[gbuffer_type.diffuse]);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT2, gl.TEXTURE_2D, this._textures[gbuffer_type.diffuse], 0);
+        // create a renderbuffer object to store depth info
+        this._depthTexture = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthTexture);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthTexture);
+        gl.drawBuffers([
+            gl.COLOR_ATTACHMENT0,
+            gl.COLOR_ATTACHMENT1,
+            gl.COLOR_ATTACHMENT2
+        ]);
+        var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        if (status != gl.FRAMEBUFFER_COMPLETE) {
+            //console.log(`Framebuffer error. Status: ${status}`);
+            switch (status) {
+                case gl.FRAMEBUFFER_UNSUPPORTED:
+                    throw new Error('framebuffer: Framebuffer unsupported');
+                case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                    throw new Error('framebuffer: Framebuffer incomplete attachment');
+                case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+                    throw new Error('framebuffer: Framebuffer incomplete dimensions');
+                case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                    throw new Error('framebuffer: Framebuffer incomplete missing attachment');
+                default:
+                    throw new Error('framebuffer: Framebuffer failed for unspecified reason');
+            }
+        }
+        console.log("done");
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+    GBuffer.prototype.bindForReading = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        for (var i = 0; i < gbuffer_type.num_textures; ++i) {
+            gl.activeTexture(gl.TEXTURE0 + i);
+            gl.bindTexture(gl.TEXTURE_2D, this._textures[i]);
+        }
+    };
+    GBuffer.prototype.bindForWriting = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._fbo);
+    };
+    GBuffer.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        if (this._fbo) {
+            gl.deleteFramebuffer(this._fbo);
+        }
+        if (this._textures) {
+            for (var i = 0; i < gbuffer_type.num_textures; ++i) {
+                if (this._textures[i]) {
+                    gl.deleteTexture(this._textures[i]);
+                }
+            }
+        }
+        if (this._depthTexture) {
+            gl.deleteRenderbuffer(this._depthTexture);
+        }
+    };
+    return GBuffer;
+})();
 /// <reference path="core.ts" />
 "use strict";
 var Model = (function () {
@@ -1617,6 +1722,8 @@ var CubeMapTexture = (function (_super) {
         options = options || {};
         console.log(this.target);
         this.finished = false;
+        // TODO: Faltan todo el tema de filtrados o wrap de las opciones 
+        // que me he saltado por falta de tiempo :(
         this._handle = gl.createTexture();
     }
     CubeMapTexture.prototype.addImage = function (i, data) {
@@ -1769,6 +1876,7 @@ var Skybox = (function () {
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
 /// <reference path="resources/skybox.ts" />
+/// <reference path="core/gbuffer.ts" />
 Element.prototype.remove = function () {
     this.parentElement.removeChild(this);
 };
@@ -1805,6 +1913,7 @@ function loadAssets() {
 function initialize() {
     torito = new Torus(3.7, 2.3, 25, 10);
     m = new Model("teddy.json");
+    var gb = new GBuffer(new vector2(100.0, 100.0));
     ShaderManager.addWithFun("prog", function () {
         var prog = new ShaderProgram();
         prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
@@ -1943,7 +2052,7 @@ function loop(dt) {
     stats.begin();
     dt *= 0.001; // convert to seconds
     timer.update();
-    //resize();
+    resize();
     drawScene(dt); // User cliet
     stats.end();
     requestAnimationFrame(loop);

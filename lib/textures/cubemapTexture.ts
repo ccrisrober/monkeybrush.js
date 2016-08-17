@@ -18,7 +18,8 @@ class CubeMapTexture extends Texture {
 
 		this.finished = false;
 
-
+		// TODO: Faltan todo el tema de filtrados o wrap de las opciones 
+			// que me he saltado por falta de tiempo :(
 		this._handle = gl.createTexture();
 	}
 	public addImage(i: number, data) {

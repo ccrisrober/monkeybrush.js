@@ -208,6 +208,21 @@ declare class Framebuffer {
     destroy(): void;
     protected createRenderBuffer(size: vector2<number>, format: number, attachment: number): WebGLRenderbuffer;
 }
+declare enum gbuffer_type {
+    position = 0,
+    normal = 1,
+    diffuse = 2,
+    num_textures = 3,
+}
+declare class GBuffer {
+    protected _fbo: WebGLFramebuffer;
+    protected _depthTexture: any;
+    protected _textures: Array<WebGLTexture>;
+    constructor(size: vector2<number>);
+    bindForReading(): void;
+    bindForWriting(): void;
+    destroy(): void;
+}
 declare class Model {
     indices: any;
     vao: any;
