@@ -1,21 +1,21 @@
 /// <reference path="texture.ts" />
-/// <reference path="../extras/vector3.ts" />
+/// <reference path="../extras/Vector3.ts" />
 
 class Texture3D extends Texture {
-	constructor(data, size: vector3<number>, options = {}) {
-		var gl = Core.getInstance().getGL();
+	constructor (data, size: Vector3<number>, options = {}) {
+		const gl = Core.getInstance().getGL();
 		super((<any>gl).TEXTURE_3D);
 		options = options || {};
 
 		console.log(this.target);
 
-		var compressed = options["compressed"] === true;
+		let compressed = options["compressed"] === true;
 		
-		var _internalformat = options["internalformat"] || gl.RGBA;
-		var _format = options["format"] || gl.RGBA;
-		var _type = options["type"] || gl.UNSIGNED_BYTE;
+		let _internalformat = options["internalformat"] || gl.RGBA;
+		let _format = options["format"] || gl.RGBA;
+		let _type = options["type"] || gl.UNSIGNED_BYTE;
 
-		if(compressed) {
+		if (compressed) {
       		/*gl.compressedTexImage3D(
       			this.target,
 				0,  // level
@@ -41,8 +41,8 @@ class Texture3D extends Texture {
 		}
 	}
 	public bind(slot?: number) {
-		var gl = Core.getInstance().getGL();
-		if(typeof slot === "number") {
+		const gl = Core.getInstance().getGL();
+		if (typeof slot === "number") {
 			gl.activeTexture(gl.TEXTURE0 + slot);
 		}
 		gl.bindTexture(this.target, this._handle);

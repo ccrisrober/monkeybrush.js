@@ -1,8 +1,8 @@
-module timer {
-    var _lastTime = Date.now();
-    var _deltaTime = 0.0;
+namespace Timer {
+    let _lastTime = Date.now();
+    let _deltaTime = 0.0;
 
-    var _currentTime, _timeElapsed;
+    let _currentTime, _timeElapsed;
     export function update() {
         _currentTime = Date.now();
         _timeElapsed = _currentTime - _lastTime;

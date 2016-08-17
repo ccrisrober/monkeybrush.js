@@ -1,14 +1,14 @@
 "use strict";
 declare var VanillaToasts: any;
-module ResourceMap {
+namespace ResourceMap {
     export class MapEntry {
-        public _asset : string;
-        public _refCount : number;
+        public _asset: string;
+        public _refCount: number;
         constructor(resName: string) {
             this._asset = resName;
             this._refCount = 1;
         }
-        public getAsset() : string { return this._asset; }
+        public getAsset(): string { return this._asset; }
         public setAsset(name: string) {
             this._asset = name;
         }
@@ -22,11 +22,11 @@ module ResourceMap {
             this._refCount--;
         }
     }
-    var _numOutstandingLoads: number = 0;
+    let _numOutstandingLoads: number = 0;
 
-    var _loadCompleteCallback: Function = null;
+    let _loadCompleteCallback: Function = null;
 
-    var _resourceMap: { [ key:string ] : MapEntry; } = {};
+    let _resourceMap: { [ key: string ]: MapEntry; } = {};
 
     export function asyncLoadRequested(resName: string) {
         _resourceMap[resName] = new MapEntry(resName);
@@ -36,7 +36,7 @@ module ResourceMap {
     export function asyncLoadFailed(resName: string) {
         VanillaToasts.create({
             title: `${resName} completed`,
-            type: 'error',
+            type: "error",
             timeout: 2500
         });
         --_numOutstandingLoads;
@@ -47,13 +47,13 @@ module ResourceMap {
         if (!isAssetLoaded(resName)) {
             VanillaToasts.create({
                 title: `asyncLoadCompleted: [${resName}] not in map!`,
-                type: 'error',
+                type: "error",
                 timeout: 2500
             });
         }
         VanillaToasts.create({
             title: `${resName} completed`,
-            type: 'success',
+            type: "success",
             timeout: 1500
         });
         _resourceMap[resName].setAsset(loadedAsset);
@@ -61,9 +61,9 @@ module ResourceMap {
         _checkForAllLoadCompleted();
     };
 
-    var _checkForAllLoadCompleted = function () {
+    function _checkForAllLoadCompleted() {
         if ((_numOutstandingLoads === 0) && (_loadCompleteCallback !== null)) {
-            var funToCall = _loadCompleteCallback;
+            let funToCall = _loadCompleteCallback;
             _loadCompleteCallback = null;
             funToCall();
         }
@@ -75,7 +75,7 @@ module ResourceMap {
     };
 
     export function retrieveAsset(resName: string) {
-        var r = null;
+        let r = null;
         if (resName in _resourceMap) {
             r = _resourceMap[resName].getAsset();
         } else {
@@ -93,7 +93,7 @@ module ResourceMap {
     };
 
     export function unloadAsset (resName: string) {
-        var c = 0;
+        let c = 0;
         if (resName in _resourceMap) {
             _resourceMap[resName].decCount();
             c = _resourceMap[resName].count();

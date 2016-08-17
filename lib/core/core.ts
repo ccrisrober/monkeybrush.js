@@ -11,20 +11,18 @@
 class Core {
 	private static _instance: Core = new Core();
 
-	private _gl : WebGLRenderingContext;
+	private _gl: WebGLRenderingContext;
 
 	constructor() {
-		if(Core._instance) {
+		if (Core._instance) {
 			throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
 		}
-		//var canvas = <HTMLCanvasElement>document.getElementById("canvas");
-		
-		var canvas = document.createElement('canvas');
+		// var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+		let canvas = document.createElement("canvas");
 		canvas.width = 800;
 		canvas.height = 800;
 
 		document.body.appendChild(canvas);
-
 
 		/**
 		canvas.addEventListener("mouseup", function(ev: MouseEvent) {
@@ -42,10 +40,8 @@ class Core {
 		}, false);
 		/**/
 
-
-
 		this._gl = this._getContext(canvas);
-		if(!this._gl) {
+		if (!this._gl) {
 			document.write("<br><b>WebGL is not supported!</b>");
 			return;
 		}
@@ -56,8 +52,8 @@ class Core {
 	}
 
 	public initialize(color: Array<number>) {
-		var gl = this._gl;
-		//ToneMap.init(gl);
+		const gl = this._gl;
+		// ToneMap.init(gl);
 		gl.clearColor(color[0], color[1], color[2], color[3]);
 	}
 
@@ -71,14 +67,14 @@ class Core {
 		return this._gl.canvas;
 	}
 	protected init() {
-		var gl = this._gl;
+		const gl = this._gl;
 
 		gl.enable(gl.DEPTH_TEST);
 		gl.depthFunc(gl.LESS);
-		//gl.depthFunc(gl.LEQUAL);
+		// gl.depthFunc(gl.LEQUAL);
 
 		// Set images to flip y axis to match the texture coordinate space.
-		//gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+		// gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
 		gl.enable(gl.CULL_FACE);
 		gl.disable(gl.BLEND);
@@ -87,7 +83,7 @@ class Core {
 		Input.getInstance();
 	}
 
-	public static getInstance() : Core {
+	public static getInstance(): Core {
 		return Core._instance;
 	}
 
@@ -97,15 +93,15 @@ class Core {
 	* @method getGL
 	* @return {WebGLRenderingContext} Returns WebGL rendering context
 	*/
-	public getGL() : WebGLRenderingContext {
+	public getGL(): WebGLRenderingContext {
 		return this._gl;
 	}
 
 	protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
-		var contexts: string[] = "webgl2,experimental-webgl2".split(",");
-		var gl: WebGLRenderingContext;
-		var ctx;
-		for (var i = 0; i < contexts.length; i++) {
+		let contexts: string[] = "webgl2,experimental-webgl2".split(",");
+		let gl: WebGLRenderingContext;
+		let ctx;
+		for (let i = 0; i < contexts.length; i++) {
 			ctx = contexts[i];
 			gl = <WebGLRenderingContext>canvas.getContext(contexts[i]);
 			if (gl) {
@@ -115,19 +111,17 @@ class Core {
 		return null;
 	}
 	private _getVendors() {
-		var vendors: string[] = "ms,moz,webkit,o".split(",");
+		let vendors: string[] = "ms,moz,webkit,o".split(",");
 		if (!window.requestAnimationFrame) {
-			var vendor;
-			for (var i = 0; i < vendors.length; i++) {
+			let vendor;
+			for (let i = 0; i < vendors.length; i++) {
 				vendor = vendors[i];
-				window.requestAnimationFrame = window[vendor + 'RequestAnimationFrame'];
-				window.cancelAnimationFrame = window[vendor + 'CancelAnimationFrame'] || window[vendor + 'CancelRequestAnimationFrame'];
+				window.requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
+				window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];
 				if (window.requestAnimationFrame) {
 					break;
 				}
 			}
 		}
 	}
-
-	
 }

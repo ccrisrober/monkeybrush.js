@@ -12,7 +12,7 @@ abstract class Scene {
 		this._animate = value;
 	}
 
-	public animating() : boolean {
+	public animating(): boolean {
 		return this._animate;
 	}
 

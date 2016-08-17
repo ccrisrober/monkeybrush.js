@@ -4,9 +4,9 @@ class Cube extends Drawable {
 	protected _handle: Array<WebGLBuffer>;
 	constructor(side: number = 1.0) {
 		super();
-	    var side2 = side / 2.0;
+	    const side2 = side / 2.0;
 
-	    var v = [
+	    let v = [
 	        // Front
 	       -side2, -side2, side2,
 	        side2, -side2, side2,
@@ -39,7 +39,7 @@ class Cube extends Drawable {
 	       -side2,  side2, -side2
 	    ];
 
-	    var n = [
+	    let n = [
 	        // Front
 	        0.0, 0.0, 1.0,
 	        0.0, 0.0, 1.0,
@@ -72,7 +72,7 @@ class Cube extends Drawable {
 	        0.0, 1.0, 0.0
 	    ];
 
-	    var tex = [
+	    let tex = [
 	        // Front
 	        0.0, 0.0,
 	        1.0, 0.0,
@@ -105,19 +105,19 @@ class Cube extends Drawable {
 	        0.0, 1.0
 	    ];
 
-	    var el = [
-	        0,1,2,0,2,3,
-	        4,5,6,4,6,7,
-	        8,9,10,8,10,11,
-	        12,13,14,12,14,15,
-	        16,17,18,16,18,19,
-	        20,21,22,20,22,23
+	    let el = [
+	        0, 1, 2, 0, 2, 3,
+	        4, 5, 6, 4, 6, 7,
+	        8, 9, 10, 8, 10, 11,
+	        12, 13, 14, 12, 14, 15,
+	        16, 17, 18, 16, 18, 19,
+	        20, 21, 22, 20, 22, 23
 	    ];
 
-	    var gl = Core.getInstance().getGL();
+	    const gl = Core.getInstance().getGL();
 
 		this._handle = new Array(4);
-		for(var i = 0, size = this._handle.length; i < size; i++) {
+		for (let i = 0, size = this._handle.length; i < size; i++) {
 			this._handle[i] = gl.createBuffer();
 		}
 
@@ -148,7 +148,7 @@ class Cube extends Drawable {
 
 	protected _indicesLen;
 	public render() {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 		(<any>gl).bindVertexArray(this._vao);
 		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}

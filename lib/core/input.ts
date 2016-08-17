@@ -4,32 +4,30 @@ class Input {
 	private static _instance: Input = new Input();
 
 	constructor() {
-		if(Input._instance) {
+		if (Input._instance) {
 			throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
 		}
 		
-		for(var i = 0; i < this.keys["LastKeyCode"]; i++) {
+		for (let i = 0; i < this.keys["LastKeyCode"]; i++) {
 			this._isKeyPressed[i] = false;
 			this._keyPreviusState[i] = false;
 			this._isKeyClicked[i] = false;
 		}
 
-		var self = this;
+		let self = this;
 		// Register handles
 		window.addEventListener("keyup", function(ev) {
 			if (ev.keyCode === 40 || ev.keyCode === 38) {
 				ev.preventDefault();
 			}
-			//console.log(self);
 			self._onKeyUp(ev);
-		});//this._onKeyUp);
+		});
 		window.addEventListener("keydown", function(ev) {
 			if (ev.keyCode === 40 || ev.keyCode === 38) {
 				ev.preventDefault();
 			}
-			//console.log(self);
 			self._onKeyDown(ev);
-		});//this._onKeyDown);
+		});
 
 		Input._instance = this;
 	}
@@ -52,35 +50,35 @@ class Input {
 		Two: 50,
 		Three: 51,
 		Four: 52,
-		Five : 53,
-		Six : 54,
-		Seven : 55,
-		Eight : 56,
-		Nine : 57,
+		Five: 53,
+		Six: 54,
+		Seven: 55,
+		Eight: 56,
+		Nine: 57,
 
 		// Alphabets
-		A : 65,
-		D : 68,
-		E : 69,
-		F : 70,
-		G : 71,
-		I : 73,
-		J : 74,
-		K : 75,
-		L : 76,
-		M : 77,
-		N : 78,
-		O : 79,
-		P : 80,
-		Q : 81,
-		R : 82,
-		S : 83,
-		W : 87,
-		LastKeyCode : 222
+		A: 65,
+		D: 68,
+		E: 69,
+		F: 70,
+		G: 71,
+		I: 73,
+		J: 74,
+		K: 75,
+		L: 76,
+		M: 77,
+		N: 78,
+		O: 79,
+		P: 80,
+		Q: 81,
+		R: 82,
+		S: 83,
+		W: 87,
+		LastKeyCode: 222
 	};
 
 	public update() {
-		for(var i = 0; i < this.keys["LastKeyCode"]; i++) {
+		for (let i = 0; i < this.keys["LastKeyCode"]; i++) {
 			this._isKeyClicked[i] = (!this._keyPreviusState[i]) && this._isKeyPressed[i];
 			this._keyPreviusState[i] = this._isKeyPressed[i];
 		}
@@ -109,7 +107,7 @@ class Input {
 		this._isKeyPressed[ev.keyCode] = false;
 	}
 
-	public static getInstance() : Input {
+	public static getInstance(): Input {
 		return Input._instance;
 	}
 }

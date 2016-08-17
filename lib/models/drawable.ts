@@ -4,7 +4,7 @@ abstract class Drawable {
 	abstract render();
     // TODO: unused DELETE PLS
     protected addAttrib(attribLocation, buffer, data, numElems) {
-        var gl: any = Core.getInstance().getGL();
+        const gl = Core.getInstance().getGL();
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
@@ -19,19 +19,16 @@ abstract class Drawable {
         );
         gl.enableVertexAttribArray(attribLocation);
     }
-
-
-
-
+    // TODO: USED?
     protected createBuffer(data, handle) {
-        var gl: any = Core.getInstance().getGL();
+        const gl = Core.getInstance().getGL();
         gl.bindBuffer(gl.ARRAY_BUFFER, handle);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
         return handle;
     }
-
+    // TODO: USED?
     protected addAttrib_(attribLocation, buffer, numElems) {
-        var gl: any = Core.getInstance().getGL();
+        const gl = Core.getInstance().getGL();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.vertexAttribPointer(
             attribLocation, // Attribute location

@@ -1,5 +1,5 @@
 /// <reference path="drawable.ts" />
-
+/*
 class Capsule extends Drawable {
 	protected _handle: Array<WebGLBuffer>;
 	constructor(segments: number = 0, radius: number = 0.0, length: number = 0.0) {
@@ -20,10 +20,10 @@ class Capsule extends Drawable {
 
 
 
-	    var gl = Core.getInstance().getGL();
+	    const gl = Core.getInstance().getGL();
 
 		this._handle = new Array(4);
-		for(var i = 0, size = this._handle.length; i < size; i++) {
+		for (var i = 0, size = this._handle.length; i < size; i++) {
 			this._handle[i] = gl.createBuffer();
 		}
 
@@ -54,8 +54,9 @@ class Capsule extends Drawable {
 
 	protected _indicesLen;
 	public render() {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 		(<any>gl).bindVertexArray(this._vao);
 		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 }
+*/

@@ -2,11 +2,11 @@
 
 class VertexBuffer {
 	constructor() {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 		this._buffer = gl.createBuffer();
 	}
 	public bind(type: number) {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 		this._type = type;
 		gl.bindBuffer(this._type, this._buffer);
 	}
@@ -17,8 +17,8 @@ class VertexBuffer {
 		return this._buffer;
 	}
 	public destroy() {
-		var gl = Core.getInstance().getGL();
-		if(this._type !== 0) {
+		const gl = Core.getInstance().getGL();
+		if (this._type !== 0) {
 			switch (this._type) {
 				case gl.ARRAY_BUFFER:
 					gl.bindBuffer(this._type, 0);
@@ -28,7 +28,7 @@ class VertexBuffer {
 					break;
 			}
 		}
-		if(!this._buffer) {
+		if (!this._buffer) {
 			gl.deleteBuffer(this._buffer);
 		}
 		this._buffer = null;

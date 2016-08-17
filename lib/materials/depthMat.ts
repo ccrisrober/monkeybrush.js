@@ -4,8 +4,8 @@
 class DepthMat extends Material {
 	static ss: ShaderProgram = new ShaderProgram();
 	static initialize() {
-        //var gl = Core.getInstance().getGL();
-		//DepthMat.ss.addShader("shaders/depthShader.vert", shader_type.vertex, mode.read_file);
+        // const gl = Core.getInstance().getGL();
+		// DepthMat.ss.addShader("shaders/depthShader.vert", shader_type.vertex, mode.read_file);
 	}
 }
-//DepthMat.initialize();
+// DepthMat.initialize();

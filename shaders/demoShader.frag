@@ -26,7 +26,7 @@ vec2 matcap(vec3 eye, vec3 normal) {
     return reflected.xy / m + 0.5;
 }
 
-vec2 minMaxDist = vec2(2.5, 35.0);
+vec2 minMaxDist = vec2(10.0, 100.0);
 
 void colorWithFog(out vec3 color) {
     vec3 viewDir = normalize(viewPos - outPosition);
@@ -88,9 +88,9 @@ void main() {
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
     fragColor = vec4(result, 1.0);
-    fragColor = texture(texSampler, matcap(outPosition, outNormal));
+    //fragColor = texture(texSampler, matcap(outPosition, outNormal));
     // Apply fog
-    //colorWithFog(fragColor.rgb);
+    colorWithFog(fragColor.rgb);
 
     //fragColor = vec4(normalize(outNormal), 1.0);
 }

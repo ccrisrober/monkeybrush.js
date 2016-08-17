@@ -10,15 +10,15 @@ class Model {
         this.loadJSON(fileRoute);
     }
     private createBuffer(data) {
-        var gl: any = Core.getInstance().getGL();
-        var buffer = gl.createBuffer();
+        const gl: any = Core.getInstance().getGL();
+        let buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
         return buffer;
     }
 
     private addAttrib(attribLocation, buffer, numElems) {
-        var gl: any = Core.getInstance().getGL();
+        const gl: any = Core.getInstance().getGL();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.vertexAttribPointer(
             attribLocation, // Attribute location
@@ -32,15 +32,15 @@ class Model {
     }
 
     private createVAO(model, indicesArray) {
-        var gl: any = Core.getInstance().getGL();
+        const gl: any = Core.getInstance().getGL();
         this.vao = gl.createVertexArray();
         gl.bindVertexArray(this.vao);
 
-        var indexBuffer = gl.createBuffer();
+        let indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicesArray), gl.STATIC_DRAW);
 
-        //console.log(model.meshes[0]);
+        // console.log(model.meshes[0]);
 
         if (model.meshes[0].vertices) this.addAttrib(0, this.createBuffer(model.meshes[0].vertices), 3);
         if (model.meshes[0].normals) this.addAttrib(1, this.createBuffer(model.meshes[0].normals), 3);
@@ -50,15 +50,15 @@ class Model {
     }
 
     private loadJSON(url) {
-        var request = new XMLHttpRequest();
-        request.open('GET', url, false);
-        var self = this;
+        let request = new XMLHttpRequest();
+        request.open("GET", url, false);
+        let self = this;
         request.onload = function () {
             if (request.status < 200 || request.status > 299) {
-                console.log('Error: HTTP Status ' + request.status + ' on resource ' + url);
+                console.log(`Error: HTTP Status ${request.status} on resource ${url}`);
                 return {};
             } else {
-                var modelObj = JSON.parse(request.responseText);
+                let modelObj = JSON.parse(request.responseText);
                 self.indices = [].concat.apply([], modelObj.meshes[0].faces);
                 console.log("Creating VAO");
                 self.createVAO(modelObj, self.indices);
@@ -69,13 +69,13 @@ class Model {
     }
 
     public render() {
-        var gl = Core.getInstance().getGL();
+        const gl = Core.getInstance().getGL();
         (<any>gl).bindVertexArray(this.vao);
         gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
         (<any>gl).bindVertexArray(null);
     }
     public renderArrayInstance(numInstances) {
-        var gl: any = Core.getInstance().getGL();
+        const gl: any = Core.getInstance().getGL();
         gl.bindVertexArray(this.vao);
         gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 100);
         gl.bindVertexArray(null);

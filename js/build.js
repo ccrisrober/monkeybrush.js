@@ -62,16 +62,14 @@ var Input = (function () {
             if (ev.keyCode === 40 || ev.keyCode === 38) {
                 ev.preventDefault();
             }
-            //console.log(self);
             self._onKeyUp(ev);
-        }); //this._onKeyUp);
+        });
         window.addEventListener("keydown", function (ev) {
             if (ev.keyCode === 40 || ev.keyCode === 38) {
                 ev.preventDefault();
             }
-            //console.log(self);
             self._onKeyDown(ev);
-        }); //this._onKeyDown);
+        });
         Input._instance = this;
     }
     Input.prototype.update = function () {
@@ -164,11 +162,13 @@ var Camera = (function () {
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(37)) {
-            this.processMouseMovement(2.5, 0.0);
+            // this.processMouseMovement(2.5, 0.0);
+            this.processMouseMovement(-2.5, 0.0);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(39)) {
-            this.processMouseMovement(-2.5, 0.0);
+            // this.processMouseMovement(-2.5, 0.0);
+            this.processMouseMovement(2.5, 0.0);
             this._updateCamera = true;
         }
         if (this._updateCamera && callback) {
@@ -180,24 +180,24 @@ var Camera = (function () {
         if (this.timeElapsed > 25) {
             return;
         }
-        var velocity = this.movSpeed * this.timeElapsed * speed; //deltaTime;
-        //console.log(direction);
-        if (direction == 0) {
+        var velocity = this.movSpeed * this.timeElapsed * speed;
+        // console.log(direction);
+        if (direction === 0) {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.front, velocity);
         }
-        else if (direction == 1) {
+        else if (direction === 1) {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.front, -velocity);
         }
-        else if (direction == 2) {
+        else if (direction === 2) {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.right, -velocity);
         }
-        else if (direction == 3) {
+        else if (direction === 3) {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.right, velocity);
         }
-        else if (direction == 4) {
+        else if (direction === 4) {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.up, velocity);
         }
-        else if (direction == 5) {
+        else if (direction === 5) {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.up, -velocity);
         }
     };
@@ -230,7 +230,7 @@ var Camera = (function () {
     };
     Camera.prototype.GetProjectionMatrix = function (w, h) {
         this.proj = mat4.perspective(this.proj, 45.0, (w * 1.0) / (h * 1.0), 0.001, 1000.0);
-        //this.proj = mat4.ortho(this.proj, -10.0, 10.0, -10.0, 10.0, 0.001, 1000.0);
+        // this.proj = mat4.ortho(this.proj, -10.0, 10.0, -10.0, 10.0, 0.001, 1000.0);
         return this.proj;
     };
     return Camera;
@@ -283,8 +283,8 @@ var FreeCamera = (function (_super) {
         this._translation = vec3.create();
     }
     FreeCamera.prototype.update = function () {
-        //var R = this._genMatrixUsingYawPitchRoll(
-        //		this._yaw, this._pitch, this._roll);
+        // var R = this._genMatrixUsingYawPitchRoll(
+        // this._yaw, this._pitch, this._roll);
         this._position = vec3.add(this._position, this._position, this._look);
         this._translation = vec3.create();
     };
@@ -336,7 +336,7 @@ var ShaderProgram = (function () {
         this.attribLocations = {};
         this._shaders = [];
     }
-    //public addAttributes(..attrs: string) {
+    // public addAttributes(..attrs: string) {
     ShaderProgram.prototype.addAttributes = function (attrs) {
         var gl = Core.getInstance().getGL();
         for (var attr in attrs) {
@@ -349,7 +349,7 @@ var ShaderProgram = (function () {
             this.attribLocations[attr] = attrID;
         }
     };
-    //public addUniforms(..attrs: string) {
+    // public addUniforms(..attrs: string) {
     ShaderProgram.prototype.addUniforms = function (unifs) {
         var gl = Core.getInstance().getGL();
         for (var unif in unifs) {
@@ -369,22 +369,22 @@ var ShaderProgram = (function () {
         var gl = Core.getInstance().getGL();
         var shader;
         var type = -1;
-        if (st == shader_type.vertex) {
+        if (st === shader_type.vertex) {
             type = gl.VERTEX_SHADER;
         }
-        else if (st == shader_type.fragment) {
+        else if (st === shader_type.fragment) {
             type = gl.FRAGMENT_SHADER;
         }
         if (type < 0) {
             throw new Error("SHADER TYPE UNDEFINED");
         }
-        if (_mode == mode.read_file) {
+        if (_mode === mode.read_file) {
             shader = this.loadAndCompileWithFile(shader_, type);
         }
-        else if (_mode == mode.read_script) {
+        else if (_mode === mode.read_script) {
             shader = this.loadAndCompile(shader_, type);
         }
-        else if (_mode == mode.read_text) {
+        else if (_mode === mode.read_text) {
             shader = this.loadAndCompileFromText(shader_, type);
         }
         this._shaders.push(shader);
@@ -448,10 +448,10 @@ var ShaderProgram = (function () {
     ShaderProgram.prototype.compileShader = function (shaderSource, shaderType) {
         var gl = Core.getInstance().getGL();
         var compiledShader;
-        if (shaderType == gl.VERTEX_SHADER) {
+        if (shaderType === gl.VERTEX_SHADER) {
             this._vertexSource = shaderSource;
         }
-        else if (shaderType == gl.FRAGMENT_SHADER) {
+        else if (shaderType === gl.FRAGMENT_SHADER) {
             this._fragmentSource = shaderSource;
         }
         // Create shader
@@ -483,7 +483,7 @@ var ShaderProgram = (function () {
     /*
     protected getPropSetter(path, location, type) {
         // Check primitive types
-        switch(type) {
+        switch (type) {
             case "bool":
             case "int":
                 return "gl.uniform1i(location, value)";
@@ -500,16 +500,16 @@ var ShaderProgram = (function () {
 
         // Check complex matrix type
         if (/^mat[0-9]x[0-9]$/.test(type)) {
-            var dims = type.substring(type.length - 3)
+            let dims = type.substring(type.length - 3)
             return 'gl.uniformMatrix' + dims + 'fv(location, Boolean(transposed), value)'
         }
 
         // Checksimple type
-        var vecIdx = type.indexOf('vec');
-        var count = parseInt(type.charAt(type.length - 1), 10) || -1;
+        let vecIdx = type.indexOf('vec');
+        let count = parseInt(type.charAt(type.length - 1), 10) || -1;
 
         if ((vecIdx === 0 || vecIdx === 1) && (count >= 1 && count <= 4)) {
-            var vtype = type.charAt('0')
+            let vtype = type.charAt('0')
             switch (vtype) {
                 case 'b':
                 case 'i':
@@ -523,7 +523,7 @@ var ShaderProgram = (function () {
             }
         }
 
-        var matIdx = type.indexOf('mat');
+        let matIdx = type.indexOf('mat');
         count = parseInt(type.charAt(type.length - 1), 10) || -1;
         console.log(count);
         
@@ -534,13 +534,13 @@ var ShaderProgram = (function () {
     }
 
     public sendUniform(uniform, type) {
-        var path = uniform;
-        var location = this.uniformLocations[path];
-        var setter = this.getPropSetter(path, location, type);
+        let path = uniform;
+        let location = this.uniformLocations[path];
+        let setter = this.getPropSetter(path, location, type);
         
-        var srcfn = `
+        let srcfn = `
         return function uniformGetSet (value, transposed) {
-            transposed = typeof transposed !== 'undefined' ? transposed : false;
+            transposed = typeof transposed !== 'undefined' ? transposed: false;
             location = prog.uniformLocations[name];
                 if (!location) {
                     prog.addUniforms([name]);
@@ -554,8 +554,8 @@ var ShaderProgram = (function () {
                 }
         }`;
 
-        var generated = new Function('prog', 'gl', 'name', 'location', srcfn);
-        var gl = Core.getInstance().getGL();
+        let generated = new Function('prog', 'gl', 'name', 'location', srcfn);
+        const gl = Core.getInstance().getGL();
         return generated(this, gl, uniform, location);
     }*/
     ShaderProgram.prototype.sendUniform1f = function (name, value) {
@@ -578,9 +578,9 @@ var ShaderProgram = (function () {
     return ShaderProgram;
 })();
 /// <reference path="../core/shaderProgram.ts" />
-var vertexCode = "#version 300 es\nin vec3 vertex;\nout vec2 texCoord;\nvoid main() {\n  texCoord = vertex.xy * 0.5 + 0.5;\n  gl_Position = vec4( vertex, 1 );\n}";
 var ToneMap;
 (function (ToneMap) {
+    var vertexCode = "#version 300 es\n  in vec3 vertex;\n  out vec2 texCoord;\n  void main() {\n    texCoord = vertex.xy * 0.5 + 0.5;\n    gl_Position = vec4( vertex, 1 );\n  }";
     function init(gl) {
         ToneMap.textureQuadSimpleProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
         ToneMap.textureQuadSimpleProgram.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      out vec4 fragColor;\n      void main() {\n        fragColor = texture( texture_, texCoord );\n      }", shader_type.fragment, mode.read_text);
@@ -603,7 +603,7 @@ var ToneMap;
         ToneMap.textureQuadFilmicProgram.addAttributes(["vertex"]);
         ToneMap.textureQuadFilmicProgram.addUniforms(["texture_", "brightness"]);
         ToneMap.textureQuadsRGBProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
-        ToneMap.textureQuadsRGBProgram.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      out vec4 fragColor;\n      float sRGB_gamma_correct(float c) {\n       const float a = 0.055;\n       if(c < 0.0031308) return 12.92*c;\n       else return (1.0+a)*pow(c, 1.0/2.4) - a;\n      }\n      void main() {\n        fragColor = texture( texture_, texCoord );\n        fragColor.r = sRGB_gamma_correct(fragColor.r);\n        fragColor.g = sRGB_gamma_correct(fragColor.g);\n        fragColor.b = sRGB_gamma_correct(fragColor.b);\n      }", shader_type.fragment, mode.read_text);
+        ToneMap.textureQuadsRGBProgram.addShader("#version 300 es\n      precision highp float;\n      in vec2 texCoord;\n      uniform sampler2D texture_;\n      out vec4 fragColor;\n      float sRGB_gamma_correct(float c) {\n       const float a = 0.055;\n       if (c < 0.0031308) return 12.92*c;\n       else return (1.0+a)*pow(c, 1.0/2.4) - a;\n      }\n      void main() {\n        fragColor = texture( texture_, texCoord );\n        fragColor.r = sRGB_gamma_correct(fragColor.r);\n        fragColor.g = sRGB_gamma_correct(fragColor.g);\n        fragColor.b = sRGB_gamma_correct(fragColor.b);\n      }", shader_type.fragment, mode.read_text);
         ToneMap.textureQuadsRGBProgram.compile();
         ToneMap.textureQuadsRGBProgram.addAttributes(["vertex"]);
         ToneMap.textureQuadsRGBProgram.addUniforms(["texture_", "brightness"]);
@@ -635,8 +635,8 @@ var Core = (function () {
         if (Core._instance) {
             throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
         }
-        //var canvas = <HTMLCanvasElement>document.getElementById("canvas");
-        var canvas = document.createElement('canvas');
+        // var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+        var canvas = document.createElement("canvas");
         canvas.width = 800;
         canvas.height = 800;
         document.body.appendChild(canvas);
@@ -666,7 +666,7 @@ var Core = (function () {
     }
     Core.prototype.initialize = function (color) {
         var gl = this._gl;
-        //ToneMap.init(gl);
+        // ToneMap.init(gl);
         gl.clearColor(color[0], color[1], color[2], color[3]);
     };
     Core.prototype.clearColorAndDepth = function () {
@@ -682,9 +682,9 @@ var Core = (function () {
         var gl = this._gl;
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LESS);
-        //gl.depthFunc(gl.LEQUAL);
+        // gl.depthFunc(gl.LEQUAL);
         // Set images to flip y axis to match the texture coordinate space.
-        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.enable(gl.CULL_FACE);
         gl.disable(gl.BLEND);
         Input.getInstance();
@@ -720,8 +720,8 @@ var Core = (function () {
             var vendor;
             for (var i = 0; i < vendors.length; i++) {
                 vendor = vendors[i];
-                window.requestAnimationFrame = window[vendor + 'RequestAnimationFrame'];
-                window.cancelAnimationFrame = window[vendor + 'CancelAnimationFrame'] || window[vendor + 'CancelRequestAnimationFrame'];
+                window.requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
+                window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];
                 if (window.requestAnimationFrame) {
                     break;
                 }
@@ -731,18 +731,18 @@ var Core = (function () {
     Core._instance = new Core();
     return Core;
 })();
-var vector2 = (function () {
-    function vector2(x, y) {
+var Vector2 = (function () {
+    function Vector2(x, y) {
         this.x = x;
         this.y = y;
     }
-    vector2.prototype.isEqual = function (other) {
+    Vector2.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y;
     };
-    return vector2;
+    return Vector2;
 })();
 /// <reference path="../core/core.ts" />
-/// <reference path="../extras/vector2.ts" />
+/// <reference path="../extras/Vector2.ts" />
 var Texture = (function () {
     function Texture(target) {
         this._target = target;
@@ -759,7 +759,7 @@ var Texture = (function () {
 })();
 /// <reference path="core.ts" />
 /// <reference path="../textures/texture.ts" />
-/// <reference path="../extras/vector2.ts" />
+/// <reference path="../extras/Vector2.ts" />
 var Framebuffer = (function () {
     function Framebuffer(textures, size, depth, stencil, options) {
         if (depth === void 0) { depth = false; }
@@ -768,7 +768,7 @@ var Framebuffer = (function () {
         var gl = Core.getInstance().getGL();
         var numColors = textures.length;
         if (numColors < 0) {
-            throw new Error('must specify >= 0 color attachments');
+            throw new Error("must specify >= 0 color attachments");
         }
         else if (numColors > 1) {
             if (numColors > gl.getParameter(gl.MAX_COLOR_ATTACHMENTS)) {
@@ -793,10 +793,10 @@ var Framebuffer = (function () {
         });
         // TODO: Check no texture attachments (default render buffer storage)
         /**
-        if(depth && stencil) {
+        if (depth && stencil) {
                 // TODO options.floatDepth ??
             this._depth = initTexture2D(size, gl.UNSIGNED_INT_24_8, gl.DEPTH_STENCIL, gl.DEPTH_STENCIL_ATTACHMENT);
-        } else if(depth && !stencil) {
+        } else if (depth && !stencil) {
             this._depth = initTexture2D(size, gl.UNSIGNED_SHORT, gl.DEPTH_ATTACHMENT, gl.DEPTH_ATTACHMENT);
         } else if (!depth && stencil) {
             this._renderBuffer = this.createRenderBuffer(size, gl.STENCIL_INDEX, gl.STENCIL_ATTACHMENT);
@@ -813,15 +813,15 @@ var Framebuffer = (function () {
         var gl = Core.getInstance().getGL();
         switch (status) {
             case gl.FRAMEBUFFER_UNSUPPORTED:
-                throw new Error('framebuffer: Framebuffer unsupported');
+                throw new Error("framebuffer: Framebuffer unsupported");
             case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                throw new Error('framebuffer: Framebuffer incomplete attachment');
+                throw new Error("framebuffer: Framebuffer incomplete attachment");
             case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-                throw new Error('framebuffer: Framebuffer incomplete dimensions');
+                throw new Error("framebuffer: Framebuffer incomplete dimensions");
             case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                throw new Error('framebuffer: Framebuffer incomplete missing attachment');
+                throw new Error("framebuffer: Framebuffer incomplete missing attachment");
             default:
-                throw new Error('framebuffer: Framebuffer failed for unspecified reason');
+                throw new Error("framebuffer: Framebuffer failed for unspecified reason");
         }
     };
     Framebuffer.prototype.bind = function () {
@@ -852,8 +852,8 @@ var Framebuffer = (function () {
         }
         // Destroy depth/stencil
         if (this._renderBuffer) {
-            //this._renderBuffer.destroy();
-            //gl.deleteRenderbuffer(this._renderBuffer)
+            // this._renderBuffer.destroy();
+            // gl.deleteRenderbuffer(this._renderBuffer)
             this._renderBuffer = null;
         }
         // Color buffer default TODO
@@ -868,7 +868,7 @@ var Framebuffer = (function () {
     };
     return Framebuffer;
 })();
-/// <reference path="../extras/vector2.ts" />
+/// <reference path="../extras/Vector2.ts" />
 /// <reference path="core.ts" />
 var gbuffer_type;
 (function (gbuffer_type) {
@@ -925,19 +925,19 @@ var GBuffer = (function () {
             gl.COLOR_ATTACHMENT2
         ]);
         var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-        if (status != gl.FRAMEBUFFER_COMPLETE) {
-            //console.log(`Framebuffer error. Status: ${status}`);
+        if (status !== gl.FRAMEBUFFER_COMPLETE) {
+            // console.log(`Framebuffer error. Status: ${status}`);
             switch (status) {
                 case gl.FRAMEBUFFER_UNSUPPORTED:
-                    throw new Error('framebuffer: Framebuffer unsupported');
+                    throw new Error("framebuffer: Framebuffer unsupported");
                 case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                    throw new Error('framebuffer: Framebuffer incomplete attachment');
+                    throw new Error("framebuffer: Framebuffer incomplete attachment");
                 case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-                    throw new Error('framebuffer: Framebuffer incomplete dimensions');
+                    throw new Error("framebuffer: Framebuffer incomplete dimensions");
                 case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                    throw new Error('framebuffer: Framebuffer incomplete missing attachment');
+                    throw new Error("framebuffer: Framebuffer incomplete missing attachment");
                 default:
-                    throw new Error('framebuffer: Framebuffer failed for unspecified reason');
+                    throw new Error("framebuffer: Framebuffer failed for unspecified reason");
             }
         }
         console.log("done");
@@ -1005,7 +1005,7 @@ var Model = (function () {
         var indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicesArray), gl.STATIC_DRAW);
-        //console.log(model.meshes[0]);
+        // console.log(model.meshes[0]);
         if (model.meshes[0].vertices)
             this.addAttrib(0, this.createBuffer(model.meshes[0].vertices), 3);
         if (model.meshes[0].normals)
@@ -1016,11 +1016,11 @@ var Model = (function () {
     };
     Model.prototype.loadJSON = function (url) {
         var request = new XMLHttpRequest();
-        request.open('GET', url, false);
+        request.open("GET", url, false);
         var self = this;
         request.onload = function () {
             if (request.status < 200 || request.status > 299) {
-                console.log('Error: HTTP Status ' + request.status + ' on resource ' + url);
+                console.log("Error: HTTP Status " + request.status + " on resource " + url);
                 return {};
             }
             else {
@@ -1061,12 +1061,7 @@ var PostProcess = (function () {
     PostProcess.initialize = function () {
         var gl = Core.getInstance().getGL();
         if (!PostProcess._planeVAO) {
-            var positions = [
-                -1.0, -1.0,
-                1.0, -1.0,
-                -1.0, 1.0,
-                1.0, 1.0
-            ];
+            var positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
             PostProcess._planeVAO = gl.createVertexArray();
             gl.bindVertexArray(PostProcess._planeVAO);
             var planeVertexVBO = gl.createBuffer();
@@ -1082,7 +1077,7 @@ var PostProcess = (function () {
         gl.bindVertexArray(PostProcess._planeVAO);
     };
     PostProcess.render = function () {
-        //console.log("DRAW QUAD");
+        // console.log("DRAW QUAD");
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(PostProcess._planeVAO);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -1105,7 +1100,7 @@ var Scene = (function () {
     };
     return Scene;
 })();
-// TODO: Change _color to vector3
+// TODO: Change _color to Vector3
 var Color = (function () {
     function Color(r, g, b) {
         this._color = new Array(3);
@@ -1180,45 +1175,48 @@ var extensions;
     extensions.get = get;
 })(extensions || (extensions = {}));
 ;
-var Timer__ = (function () {
-    function Timer__() {
+/*class Timer__ {
+    protected running: boolean;
+    protected start_clock: number;
+    protected start_time: number;
+    protected acc_time: number;
+    constructor() {
         this.running = false;
         this.start_clock = 0;
         this.start_time = 0;
         this.acc_time = 0;
     }
-    Timer__.prototype.elapsed_time = function () {
+    public elapsed_time(): number {
         var acc_sec = (performance || Date).now();
         return -1;
-    };
-    Timer__.prototype.start = function (msg) {
-        if (msg === void 0) { msg = ""; }
-    };
-    Timer__.prototype.SetToZero = function () {
+    }
+    public start(msg: string = ""): void {
+
+    }
+    public SetToZero(): void {
         this.acc_time = 0;
-    };
-    Timer__.prototype.restart = function () {
+    }
+    public restart(): void {
         // Set timer status to running, reset accumulated time, and set start time
         this.running = true;
         this.acc_time = 0;
-        this.start_clock =
-            this.start_time = (performance || Date).now();
-    };
-    Timer__.prototype.stop = function () {
+        this.start_clock = //clock();
+        this.start_time = (performance || Date).now();
+    }
+    public stop(): void {
         // Compute accumulated running time and set timer status to not running
-        if (this.running)
-            this.acc_time += this.elapsed_time();
+        if (this.running) this.acc_time += this.elapsed_time();
         this.running = false;
-    };
-    Timer__.prototype.check = function () {
+    }
+    public check(): number {
         return -1;
-    };
-    return Timer__;
-})();
-// newTime = ( performance || Date ).now()
-// https://bitbucket.org/masterurjc/practica1/src/1b9cfa67f4b68e8c6a570ce58cfdb2c02d9ee32e/RenderingAvanzado1/Timer.h?at=master&fileviewer=file-view-default 
-var timer;
-(function (timer) {
+    }
+}
+        // newTime = ( performance || Date ).now()
+        // https://bitbucket.org/masterurjc/practica1/src/1b9cfa67f4b68e8c6a570ce58cfdb2c02d9ee32e/RenderingAvanzado1/Timer.h?at=master&fileviewer=file-view-default
+        */ 
+var Timer;
+(function (Timer) {
     var _lastTime = Date.now();
     var _deltaTime = 0.0;
     var _currentTime, _timeElapsed;
@@ -1228,34 +1226,34 @@ var timer;
         _deltaTime = _timeElapsed;
         _lastTime = _currentTime;
     }
-    timer.update = update;
+    Timer.update = update;
     function deltaTime() {
         return _deltaTime;
     }
-    timer.deltaTime = deltaTime;
-})(timer || (timer = {}));
-var vector3 = (function () {
-    function vector3(x, y, z) {
+    Timer.deltaTime = deltaTime;
+})(Timer || (Timer = {}));
+var Vector3 = (function () {
+    function Vector3(x, y, z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
-    vector3.prototype.isEqual = function (other) {
+    Vector3.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y && this.z === other.z;
     };
-    return vector3;
+    return Vector3;
 })();
-var vector4 = (function () {
-    function vector4(x, y, z, w) {
+var Vector4 = (function () {
+    function Vector4(x, y, z, w) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = w;
     }
-    vector4.prototype.isEqual = function (other) {
+    Vector4.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
     };
-    return vector4;
+    return Vector4;
 })();
 /// <reference path="../core/core.ts" />
 var VertexBuffer = (function () {
@@ -1298,6 +1296,7 @@ var VertexBuffer = (function () {
 "use strict";
 var ShaderManager;
 (function (ShaderManager) {
+    var _progDictionary = {};
     function get(name) {
         return _progDictionary[name];
     }
@@ -1307,10 +1306,10 @@ var ShaderManager;
     }
     ShaderManager.addWithFun = addWithFun;
     function add(name, prog) {
-        //if(name in ShaderManager._progDictionary) {
-        //if(_progDictionary.hasOwnProperty(name)) {
-        //	console.warn(name + " key exist ...");
-        //}
+        // if (name in ShaderManager._progDictionary) {
+        // if (_progDictionary.hasOwnProperty(name)) {
+        // 	console.warn(name + " key exist ...");
+        // }
         _progDictionary[name] = prog;
     }
     ShaderManager.add = add;
@@ -1320,7 +1319,6 @@ var ShaderManager;
         }
     }
     ShaderManager.destroy = destroy;
-    var _progDictionary = {};
 })(ShaderManager || (ShaderManager = {}));
 ;
 "use strict";
@@ -1359,7 +1357,7 @@ var ResourceMap;
     function asyncLoadFailed(resName) {
         VanillaToasts.create({
             title: resName + " completed",
-            type: 'error',
+            type: "error",
             timeout: 2500
         });
         --_numOutstandingLoads;
@@ -1370,13 +1368,13 @@ var ResourceMap;
         if (!isAssetLoaded(resName)) {
             VanillaToasts.create({
                 title: "asyncLoadCompleted: [" + resName + "] not in map!",
-                type: 'error',
+                type: "error",
                 timeout: 2500
             });
         }
         VanillaToasts.create({
             title: resName + " completed",
-            type: 'success',
+            type: "success",
             timeout: 1500
         });
         _resourceMap[resName].setAsset(loadedAsset);
@@ -1385,13 +1383,14 @@ var ResourceMap;
     }
     ResourceMap.asyncLoadCompleted = asyncLoadCompleted;
     ;
-    var _checkForAllLoadCompleted = function () {
+    function _checkForAllLoadCompleted() {
         if ((_numOutstandingLoads === 0) && (_loadCompleteCallback !== null)) {
             var funToCall = _loadCompleteCallback;
             _loadCompleteCallback = null;
             funToCall();
         }
-    };
+    }
+    ;
     function setLoadCompleteCallback(fn) {
         _loadCompleteCallback = fn;
         _checkForAllLoadCompleted();
@@ -1451,12 +1450,14 @@ var Drawable = (function () {
         );
         gl.enableVertexAttribArray(attribLocation);
     };
+    // TODO: USED?
     Drawable.prototype.createBuffer = function (data, handle) {
         var gl = Core.getInstance().getGL();
         gl.bindBuffer(gl.ARRAY_BUFFER, handle);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
         return handle;
     };
+    // TODO: USED?
     Drawable.prototype.addAttrib_ = function (attribLocation, buffer, numElems) {
         var gl = Core.getInstance().getGL();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -1563,16 +1564,16 @@ var Torus = (function (_super) {
         gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         // offset the filled object to avoid the stitching that can arise when the wireframe lines are drawn
-        //gl.enable(gl.POLYGON_OFFSET_FILL);
-        //gl.polygonOffset(2.0, 2.0);
-        //gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-        //gl.disable(gl.POLYGON_OFFSET_FILL);
-        //Then disable the vertex colors and draw the wire frame with one constant color
-        //gl.lineWidth(1.0);
-        //gl.drawElements(gl.LINE_LOOP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        // gl.enable(gl.POLYGON_OFFSET_FILL);
+        // gl.polygonOffset(2.0, 2.0);
+        // gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        // gl.disable(gl.POLYGON_OFFSET_FILL);
+        // Then disable the vertex colors and draw the wire frame with one constant color
+        // gl.lineWidth(1.0);
+        // gl.drawElements(gl.LINE_LOOP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     Torus.prototype.render2 = function (counter) {
-        //console.log(counter);
+        // console.log(counter);
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._vao);
         gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, counter);
@@ -1745,6 +1746,13 @@ var torito;
 var m;
 var view;
 var projection;
+var tex2d;
+var light = new PointLight(new Float32Array([-2.5, -2.5, 0.0]));
+var identityMatrix = mat4.create();
+mat4.identity(identityMatrix);
+var model = mat4.create();
+var angle = 0;
+var text = SimpleConfig();
 function loadAssets() {
     myImageLoader("crystal.jpg");
 }
@@ -1780,12 +1788,6 @@ function initialize() {
     });
     cameraUpdateCb();
 }
-var tex2d;
-var light = new PointLight(new Float32Array([-2.5, -2.5, 0.0]));
-var identityMatrix = mat4.create();
-mat4.identity(identityMatrix);
-var model = mat4.create();
-var angle = 0;
 function cameraUpdateCb() {
     var canvas = Core.getInstance().canvas();
     view = camera.GetViewMatrix();
@@ -1799,7 +1801,7 @@ function cameraUpdateCb() {
 // @param dt: Global time in seconds
 function drawScene(dt) {
     var gl = Core.getInstance().getGL();
-    camera.timeElapsed = timer.deltaTime() / 10.0;
+    camera.timeElapsed = Timer.deltaTime() / 10.0;
     camera.update(cameraUpdateCb);
     Core.getInstance().clearColorAndDepth();
     /**/
@@ -1813,8 +1815,8 @@ function drawScene(dt) {
     var prog = ShaderManager.get("prog");
     prog.use();
     prog.sendUniformVec3("lightPosition", light.position);
-    angle += timer.deltaTime() * 0.001;
-    //console.log(angle);
+    angle += Timer.deltaTime() * 0.001;
+    // console.log(angle);
     tex2d.bind(0);
     prog.sendUniform1i("texSampler", 0);
     var varvar = text.max;
@@ -1834,21 +1836,20 @@ function drawScene(dt) {
         }
     }
 }
-var text = SimpleConfig();
 // ============================================================================================ //
 // ============================================================================================ //
 // ============================================================================================ //
 // ============================================================================================ //
 // ============================================================================================ //
 // ============================================================================================ //
-var myImageLoader = function (src) {
+function myImageLoader(src) {
     if (!ResourceMap.isAssetLoaded(src)) {
         var img = new Image();
         ResourceMap.asyncLoadRequested(src);
         img.onload = function () {
-            //setTimeout(function() {
+            // setTimeout(function() {
             ResourceMap.asyncLoadCompleted(src, img);
-            //}, 2500);
+            // }, 2500);
         };
         img.onerror = function (err) {
             ResourceMap.asyncLoadFailed(src);
@@ -1858,12 +1859,13 @@ var myImageLoader = function (src) {
     else {
         ResourceMap.incAssetRefCount(src);
     }
-};
+}
+;
 window.onload = function () {
     Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
     if (Object.keys(text).length > 0) {
         gui = new dat.GUI();
-        /*for(var index in text) {
+        /*for (var index in text) {
             gui.add(text, index);
         }*/
         gui.add(text, "max", 5, 100);
@@ -1891,7 +1893,7 @@ function loop(dt) {
     Input.getInstance().update();
     stats.begin();
     dt *= 0.001; // convert to seconds
-    timer.update();
+    Timer.update();
     resize();
     drawScene(dt); // Draw user function
     stats.end();
@@ -1906,8 +1908,8 @@ function resize() {
     var displayWidth = Math.floor(canvas.clientWidth * realToCSSPixels);
     var displayHeight = Math.floor(canvas.clientHeight * realToCSSPixels);
     // Check if the canvas is not the same size.
-    if (canvas.width != displayWidth ||
-        canvas.height != displayHeight) {
+    if (canvas.width !== displayWidth ||
+        canvas.height !== displayHeight) {
         // Make the canvas the same size
         canvas.width = displayWidth;
         canvas.height = displayHeight;
@@ -1969,13 +1971,13 @@ var DepthMat = (function (_super) {
         _super.apply(this, arguments);
     }
     DepthMat.initialize = function () {
-        //var gl = Core.getInstance().getGL();
-        //DepthMat.ss.addShader("shaders/depthShader.vert", shader_type.vertex, mode.read_file);
+        // const gl = Core.getInstance().getGL();
+        // DepthMat.ss.addShader("shaders/depthShader.vert", shader_type.vertex, mode.read_file);
     };
     DepthMat.ss = new ShaderProgram();
     return DepthMat;
 })(Material);
-//DepthMat.initialize(); 
+// DepthMat.initialize(); 
 /// <reference path="material.ts" />
 var LambertMat = (function (_super) {
     __extends(LambertMat, _super);
@@ -2009,35 +2011,48 @@ var ShaderMat = (function (_super) {
     return ShaderMat;
 })(Material);
 /// <reference path="drawable.ts" />
-var Capsule = (function (_super) {
-    __extends(Capsule, _super);
-    function Capsule(segments, radius, length) {
-        if (segments === void 0) { segments = 0; }
-        if (radius === void 0) { radius = 0.0; }
-        if (length === void 0) { length = 0.0; }
-        _super.call(this);
+/*
+class Capsule extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    constructor(segments: number = 0, radius: number = 0.0, length: number = 0.0) {
+        super();
+
         // Ensure odd
-        segments = (segments + 1) & ~1;
+        segments = (segments + 1) &~1;
+        
         var doubleSegments = segments * 2;
         var halfLength = length / 2;
+
+        
         var vertices = new Array(3 * doubleSegments);
         var normals = new Array(3 * doubleSegments);
         var texCoords = new Array(3 * doubleSegments);
         var el;
-        var gl = Core.getInstance().getGL();
+
+
+
+
+        const gl = Core.getInstance().getGL();
+
         this._handle = new Array(4);
         for (var i = 0, size = this._handle.length; i < size; i++) {
             this._handle[i] = gl.createBuffer();
         }
-        this._vao = gl.createVertexArray();
-        gl.bindVertexArray(this._vao);
+
+        this._vao = (<any>gl).createVertexArray();
+        (<any>gl).bindVertexArray(this._vao);
+
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
+
         this.addAttrib_(0, this.createBuffer(vertices, this._handle[1]), 3);
         this.addAttrib_(1, this.createBuffer(normals, this._handle[2]), 3);
         this.addAttrib_(2, this.createBuffer(texCoords, this._handle[3]), 2);
+
         this._indicesLen = el.length;
-        gl.bindVertexArray(null);
+
+        (<any>gl).bindVertexArray(null);
+        
         // TODO: Clear v, n, tex and el
         console.log({
             vertices: vertices,
@@ -2047,13 +2062,16 @@ var Capsule = (function (_super) {
             vao: this._handle
         });
     }
-    Capsule.prototype.render = function () {
-        var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
+
+
+    protected _indicesLen;
+    public render() {
+        const gl = Core.getInstance().getGL();
+        (<any>gl).bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-    };
-    return Capsule;
-})(Drawable);
+    }
+}
+*/ 
 /// <reference path="drawable.ts" />
 var Cube = (function (_super) {
     __extends(Cube, _super);
@@ -2269,7 +2287,7 @@ var Quad = (function (_super) {
     Quad.prototype.render = function () {
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._vao);
-        //gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);	// TODO: UNSIGNED_INT => https://developer.mozilla.org/en-US/docs/Web/API/OES_element_index_uint
+        // gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);	// TODO: UNSIGNED_INT => https://developer.mozilla.org/en-US/docs/Web/API/OES_element_index_uint
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     return Quad;
@@ -2323,13 +2341,13 @@ var Sphere = (function (_super) {
             var stackStart = i * (stacks + 1);
             var nextStackStart = (i + 1) * (stacks + 1);
             for (var j = 0; j < stacks; j++) {
-                if (j == 0) {
+                if (j === 0) {
                     el[idx] = stackStart;
                     el[idx + 1] = stackStart + 1;
                     el[idx + 2] = nextStackStart + 1;
                     idx += 3;
                 }
-                else if (j == stacks - 1) {
+                else if (j === stacks - 1) {
                     el[idx] = stackStart + j;
                     el[idx + 1] = stackStart + j + 1;
                     el[idx + 2] = nextStackStart + j;
@@ -2371,9 +2389,9 @@ var Sphere = (function (_super) {
         var gl = Core.getInstance().getGL();
         gl.bindVertexArray(this._vao);
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-        //gl.lineWidth(1.0);
-        // Puts vertices to buffer and links it to attribute variable 'ppos'
-        //gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        // gl.lineWidth(1.0);
+        // Puts vertices to buffer and links it to attribute letiable 'ppos'
+        // gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     return Sphere;
 })(Drawable);
@@ -2405,7 +2423,7 @@ class AudioClip {
     }
     public loadAudio(clipName: string) {
         var rs = ResourceMap.getInstance();
-        if(!(rs.isAssetLoaded(clipName))) {
+        if (!(rs.isAssetLoaded(clipName))) {
             // Update resources in load counter
             rs.asyncLoadRequested(clipName);
 
@@ -2461,7 +2479,7 @@ class AudioClip {
 
     protected _stopBackgroundAudio() {
         // Check if audio is playing
-        if(this._bgAudioNode !== null) {
+        if (this._bgAudioNode !== null) {
             this._bgAudioNode.stop(0);
             this._bgAudioNode = null;
         }
@@ -2471,8 +2489,8 @@ class AudioClip {
 /*
 class Font {
     constructor(fontName: string) {
-        var rm : ResourceMap = ResourceMap.getInstance();
-        if(!(rm.isAssetLoaded(fontName))) {
+        var rm: ResourceMap = ResourceMap.getInstance();
+        if (!(rm.isAssetLoaded(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
             var texSrcStr = fontName + ".png";
 
@@ -2485,8 +2503,8 @@ class Font {
         }
     }
     public unloadFont(fontName: string) {
-        var rm : ResourceMap = ResourceMap.getInstance();
-        if(!(rm.unloadAsset(fontName))) {
+        var rm: ResourceMap = ResourceMap.getInstance();
+        if (!(rm.unloadAsset(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
             var texSrcStr = fontName + ".png";
 
@@ -2675,7 +2693,7 @@ var FloatTexture = (function (_super) {
     }
     return FloatTexture;
 })(Texture2D);
-/// <reference path="../extras/vector2.ts" />
+/// <reference path="../extras/Vector2.ts" />
 /// <reference path="../core/Core.ts" />
 var RenderBufferTexture = (function () {
     function RenderBufferTexture(size, format, attachment) {
@@ -2697,7 +2715,7 @@ var SimpleTexture2D = (function (_super) {
     return SimpleTexture2D;
 })(Texture2D);
 /// <reference path="texture.ts" />
-/// <reference path="../extras/vector3.ts" />
+/// <reference path="../extras/Vector3.ts" />
 var Texture3D = (function (_super) {
     __extends(Texture3D, _super);
     function Texture3D(data, size, options) {

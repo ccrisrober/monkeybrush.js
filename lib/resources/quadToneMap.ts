@@ -1,14 +1,14 @@
 /// <reference path="../core/shaderProgram.ts" />
 
-var vertexCode = `#version 300 es
-in vec3 vertex;
-out vec2 texCoord;
-void main() {
-  texCoord = vertex.xy * 0.5 + 0.5;
-  gl_Position = vec4( vertex, 1 );
-}`;
-module ToneMap {
-  export function init(gl : WebGLRenderingContext) {
+namespace ToneMap {
+  let vertexCode = `#version 300 es
+  in vec3 vertex;
+  out vec2 texCoord;
+  void main() {
+    texCoord = vertex.xy * 0.5 + 0.5;
+    gl_Position = vec4( vertex, 1 );
+  }`;
+  export function init(gl: WebGLRenderingContext) {
     textureQuadSimpleProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
     textureQuadSimpleProgram.addShader(`#version 300 es
       precision highp float;
@@ -82,7 +82,7 @@ module ToneMap {
       out vec4 fragColor;
       float sRGB_gamma_correct(float c) {
        const float a = 0.055;
-       if(c < 0.0031308) return 12.92*c;
+       if (c < 0.0031308) return 12.92*c;
        else return (1.0+a)*pow(c, 1.0/2.4) - a;
       }
       void main() {
@@ -125,10 +125,10 @@ module ToneMap {
     textureQuadUncharted2Program.addAttributes(["vertex"]);
     textureQuadUncharted2Program.addUniforms(["texture_", "brightness"]);
   }
-  export var textureQuadSimpleProgram : ShaderProgram = new ShaderProgram();
-  export var textureQuadGammaProgram : ShaderProgram = new ShaderProgram();
-  export var textureQuadReinhardProgram : ShaderProgram = new ShaderProgram();
-  export var textureQuadFilmicProgram : ShaderProgram = new ShaderProgram();
-  export var textureQuadsRGBProgram : ShaderProgram = new ShaderProgram();
-  export var textureQuadUncharted2Program : ShaderProgram = new ShaderProgram();
+  export let textureQuadSimpleProgram: ShaderProgram = new ShaderProgram();
+  export let textureQuadGammaProgram: ShaderProgram = new ShaderProgram();
+  export let textureQuadReinhardProgram: ShaderProgram = new ShaderProgram();
+  export let textureQuadFilmicProgram: ShaderProgram = new ShaderProgram();
+  export let textureQuadsRGBProgram: ShaderProgram = new ShaderProgram();
+  export let textureQuadUncharted2Program: ShaderProgram = new ShaderProgram();
 }

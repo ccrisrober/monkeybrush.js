@@ -1,4 +1,4 @@
-class vector4<T> {
+class Vector4<T> {
 	public x: T;
 	public y: T;
 	public z: T;
@@ -9,7 +9,7 @@ class vector4<T> {
 		this.z = z;
 		this.w = w;
 	}
-	public isEqual(other: vector4<T>) : boolean {
+	public isEqual(other: Vector4<T>): boolean {
 		return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
 	}
 }

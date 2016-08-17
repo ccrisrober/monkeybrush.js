@@ -1,4 +1,4 @@
-/// <reference path="../extras/vector2.ts" />
+/// <reference path="../extras/Vector2.ts" />
 /// <reference path="core.ts" />
 
 enum gbuffer_type {
@@ -13,20 +13,20 @@ class GBuffer {
 
 	protected _depthTexture;
 	protected _textures: Array<WebGLTexture>;
-	constructor(size: vector2<number>) {
-		var gl = Core.getInstance().getGL();
+	constructor(size: Vector2<number>) {
+		const gl = Core.getInstance().getGL();
 
 		this._textures = new Array(3);
 
 		this._fbo = gl.createFramebuffer();
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this._fbo);
 
-		for(var i = 0; i < gbuffer_type.num_textures; ++i) {
+		for (let i = 0; i < gbuffer_type.num_textures; ++i) {
 			this._textures[i] = gl.createTexture();
 		}
 
-		var width = size.x;
-		var height = size.y;
+		const width = size.x;
+		const height = size.y;
 
 		// Position color buffer
 		gl.bindTexture(gl.TEXTURE_2D, this._textures[gbuffer_type.position]);
@@ -76,23 +76,23 @@ class GBuffer {
 			(<any>gl).COLOR_ATTACHMENT1,
 			(<any>gl).COLOR_ATTACHMENT2
 		]);
-		var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+		let status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 
-		if(status != gl.FRAMEBUFFER_COMPLETE) {
-			//console.log(`Framebuffer error. Status: ${status}`);
-			switch(status) {
+		if (status !== gl.FRAMEBUFFER_COMPLETE) {
+			// console.log(`Framebuffer error. Status: ${status}`);
+			switch (status) {
 				case gl.FRAMEBUFFER_UNSUPPORTED:
-					throw new Error('framebuffer: Framebuffer unsupported')
+					throw new Error("framebuffer: Framebuffer unsupported");
 				case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-					throw new Error('framebuffer: Framebuffer incomplete attachment')
+					throw new Error("framebuffer: Framebuffer incomplete attachment");
 				case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-					throw new Error('framebuffer: Framebuffer incomplete dimensions')
+					throw new Error("framebuffer: Framebuffer incomplete dimensions");
 				case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-					throw new Error('framebuffer: Framebuffer incomplete missing attachment')
+					throw new Error("framebuffer: Framebuffer incomplete missing attachment");
 				default:
-					throw new Error('framebuffer: Framebuffer failed for unspecified reason')
+					throw new Error("framebuffer: Framebuffer failed for unspecified reason");
 			}
-			//throw new Error("GBuffer error");
+			// throw new Error("GBuffer error");
 		}
 		console.log("done");
 
@@ -100,34 +100,34 @@ class GBuffer {
 	}
 
 	public bindForReading() {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-		for(var i = 0; i < gbuffer_type.num_textures; ++i) {
+		for (let i = 0; i < gbuffer_type.num_textures; ++i) {
 			gl.activeTexture(gl.TEXTURE0 + i);
 			gl.bindTexture(gl.TEXTURE_2D, this._textures[i]);
 		}
 	}
 
 	public bindForWriting() {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this._fbo);
 	}
 
 	public destroy() {
-		var gl = Core.getInstance().getGL();
-		if(this._fbo) {
+		const gl = Core.getInstance().getGL();
+		if (this._fbo) {
 			gl.deleteFramebuffer(this._fbo);
 		}
-		if(this._textures) {
-			for(var i = 0; i < gbuffer_type.num_textures; ++i) {
-				if(this._textures[i]) {
+		if (this._textures) {
+			for (let i = 0; i < gbuffer_type.num_textures; ++i) {
+				if (this._textures[i]) {
 					gl.deleteTexture(this._textures[i]);
 				}
 			}
 		}
-		if(this._depthTexture) {
+		if (this._depthTexture) {
 			gl.deleteRenderbuffer(this._depthTexture);
 		}
 	}

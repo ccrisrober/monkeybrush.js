@@ -7,7 +7,7 @@
 class Skybox {
 	constructor(dir: string) {
 		console.log("Load skybox ...");
-		var faces : Array<string> = [];
+		let faces: Array<string> = [];
 		faces.push(dir + "/right.jpg");
 		faces.push(dir + "/left.jpg");
 		faces.push(dir + "/top.jpg");
@@ -15,11 +15,11 @@ class Skybox {
 		faces.push(dir + "/back.jpg");
 		faces.push(dir + "/front.jpg");
 
-		var gl : WebGLRenderingContext = Core.getInstance().getGL();
+		const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
 		this._prog = new ShaderProgram();
 
-		var vs: string = `#version 300 es
+		let vs: string = `#version 300 es
     	precision highp float;
 		layout (location = 0) in vec3 position;
 		out vec3 TexCoords;
@@ -33,7 +33,7 @@ class Skybox {
 		
 		this._prog.addShader(vs, shader_type.vertex, mode.read_text);
 
-		var fg: string = `#version 300 es
+		let fg: string = `#version 300 es
     	precision highp float;
 		in vec3 TexCoords;
 		out vec4 color;
@@ -47,7 +47,7 @@ class Skybox {
 
 		this._prog.addUniforms(["view", "projection"]);
 
-		var skyboxVertices = new Float32Array([
+		let skyboxVertices = new Float32Array([
 			// Positions          
 			-1.0,  1.0, -1.0,
 			-1.0, -1.0, -1.0,
@@ -100,11 +100,11 @@ class Skybox {
 		this._loadCubemap(faces);
 	}
 	public render(view: Float32Array, projection: Float32Array) {
-		var gl : WebGLRenderingContext = Core.getInstance().getGL();
+		const gl: WebGLRenderingContext = Core.getInstance().getGL();
 		gl.depthFunc(gl.LEQUAL);
 		this._prog.use();
 
-		var auxView = mat3.create();
+		let auxView = mat3.create();
 		auxView = mat3.fromMat4(auxView, view);
 		// Remove any translation
 		auxView = new Float32Array([
@@ -122,11 +122,11 @@ class Skybox {
 		gl.depthFunc(gl.LESS);
 	}
 	public destroy() {
-		var gl : WebGLRenderingContext = Core.getInstance().getGL()
+		const gl: WebGLRenderingContext = Core.getInstance().getGL();
 		this.cubeMapTexture.destroy();
 	}
 
-	protected skyboxVBO : WebGLBuffer;
+	protected skyboxVBO: WebGLBuffer;
 	protected _prog: ShaderProgram;
 	protected cubeMapTexture: CubeMapTexture;
 
@@ -135,7 +135,7 @@ class Skybox {
 		this.cubeMapTexture.bind();
 
 		faces.forEach(function(face: string, i: number) {
-			var img = ResourceMap.retrieveAsset(face);
+			let img = ResourceMap.retrieveAsset(face);
 			this.cubeMapTexture.addImage(i, img);
 		}.bind(this));
 

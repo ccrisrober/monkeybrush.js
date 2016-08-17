@@ -60,18 +60,18 @@ declare class Camera {
     protected pitch: number;
     protected movSpeed: number;
     protected mouseSensivity: number;
-    GetPos(): Float32Array;
-    timeElapsed: number;
-    constructor(position?: Float32Array, up?: Float32Array, yaw?: number, pitch?: number);
     protected _updateCamera: boolean;
+    timeElapsed: number;
+    private view;
+    private proj;
+    GetPos(): Float32Array;
+    constructor(position?: Float32Array, up?: Float32Array, yaw?: number, pitch?: number);
     update(callback: Function): void;
     processKeyboard(direction: number, speed?: number): void;
     processMouseMovement(xOffset: number, yOffset: number): void;
     updateCameraVectors(): void;
-    private view;
-    private proj;
     GetViewMatrix(): Float32Array;
-    GetProjectionMatrix(w: any, h: any): Float32Array;
+    GetProjectionMatrix(w: number, h: number): Float32Array;
 }
 declare abstract class ICamera {
     protected _position: Float32Array;
@@ -143,15 +143,14 @@ declare class ShaderProgram {
     sendUniformVec3(name: string, value: Float32Array): void;
     sendUniformMat4(name: string, value: Float32Array, transpose?: boolean): void;
 }
-declare var vertexCode: string;
-declare module ToneMap {
+declare namespace ToneMap {
     function init(gl: WebGLRenderingContext): void;
-    var textureQuadSimpleProgram: ShaderProgram;
-    var textureQuadGammaProgram: ShaderProgram;
-    var textureQuadReinhardProgram: ShaderProgram;
-    var textureQuadFilmicProgram: ShaderProgram;
-    var textureQuadsRGBProgram: ShaderProgram;
-    var textureQuadUncharted2Program: ShaderProgram;
+    let textureQuadSimpleProgram: ShaderProgram;
+    let textureQuadGammaProgram: ShaderProgram;
+    let textureQuadReinhardProgram: ShaderProgram;
+    let textureQuadFilmicProgram: ShaderProgram;
+    let textureQuadsRGBProgram: ShaderProgram;
+    let textureQuadUncharted2Program: ShaderProgram;
 }
 /**
 * This class get WebGL2 context and animationFrame for your navigator.
@@ -178,16 +177,16 @@ declare class Core {
     protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
     private _getVendors();
 }
-declare class vector2<T> {
+declare class Vector2<T> {
     x: T;
     y: T;
     constructor(x: T, y: T);
-    isEqual(other: vector2<T>): boolean;
+    isEqual(other: Vector2<T>): boolean;
 }
 declare abstract class Texture {
     protected _handle: WebGLTexture;
     protected _target: number;
-    protected _size: vector2<number>;
+    protected _size: Vector2<number>;
     constructor(target: number);
     target: number;
     abstract destroy(): void;
@@ -195,19 +194,19 @@ declare abstract class Texture {
     handle(): WebGLTexture;
 }
 declare class Framebuffer {
-    protected _size: vector2<number>;
+    protected _size: Vector2<number>;
     protected _handle: WebGLFramebuffer;
     protected _attachments: Array<number>;
     protected _depth: Texture;
     protected _renderBuffer: any;
     protected _colors: Array<Texture>;
-    constructor(textures: Array<Texture>, size: vector2<number>, depth?: boolean, stencil?: boolean, options?: {});
+    constructor(textures: Array<Texture>, size: Vector2<number>, depth?: boolean, stencil?: boolean, options?: {});
     private _throwFBOError(status);
     bind(): void;
     unbind(): void;
-    rebuild(size: vector2<number>): void;
+    rebuild(size: Vector2<number>): void;
     destroy(): void;
-    protected createRenderBuffer(size: vector2<number>, format: number, attachment: number): WebGLRenderbuffer;
+    protected createRenderBuffer(size: Vector2<number>, format: number, attachment: number): WebGLRenderbuffer;
 }
 declare enum gbuffer_type {
     position = 0,
@@ -219,7 +218,7 @@ declare class GBuffer {
     protected _fbo: WebGLFramebuffer;
     protected _depthTexture: any;
     protected _textures: Array<WebGLTexture>;
-    constructor(size: vector2<number>);
+    constructor(size: Vector2<number>);
     bindForReading(): void;
     bindForWriting(): void;
     destroy(): void;
@@ -266,40 +265,27 @@ declare class Color {
     setRGB(r: number, g: number, b: number): void;
     toHSL(): Color;
 }
-declare module extensions {
+declare namespace extensions {
     function get(name: string): any;
 }
-declare class Timer__ {
-    protected running: boolean;
-    protected start_clock: number;
-    protected start_time: number;
-    protected acc_time: number;
-    constructor();
-    elapsed_time(): number;
-    start(msg?: string): void;
-    SetToZero(): void;
-    restart(): void;
-    stop(): void;
-    check(): number;
-}
-declare module timer {
+declare namespace Timer {
     function update(): void;
     function deltaTime(): number;
 }
-declare class vector3<T> {
+declare class Vector3<T> {
     x: T;
     y: T;
     z: T;
     constructor(x: T, y: T, z: T);
-    isEqual(other: vector3<T>): boolean;
+    isEqual(other: Vector3<T>): boolean;
 }
-declare class vector4<T> {
+declare class Vector4<T> {
     x: T;
     y: T;
     z: T;
     w: T;
     constructor(x: T, y: T, z: T, w: T);
-    isEqual(other: vector4<T>): boolean;
+    isEqual(other: Vector4<T>): boolean;
 }
 declare class VertexBuffer {
     constructor();
@@ -316,31 +302,31 @@ class ShaderManager {
         return ShaderManager._progDictionary[name];
     }
     public static add(name: string, prog: ShaderProgram) {
-        //if(name in ShaderManager._progDictionary) {
-        if(ShaderManager._progDictionary.hasOwnProperty(name)) {
+        //if (name in ShaderManager._progDictionary) {
+        if (ShaderManager._progDictionary.hasOwnProperty(name)) {
             console.warn(name + " key exist ...");
         }
         ShaderManager._progDictionary[name] = prog;
     }
     public static destroy() {
-        for(var key in ShaderManager._progDictionary) {
+        for (var key in ShaderManager._progDictionary) {
             ShaderManager._progDictionary[key].destroy();
         }
     }
-    protected static _progDictionary: { [ key:string ] : ShaderProgram; };
+    protected static _progDictionary: { [ key:string ]: ShaderProgram; };
 };
 /**/
 interface ShaderCallback {
     (): ShaderProgram;
 }
-declare module ShaderManager {
+declare namespace ShaderManager {
     function get(name: string): ShaderProgram;
     function addWithFun(name: string, fn: ShaderCallback): void;
     function add(name: string, prog: ShaderProgram): void;
     function destroy(): void;
 }
 declare var VanillaToasts: any;
-declare module ResourceMap {
+declare namespace ResourceMap {
     class MapEntry {
         _asset: string;
         _refCount: number;
@@ -402,29 +388,29 @@ declare class PointLight extends Light {
     position: Float32Array;
     addTransform(x?: number, y?: number, z?: number): void;
 }
-declare var camera: Camera;
-declare var stats: Stats;
-declare var SimpleConfig: () => {
+declare let camera: Camera;
+declare let stats: Stats;
+declare let SimpleConfig: () => {
     max: number;
 };
-declare var gui: dat.GUI;
-declare var torito: Torus;
-declare var m: Model;
-declare var view: any;
-declare var projection: any;
+declare let gui: dat.GUI;
+declare let torito: Torus;
+declare let m: Model;
+declare let view: any;
+declare let projection: any;
+declare let tex2d: Texture2D;
+declare let light: PointLight;
+declare let identityMatrix: Float32Array;
+declare let model: Float32Array;
+declare let angle: number;
+declare let text: {
+    max: number;
+};
 declare function loadAssets(): void;
 declare function initialize(): void;
-declare var tex2d: Texture2D;
-declare var light: PointLight;
-declare var identityMatrix: Float32Array;
-declare var model: Float32Array;
-declare var angle: number;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
-declare var text: {
-    max: number;
-};
-declare var myImageLoader: (src: any) => void;
+declare function myImageLoader(src: any): void;
 declare function loop(dt: number): void;
 declare function resize(): void;
 declare class DirectionalLight extends Light {
@@ -452,12 +438,6 @@ declare class NormalMat extends Material {
 declare class PhongMat extends Material {
 }
 declare class ShaderMat extends Material {
-}
-declare class Capsule extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    constructor(segments?: number, radius?: number, length?: number);
-    protected _indicesLen: any;
-    render(): void;
 }
 declare class Cube extends Drawable {
     protected _handle: Array<WebGLBuffer>;
@@ -506,17 +486,17 @@ declare class Skybox {
     protected _loadCubemap(faces: Array<string>): void;
 }
 declare class FloatTexture extends Texture2D {
-    constructor(image: any, size: vector2<number>, options?: {});
+    constructor(image: any, size: Vector2<number>, options?: {});
 }
 declare class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
-    constructor(size: vector2<number>, format: number, attachment: number);
+    constructor(size: Vector2<number>, format: number, attachment: number);
 }
 declare class SimpleTexture2D extends Texture2D {
-    constructor(size: vector2<number>, options?: {});
+    constructor(size: Vector2<number>, options?: {});
 }
 declare class Texture3D extends Texture {
-    constructor(data: any, size: vector3<number>, options?: {});
+    constructor(data: any, size: Vector3<number>, options?: {});
     bind(slot?: number): void;
     destroy(): void;
 }

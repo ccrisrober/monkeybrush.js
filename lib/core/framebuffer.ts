@@ -1,25 +1,25 @@
 /// <reference path="core.ts" />
 /// <reference path="../textures/texture.ts" />
-/// <reference path="../extras/vector2.ts" />
+/// <reference path="../extras/Vector2.ts" />
 
 class Framebuffer {
-	protected _size: vector2<number>;
+	protected _size: Vector2<number>;
 	protected _handle: WebGLFramebuffer;
 	protected _attachments: Array<number>;
 	protected _depth: Texture;
-	protected _renderBuffer;//: Texture;
-	//protected _colorBuffer: Texture;
+	protected _renderBuffer; // : Texture;
+	// protected _colorBuffer: Texture;
 
 	protected _colors: Array<Texture>;
 
-	constructor(textures: Array<Texture>, size: vector2<number>, depth: boolean = false, stencil: boolean = false, options = {}) {
-		var gl = Core.getInstance().getGL();
+	constructor(textures: Array<Texture>, size: Vector2<number>, depth: boolean = false, stencil: boolean = false, options = {}) {
+		const gl = Core.getInstance().getGL();
 
-		var numColors = textures.length;
-		if(numColors < 0) {
-			throw new Error('must specify >= 0 color attachments');
-		} else if(numColors > 1) {
-			if(numColors > gl.getParameter((<any>gl).MAX_COLOR_ATTACHMENTS)) {
+		let numColors = textures.length;
+		if (numColors < 0) {
+			throw new Error("must specify >= 0 color attachments");
+		} else if (numColors > 1) {
+			if (numColors > gl.getParameter((<any>gl).MAX_COLOR_ATTACHMENTS)) {
 				throw new Error(`GL context doesn´t support ${numColors} color attachments`);
 			}
 		}
@@ -37,7 +37,7 @@ class Framebuffer {
 
 			// Only supported simple textures
 			// TODO: Cubemap or texture3D
-			var target = texture.target;
+			let target = texture.target;
 
 			gl.framebufferTexture2D(gl.FRAMEBUFFER,
 				gl.COLOR_ATTACHMENT0 + i,
@@ -54,10 +54,10 @@ class Framebuffer {
 		// TODO: Check no texture attachments (default render buffer storage)
 
 		/**
-		if(depth && stencil) {
+		if (depth && stencil) {
 				// TODO options.floatDepth ??
 			this._depth = initTexture2D(size, gl.UNSIGNED_INT_24_8, gl.DEPTH_STENCIL, gl.DEPTH_STENCIL_ATTACHMENT);
-		} else if(depth && !stencil) {
+		} else if (depth && !stencil) {
 			this._depth = initTexture2D(size, gl.UNSIGNED_SHORT, gl.DEPTH_ATTACHMENT, gl.DEPTH_ATTACHMENT);
 		} else if (!depth && stencil) {
 			this._renderBuffer = this.createRenderBuffer(size, gl.STENCIL_INDEX, gl.STENCIL_ATTACHMENT);
@@ -65,50 +65,50 @@ class Framebuffer {
 		/**/
 
 		// Check status
-		var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-		if(status !== gl.FRAMEBUFFER_COMPLETE) {
+		let status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+		if (status !== gl.FRAMEBUFFER_COMPLETE) {
 			this.destroy();
 			this._throwFBOError(status);
 		}
 	}
 
 	private _throwFBOError(status: number) {
-		var gl = Core.getInstance().getGL();
-		switch(status) {
+		const gl = Core.getInstance().getGL();
+		switch (status) {
 			case gl.FRAMEBUFFER_UNSUPPORTED:
-				throw new Error('framebuffer: Framebuffer unsupported')
+				throw new Error("framebuffer: Framebuffer unsupported");
 			case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-				throw new Error('framebuffer: Framebuffer incomplete attachment')
+				throw new Error("framebuffer: Framebuffer incomplete attachment");
 			case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-				throw new Error('framebuffer: Framebuffer incomplete dimensions')
+				throw new Error("framebuffer: Framebuffer incomplete dimensions");
 			case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-				throw new Error('framebuffer: Framebuffer incomplete missing attachment')
+				throw new Error("framebuffer: Framebuffer incomplete missing attachment");
 			default:
-				throw new Error('framebuffer: Framebuffer failed for unspecified reason')
+				throw new Error("framebuffer: Framebuffer failed for unspecified reason");
 		}
 	}
 
 	public bind() {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
 	}
 
 	public unbind() {
-		var gl = Core.getInstance().getGL();
+		const gl = Core.getInstance().getGL();
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	}
 
-	public rebuild(size: vector2<number>) {
-		if(!size.isEqual(this._size)) {
+	public rebuild(size: Vector2<number>) {
+		if (!size.isEqual(this._size)) {
 
 		}
 	}
 
 	public destroy() {
-		var gl = Core.getInstance().getGL();
-		var oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+		const gl = Core.getInstance().getGL();
+		let oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
-		if(oldBinding === this._handle) {
+		if (oldBinding === this._handle) {
 			gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		}
 
@@ -118,24 +118,24 @@ class Framebuffer {
 
 		gl.deleteFramebuffer(this._handle);
 
-		if(this._depth) {
+		if (this._depth) {
 			this._depth.destroy();
 			this._depth = null;
 		}
 
 		// Destroy depth/stencil
-		if(this._renderBuffer) {
-			//this._renderBuffer.destroy();
-			//gl.deleteRenderbuffer(this._renderBuffer)
-			this._renderBuffer = null
+		if (this._renderBuffer) {
+			// this._renderBuffer.destroy();
+			// gl.deleteRenderbuffer(this._renderBuffer)
+			this._renderBuffer = null;
 		}
 
 		// Color buffer default TODO
 	}
 
-	protected createRenderBuffer(size: vector2<number>, format: number, attachment: number): WebGLRenderbuffer {
-		var gl = Core.getInstance().getGL();
-		var res = gl.createRenderbuffer();
+	protected createRenderBuffer(size: Vector2<number>, format: number, attachment: number): WebGLRenderbuffer {
+		const gl = Core.getInstance().getGL();
+		let res = gl.createRenderbuffer();
 		gl.bindRenderbuffer(gl.RENDERBUFFER, res);
 		gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
 		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, null);

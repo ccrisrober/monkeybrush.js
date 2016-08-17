@@ -1,4 +1,4 @@
-// TODO: Change _color to vector3
+// TODO: Change _color to Vector3
 class Color {
 	protected _color = new Array(3);
 	constructor(r: number, g: number, b: number) {
@@ -18,18 +18,18 @@ class Color {
 		this.b = b;
 	}
 
-	public toHSL() : Color {
-		var max = Math.max(this.r, this.g, this.b), 
+	public toHSL(): Color {
+		const max = Math.max(this.r, this.g, this.b), 
 			min = Math.min(this.r, this.g, this.b);
 
-		var h, s, l = (max + min) / 2;
+		let h, s, l = (max + min) / 2;
 
-		if(max === min) {
+		if (max === min) {
 			h = s = 0; 	// achromatic
 		} else {
-			var d = max - min;
+			let d = max - min;
 	        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-	        switch(max) {
+	        switch (max) {
 	            case this.r: h = (this.g - this.b) / d + (this.g < this.b ? 6 : 0); break;
 	            case this.g: h = (this.b - this.r) / d + 2; break;
 	            case this.b: h = (this.r - this.g) / d + 4; break;
