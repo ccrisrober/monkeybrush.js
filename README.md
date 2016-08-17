@@ -15,6 +15,7 @@
 - [ ] Add framebuffer
 - [ ] Float texture (gl.getExtension("OES_texture_float_linear");)
 - [ ] Create "shadertoy" for desktop
+- [ ] Rim Lighting
 
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt

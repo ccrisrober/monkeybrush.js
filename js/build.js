@@ -868,7 +868,113 @@ var Framebuffer = (function () {
     };
     return Framebuffer;
 })();
+/// <reference path="texture.ts" />
+var SimpleTexture2D = (function (_super) {
+    __extends(SimpleTexture2D, _super);
+    function SimpleTexture2D(size, options) {
+        if (options === void 0) { options = {}; }
+        var gl = Core.getInstance().getGL();
+        _super.call(this, gl.TEXTURE_2D);
+        options = options || {};
+        console.log(this.target);
+        // Support compression
+        this._flipY = options["flipY"] === true;
+        this._handle = gl.createTexture();
+        var _internalformat = options["internalformat"] || gl.RGBA;
+        var _format = options["format"] || gl.RGBA;
+        var _type = options["type"] || gl.UNSIGNED_BYTE;
+        this._minFilter = options["minFilter"] || gl.NEAREST;
+        this._magFilter = options["magFilter"] || gl.NEAREST;
+        var wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
+        if (!Array.isArray(wraps)) {
+            wraps = [wraps, wraps];
+        }
+        else {
+            this._wraps = wraps;
+        }
+        this.bind();
+        gl.texImage2D(this._target, 0, // Level of details
+        _internalformat, // Internal format
+        size.x, size.y, 0, _format, // Format
+        _type, // Size of each channel
+        null);
+        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this._minFilter);
+        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this._magFilter);
+        this.wrap(wraps);
+        /*// Prevent NPOT textures
+        // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
+        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        // Prevents s-coordinate wrapping (repeating).
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        // Prevents t-coordinate wrapping (repeating).
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
+    }
+    SimpleTexture2D.prototype.genMipMap = function () {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        // TODO: Check NPOT??
+        gl.generateMipmap(this.target);
+    };
+    SimpleTexture2D.prototype.wrap = function (modes) {
+        if (modes.length !== 2) {
+            throw new Error("Must specify wrapS, wrapT modes");
+        }
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, modes[0]);
+        gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, modes[1]);
+        this._wraps = modes;
+    };
+    SimpleTexture2D.prototype.minFilter = function (filter) {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, filter);
+        this._minFilter = filter;
+    };
+    SimpleTexture2D.prototype.magFilter = function (filter) {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, filter);
+        this._magFilter = filter;
+    };
+    SimpleTexture2D.prototype.bind = function (slot) {
+        var gl = Core.getInstance().getGL();
+        if (typeof slot === "number") {
+            gl.activeTexture(gl.TEXTURE0 + slot);
+        }
+        gl.bindTexture(this.target, this._handle);
+    };
+    SimpleTexture2D.prototype.unbind = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindTexture(this.target, null);
+    };
+    SimpleTexture2D.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        gl.deleteTexture(this._handle);
+        this._handle = null;
+    };
+    return SimpleTexture2D;
+})(Texture);
 /// <reference path="../extras/Vector2.ts" />
+/// <reference path="../core/Core.ts" />
+var RenderBufferTexture = (function () {
+    function RenderBufferTexture(size, format, attachment) {
+        var gl = Core.getInstance().getGL();
+        this._handle = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+        gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
+        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    }
+    RenderBufferTexture.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        gl.deleteTexture(this._handle);
+    };
+    return RenderBufferTexture;
+})();
+/// <reference path="../extras/Vector2.ts" />
+/// <reference path="../textures/simpleTexture2D.ts" />
+/// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="core.ts" />
 var gbuffer_type;
 (function (gbuffer_type) {
@@ -879,46 +985,43 @@ var gbuffer_type;
 })(gbuffer_type || (gbuffer_type = {}));
 var GBuffer = (function () {
     function GBuffer(size) {
+        this._textures = new Array(gbuffer_type.num_textures);
         var gl = Core.getInstance().getGL();
         this._textures = new Array(3);
         this._fbo = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._fbo);
-        for (var i = 0; i < gbuffer_type.num_textures; ++i) {
-            this._textures[i] = gl.createTexture();
-        }
         var width = size.x;
         var height = size.y;
         // Position color buffer
-        gl.bindTexture(gl.TEXTURE_2D, this._textures[gbuffer_type.position]);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textures[gbuffer_type.position], 0);
+        (this._textures[gbuffer_type.position] = new SimpleTexture2D(size, {
+            "internalformat": gl.RGB,
+            "format": gl.RGB,
+            "type": gl.FLOAT,
+            "minFilter": gl.NEAREST,
+            "maxFilter": gl.NEAREST
+        })).unbind();
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textures[gbuffer_type.position].handle(), 0);
         // Normal color buffer
-        gl.bindTexture(gl.TEXTURE_2D, this._textures[gbuffer_type.normal]);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        /**
-        gl.texImage2D(gl.TEXTURE_2D, 0, (<any>gl).RGB16F, width, height, 0,
-            gl.RGB, gl.FLOAT, null);
-        /**/
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.FLOAT, null);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, this._textures[gbuffer_type.normal], 0);
+        (this._textures[gbuffer_type.normal] = new SimpleTexture2D(size, {
+            "internalformat": gl.RGB,
+            "format": gl.RGB,
+            "type": gl.FLOAT,
+            "minFilter": gl.NEAREST,
+            "maxFilter": gl.NEAREST
+        })).unbind();
+        this._textures[gbuffer_type.normal].unbind();
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, this._textures[gbuffer_type.normal].handle(), 0);
         // Color + Specular color buffer
-        gl.bindTexture(gl.TEXTURE_2D, this._textures[gbuffer_type.diffuse]);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT2, gl.TEXTURE_2D, this._textures[gbuffer_type.diffuse], 0);
+        (this._textures[gbuffer_type.diffuse] = new SimpleTexture2D(size, {
+            "internalformat": gl.RGBA,
+            "format": gl.RGBA,
+            "type": gl.FLOAT,
+            "minFilter": gl.NEAREST,
+            "maxFilter": gl.NEAREST
+        })).unbind();
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT2, gl.TEXTURE_2D, this._textures[gbuffer_type.diffuse].handle(), 0);
         // create a renderbuffer object to store depth info
-        this._depthTexture = gl.createRenderbuffer();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthTexture);
-        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
-        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthTexture);
+        this._depthTexture = new RenderBufferTexture(size, gl.DEPTH_COMPONENT16, gl.DEPTH_ATTACHMENT);
         gl.drawBuffers([
             gl.COLOR_ATTACHMENT0,
             gl.COLOR_ATTACHMENT1,
@@ -946,10 +1049,9 @@ var GBuffer = (function () {
     GBuffer.prototype.bindForReading = function () {
         var gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        for (var i = 0; i < gbuffer_type.num_textures; ++i) {
-            gl.activeTexture(gl.TEXTURE0 + i);
-            gl.bindTexture(gl.TEXTURE_2D, this._textures[i]);
-        }
+        this._textures.forEach(function (tex, idx) {
+            tex.bind(idx);
+        });
     };
     GBuffer.prototype.bindForWriting = function () {
         var gl = Core.getInstance().getGL();
@@ -961,14 +1063,12 @@ var GBuffer = (function () {
             gl.deleteFramebuffer(this._fbo);
         }
         if (this._textures) {
-            for (var i = 0; i < gbuffer_type.num_textures; ++i) {
-                if (this._textures[i]) {
-                    gl.deleteTexture(this._textures[i]);
-                }
-            }
+            this._textures.forEach(function (tex) {
+                tex.destroy();
+            });
         }
         if (this._depthTexture) {
-            gl.deleteRenderbuffer(this._depthTexture);
+            this._depthTexture.destroy();
         }
     };
     return GBuffer;
@@ -2720,27 +2820,6 @@ var FloatTexture = (function (_super) {
         _super.call(this, image, options);
     }
     return FloatTexture;
-})(Texture2D);
-/// <reference path="../extras/Vector2.ts" />
-/// <reference path="../core/Core.ts" />
-var RenderBufferTexture = (function () {
-    function RenderBufferTexture(size, format, attachment) {
-        var gl = Core.getInstance().getGL();
-        this._handle = gl.createRenderbuffer();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-        gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, null);
-    }
-    return RenderBufferTexture;
-})();
-/// <reference path="texture2d.ts" />
-var SimpleTexture2D = (function (_super) {
-    __extends(SimpleTexture2D, _super);
-    function SimpleTexture2D(size, options) {
-        if (options === void 0) { options = {}; }
-        _super.call(this, null, options);
-    }
-    return SimpleTexture2D;
 })(Texture2D);
 /// <reference path="texture.ts" />
 /// <reference path="../extras/Vector3.ts" />

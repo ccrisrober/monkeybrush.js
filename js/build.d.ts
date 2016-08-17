@@ -208,6 +208,25 @@ declare class Framebuffer {
     destroy(): void;
     protected createRenderBuffer(size: Vector2<number>, format: number, attachment: number): WebGLRenderbuffer;
 }
+declare class SimpleTexture2D extends Texture {
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    constructor(size: Vector2<number>, options?: {});
+    genMipMap(): void;
+    wrap(modes: Array<number>): void;
+    minFilter(filter: number): void;
+    magFilter(filter: number): void;
+    bind(slot?: number): void;
+    unbind(): void;
+    destroy(): void;
+}
+declare class RenderBufferTexture {
+    protected _handle: WebGLRenderbuffer;
+    constructor(size: Vector2<number>, format: number, attachment: number);
+    destroy(): void;
+}
 declare enum gbuffer_type {
     position = 0,
     normal = 1,
@@ -217,7 +236,8 @@ declare enum gbuffer_type {
 declare class GBuffer {
     protected _fbo: WebGLFramebuffer;
     protected _depthTexture: any;
-    protected _textures: Array<WebGLTexture>;
+    RenderBufferTexture: any;
+    protected _textures: Array<SimpleTexture2D>;
     constructor(size: Vector2<number>);
     bindForReading(): void;
     bindForWriting(): void;
@@ -489,13 +509,6 @@ declare class Skybox {
 }
 declare class FloatTexture extends Texture2D {
     constructor(image: any, size: Vector2<number>, options?: {});
-}
-declare class RenderBufferTexture {
-    protected _handle: WebGLRenderbuffer;
-    constructor(size: Vector2<number>, format: number, attachment: number);
-}
-declare class SimpleTexture2D extends Texture2D {
-    constructor(size: Vector2<number>, options?: {});
 }
 declare class Texture3D extends Texture {
     constructor(data: any, size: Vector3<number>, options?: {});

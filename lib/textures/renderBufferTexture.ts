@@ -8,6 +8,11 @@ class RenderBufferTexture {
 		this._handle = gl.createRenderbuffer();
 		gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
 		gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
-		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, null);
+		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
+		gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+	}
+	public destroy() {
+		const gl = Core.getInstance().getGL();
+		gl.deleteTexture(this._handle);
 	}
 }
