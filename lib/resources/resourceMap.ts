@@ -1,105 +1,106 @@
 "use strict";
-
-class ResourceMap {
-    // Number of outstanding load operations
-    protected _numOutstandingLoads = 0;
-
-    // Callback function when all textures are loaded
-    protected _loadCompleteCallback: Function = null;
-
-    // Resource storage
-    protected _resourceMap: { [ key:string ] : ResourceMap.MapEntry; };
-
-    private static _instance: ResourceMap = new ResourceMap();
-
-    constructor() {
-        if(ResourceMap._instance) {
-            throw new Error("Error: Instantiation failed: Use ResourceMap.getInstance() instead of new.");
+declare var VanillaToasts: any;
+module ResourceMap {
+    export class MapEntry {
+        public _asset : string;
+        public _refCount : number;
+        constructor(resName: string) {
+            this._asset = resName;
+            this._refCount = 1;
         }
-        ResourceMap._instance = this;
+        public getAsset() : string { return this._asset; }
+        public setAsset(name: string) {
+            this._asset = name;
+        }
+        public count(): number {
+            return this._refCount;
+        }
+        public incCount() {
+            this._refCount++;
+        }
+        public decCount() {
+            this._refCount--;
+        }
+    }
+    var _numOutstandingLoads: number = 0;
+
+    var _loadCompleteCallback: Function = null;
+
+    var _resourceMap: { [ key:string ] : MapEntry; } = {};
+
+    export function asyncLoadRequested(resName: string) {
+        _resourceMap[resName] = new MapEntry(resName);
+        ++_numOutstandingLoads;
+    };
+
+    export function asyncLoadFailed(resName: string) {
+        VanillaToasts.create({
+            title: `${resName} completed`,
+            type: 'error',
+            timeout: 2500
+        });
+        --_numOutstandingLoads;
+        _checkForAllLoadCompleted();
     }
 
-    public static getInstance() : ResourceMap {
-        return ResourceMap._instance;
-    }
+    export function asyncLoadCompleted(resName: string, loadedAsset) {
+        if (!isAssetLoaded(resName)) {
+            VanillaToasts.create({
+                title: `asyncLoadCompleted: [${resName}] not in map!`,
+                type: 'error',
+                timeout: 2500
+            });
+        }
+        VanillaToasts.create({
+            title: `${resName} completed`,
+            type: 'success',
+            timeout: 1500
+        });
+        _resourceMap[resName].setAsset(loadedAsset);
+        --_numOutstandingLoads;
+        _checkForAllLoadCompleted();
+    };
 
-    public asyncLoadRequested(resName: string) {
-    	this._resourceMap[resName] = new ResourceMap.MapEntry(resName);
-    	++this._numOutstandingLoads;
-    }
-    public asyncLoadCompleted(resName: string, loadedAsset) {
-    	if(!this.isAssetLoaded(resName)) {
-            alert("asyncLoadCompleted: [" + resName + "] not in map!");
-    	}
-    	this._resourceMap[resName].setAsset(resName);
-    	--this._numOutstandingLoads;
-    	this._checkForAllLoadCompleted();
-    }
-    // Make sure to set the callback _AFTER_ all load commands are issued
-    public setLoadCompleteCallback(fun: Function) {
-    	this._loadCompleteCallback = fun;
-        // in case all loading are done
-        this._checkForAllLoadCompleted();
-    }
+    var _checkForAllLoadCompleted = function () {
+        if ((_numOutstandingLoads === 0) && (_loadCompleteCallback !== null)) {
+            var funToCall = _loadCompleteCallback;
+            _loadCompleteCallback = null;
+            funToCall();
+        }
+    };
 
-    public retrieveAsset(resName: string) {
+    export function setLoadCompleteCallback(fn) {
+        _loadCompleteCallback = fn;
+        _checkForAllLoadCompleted();
+    };
+
+    export function retrieveAsset(resName: string) {
         var r = null;
-        if (resName in this._resourceMap) {
-            r = this._resourceMap[resName].getAsset();
+        if (resName in _resourceMap) {
+            r = _resourceMap[resName].getAsset();
         } else {
-            alert("retrieveAsset: [" + resName + "] not in map!");
+            alert(`retrieveAsset: [${resName}] not in map!`);
         }
         return r;
-    }
+    };
 
-    public unloadAsset(resName: string) {
+    export function isAssetLoaded(resName: string) {
+        return (resName in _resourceMap);
+    };
+
+    export function incAssetRefCount (resName: string) {
+        _resourceMap[resName].incCount();
+    };
+
+    export function unloadAsset (resName: string) {
         var c = 0;
-        if (resName in this._resourceMap) {
-            this._resourceMap[resName].decCount();
-            c = this._resourceMap[resName].count();
+        if (resName in _resourceMap) {
+            _resourceMap[resName].decCount();
+            c = _resourceMap[resName].count();
             if (c === 0) {
-                delete this._resourceMap[resName];
+                delete _resourceMap[resName];
             }
         }
         return c;
-    }
-    public isAssetLoaded(resName: string) : boolean {
-        return (resName in this._resourceMap);
-    }
-    public incAssetRefCount(resName: string) {
-    	this._resourceMap[resName].incCount();
-    }
-
-    protected _checkForAllLoadCompleted() {
-    	if((this._numOutstandingLoads === 0) && (this._loadCompleteCallback != null)) {
-            // ensures the load complete call back will only be called once!
-            var fun = this._loadCompleteCallback;
-            this._loadCompleteCallback = null;
-            fun();
-    	}
-    }
-}
-
-module ResourceMap {
-	export class MapEntry {
-		protected _asset : string;
-		protected _refCount : number;
-		constructor(resName: string) {
-			this._asset = resName;
-			this._refCount = 1;
-		}
-		public getAsset() : string { return this._asset; }
-		public setAsset(name: string) {
-			this._asset = name;
-		}
-		public count(): number {
-			return this._refCount;
-		}
-		public incCount() {
-			this._refCount++;
-		}
-		public decCount() {
-			this._refCount--;
-		}
-	}
+    };
 }

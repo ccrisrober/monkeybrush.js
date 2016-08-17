@@ -88,7 +88,7 @@ void main() {
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
     fragColor = vec4(result, 1.0);
-    //fragColor = texture(texSampler, matcap(outPosition, outNormal));
+    fragColor = texture(texSampler, matcap(outPosition, outNormal));
     // Apply fog
     //colorWithFog(fragColor.rgb);
 

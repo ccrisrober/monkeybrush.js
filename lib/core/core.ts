@@ -19,16 +19,35 @@ class Core {
 		}
 		//var canvas = <HTMLCanvasElement>document.getElementById("canvas");
 		
-	    var canvas = document.createElement('canvas');
-	    canvas.width = 800;
-	    canvas.height = 800;
+		var canvas = document.createElement('canvas');
+		canvas.width = 800;
+		canvas.height = 800;
 
 		document.body.appendChild(canvas);
 
+
+		/**
+		canvas.addEventListener("mouseup", function(ev: MouseEvent) {
+			console.log("X: " + ev.pageX + ", Y: " + ev.pageY);
+		}, false);
+
+
+		canvas.addEventListener("mousemove", function(ev: MouseEvent) {
+			console.log("X: " + ev.pageX + ", Y: " + ev.pageY);
+		}, false);
+
+
+		canvas.addEventListener("mousedown", function(ev: MouseEvent) {
+			console.log("X: " + ev.pageX + ", Y: " + ev.pageY);
+		}, false);
+		/**/
+
+
+
 		this._gl = this._getContext(canvas);
 		if(!this._gl) {
-            document.write("<br><b>WebGL is not supported!</b>");
-            return;
+			document.write("<br><b>WebGL is not supported!</b>");
+			return;
 		}
 		this._getVendors();
 		this.init();
@@ -58,14 +77,14 @@ class Core {
 		gl.depthFunc(gl.LESS);
 		//gl.depthFunc(gl.LEQUAL);
 
-        // Set images to flip y axis to match the texture coordinate space.
-        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+		// Set images to flip y axis to match the texture coordinate space.
+		//gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-        gl.enable(gl.CULL_FACE);
-        gl.disable(gl.BLEND);
+		gl.enable(gl.CULL_FACE);
+		gl.disable(gl.BLEND);
 
 
-        Input.getInstance();
+		Input.getInstance();
 	}
 
 	public static getInstance() : Core {

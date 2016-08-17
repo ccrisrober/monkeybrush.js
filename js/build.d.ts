@@ -139,7 +139,7 @@ declare class ShaderProgram {
     destroy(): void;
     sendUniform1f(name: string, value: number): void;
     sendUniform1i(name: string, value: number): void;
-    sendUniform3fv(name: string, value: Float32Array): void;
+    sendUniformVec3(name: string, value: Float32Array): void;
     sendUniformMat4(name: string, value: Float32Array, transpose?: boolean): void;
 }
 declare var vertexCode: string;
@@ -323,6 +323,27 @@ declare module ShaderManager {
     function add(name: string, prog: ShaderProgram): void;
     function destroy(): void;
 }
+declare var VanillaToasts: any;
+declare module ResourceMap {
+    class MapEntry {
+        _asset: string;
+        _refCount: number;
+        constructor(resName: string);
+        getAsset(): string;
+        setAsset(name: string): void;
+        count(): number;
+        incCount(): void;
+        decCount(): void;
+    }
+    function asyncLoadRequested(resName: string): void;
+    function asyncLoadFailed(resName: string): void;
+    function asyncLoadCompleted(resName: string, loadedAsset: any): void;
+    function setLoadCompleteCallback(fn: any): void;
+    function retrieveAsset(resName: string): any;
+    function isAssetLoaded(resName: string): boolean;
+    function incAssetRefCount(resName: string): void;
+    function unloadAsset(resName: string): number;
+}
 declare abstract class Drawable {
     protected _vao: any;
     abstract render(): any;
@@ -343,7 +364,7 @@ declare class Texture2D extends Texture {
     protected _minFilter: number;
     protected _magFilter: number;
     protected _wraps: Array<number>;
-    constructor(image: any, size: vector2<number>, options?: {});
+    constructor(image: ImageData, options?: {});
     genMipMap(): void;
     wrap(modes: Array<number>): void;
     minFilter(filter: number): void;
@@ -365,16 +386,28 @@ declare class PointLight extends Light {
     position: Float32Array;
     addTransform(x?: number, y?: number, z?: number): void;
 }
+declare class Skybox {
+    constructor(dir: string);
+    render(view: Float32Array, projection: Float32Array): void;
+    destroy(): void;
+    protected skyboxVAO: any;
+    protected skyboxVBO: WebGLBuffer;
+    protected cubeMapTexture: WebGLTexture;
+    protected ss: ShaderProgram;
+    protected model: Float32Array;
+    protected _loadCubemap(faces: Array<string>): void;
+}
+declare var skybox: Skybox;
 declare var camera: Camera;
 declare var stats: Stats;
 declare var SimpleConfig: () => {};
 declare var gui: dat.GUI;
 declare var torito: Torus;
+declare var m: Model;
 declare var view: any;
 declare var projection: any;
+declare function loadAssets(): void;
 declare function initialize(): void;
-declare var counterTextures: number;
-declare function initTexture(str: string): void;
 declare var tex2d: Texture2D;
 declare var light: PointLight;
 declare var identityMatrix: Float32Array;
@@ -382,7 +415,9 @@ declare var model: Float32Array;
 declare var angle: number;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
+declare var myImageLoader: (src: any) => void;
 declare function loop(dt: number): void;
+declare function resize(): void;
 declare class DirectionalLight extends Light {
     protected _direction: Float32Array;
     constructor(direction?: Float32Array);
@@ -438,79 +473,6 @@ declare class Teaspot extends Drawable {
     protected _faces: number;
     constructor();
     render(): void;
-}
-declare class ResourceMap {
-    protected _numOutstandingLoads: number;
-    protected _loadCompleteCallback: Function;
-    protected _resourceMap: {
-        [key: string]: ResourceMap.MapEntry;
-    };
-    private static _instance;
-    constructor();
-    static getInstance(): ResourceMap;
-    asyncLoadRequested(resName: string): void;
-    asyncLoadCompleted(resName: string, loadedAsset: any): void;
-    setLoadCompleteCallback(fun: Function): void;
-    retrieveAsset(resName: string): any;
-    unloadAsset(resName: string): number;
-    isAssetLoaded(resName: string): boolean;
-    incAssetRefCount(resName: string): void;
-    protected _checkForAllLoadCompleted(): void;
-}
-declare module ResourceMap {
-    class MapEntry {
-        protected _asset: string;
-        protected _refCount: number;
-        constructor(resName: string);
-        getAsset(): string;
-        setAsset(name: string): void;
-        count(): number;
-        incCount(): void;
-        decCount(): void;
-    }
-}
-declare class AudioClip {
-    protected _audioCtx: any;
-    protected _bgAudioNode: any;
-    protected _audioContext: AudioContext;
-    constructor();
-    initAudioContext(): void;
-    loadAudio(clipName: string): void;
-    unloadAudio(clipName: string): void;
-    playACue(): void;
-    playBackgroundAudio(clipName: string): void;
-    stopBackgroundAudio(): void;
-    isBackgroundAudioPlaying(): void;
-    protected _stopBackgroundAudio(): void;
-}
-declare class Font {
-    constructor(fontName: string);
-    unloadFont(fontName: string): void;
-}
-declare module Font {
-    class CharacterInfo {
-        protected mTexCoordLeft: number;
-        protected mTexCoordRight: number;
-        protected mTexCoordBottom: number;
-        protected mTexCoordTop: number;
-        protected mCharWidth: number;
-        protected mCharHeight: number;
-        protected mCharWidthOffset: number;
-        protected mCharHeightOffset: number;
-        protected mCharAspectRatio: number;
-    }
-}
-declare class Skybox {
-    constructor(dir: string);
-    render(): void;
-    destroy(): void;
-    protected skyboxVAO: any;
-    protected skyboxVBO: WebGLBuffer;
-    protected cubeMapTexture: any;
-    protected ss: ShaderProgram;
-    protected model: Float32Array;
-    protected tex: Texture;
-    protected _loadCubemap(faces: Array<string>): void;
 }
 declare class FloatTexture extends Texture2D {
     constructor(image: any, size: vector2<number>, options?: {});

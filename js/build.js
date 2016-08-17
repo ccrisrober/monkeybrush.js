@@ -560,7 +560,7 @@ var ShaderProgram = (function () {
         var gl = Core.getInstance().getGL();
         gl.uniform1i(this.uniformLocations[name], value);
     };
-    ShaderProgram.prototype.sendUniform3fv = function (name, value) {
+    ShaderProgram.prototype.sendUniformVec3 = function (name, value) {
         var gl = Core.getInstance().getGL();
         gl.uniform3fv(this.uniformLocations[name], value);
     };
@@ -634,6 +634,21 @@ var Core = (function () {
         canvas.width = 800;
         canvas.height = 800;
         document.body.appendChild(canvas);
+        /**
+        canvas.addEventListener("mouseup", function(ev: MouseEvent) {
+            console.log("X: " + ev.pageX + ", Y: " + ev.pageY);
+        }, false);
+
+
+        canvas.addEventListener("mousemove", function(ev: MouseEvent) {
+            console.log("X: " + ev.pageX + ", Y: " + ev.pageY);
+        }, false);
+
+
+        canvas.addEventListener("mousedown", function(ev: MouseEvent) {
+            console.log("X: " + ev.pageX + ", Y: " + ev.pageY);
+        }, false);
+        /**/
         this._gl = this._getContext(canvas);
         if (!this._gl) {
             document.write("<br><b>WebGL is not supported!</b>");
@@ -1197,6 +1212,117 @@ var ShaderManager;
     var _progDictionary = {};
 })(ShaderManager || (ShaderManager = {}));
 ;
+"use strict";
+var ResourceMap;
+(function (ResourceMap) {
+    var MapEntry = (function () {
+        function MapEntry(resName) {
+            this._asset = resName;
+            this._refCount = 1;
+        }
+        MapEntry.prototype.getAsset = function () { return this._asset; };
+        MapEntry.prototype.setAsset = function (name) {
+            this._asset = name;
+        };
+        MapEntry.prototype.count = function () {
+            return this._refCount;
+        };
+        MapEntry.prototype.incCount = function () {
+            this._refCount++;
+        };
+        MapEntry.prototype.decCount = function () {
+            this._refCount--;
+        };
+        return MapEntry;
+    })();
+    ResourceMap.MapEntry = MapEntry;
+    var _numOutstandingLoads = 0;
+    var _loadCompleteCallback = null;
+    var _resourceMap = {};
+    function asyncLoadRequested(resName) {
+        _resourceMap[resName] = new MapEntry(resName);
+        ++_numOutstandingLoads;
+    }
+    ResourceMap.asyncLoadRequested = asyncLoadRequested;
+    ;
+    function asyncLoadFailed(resName) {
+        VanillaToasts.create({
+            title: resName + " completed",
+            type: 'error',
+            timeout: 2500
+        });
+        --_numOutstandingLoads;
+        _checkForAllLoadCompleted();
+    }
+    ResourceMap.asyncLoadFailed = asyncLoadFailed;
+    function asyncLoadCompleted(resName, loadedAsset) {
+        if (!isAssetLoaded(resName)) {
+            VanillaToasts.create({
+                title: "asyncLoadCompleted: [" + resName + "] not in map!",
+                type: 'error',
+                timeout: 2500
+            });
+        }
+        VanillaToasts.create({
+            title: resName + " completed",
+            type: 'success',
+            timeout: 1500
+        });
+        _resourceMap[resName].setAsset(loadedAsset);
+        --_numOutstandingLoads;
+        _checkForAllLoadCompleted();
+    }
+    ResourceMap.asyncLoadCompleted = asyncLoadCompleted;
+    ;
+    var _checkForAllLoadCompleted = function () {
+        if ((_numOutstandingLoads === 0) && (_loadCompleteCallback !== null)) {
+            var funToCall = _loadCompleteCallback;
+            _loadCompleteCallback = null;
+            funToCall();
+        }
+    };
+    function setLoadCompleteCallback(fn) {
+        _loadCompleteCallback = fn;
+        _checkForAllLoadCompleted();
+    }
+    ResourceMap.setLoadCompleteCallback = setLoadCompleteCallback;
+    ;
+    function retrieveAsset(resName) {
+        var r = null;
+        if (resName in _resourceMap) {
+            r = _resourceMap[resName].getAsset();
+        }
+        else {
+            alert("retrieveAsset: [" + resName + "] not in map!");
+        }
+        return r;
+    }
+    ResourceMap.retrieveAsset = retrieveAsset;
+    ;
+    function isAssetLoaded(resName) {
+        return (resName in _resourceMap);
+    }
+    ResourceMap.isAssetLoaded = isAssetLoaded;
+    ;
+    function incAssetRefCount(resName) {
+        _resourceMap[resName].incCount();
+    }
+    ResourceMap.incAssetRefCount = incAssetRefCount;
+    ;
+    function unloadAsset(resName) {
+        var c = 0;
+        if (resName in _resourceMap) {
+            _resourceMap[resName].decCount();
+            c = _resourceMap[resName].count();
+            if (c === 0) {
+                delete _resourceMap[resName];
+            }
+        }
+        return c;
+    }
+    ResourceMap.unloadAsset = unloadAsset;
+    ;
+})(ResourceMap || (ResourceMap = {}));
 /// <reference path="../core/core.ts" />
 var Drawable = (function () {
     function Drawable() {
@@ -1343,9 +1469,10 @@ var Torus = (function (_super) {
     return Torus;
 })(Drawable);
 /// <reference path="texture.ts" />
+// TODO: Es necesario realmente el tamaño??
 var Texture2D = (function (_super) {
     __extends(Texture2D, _super);
-    function Texture2D(image, size, options) {
+    function Texture2D(image, options) {
         if (options === void 0) { options = {}; }
         var gl = Core.getInstance().getGL();
         _super.call(this, gl.TEXTURE_2D);
@@ -1479,17 +1606,151 @@ var PointLight = (function (_super) {
     };
     return PointLight;
 })(Light);
+/// <reference path="../core/core.ts" />
+/// <reference path="../core/shaderProgram.ts" />
+/// <reference path="../textures/texture.ts" />
+/// <reference path="../gl-matrix.d.ts" />
+var Skybox = (function () {
+    function Skybox(dir) {
+        console.log("Load skybox ...");
+        var faces = [];
+        faces.push(dir + "/right.jpg");
+        faces.push(dir + "/left.jpg");
+        faces.push(dir + "/top.jpg");
+        faces.push(dir + "/bottom.jpg");
+        faces.push(dir + "/back.jpg");
+        faces.push(dir + "/front.jpg");
+        var gl = Core.getInstance().getGL();
+        this.ss = new ShaderProgram();
+        var vs = "#version 300 es\n    \tprecision highp float;\n\t\tlayout (location = 0) in vec3 position;\n\t\tout vec3 TexCoords;\n\t\tuniform mat4 projection;\n\t\tuniform mat4 view;\n\t\tvoid main() {\n\t\t\tvec4 pos = projection * view * vec4(position, 1.0);\n\t\t\tgl_Position = pos.xyww;\n\t\t\tTexCoords = position;\n\t\t}";
+        this.ss.addShader(vs, shader_type.vertex, mode.read_text);
+        var fg = "#version 300 es\n    \tprecision highp float;\n\t\tin vec3 TexCoords;\n\t\tout vec4 color;\n\t\tuniform samplerCube skybox;\n\t\tvoid main() { \n\t\t\tcolor = texture(skybox, TexCoords);\n\t\t}";
+        this.ss.addShader(fg, shader_type.fragment, mode.read_text);
+        this.ss.compile();
+        this.ss.addUniforms(["view", "projection"]);
+        var skyboxVertices = new Float32Array([
+            // Positions          
+            -1.0, 1.0, -1.0,
+            -1.0, -1.0, -1.0,
+            1.0, -1.0, -1.0,
+            1.0, -1.0, -1.0,
+            1.0, 1.0, -1.0,
+            -1.0, 1.0, -1.0,
+            -1.0, -1.0, 1.0,
+            -1.0, -1.0, -1.0,
+            -1.0, 1.0, -1.0,
+            -1.0, 1.0, -1.0,
+            -1.0, 1.0, 1.0,
+            -1.0, -1.0, 1.0,
+            1.0, -1.0, -1.0,
+            1.0, -1.0, 1.0,
+            1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+            1.0, 1.0, -1.0,
+            1.0, -1.0, -1.0,
+            -1.0, -1.0, 1.0,
+            -1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+            1.0, -1.0, 1.0,
+            -1.0, -1.0, 1.0,
+            -1.0, 1.0, -1.0,
+            1.0, 1.0, -1.0,
+            1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+            -1.0, 1.0, 1.0,
+            -1.0, 1.0, -1.0,
+            -1.0, -1.0, -1.0,
+            -1.0, -1.0, 1.0,
+            1.0, -1.0, -1.0,
+            1.0, -1.0, -1.0,
+            -1.0, -1.0, 1.0,
+            1.0, -1.0, 1.0
+        ]);
+        // Setup vertex vao
+        //this.skyboxVAO = (<any>gl).createVertexArray();
+        this.skyboxVBO = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.skyboxVBO);
+        gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
+        //(<any>gl).bindVertexArray(null);
+        this._loadCubemap(faces);
+    }
+    Skybox.prototype.render = function (view, projection) {
+        var gl = Core.getInstance().getGL();
+        gl.depthFunc(gl.LEQUAL);
+        this.ss.use();
+        // get projection and view from camera and send it to ss
+        var auxView = mat3.create();
+        auxView = mat3.fromMat4(auxView, view);
+        // Remove any translation
+        auxView = new Float32Array([
+            auxView[0], auxView[1], auxView[2], 0.0,
+            auxView[3], auxView[4], auxView[5], 0.0,
+            auxView[6], auxView[7], auxView[8], 0.0,
+            0.0, 0.0, 0.0, 0.0
+        ]);
+        this.ss.sendUniformMat4("view", auxView);
+        this.ss.sendUniformMat4("projection", projection);
+        //(<any>gl).bindVertexArray(this.skyboxVAO);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubeMapTexture);
+        gl.drawArrays(gl.TRIANGLES, 0, 36);
+        //(<any>gl).bindVertexArray(null);
+        gl.depthFunc(gl.LESS);
+    };
+    Skybox.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        //gl.bindVertexArray(0);
+        //gl.deleteVertexArrays(this.skyboxVAO);
+        gl.deleteTexture(this.cubeMapTexture);
+    };
+    //protected textures: Array<Texture2D> = new Array(6);
+    //protected tex: Texture;
+    Skybox.prototype._loadCubemap = function (faces) {
+        var gl = Core.getInstance().getGL();
+        this.cubeMapTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubeMapTexture);
+        faces.forEach(function (face, i) {
+            var img = ResourceMap.retrieveAsset(face);
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        });
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    };
+    return Skybox;
+})();
 /// <reference path="core/core.ts" />
 /// <reference path="stats.d.ts" />
 /// <reference path="dat-gui.d.ts" />
 /// <reference path="core/shaderProgram.ts" />
 /// <reference path="resources/shaderManager.ts" />
+/// <reference path="resources/resourceMap.ts" />
 /// <reference path="models/torus.ts" />
+/// <reference path="core/model.ts" />
 /// <reference path="textures/texture2d.ts" />
 /// <reference path="core/postprocess.ts" />
 /// <reference path="extras/timer.ts" />
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
+/// <reference path="core/postProcess.ts" />
+/// <reference path="resources/skybox.ts" />
+Element.prototype.remove = function () {
+    this.parentElement.removeChild(this);
+};
+NodeList.prototype["remove"] = HTMLCollection.prototype["remove"] = function () {
+    for (var i = this.length - 1; i >= 0; i--) {
+        if (this[i] && this[i].parentElement) {
+            this[i].parentElement.removeChild(this[i]);
+        }
+    }
+};
+var skybox;
 var camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
 var stats = new Stats();
 stats.setMode(0);
@@ -1499,40 +1760,51 @@ var SimpleConfig = function () {
 };
 var gui;
 var torito;
+var m;
 var view;
 var projection;
+function loadAssets() {
+    myImageLoader("crystal.jpg");
+    // skybox
+    myImageLoader("canyon/back.jpg");
+    myImageLoader("canyon/bottom.jpg");
+    myImageLoader("canyon/front.jpg");
+    myImageLoader("canyon/left.jpg");
+    myImageLoader("canyon/right.jpg");
+    myImageLoader("canyon/top.jpg");
+}
 function initialize() {
     torito = new Torus(3.7, 2.3, 25, 10);
+    m = new Model("teddy.json");
     ShaderManager.addWithFun("prog", function () {
-        var prog2 = new ShaderProgram();
-        prog2.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
-        prog2.addShader("./shaders/demoShader.frag", shader_type.fragment, mode.read_file);
-        prog2.compile();
-        prog2.addUniforms(["projection", "view", "model",
+        var prog = new ShaderProgram();
+        prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/demoShader.frag", shader_type.fragment, mode.read_file);
+        prog.compile();
+        prog.addUniforms(["projection", "view", "model",
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
-        return prog2;
+        return prog;
+    });
+    ShaderManager.addWithFun("pp", function () {
+        var prog = new ShaderProgram();
+        prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 texCoord;\n            void main(void) {\n                texCoord = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", shader_type.vertex, mode.read_text);
+        prog.addShader("#version 300 es\n            precision highp float;\n            /*uniform sampler2D dataTexture;*/\n\n            out vec4 fragColor;\n            in vec2 texCoord;\n\n            uniform float time;\n\n            void main() {\n                fragColor = vec4(texCoord, 0.0, 1.0);\n                fragColor.rgb = vec3(cos(time), 0.0, 1.0);\n            }", shader_type.fragment, mode.read_text);
+        prog.compile();
+        prog.addUniforms(["time"]);
+        return prog;
     });
     var prog = ShaderManager.get("prog");
     prog.use();
+    var cubeImage = ResourceMap.retrieveAsset("crystal.jpg");
+    var gl = Core.getInstance().getGL();
+    tex2d = new Texture2D(cubeImage, {
+        flipY: true,
+        minFilter: gl.LINEAR,
+        magFilter: gl.LINEAR,
+        wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
+    });
+    skybox = new Skybox("canyon");
     cameraUpdateCb();
-    initTexture("matcap.jpg");
-}
-var counterTextures = 0;
-function initTexture(str) {
-    counterTextures++;
-    var cubeImage = new Image();
-    cubeImage.onload = function () {
-        var gl = Core.getInstance().getGL();
-        var size = new vector2(1000.0, 1000.0);
-        tex2d = new Texture2D(cubeImage, size, {
-            flipY: true,
-            minFilter: gl.LINEAR,
-            magFilter: gl.LINEAR,
-            wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
-        });
-        counterTextures--;
-    };
-    cubeImage.src = str;
 }
 var tex2d;
 var light = new PointLight(new Float32Array([-2.5, -2.5, 0.0]));
@@ -1548,7 +1820,7 @@ function cameraUpdateCb() {
     prog.use();
     prog.sendUniformMat4("view", view);
     prog.sendUniformMat4("projection", projection);
-    prog.sendUniform3fv("viewPos", camera.position);
+    prog.sendUniformVec3("viewPos", camera.position);
 }
 // @param dt: Global time in seconds
 function drawScene(dt) {
@@ -1556,9 +1828,17 @@ function drawScene(dt) {
     camera.timeElapsed = timer.deltaTime() / 10.0;
     camera.update(cameraUpdateCb);
     Core.getInstance().clearColorAndDepth();
+    /**
+    gl.depthMask(false);
+    var prog2 = ShaderManager.get("pp");
+    prog2.use();
+    prog2.sendUniform1f("time", dt);
+    PostProcess.render();
+    gl.depthMask(true);
+    /**/
     var prog = ShaderManager.get("prog");
     prog.use();
-    prog.sendUniform3fv("lightPosition", light.position);
+    prog.sendUniformVec3("lightPosition", light.position);
     angle += timer.deltaTime() * 0.001;
     //console.log(angle);
     tex2d.bind(0);
@@ -1572,17 +1852,37 @@ function drawScene(dt) {
             mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
             mat4.rotateY(model, model, angle * dd);
-            mat4.scale(model, model, vec3.fromValues(0.25, 0.25, 0.25));
+            mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
             prog.sendUniformMat4("model", model);
-            torito.render();
+            m.render();
         }
     }
+    skybox.render(view, projection);
 }
 // ============================================================================================ //
 // ============================================================================================ //
 // ============================================================================================ //
 // ============================================================================================ //
 // ============================================================================================ //
+// ============================================================================================ //
+var myImageLoader = function (src) {
+    if (!ResourceMap.isAssetLoaded(src)) {
+        var img = new Image();
+        ResourceMap.asyncLoadRequested(src);
+        img.onload = function () {
+            //setTimeout(function() {
+            ResourceMap.asyncLoadCompleted(src, img);
+            //}, 2500);
+        };
+        img.onerror = function (err) {
+            ResourceMap.asyncLoadFailed(src);
+        };
+        img.src = src;
+    }
+    else {
+        ResourceMap.incAssetRefCount(src);
+    }
+};
 window.onload = function () {
     Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
     var text = SimpleConfig();
@@ -1592,24 +1892,51 @@ window.onload = function () {
             gui.add(text, index);
         }
     }
-    initialize();
-    var itv = setInterval(function () {
+    loadAssets();
+    ResourceMap.setLoadCompleteCallback(function () {
+        console.log("ALL RESOURCES LOADED!!!!");
+        // Remove loader css3 window
+        document.getElementById("spinner").remove();
+        initialize();
+        requestAnimationFrame(loop);
+    });
+    /*var itv = setInterval(function() {
         //console.log(counterTextures);
-        if (counterTextures === 0) {
+        if(counterTextures === 0) {
             //console.log(tex2d);
             clearInterval(itv);
             requestAnimationFrame(loop);
         }
-    }, 100);
+    }, 100);*/
 };
 function loop(dt) {
     Input.getInstance().update();
     stats.begin();
     dt *= 0.001; // convert to seconds
     timer.update();
+    //resize();
     drawScene(dt); // User cliet
     stats.end();
     requestAnimationFrame(loop);
+}
+function resize() {
+    var canvas = Core.getInstance().canvas();
+    var realToCSSPixels = window.devicePixelRatio || 1;
+    // Lookup the size the browser is displaying the canvas in CSS pixels
+    // and compute a size needed to make our drawingbuffer match it in
+    // device pixels.
+    var displayWidth = Math.floor(canvas.clientWidth * realToCSSPixels);
+    var displayHeight = Math.floor(canvas.clientHeight * realToCSSPixels);
+    // Check if the canvas is not the same size.
+    if (canvas.width != displayWidth ||
+        canvas.height != displayHeight) {
+        // Make the canvas the same size
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        // Set the viewport to match
+        Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
+        cameraUpdateCb();
+    }
 }
 /// <reference path="light.ts" />
 var DirectionalLight = (function (_super) {
@@ -2085,296 +2412,130 @@ var Teaspot = (function (_super) {
     };
     return Teaspot;
 })(Drawable);
-"use strict";
-var ResourceMap = (function () {
-    function ResourceMap() {
-        // Number of outstanding load operations
-        this._numOutstandingLoads = 0;
-        // Callback function when all textures are loaded
-        this._loadCompleteCallback = null;
-        if (ResourceMap._instance) {
-            throw new Error("Error: Instantiation failed: Use ResourceMap.getInstance() instead of new.");
-        }
-        ResourceMap._instance = this;
-    }
-    ResourceMap.getInstance = function () {
-        return ResourceMap._instance;
-    };
-    ResourceMap.prototype.asyncLoadRequested = function (resName) {
-        this._resourceMap[resName] = new ResourceMap.MapEntry(resName);
-        ++this._numOutstandingLoads;
-    };
-    ResourceMap.prototype.asyncLoadCompleted = function (resName, loadedAsset) {
-        if (!this.isAssetLoaded(resName)) {
-            alert("asyncLoadCompleted: [" + resName + "] not in map!");
-        }
-        this._resourceMap[resName].setAsset(resName);
-        --this._numOutstandingLoads;
-        this._checkForAllLoadCompleted();
-    };
-    // Make sure to set the callback _AFTER_ all load commands are issued
-    ResourceMap.prototype.setLoadCompleteCallback = function (fun) {
-        this._loadCompleteCallback = fun;
-        // in case all loading are done
-        this._checkForAllLoadCompleted();
-    };
-    ResourceMap.prototype.retrieveAsset = function (resName) {
-        var r = null;
-        if (resName in this._resourceMap) {
-            r = this._resourceMap[resName].getAsset();
-        }
-        else {
-            alert("retrieveAsset: [" + resName + "] not in map!");
-        }
-        return r;
-    };
-    ResourceMap.prototype.unloadAsset = function (resName) {
-        var c = 0;
-        if (resName in this._resourceMap) {
-            this._resourceMap[resName].decCount();
-            c = this._resourceMap[resName].count();
-            if (c === 0) {
-                delete this._resourceMap[resName];
-            }
-        }
-        return c;
-    };
-    ResourceMap.prototype.isAssetLoaded = function (resName) {
-        return (resName in this._resourceMap);
-    };
-    ResourceMap.prototype.incAssetRefCount = function (resName) {
-        this._resourceMap[resName].incCount();
-    };
-    ResourceMap.prototype._checkForAllLoadCompleted = function () {
-        if ((this._numOutstandingLoads === 0) && (this._loadCompleteCallback != null)) {
-            // ensures the load complete call back will only be called once!
-            var fun = this._loadCompleteCallback;
-            this._loadCompleteCallback = null;
-            fun();
-        }
-    };
-    ResourceMap._instance = new ResourceMap();
-    return ResourceMap;
-})();
-var ResourceMap;
-(function (ResourceMap) {
-    var MapEntry = (function () {
-        function MapEntry(resName) {
-            this._asset = resName;
-            this._refCount = 1;
-        }
-        MapEntry.prototype.getAsset = function () { return this._asset; };
-        MapEntry.prototype.setAsset = function (name) {
-            this._asset = name;
-        };
-        MapEntry.prototype.count = function () {
-            return this._refCount;
-        };
-        MapEntry.prototype.incCount = function () {
-            this._refCount++;
-        };
-        MapEntry.prototype.decCount = function () {
-            this._refCount--;
-        };
-        return MapEntry;
-    })();
-    ResourceMap.MapEntry = MapEntry;
-})(ResourceMap || (ResourceMap = {}));
 /// <reference path="resourceMap.ts" />
-var AudioClip = (function () {
-    function AudioClip() {
-        this._audioCtx = null;
-        this._bgAudioNode = null;
+/*
+class AudioClip {
+    protected _audioCtx = null;
+    protected _bgAudioNode: any = null;
+    protected _audioContext: AudioContext;
+
+    constructor() {
         this.initAudioContext();
     }
-    AudioClip.prototype.initAudioContext = function () {
+    public initAudioContext() {
         this._audioContext = new (window["AudioContext"] || window["webkitAudioContext"])();
-    };
-    AudioClip.prototype.loadAudio = function (clipName) {
+    }
+    public loadAudio(clipName: string) {
         var rs = ResourceMap.getInstance();
-        if (!(rs.isAssetLoaded(clipName))) {
+        if(!(rs.isAssetLoaded(clipName))) {
             // Update resources in load counter
             rs.asyncLoadRequested(clipName);
+
             // Async request the data from server
             var request = new XMLHttpRequest();
-            request.onreadystatechange = function () {
+            request.onreadystatechange = function() {
                 if (request.status < 200 || request.status > 299) {
                     alert(clipName + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
                         "The index.html file must be loaded by a web-server.]");
                 }
             };
+
             request.open("GET", clipName, true);
             // Specify that the request retrieves binary data.
             request.responseType = "arraybuffer";
+
             request.onload = function () {
                 // Asynchronously decode, then call the function in parameter.
-                this._audioContext.decodeAudioData(request.response, function (buffer) {
-                    rs.asyncLoadCompleted(clipName, buffer);
-                });
+                this._audioContext.decodeAudioData(request.response,
+                    function (buffer) {
+                        rs.asyncLoadCompleted(clipName, buffer);
+                    }
+                );
             };
             request.send();
         }
-    };
-    AudioClip.prototype.unloadAudio = function (clipName) {
+    }
+    public unloadAudio(clipName: string) {
         ResourceMap.getInstance().unloadAsset(clipName);
-    };
-    AudioClip.prototype.playACue = function () {
-    };
-    AudioClip.prototype.playBackgroundAudio = function (clipName) {
+    }
+    public playACue() {
+
+    }
+    public playBackgroundAudio(clipName: string) {
         var clipInfo = ResourceMap.getInstance().retrieveAsset(clipName);
         if (clipInfo !== null) {
             // Stop audio if playing.
             this._stopBackgroundAudio();
+
             this._bgAudioNode = this._audioContext.createBufferSource();
             this._bgAudioNode.buffer = clipInfo;
             this._bgAudioNode.connect(this._audioContext.destination);
             this._bgAudioNode.loop = true;
             this._bgAudioNode.start(0);
         }
-    };
-    AudioClip.prototype.stopBackgroundAudio = function () {
-    };
-    AudioClip.prototype.isBackgroundAudioPlaying = function () {
-    };
-    AudioClip.prototype._stopBackgroundAudio = function () {
+    }
+    public stopBackgroundAudio() {
+
+    }
+    public isBackgroundAudioPlaying() {
+
+    }
+
+    protected _stopBackgroundAudio() {
         // Check if audio is playing
-        if (this._bgAudioNode !== null) {
+        if(this._bgAudioNode !== null) {
             this._bgAudioNode.stop(0);
             this._bgAudioNode = null;
         }
-    };
-    return AudioClip;
-})();
+    }
+}*/ 
 /// <reference path="resourceMap.ts" />
-var Font = (function () {
-    function Font(fontName) {
-        var rm = ResourceMap.getInstance();
-        if (!(rm.isAssetLoaded(fontName))) {
+/*
+class Font {
+    constructor(fontName: string) {
+        var rm : ResourceMap = ResourceMap.getInstance();
+        if(!(rm.isAssetLoaded(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
             var texSrcStr = fontName + ".png";
+
             rm.asyncLoadRequested(fontName);
-        }
-        else {
+
+            // Load texture
+            // Load text file
+        } else {
             rm.incAssetRefCount(fontName);
         }
     }
-    Font.prototype.unloadFont = function (fontName) {
-        var rm = ResourceMap.getInstance();
-        if (!(rm.unloadAsset(fontName))) {
+    public unloadFont(fontName: string) {
+        var rm : ResourceMap = ResourceMap.getInstance();
+        if(!(rm.unloadAsset(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
             var texSrcStr = fontName + ".png";
+
+            // Destroy texture
+            // Destroy text file
         }
-    };
-    return Font;
-})();
-var Font;
-(function (Font) {
-    var CharacterInfo = (function () {
-        function CharacterInfo() {
-            // in texture coordinate (0 to 1) maps to the entier image
-            this.mTexCoordLeft = 0;
-            this.mTexCoordRight = 1;
-            this.mTexCoordBottom = 0;
-            this.mTexCoordTop = 0;
-            // reference to nominal character size, 1 is "standard width/height" of a char
-            this.mCharWidth = 1;
-            this.mCharHeight = 1;
-            this.mCharWidthOffset = 0;
-            this.mCharHeightOffset = 0;
-            // reference of char width/height ration
-            this.mCharAspectRatio = 1;
-        }
-        return CharacterInfo;
-    })();
-    Font.CharacterInfo = CharacterInfo;
-})(Font || (Font = {}));
-/// <reference path="../core/core.ts" />
-/// <reference path="../core/shaderProgram.ts" />
-/// <reference path="../textures/texture.ts" />
-/// <reference path="../gl-matrix.d.ts" />
-var Skybox = (function () {
-    function Skybox(dir) {
-        console.log("Load skybox ...");
-        var faces = [];
-        faces.push("textures/" + dir + "/right.jpg");
-        faces.push("textures/" + dir + "/left.jpg");
-        faces.push("textures/" + dir + "/top.jpg");
-        faces.push("textures/" + dir + "/bottom.jpg");
-        faces.push("textures/" + dir + "/back.jpg");
-        faces.push("textures/" + dir + "/front.jpg");
-        var gl = Core.getInstance().getGL();
-        var vs = "#version 300 es\n    \tprecision highp float;\n\t\tlayout (location = 0) in vec3 position;\n\t\tout vec3 TexCoords;\n\t\tuniform mat4 projection;\n\t\tuniform mat4 view;\n\t\tvoid main() {\n\t\t\tvec4 pos = projection * view * vec4(position, 1.0);\n\t\t\tgl_Position = pos.xyww;\n\t\t\tTexCoords = position;\n\t\t}";
-        this.ss.addShader(vs, gl.VERTEX_SHADER, mode.read_text);
-        var fg = "#version 300 es\n    \tprecision highp float;\n\t\tin vec3 TexCoords;\n\t\tout vec4 color;\n\t\tuniform samplerCube skybox;\n\t\tvoid main() { \n\t\t\tcolor = texture(skybox, TexCoords);\n\t\t}";
-        this.ss.addShader(fg, gl.FRAGMENT_SHADER, mode.read_text);
-        this.ss.compile();
-        var skyboxVertices = new Float32Array([
-            // Positions          
-            -1.0, 1.0, -1.0,
-            -1.0, -1.0, -1.0,
-            1.0, -1.0, -1.0,
-            1.0, -1.0, -1.0,
-            1.0, 1.0, -1.0,
-            -1.0, 1.0, -1.0,
-            -1.0, -1.0, 1.0,
-            -1.0, -1.0, -1.0,
-            -1.0, 1.0, -1.0,
-            -1.0, 1.0, -1.0,
-            -1.0, 1.0, 1.0,
-            -1.0, -1.0, 1.0,
-            1.0, -1.0, -1.0,
-            1.0, -1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, -1.0,
-            1.0, -1.0, -1.0,
-            -1.0, -1.0, 1.0,
-            -1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, -1.0, 1.0,
-            -1.0, -1.0, 1.0,
-            -1.0, 1.0, -1.0,
-            1.0, 1.0, -1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            -1.0, 1.0, 1.0,
-            -1.0, 1.0, -1.0,
-            -1.0, -1.0, -1.0,
-            -1.0, -1.0, 1.0,
-            1.0, -1.0, -1.0,
-            1.0, -1.0, -1.0,
-            -1.0, -1.0, 1.0,
-            1.0, -1.0, 1.0
-        ]);
-        // Setup vertex vao
-        //this.skyboxVAO = gl.createVertexArray();
-        this.skyboxVBO = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.skyboxVBO);
-        gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(0);
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
-        //gl.bindVertexArray(0);
-        this.cubeMapTexture = this._loadCubemap(faces);
-        this.ss.addUniforms(["view", "projection"]);
     }
-    Skybox.prototype.render = function () {
-        var gl = Core.getInstance().getGL();
-        gl.depthFunc(gl.LEQUAL);
-        this.ss.use();
-        // get projection and view from camera and send it to ss
-        gl.depthFunc(gl.LESS);
-    };
-    Skybox.prototype.destroy = function () {
-        var gl = Core.getInstance().getGL();
-        //gl.bindVertexArray(0);
-        //gl.deleteVertexArrays(this.skyboxVAO);
-        //gl.deleteTexture
-    };
-    Skybox.prototype._loadCubemap = function (faces) {
-    };
-    return Skybox;
-})();
+}
+
+module Font {
+    export class CharacterInfo {
+        // in texture coordinate (0 to 1) maps to the entier image
+        protected mTexCoordLeft = 0;
+        protected mTexCoordRight = 1;
+        protected mTexCoordBottom = 0;
+        protected mTexCoordTop = 0;
+
+        // reference to nominal character size, 1 is "standard width/height" of a char
+        protected mCharWidth = 1;
+        protected mCharHeight = 1;
+        protected mCharWidthOffset = 0;
+        protected mCharHeightOffset = 0;
+
+        // reference of char width/height ration
+        protected mCharAspectRatio = 1;
+    }
+}*/ 
 /// <reference path="texture2d.ts" />
 var FloatTexture = (function (_super) {
     __extends(FloatTexture, _super);
@@ -2382,7 +2543,7 @@ var FloatTexture = (function (_super) {
         if (options === void 0) { options = {}; }
         options = options || {};
         // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texWidth, texHeight, 0, gl.RGBA, gl.FLOAT, null);
-        _super.call(this, image, size, options);
+        _super.call(this, image, options);
     }
     return FloatTexture;
 })(Texture2D);
@@ -2403,7 +2564,7 @@ var SimpleTexture2D = (function (_super) {
     __extends(SimpleTexture2D, _super);
     function SimpleTexture2D(size, options) {
         if (options === void 0) { options = {}; }
-        _super.call(this, null, size, options);
+        _super.call(this, null, options);
     }
     return SimpleTexture2D;
 })(Texture2D);

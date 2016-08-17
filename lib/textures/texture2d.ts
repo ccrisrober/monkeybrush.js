@@ -1,12 +1,12 @@
 /// <reference path="texture.ts" />
-
+// TODO: Es necesario realmente el tamaño??
 class Texture2D extends Texture {
 	protected _flipY : boolean;
 	protected _minFilter: number;
 	protected _magFilter: number;
 	protected _wraps: Array<number>;
 
-	constructor(image, size: vector2<number>, options = {}) {
+	constructor(image: ImageData, options = {}) {
 		var gl = Core.getInstance().getGL();
 		super(gl.TEXTURE_2D);
 		options = options || {};

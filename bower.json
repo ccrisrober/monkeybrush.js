@@ -1,0 +1,20 @@
+{
+  "name": "webgl2template",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Cristian Rodríguez <ccrisrober@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/maldicion069/webgl2template",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vanillatoasts": "*"
+  }
+}

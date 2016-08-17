@@ -275,7 +275,7 @@ class ShaderProgram {
         var gl = Core.getInstance().getGL();
         gl.uniform1i(this.uniformLocations[name], value);
     }
-    public sendUniform3fv(name: string, value: Float32Array) {
+    public sendUniformVec3(name: string, value: Float32Array) {
         var gl = Core.getInstance().getGL();
         gl.uniform3fv(this.uniformLocations[name], value);
     }
