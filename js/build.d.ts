@@ -5,6 +5,7 @@ declare class Input {
     private static _instance;
     constructor();
     keys: {
+        Left_Shift: number;
         Left: number;
         Up: number;
         Right: number;
@@ -64,7 +65,7 @@ declare class Camera {
     constructor(position?: Float32Array, up?: Float32Array, yaw?: number, pitch?: number);
     protected _updateCamera: boolean;
     update(callback: Function): void;
-    processKeyboard(direction: number): void;
+    processKeyboard(direction: number, speed?: number): void;
     processMouseMovement(xOffset: number, yOffset: number): void;
     updateCameraVectors(): void;
     private view;
@@ -401,32 +402,11 @@ declare class PointLight extends Light {
     position: Float32Array;
     addTransform(x?: number, y?: number, z?: number): void;
 }
-declare class CubeMapTexture extends Texture {
-    protected _flipY: boolean;
-    protected _minFilter: number;
-    protected _magFilter: number;
-    protected _wraps: Array<number>;
-    protected finished: boolean;
-    constructor(options?: {});
-    addImage(i: number, data: any): void;
-    bind(slot?: number): void;
-    unbind(): void;
-    destroy(): void;
-    finishTex(): void;
-}
-declare class Skybox {
-    constructor(dir: string);
-    render(view: Float32Array, projection: Float32Array): void;
-    destroy(): void;
-    protected skyboxVBO: WebGLBuffer;
-    protected _prog: ShaderProgram;
-    protected cubeMapTexture: CubeMapTexture;
-    protected _loadCubemap(faces: Array<string>): void;
-}
-declare var skybox: Skybox;
 declare var camera: Camera;
 declare var stats: Stats;
-declare var SimpleConfig: () => {};
+declare var SimpleConfig: () => {
+    max: number;
+};
 declare var gui: dat.GUI;
 declare var torito: Torus;
 declare var m: Model;
@@ -441,6 +421,9 @@ declare var model: Float32Array;
 declare var angle: number;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
+declare var text: {
+    max: number;
+};
 declare var myImageLoader: (src: any) => void;
 declare function loop(dt: number): void;
 declare function resize(): void;
@@ -499,6 +482,28 @@ declare class Teaspot extends Drawable {
     protected _faces: number;
     constructor();
     render(): void;
+}
+declare class CubeMapTexture extends Texture {
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    protected finished: boolean;
+    constructor(options?: {});
+    addImage(i: number, data: any): void;
+    bind(slot?: number): void;
+    unbind(): void;
+    destroy(): void;
+    finishTex(): void;
+}
+declare class Skybox {
+    constructor(dir: string);
+    render(view: Float32Array, projection: Float32Array): void;
+    destroy(): void;
+    protected skyboxVBO: WebGLBuffer;
+    protected _prog: ShaderProgram;
+    protected cubeMapTexture: CubeMapTexture;
+    protected _loadCubemap(faces: Array<string>): void;
 }
 declare class FloatTexture extends Texture2D {
     constructor(image: any, size: vector2<number>, options?: {});

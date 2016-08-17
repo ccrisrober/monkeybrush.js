@@ -42,28 +42,34 @@ class Camera {
         // TODO: Move input here
         this._updateCamera = false;
 
+        var speed = 1.0;
+
+        if(Input.getInstance().isKeyPressed(Input.getInstance().keys.Left_Shift)) {
+            speed = 2.5;
+        }
+
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.W)) {
-            this.processKeyboard(4);
+            this.processKeyboard(4, speed);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.S)) {
-            this.processKeyboard(5);
+            this.processKeyboard(5, speed);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.A)) {
-            this.processKeyboard(2);
+            this.processKeyboard(2, speed);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.D)) {
-            this.processKeyboard(3);
+            this.processKeyboard(3, speed);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.E)) {
-            this.processKeyboard(0);
+            this.processKeyboard(0, speed);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(Input.getInstance().keys.Q)) {
-            this.processKeyboard(1);
+            this.processKeyboard(1, speed);
             this._updateCamera = true;
         }
         if (Input.getInstance().isKeyPressed(38)) {
@@ -87,11 +93,11 @@ class Camera {
         }
     }
 
-    public processKeyboard(direction: number) {
+    public processKeyboard(direction: number, speed: number = 1.0) {
         if (this.timeElapsed > 25) {
             return;
         }
-        var velocity : number = this.movSpeed * this.timeElapsed; //deltaTime;
+        var velocity : number = this.movSpeed * this.timeElapsed * speed; //deltaTime;
         //console.log(direction);
         if(direction == 0) {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.front, velocity);

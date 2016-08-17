@@ -36,6 +36,7 @@ class Input {
 
 	// Key code constants
 	public keys = {
+		Left_Shift: 16,
 		// arrows
 		Left: 37,
 		Up: 38,
