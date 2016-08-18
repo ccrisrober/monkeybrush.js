@@ -12,10 +12,18 @@
 - [ ] Finish Orthographic Camera
 - [x] Add texture 2D
 - [ ] Add texture 3D
-- [ ] Add framebuffer
+- [x] Add framebuffer
 - [ ] Float texture (gl.getExtension("OES_texture_float_linear");)
 - [ ] Create "shadertoy" for desktop
 - [ ] Rim Lighting
+- [ ] Deferred Shading
+- [ ] SSAO
+- [ ] HDR
+- [ ] Audio supporting (Background)
+- [ ] Audio supporting (SimpleAudio)
+- [ ] Fonts
+- [ ] Webcam texture
+- [ ] Video texture
 
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt

@@ -2019,6 +2019,67 @@ var PointLight = (function (_super) {
     };
     return PointLight;
 })(Light);
+/// <reference path="resourceMap.ts" />
+var AudioClip = (function () {
+    function AudioClip() {
+        this._bgAudioNode = null;
+        this.initAudioContext();
+    }
+    AudioClip.prototype.initAudioContext = function () {
+        this._audioContext = new (window["AudioContext"] || window["webkitAudioContext"])();
+    };
+    AudioClip.prototype.loadAudio = function (clipName) {
+        if (!(ResourceMap.isAssetLoaded(clipName))) {
+            // Update resources in load counter
+            ResourceMap.asyncLoadRequested(clipName);
+            // Async request the data from server
+            var request = new XMLHttpRequest();
+            /*request.onreadystatechange = function() {
+                if (request.status < 200 || request.status > 299) {
+                    alert(clipName + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
+                        "The index.html file must be loaded by a web-server.]");
+                }
+            };*/
+            request.open("GET", clipName, true);
+            // Specify that the request retrieves binary data.
+            request.responseType = "arraybuffer";
+            request.onload = function () {
+                // Asynchronously decode, then call the function in parameter.
+                this._audioContext.decodeAudioData(request.response, function (buffer) {
+                    ResourceMap.asyncLoadCompleted(clipName, buffer);
+                });
+            }.bind(this);
+            request.send();
+        }
+    };
+    AudioClip.prototype.unloadAudio = function (clipName) {
+        ResourceMap.unloadAsset(clipName);
+    };
+    AudioClip.prototype.stopBackgroundAudio = function () {
+    };
+    AudioClip.prototype.isBackgroundAudioPlaying = function () {
+    };
+    AudioClip.prototype.playBackgroundAudio = function (clipName) {
+        var clipInfo = ResourceMap.retrieveAsset(clipName);
+        if (clipInfo !== null) {
+            // Stop audio if playing.
+            this._stopBackgroundAudio();
+            this._bgAudioNode = this._audioContext.createBufferSource();
+            this._bgAudioNode.buffer = clipInfo;
+            this._bgAudioNode.connect(this._audioContext.destination);
+            this._bgAudioNode.loop = true;
+            this._bgAudioNode.start(0);
+        }
+    };
+    AudioClip.prototype._stopBackgroundAudio = function () {
+        // Check if audio is playing
+        if (this._bgAudioNode !== null) {
+            this._bgAudioNode.stop(0);
+            this._bgAudioNode = null;
+        }
+    };
+    return AudioClip;
+})();
 /// <reference path="core/core.ts" />
 /// <reference path="stats.d.ts" />
 /// <reference path="dat-gui.d.ts" />
@@ -2036,6 +2097,8 @@ var PointLight = (function (_super) {
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
+/// <reference path="resources/audioClip.ts" />
+var audioClip = new AudioClip();
 var camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
 var stats = new Stats();
 stats.setMode(0);
@@ -2062,6 +2125,7 @@ var angle = 0;
 var text = SimpleConfig();
 function loadAssets() {
     myImageLoader("crystal.jpg");
+    audioClip.loadAudio("music.mp3");
 }
 var mainShader = "prepass";
 function initialize() {
@@ -2116,6 +2180,7 @@ function initialize() {
         magFilter: gl.LINEAR,
         wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
     });
+    audioClip.playBackgroundAudio("music.mp3");
     cameraUpdateCb();
 }
 function cameraUpdateCb() {
@@ -2663,129 +2728,46 @@ var Teaspot = (function (_super) {
     return Teaspot;
 })(Drawable);
 /// <reference path="resourceMap.ts" />
-/*
-class AudioClip {
-    protected _audioCtx = null;
-    protected _bgAudioNode: any = null;
-    protected _audioContext: AudioContext;
-
-    constructor() {
-        this.initAudioContext();
-    }
-    public initAudioContext() {
-        this._audioContext = new (window["AudioContext"] || window["webkitAudioContext"])();
-    }
-    public loadAudio(clipName: string) {
-        var rs = ResourceMap.getInstance();
-        if (!(rs.isAssetLoaded(clipName))) {
-            // Update resources in load counter
-            rs.asyncLoadRequested(clipName);
-
-            // Async request the data from server
-            var request = new XMLHttpRequest();
-            request.onreadystatechange = function() {
-                if (request.status < 200 || request.status > 299) {
-                    alert(clipName + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
-                        "The index.html file must be loaded by a web-server.]");
-                }
-            };
-
-            request.open("GET", clipName, true);
-            // Specify that the request retrieves binary data.
-            request.responseType = "arraybuffer";
-
-            request.onload = function () {
-                // Asynchronously decode, then call the function in parameter.
-                this._audioContext.decodeAudioData(request.response,
-                    function (buffer) {
-                        rs.asyncLoadCompleted(clipName, buffer);
-                    }
-                );
-            };
-            request.send();
-        }
-    }
-    public unloadAudio(clipName: string) {
-        ResourceMap.getInstance().unloadAsset(clipName);
-    }
-    public playACue() {
-
-    }
-    public playBackgroundAudio(clipName: string) {
-        var clipInfo = ResourceMap.getInstance().retrieveAsset(clipName);
-        if (clipInfo !== null) {
-            // Stop audio if playing.
-            this._stopBackgroundAudio();
-
-            this._bgAudioNode = this._audioContext.createBufferSource();
-            this._bgAudioNode.buffer = clipInfo;
-            this._bgAudioNode.connect(this._audioContext.destination);
-            this._bgAudioNode.loop = true;
-            this._bgAudioNode.start(0);
-        }
-    }
-    public stopBackgroundAudio() {
-
-    }
-    public isBackgroundAudioPlaying() {
-
-    }
-
-    protected _stopBackgroundAudio() {
-        // Check if audio is playing
-        if (this._bgAudioNode !== null) {
-            this._bgAudioNode.stop(0);
-            this._bgAudioNode = null;
-        }
-    }
-}*/ 
-/// <reference path="resourceMap.ts" />
-/*
-class Font {
-    constructor(fontName: string) {
-        var rm: ResourceMap = ResourceMap.getInstance();
-        if (!(rm.isAssetLoaded(fontName))) {
+var Font = (function () {
+    function Font(fontName) {
+        if (!(ResourceMap.isAssetLoaded(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
             var texSrcStr = fontName + ".png";
-
-            rm.asyncLoadRequested(fontName);
-
-            // Load texture
-            // Load text file
-        } else {
-            rm.incAssetRefCount(fontName);
+            ResourceMap.asyncLoadRequested(fontName);
+        }
+        else {
+            ResourceMap.incAssetRefCount(fontName);
         }
     }
-    public unloadFont(fontName: string) {
-        var rm: ResourceMap = ResourceMap.getInstance();
-        if (!(rm.unloadAsset(fontName))) {
+    Font.prototype.unloadFont = function (fontName) {
+        if (!(ResourceMap.unloadAsset(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
             var texSrcStr = fontName + ".png";
-
-            // Destroy texture
-            // Destroy text file
         }
-    }
-}
-
-module Font {
-    export class CharacterInfo {
-        // in texture coordinate (0 to 1) maps to the entier image
-        protected mTexCoordLeft = 0;
-        protected mTexCoordRight = 1;
-        protected mTexCoordBottom = 0;
-        protected mTexCoordTop = 0;
-
-        // reference to nominal character size, 1 is "standard width/height" of a char
-        protected mCharWidth = 1;
-        protected mCharHeight = 1;
-        protected mCharWidthOffset = 0;
-        protected mCharHeightOffset = 0;
-
-        // reference of char width/height ration
-        protected mCharAspectRatio = 1;
-    }
-}*/ 
+    };
+    return Font;
+})();
+var Font;
+(function (Font) {
+    var CharacterInfo = (function () {
+        function CharacterInfo() {
+            // in texture coordinate (0 to 1) maps to the entier image
+            this._texCoordLeft = 0;
+            this._texCoordRight = 1;
+            this._texCoordBottom = 0;
+            this._texCoordTop = 0;
+            // reference to nominal character size, 1 is "standard width/height" of a char
+            this._charWidth = 1;
+            this._charHeight = 1;
+            this._charWidthOffset = 0;
+            this._charHeightOffset = 0;
+            // reference of char width/height ration
+            this._charAspectRatio = 1;
+        }
+        return CharacterInfo;
+    })();
+    Font.CharacterInfo = CharacterInfo;
+})(Font || (Font = {}));
 /// <reference path="texture.ts" />
 // TODO: Es necesario realmente el tamaño??
 var CubeMapTexture = (function (_super) {

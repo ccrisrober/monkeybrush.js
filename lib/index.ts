@@ -17,6 +17,9 @@
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
+/// <reference path="resources/audioClip.ts" />
+
+let audioClip = new AudioClip();
 
 let camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
 
@@ -52,6 +55,7 @@ let angle = 0;
 let text = SimpleConfig();
 function loadAssets() {
     myImageLoader("crystal.jpg");
+    audioClip.loadAudio("music.mp3");
 }
 
 const mainShader: string = "prepass";
@@ -128,6 +132,8 @@ function initialize() {
         magFilter: gl.LINEAR,
         wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
     });
+
+    audioClip.playBackgroundAudio("music.mp3");
 
     cameraUpdateCb();
 }

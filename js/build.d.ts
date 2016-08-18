@@ -432,6 +432,19 @@ declare class PointLight extends Light {
     position: Float32Array;
     addTransform(x?: number, y?: number, z?: number): void;
 }
+declare class AudioClip {
+    protected _audioContext: AudioContext;
+    protected _bgAudioNode: AudioBufferSourceNode;
+    constructor();
+    initAudioContext(): void;
+    loadAudio(clipName: string): void;
+    unloadAudio(clipName: string): void;
+    stopBackgroundAudio(): void;
+    isBackgroundAudioPlaying(): void;
+    playBackgroundAudio(clipName: string): void;
+    protected _stopBackgroundAudio(): void;
+}
+declare let audioClip: AudioClip;
 declare let camera: Camera;
 declare let stats: Stats;
 declare let deferred: GBuffer;
@@ -504,6 +517,23 @@ declare class Teaspot extends Drawable {
     protected _faces: number;
     constructor();
     render(): void;
+}
+declare class Font {
+    constructor(fontName: string);
+    unloadFont(fontName: string): void;
+}
+declare module Font {
+    class CharacterInfo {
+        protected _texCoordLeft: number;
+        protected _texCoordRight: number;
+        protected _texCoordBottom: number;
+        protected _texCoordTop: number;
+        protected _charWidth: number;
+        protected _charHeight: number;
+        protected _charWidthOffset: number;
+        protected _charHeightOffset: number;
+        protected _charAspectRatio: number;
+    }
 }
 declare class CubeMapTexture extends Texture {
     protected _flipY: boolean;
