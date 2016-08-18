@@ -5,10 +5,12 @@
 /// <reference path="resources/shaderManager.ts" />
 /// <reference path="resources/resourceMap.ts" />
 /// <reference path="models/torus.ts" />
+/// <reference path="models/quad.ts" />
 /// <reference path="core/model.ts" />
 /// <reference path="textures/texture2d.ts" />
 
 /// <reference path="core/gbuffer.ts" />
+/// <reference path="core/gbufferSSAO.ts" />
 /// <reference path="core/postprocess.ts" />
 /// <reference path="extras/timer.ts" />
 
@@ -23,6 +25,7 @@ stats.setMode(0);
 document.body.appendChild(stats.domElement);
 
 let deferred: GBuffer;
+let ssao: GBufferSSAO;
 
 let SimpleConfig = function() {
 	return {
@@ -31,6 +34,7 @@ let SimpleConfig = function() {
 };
 let gui: dat.GUI;
 let torito: Torus;
+let planito: Quad;
 let m: Model;
 
 let view;
@@ -54,6 +58,7 @@ const mainShader: string = "prepass";
 
 function initialize() {
     torito = new Torus(3.7, 2.3, 25, 10);
+    planito = new Quad(100.0, 100.0, 2.0, 2.0);
     m = new Model("teddy.json");
 
     let canvas: HTMLCanvasElement = Core.getInstance().canvas();
@@ -62,21 +67,20 @@ function initialize() {
         canvas.height
     ));
 
+    /*ssao = new GBufferSSAO(new Vector2<number>(
+        canvas.width,
+        canvas.height
+    ));*/
+
     ShaderManager.addWithFun("prepass", (): ShaderProgram => {
         let prog: ShaderProgram = new ShaderProgram();
         prog.addShader("./shaders/gBufferShader.vert", shader_type.vertex, mode.read_file);
         prog.addShader("./shaders/gBufferShader.frag", shader_type.fragment, mode.read_file);
         prog.compile();
 
-        prog.addUniforms(["projection", "view", "model", "normalMatrix"]);
+        prog.addUniforms(["tex", "usemc"]);
 
-        return prog;
-    });
-    ShaderManager.addWithFun("postpass", (): ShaderProgram => {
-        let prog: ShaderProgram = new ShaderProgram();
-        prog.addShader("./shaders/postprocessShader.vert", shader_type.vertex, mode.read_file);
-        prog.addShader("./shaders/postprocessShader.frag", shader_type.fragment, mode.read_file);
-        prog.compile();
+        prog.addUniforms(["projection", "view", "model", "normalMatrix"]);
 
         return prog;
     });
@@ -94,65 +98,10 @@ function initialize() {
 
     ShaderManager.addWithFun("pp", (): ShaderProgram => {
         let prog: ShaderProgram = new ShaderProgram();
-        prog.addShader(`#version 300 es
-            precision highp float;
-            layout(location = 0) in vec3 vertPosition;
-            out vec2 texCoord;
-            void main(void) {
-                texCoord = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-                gl_Position = vec4(vertPosition, 1.0);
-            }`, shader_type.vertex, mode.read_text);
-        prog.addShader(`#version 300 es
-            precision highp float;
-            uniform sampler2D gPosition;
-            uniform sampler2D gNormal;
-            uniform sampler2D gAlbedoSpec;
-
-            out vec4 fragColor;
-            in vec2 texCoord;
-
-            uniform float time;
-
-            void main() {
-                vec3 outPosition = texture(gPosition, texCoord).rgb;
-                vec3 outNormal = texture(gNormal, texCoord).rgb;
-                vec4 AlbedoSpec = texture(gAlbedoSpec, texCoord);
-
-                
-                if (outNormal == vec3(0.0, 0.0, 0.0)){ discard; } 
-
-                vec3 ambColor = vec3(0.24725, 0.1995, 0.0745);
-                vec3 objectColor = AlbedoSpec.rgb;
-                vec3 specColor = vec3(0.628281, 0.555802, 0.366065);
-                float shininess = 0.4;
-                vec3 lightPosition = vec3(1.0);
-
-                vec3 lightColor = vec3(0.0, 0.0, 1.0);
-
-                vec3 ambient = ambColor * lightColor;
-
-                // Diffuse 
-                vec3 norm = normalize(outNormal);
-                vec3 lightDir = normalize(lightPosition - outPosition);
-                float diff = max(dot(norm, lightDir), 0.0);
-                vec3 diffuse = diff * lightColor;
-
-                // Attenuation
-                float dist    = length(lightPosition - outPosition);
-
-                float constant = 1.0;
-                float linear = 0.14;
-                float quadratic = 0.07;
-
-                float attenuation = 1.0 / (constant + linear * dist + quadratic * (dist * dist));    
-
-                attenuation = 1.0;
-
-                vec3 color = ((ambient + diffuse) * attenuation) * objectColor;
-
-
-                fragColor = vec4(color.rgb, 1.0);
-            }`, shader_type.fragment, mode.read_text);
+        prog.addShader("./shaders/postprocessShader.vert", 
+            shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/postprocessShader.frag", 
+            shader_type.fragment, mode.read_file);
         prog.compile();
 
         prog.addUniforms(["time"]);
@@ -206,19 +155,15 @@ function drawScene(dt: number) {
 
     Core.getInstance().clearColorAndDepth();
 
-    /*
-    gl.depthMask(false);
-    var prog2 = ShaderManager.get("pp");
-    prog2.use();
-    prog2.sendUniform1f("time", dt);
-    PostProcess.render();
-    gl.depthMask(true);
-    */
-
     const prog = ShaderManager.get(mainShader);
     prog.use();
 
+    tex2d.bind(0);
+    prog.sendUniform1i("tex", 0);
+
     angle += Timer.deltaTime() * 0.001;
+
+    prog.sendUniform1b("usemc", true);
 
     let varvar = text.max;
     let i = 0, j = 0, k = 0;
@@ -238,6 +183,14 @@ function drawScene(dt: number) {
             }
         }
     }
+    mat4.translate(model, identityMatrix, vec3.fromValues(0.0, (-varvar - 5.0) * 1.0, 0.0));
+    mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+
+    prog.sendUniform1b("usemc", false);
+    prog.sendUniformMat4("model", model);
+    planito.render();
+
+    tex2d.unbind();
     deferred.bindForReading();
     Core.getInstance().clearColorAndDepth();
     var prog2 = ShaderManager.get("pp");

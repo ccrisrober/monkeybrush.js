@@ -1,16 +1,17 @@
 /// <reference path="core.ts" />
 /// <reference path="../textures/texture.ts" />
+/// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="../extras/Vector2.ts" />
 
 class Framebuffer {
 	protected _size: Vector2<number>;
 	protected _handle: WebGLFramebuffer;
 	protected _attachments: Array<number>;
-	protected _depth: Texture;
-	protected _renderBuffer; // : Texture;
+	//protected _depth: Texture;
+	public _renderBuffer : RenderBufferTexture;
 	// protected _colorBuffer: Texture;
 
-	protected _colors: Array<Texture>;
+	public _colors: Array<Texture>;
 
 	constructor(textures: Array<Texture>, size: Vector2<number>, depth: boolean = false, stencil: boolean = false, options = {}) {
 		const gl = Core.getInstance().getGL();
@@ -42,16 +43,26 @@ class Framebuffer {
 			gl.framebufferTexture2D(gl.FRAMEBUFFER,
 				gl.COLOR_ATTACHMENT0 + i,
 				target,
-				texture.handle, 0);
+				texture.handle(), 0);
+
+			(<any>texture).unbind();	// TODO: Unbind debería ser un abstract de texture
 		});
 
 
 		// Attachment indices
-		this._attachments = textures.map((texture: Texture, i: number) => {
+		/*this._attachments = textures.map((texture: Texture, i: number) => {
 			return gl.COLOR_ATTACHMENT0 + i;
-		});
+		});*/
 
 		// TODO: Check no texture attachments (default render buffer storage)
+
+		if(depth) {
+			this._renderBuffer = new RenderBufferTexture(
+				size,
+				gl.DEPTH_COMPONENT16,
+				gl.DEPTH_ATTACHMENT
+			);
+		}
 
 		/**
 		if (depth && stencil) {
@@ -64,12 +75,21 @@ class Framebuffer {
 		}
 		/**/
 
+		if (numColors > 1) {
+			let drawBuffs = [];
+			for (let i = 0; i < numColors; i++) {
+				drawBuffs.push(gl.COLOR_ATTACHMENT0 + i);
+			}
+			(<any>gl).drawBuffers(drawBuffs);
+		}
+
 		// Check status
 		let status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 		if (status !== gl.FRAMEBUFFER_COMPLETE) {
 			this.destroy();
 			this._throwFBOError(status);
 		}
+		this.unbind();
 	}
 
 	private _throwFBOError(status: number) {
@@ -91,6 +111,15 @@ class Framebuffer {
 	public bind() {
 		const gl = Core.getInstance().getGL();
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
+	}
+
+	public onlyBindTextures() {
+		const gl = Core.getInstance().getGL();
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		this._colors.forEach((tex: SimpleTexture2D, idx: number) => {
+			tex.bind(idx);
+		});
 	}
 
 	public unbind() {
@@ -118,27 +147,17 @@ class Framebuffer {
 
 		gl.deleteFramebuffer(this._handle);
 
-		if (this._depth) {
+		/*if (this._depth) {
 			this._depth.destroy();
 			this._depth = null;
-		}
+		}*/
 
 		// Destroy depth/stencil
 		if (this._renderBuffer) {
-			// this._renderBuffer.destroy();
-			// gl.deleteRenderbuffer(this._renderBuffer)
+			this._renderBuffer.destroy();
 			this._renderBuffer = null;
 		}
 
 		// Color buffer default TODO
-	}
-
-	protected createRenderBuffer(size: Vector2<number>, format: number, attachment: number): WebGLRenderbuffer {
-		const gl = Core.getInstance().getGL();
-		let res = gl.createRenderbuffer();
-		gl.bindRenderbuffer(gl.RENDERBUFFER, res);
-		gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
-		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, null);
-		return res;
 	}
 }

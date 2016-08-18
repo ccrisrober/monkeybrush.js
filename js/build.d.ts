@@ -140,6 +140,7 @@ declare class ShaderProgram {
     destroy(): void;
     sendUniform1f(name: string, value: number): void;
     sendUniform1i(name: string, value: number): void;
+    sendUniform1b(name: string, value: boolean): void;
     sendUniformVec3(name: string, value: Float32Array): void;
     sendUniformMat4(name: string, value: Float32Array, transpose?: boolean): void;
 }
@@ -193,20 +194,24 @@ declare abstract class Texture {
     abstract bind(slot?: number): any;
     handle(): WebGLTexture;
 }
+declare class RenderBufferTexture {
+    protected _handle: WebGLRenderbuffer;
+    constructor(size: Vector2<number>, format: number, attachment: number);
+    destroy(): void;
+}
 declare class Framebuffer {
     protected _size: Vector2<number>;
     protected _handle: WebGLFramebuffer;
     protected _attachments: Array<number>;
-    protected _depth: Texture;
-    protected _renderBuffer: any;
-    protected _colors: Array<Texture>;
+    _renderBuffer: RenderBufferTexture;
+    _colors: Array<Texture>;
     constructor(textures: Array<Texture>, size: Vector2<number>, depth?: boolean, stencil?: boolean, options?: {});
     private _throwFBOError(status);
     bind(): void;
+    onlyBindTextures(): void;
     unbind(): void;
     rebuild(size: Vector2<number>): void;
     destroy(): void;
-    protected createRenderBuffer(size: Vector2<number>, format: number, attachment: number): WebGLRenderbuffer;
 }
 declare class SimpleTexture2D extends Texture {
     protected _flipY: boolean;
@@ -222,11 +227,6 @@ declare class SimpleTexture2D extends Texture {
     unbind(): void;
     destroy(): void;
 }
-declare class RenderBufferTexture {
-    protected _handle: WebGLRenderbuffer;
-    constructor(size: Vector2<number>, format: number, attachment: number);
-    destroy(): void;
-}
 declare enum gbuffer_type {
     position = 0,
     normal = 1,
@@ -234,13 +234,45 @@ declare enum gbuffer_type {
     num_textures = 3,
 }
 declare class GBuffer {
+    protected framebuffer: Framebuffer;
+    constructor(size: Vector2<number>);
+    bindForReading(): void;
+    bindForWriting(): void;
+    destroy(): void;
+}
+declare class Texture2D extends Texture {
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    constructor(image: ImageData, options?: {});
+    genMipMap(): void;
+    wrap(modes: Array<number>): void;
+    minFilter(filter: number): void;
+    magFilter(filter: number): void;
+    bind(slot?: number): void;
+    unbind(): void;
+    destroy(): void;
+}
+declare enum gbufferssao_type {
+    position = 0,
+    normal = 1,
+    diffuse = 2,
+    num_textures = 3,
+}
+declare class GBufferSSAO {
     protected _fbo: WebGLFramebuffer;
+    protected kernelSize: number;
+    protected ssaoKernel: Array<Float32Array>;
+    protected ssaoNoise: Array<number>;
     protected _depthTexture: any;
     RenderBufferTexture: any;
     protected _textures: Array<SimpleTexture2D>;
     constructor(size: Vector2<number>);
     bindForReading(): void;
     bindForWriting(): void;
+    bindForSSAO(): void;
+    sendSamplesSSAOTexture(progName: string): void;
     destroy(): void;
 }
 declare class Model {
@@ -381,19 +413,11 @@ declare class Torus extends Drawable {
     render(): void;
     render2(counter: number): void;
 }
-declare class Texture2D extends Texture {
-    protected _flipY: boolean;
-    protected _minFilter: number;
-    protected _magFilter: number;
-    protected _wraps: Array<number>;
-    constructor(image: ImageData, options?: {});
-    genMipMap(): void;
-    wrap(modes: Array<number>): void;
-    minFilter(filter: number): void;
-    magFilter(filter: number): void;
-    bind(slot?: number): void;
-    unbind(): void;
-    destroy(): void;
+declare class Quad extends Drawable {
+    protected _handle: Array<WebGLBuffer>;
+    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
+    protected _indicesLen: any;
+    render(): void;
 }
 declare abstract class Light {
     protected _intensity: number;
@@ -411,11 +435,13 @@ declare class PointLight extends Light {
 declare let camera: Camera;
 declare let stats: Stats;
 declare let deferred: GBuffer;
+declare let ssao: GBufferSSAO;
 declare let SimpleConfig: () => {
     max: number;
 };
 declare let gui: dat.GUI;
 declare let torito: Torus;
+declare let planito: Quad;
 declare let m: Model;
 declare let view: any;
 declare let projection: any;
@@ -464,12 +490,6 @@ declare class ShaderMat extends Material {
 declare class Cube extends Drawable {
     protected _handle: Array<WebGLBuffer>;
     constructor(side?: number);
-    protected _indicesLen: any;
-    render(): void;
-}
-declare class Quad extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
     protected _indicesLen: any;
     render(): void;
 }

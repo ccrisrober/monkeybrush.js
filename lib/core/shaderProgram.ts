@@ -274,6 +274,10 @@ class ShaderProgram {
         const gl = Core.getInstance().getGL();
         gl.uniform1i(this.uniformLocations[name], value);
     }
+    public sendUniform1b(name: string, value: boolean) {
+        const gl = Core.getInstance().getGL();
+        gl.uniform1i(this.uniformLocations[name], value === true ? 1 : 0);
+    }
     public sendUniformVec3(name: string, value: Float32Array) {
         const gl = Core.getInstance().getGL();
         gl.uniform3fv(this.uniformLocations[name], value);

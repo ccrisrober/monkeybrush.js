@@ -11,8 +11,6 @@ class SimpleTexture2D extends Texture {
 		super(gl.TEXTURE_2D);
 		options = options || {};
 
-		console.log(this.target);
-
 		// Support compression
 
 		this._flipY = options["flipY"] === true;
