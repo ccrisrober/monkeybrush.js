@@ -16,10 +16,10 @@
 - [ ] Float texture (gl.getExtension("OES_texture_float_linear");)
 - [ ] Create "shadertoy" for desktop
 - [ ] Rim Lighting
-- [ ] Deferred Shading
+- [x] Deferred Shading
 - [ ] SSAO
 - [ ] HDR
-- [ ] Audio supporting (Background)
+- [x] Audio supporting (Background)
 - [ ] Audio supporting (SimpleAudio)
 - [ ] Fonts
 - [ ] Webcam texture
