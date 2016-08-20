@@ -88,6 +88,10 @@ void main() {
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
     fragColor = vec4(result, 1.0);
+
+    float avg = (fragColor.r + fragColor.g + fragColor.b) / 3.0;
+    float avg2 = (0.2126 * fragColor.r + 0.7152 * fragColor.g + 0.0722 * fragColor.b);
+    fragColor.xyz = vec3(avg2);
 	
     // apply gamma correction
     //float gamma = 2.2;

@@ -1,0 +1,11 @@
+vec4 top         = texture(tex, vec2(outTexCoord.x, outTexCoord.y + 1.0 / 200.0));
+vec4 bottom      = texture(tex, vec2(outTexCoord.x, outTexCoord.y - 1.0 / 200.0));
+vec4 left        = texture(tex, vec2(outTexCoord.x - 1.0 / 300.0, outTexCoord.y));
+vec4 right       = texture(tex, vec2(outTexCoord.x + 1.0 / 300.0, outTexCoord.y));
+vec4 topLeft     = texture(tex, vec2(outTexCoord.x - 1.0 / 300.0, outTexCoord.y + 1.0 / 200.0));
+vec4 topRight    = texture(tex, vec2(outTexCoord.x + 1.0 / 300.0, outTexCoord.y + 1.0 / 200.0));
+vec4 bottomLeft  = texture(tex, vec2(outTexCoord.x - 1.0 / 300.0, outTexCoord.y - 1.0 / 200.0));
+vec4 bottomRight = texture(tex, vec2(outTexCoord.x + 1.0 / 300.0, outTexCoord.y - 1.0 / 200.0));
+vec4 sx = -topLeft - 2 * left - bottomLeft + topRight   + 2 * right  + bottomRight;
+vec4 sy = -topLeft - 2 * top  - topRight   + bottomLeft + 2 * bottom + bottomRight;
+vec4 sobel = sqrt(sx * sx + sy * sy);

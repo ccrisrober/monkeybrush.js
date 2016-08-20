@@ -1,28 +1,23 @@
 /// <reference path="core.ts" />
 
 class Stencil {
-	public use() {
-		const gl = Core.getInstance().getGL();
+	static gl = Core.getInstance().getGL();
+	public static use() {
 		gl.enable(gl.STENCIL_TEST);
 	}
-	public func(compFun: ComparisonFunc, ref: number, mask: number) {
-		const gl = Core.getInstance().getGL();
+	public static func(compFun: ComparisonFunc, ref: number, mask: number) {
 		gl.stencilFunc(compFun, ref, mask);
 	}
-	public operation(fail: StencilOp, zfail: StencilOp, zpass: StencilOp) {
-		const gl = Core.getInstance().getGL();
+	public static operation(fail: StencilOp, zfail: StencilOp, zpass: StencilOp) {
 		gl.stencilOp(fail, zfail, zpass);
 	}
-	public mask(mask: number) {
-		const gl = Core.getInstance().getGL();
+	public static mask(mask: number) {
 		gl.stencilMask(mask);
 	}
-	public clear() {
-		const gl = Core.getInstance().getGL();
+	public static clear() {
 		gl.clear(gl.STENCIL_BUFFER_BIT);
 	}
-	public unuse() {
-		const gl = Core.getInstance().getGL();
+	public static unuse() {
 		gl.disable(gl.STENCIL_TEST);
 	}
 }
