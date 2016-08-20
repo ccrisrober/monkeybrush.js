@@ -70,9 +70,11 @@ void main() {
 
     // Specular
     vec3 viewDir = normalize(viewPos - outPosition);
-    vec3 reflectDir = reflect(-lightDir, norm);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = specColor * spec * lightColor;  
+    /*vec3 reflectDir = reflect(-lightDir, norm);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);*/
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(norm, halfwayDir), 0.0), 16.0);
+    vec3 specular = specColor * spec * lightColor;
 
     // Attenuation
     float dist    = length(lp - outPosition);
@@ -89,9 +91,9 @@ void main() {
 
     fragColor = vec4(result, 1.0);
 
-    float avg = (fragColor.r + fragColor.g + fragColor.b) / 3.0;
-    float avg2 = (0.2126 * fragColor.r + 0.7152 * fragColor.g + 0.0722 * fragColor.b);
-    fragColor.xyz = vec3(avg2);
+    //float avg = (fragColor.r + fragColor.g + fragColor.b) / 3.0;
+    //float avg2 = (0.2126 * fragColor.r + 0.7152 * fragColor.g + 0.0722 * fragColor.b);
+    //fragColor.xyz = vec3(avg2);
 	
     // apply gamma correction
     //float gamma = 2.2;
