@@ -3,6 +3,8 @@
 /// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="../extras/Vector2.ts" />
 
+// TODO: Redimension
+// TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
 class Framebuffer {
 	protected _size: Vector2<number>;
 	protected _handle: WebGLFramebuffer;

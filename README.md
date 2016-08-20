@@ -31,6 +31,10 @@
 - [ ] Webcam texture
 - [ ] Video texture
 - [ ] Occlusion Query
+- [ ] Multi context
+- [ ] Picking
+- [ ] Basic Transparency
+- [ ] Woit Transparency
 - [ ] Transform feedback
 - [ ] UBO (projection, view, model, normalMatrix)
 

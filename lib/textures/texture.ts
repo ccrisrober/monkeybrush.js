@@ -1,5 +1,6 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../extras/Vector2.ts" />
+// TODO: Redimension
 
 abstract class Texture {
 	protected _handle: WebGLTexture;

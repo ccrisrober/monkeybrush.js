@@ -123,6 +123,25 @@ class Core {
 				}
 			}
 		}
+		// Manual fallback
+		if(!window.requestAnimationFrame) {
+			var lastTime = 0;
+			window.requestAnimationFrame = function(cb) {
+				var currTime = Date.now();
+				var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+				var id = window.setTimeout(function() {
+					cb(currTime + timeToCall);
+				}, timeToCall);
+				lastTime = currTime + timeToCall;
+				return id;
+			}
+		}
+
+		if(!window.cancelAnimationFrame) {
+			window.cancelAnimationFrame = function(id) {
+				clearTimeout(id);
+			};
+		};
 	}
 }
 
@@ -238,3 +257,5 @@ enum BlendingEq {
 	gl.MAX: Maximum of source and destination.
 	/**/
 }
+
+// TODO: Texture Filter

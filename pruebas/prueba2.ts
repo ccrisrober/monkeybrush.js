@@ -18,6 +18,8 @@
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
+/// <reference path="extras/vertexBuffer.ts" />
+/// <reference path="extras/objLoader.ts" />
 
 let camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
 
@@ -56,18 +58,42 @@ let angle = 0;
 let text = SimpleConfig();
 function loadAssets() {
     myImageLoader("matcap.jpg");
+    var obj = ObjLoader.loadObj("omg.obj");
+    console.log(obj);
 }
 
 const mainShader: string = "prog";
 
-let query;
+let offsetBuffer: VertexBuffer;
+let numInstancias: number;
+
+function maxOffsetUpdate() {
+    let varvar = text.max;
+    var offsetData = [];
+    numInstancias = 0;
+    for (var i = -varvar; i < varvar; i += 5.0) {
+        for (var j = -varvar; j < varvar; j += 5.0) {
+            for (var k = -varvar; k < varvar; k += 5.0) {
+                offsetData.push(i * 1.0);
+                offsetData.push(j * 1.0);
+                offsetData.push(k * 1.0);
+                numInstancias += 1;
+            }
+        }
+    }
+    console.log("NUM INSTANCES: " + numInstancias);
+    // A nice little line of monkeys down the X axis
+    // Optional (unnecesary): offsetBuffer.bind();
+    var offsets = new Float32Array(offsetData);
+    offsetBuffer.bufferData(offsets, UsageType.StaticDraw);
+}
 
 function initialize() {
-    gl_ = Core.getInstance().getGL();
     esferita = new Sphere(1.0, 20, 20);
     torito = new Torus(3.7, 2.3, 25, 10);
     planito = new Quad(100.0, 100.0, 2.0, 2.0);
     m = new Model("teddy.json");
+    gl_ = Core.getInstance().getGL();
 
     ShaderManager.addWithFun("prog", (): ShaderProgram => {
         let prog: ShaderProgram = new ShaderProgram();
@@ -91,7 +117,9 @@ function initialize() {
 
     //audio.playBackgroundAudio("music.mp3");
 
-    query = (<any>gl).createQuery();
+    offsetBuffer = new VertexBuffer(BufferType.Array);
+
+    maxOffsetUpdate();
 
     cameraUpdateCb();
 }
@@ -115,66 +143,42 @@ function drawScene(dt: number) {
 
     camera.update(cameraUpdateCb);
 
-    const prog = ShaderManager.get(mainShader);
-
     light.addTransform(
         Math.sin(dt) * 0.06,
         Math.cos(dt) * 0.06,
         0.0 //5.0 + Math.cos(dt) * 0.06
     );
 
-    prog.use();
+    Core.getInstance().clearColorAndDepth();
 
-    prog.sendUniformVec3("lightPosition", light.position);
+    ShaderManager.getCB(mainShader, function(prog: ShaderProgram) {
+        prog.use();
 
-    tex2d.bind(0);
-    prog.sendUniform1i("tex", 0);
+        prog.sendUniformVec3("lightPosition", light.position);
 
-    angle += Timer.deltaTime() * 0.001;
+        tex2d.bind(0);
+        prog.sendUniform1i("tex", 0);
 
-    prog.sendUniform1b("usemc", true);
+        angle += Timer.deltaTime() * 0.001;
 
-    let varvar = text.max;
-    let i = 0, j = 0, k = 0;
-    let dd = -1;
-    /**
-    for (i = -varvar; i < varvar; i += 5.0) {
-        for (j = -varvar; j < varvar; j += 5.0) {
-            for (k = -varvar; k < varvar; k += 5.0) {
-                dd *= -1;
-                mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
-                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                mat4.rotateY(model, model, angle * dd);
-                mat4.scale(model, model, vec3.fromValues(0.35, 0.35, 0.35));
+        prog.sendUniform1b("usemc", true);
 
-                prog.sendUniformMat4("model", model);
+        let varvar = text.max;
+        let i = 0, j = 0, k = 0;
 
-                torito.render();
-            }
-        }
-    }
-    /**/
-    
-    
-    for (i = -varvar; i < varvar; i += 5.0) {
-        for (j = -varvar; j < varvar; j += 5.0) {
-            for (k = -varvar; k < varvar; k += 5.0) {
-                dd *= -1;
-                mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
-                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                mat4.rotateY(model, model, angle * dd);
-                mat4.scale(model, model, vec3.fromValues(0.35, 0.35, 0.35));
+        mat4.translate(model, identityMatrix, vec3.create());
+        mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+        mat4.rotateY(model, model, angle);
+        mat4.scale(model, model, vec3.fromValues(0.33, 0.33, 0.33));
 
-                prog.sendUniformMat4("model", model);
+        prog.sendUniformMat4("model", model);
+        // Bind the instance position data
+        // Optional (unnecesary): offsetBuffer.bind();
+        offsetBuffer.attribDivisor(3, 3, 1);
 
-                torito.render();
-            }
-        }
-    }
-
-    /*mat4.translate(model, identityMatrix, light.position);
-    prog.sendUniformMat4("model", model);
-    esferita.render();*/
+        // Draw the instanced meshes
+        torito.renderArrayInstance(numInstancias);
+    });
 }
 
 // ============================================================================================ //
@@ -201,8 +205,9 @@ function myImageLoader(src) {
         ResourceMap.incAssetRefCount(src);
     }
 };
+
 window.onload = () => {
-    Core.getInstance().initialize([0.0, 1.0, 0.0, 1.0]);
+    Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
 
 
     if (Object.keys(text).length > 0) {
@@ -211,7 +216,7 @@ window.onload = () => {
         /*for (var index in text) { 
             gui.add(text, index);
         }*/
-        gui.add(text, "max", 5, 100);
+        gui.add(text, "max", 5, 100).onChange(maxOffsetUpdate);
     }
 
     loadAssets();
@@ -237,6 +242,7 @@ window.onload = () => {
         requestAnimationFrame(loop);
     });
 };
+
 function loop(dt: number) {
     Input.getInstance().update();
 

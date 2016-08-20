@@ -154,7 +154,14 @@ class Camera {
 		this.view = mat4.lookAt(this.view, this.position, vec3.add(aux, this.position, this.front), this.up);
 		return this.view;
 	}
-
+	public GetOrthoProjectionMatrix(w: number, h: number): Float32Array {
+	    const ymax = 0.001 * Math.tan(45.0 * Math.PI / 360);
+	    const ymin = -ymax;
+	    const xmin = ymin * (w * 1.0) / (h * 1.0);
+	    const xmax = ymax * (w * 1.0) / (h * 1.0);
+		this.proj = mat4.ortho(this.proj, xmin, xmax, ymin, ymax, 0.001, 1000.0);
+		return this.proj;
+	}
 	public GetProjectionMatrix(w: number, h: number): Float32Array {
 		this.proj = mat4.perspective(this.proj, 45.0, (w * 1.0) / (h * 1.0), 0.001, 1000.0);
 
