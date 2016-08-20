@@ -6,7 +6,7 @@ class Texture2D extends Texture {
 	protected _magFilter: number;
 	protected _wraps: Array<number>;
 
-	constructor(image: ImageData, options = {}) {
+	constructor(data/*: ImageData*/, options = {}) {
 		const gl = Core.getInstance().getGL();
 		super(gl.TEXTURE_2D);
 		options = options || {};
@@ -40,7 +40,7 @@ class Texture2D extends Texture {
 			_internalformat, // Internal format
 			_format, // Format
 			_type, // Size of each channel
-			image
+			data
 		);
 
 

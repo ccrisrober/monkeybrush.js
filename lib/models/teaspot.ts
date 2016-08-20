@@ -1,7 +1,7 @@
 /// <reference path="drawable.ts" />
 
 class Teaspot extends Drawable {
-	protected _handle: Array<WebGLBuffer>;
+	protected _handle: Array<VertexBuffer>;
 
 	protected _faces: number;
 
@@ -10,7 +10,7 @@ class Teaspot extends Drawable {
 	}
 	public render() {
 		const gl = Core.getInstance().getGL();
-		(<any>gl).bindVertexArray(this._vao);
+        this._vao.bind();
 		gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
 	}
 }

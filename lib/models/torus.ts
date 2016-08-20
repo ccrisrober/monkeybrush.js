@@ -1,7 +1,7 @@
 /// <reference path="drawable.ts" />
 
 class Torus extends Drawable {
-	protected _handle: Array<WebGLBuffer>;
+	protected _handle: Array<VertexBuffer>;
 
 	protected _faces: number;
 
@@ -74,34 +74,26 @@ class Torus extends Drawable {
 		const gl = Core.getInstance().getGL();
 
 		this._handle = new Array(4);
-		for (let i = 0; i < 4; i++) {
-			this._handle[i] = gl.createBuffer();
+		let i = 0;
+		this._handle[i] = new VertexBuffer(BufferType.ElementArray);
+		for (i = 1; i < 4; i++) {
+			this._handle[i] = new VertexBuffer(BufferType.Array);
 		}
 
-		this._vao = (<any>gl).createVertexArray();
-        (<any>gl).bindVertexArray(this._vao);
+        this._vao.bind();
 
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
+        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
 
-        this.addAttrib_(0, this.createBuffer(verts, this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(norms, this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this.addAttrib_(0, this.createBuffer(new Float32Array(verts), this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(new Float32Array(norms), this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
 
         this._indicesLen = el.length;
-
-		// TODO: Clear v, n, tex and el
-		/*console.log({
-			vertices: verts,
-			normal: norms,
-			textureCoords: tex,
-			indices: el
-		});*/
 	}
 	protected _indicesLen;
 	public render() {
 		const gl = Core.getInstance().getGL();
-		(<any>gl).bindVertexArray(this._vao);
+        this._vao.bind();
 		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 
 		// offset the filled object to avoid the stitching that can arise when the wireframe lines are drawn
@@ -115,10 +107,17 @@ class Torus extends Drawable {
 		// gl.drawElements(gl.LINE_LOOP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 
-	public render2(counter: number) {
-		// console.log(counter);
-		const gl = Core.getInstance().getGL();
-		(<any>gl).bindVertexArray(this._vao);
-		(<any>gl).drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, counter);
-	}
+    public renderArrayInstance(numInstances: number) {
+        const gl = Core.getInstance().getGL();
+        this._vao.bind();
+        (<any>gl).drawElementsInstanced(
+            gl.TRIANGLES, 
+            this._indicesLen,
+            //indexCount, 
+            gl.UNSIGNED_SHORT, 
+            0, 
+            numInstances
+        );
+        //this.vao.unbind();
+    }
 }

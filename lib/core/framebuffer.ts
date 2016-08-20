@@ -48,12 +48,6 @@ class Framebuffer {
 			(<any>texture).unbind();	// TODO: Unbind debería ser un abstract de texture
 		});
 
-
-		// Attachment indices
-		/*this._attachments = textures.map((texture: Texture, i: number) => {
-			return gl.COLOR_ATTACHMENT0 + i;
-		});*/
-
 		// TODO: Check no texture attachments (default render buffer storage)
 
 		if(depth) {
@@ -117,7 +111,7 @@ class Framebuffer {
 		const gl = Core.getInstance().getGL();
 
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-		this._colors.forEach((tex: SimpleTexture2D, idx: number) => {
+		this._colors.forEach((tex: Texture, idx: number) => {
 			tex.bind(idx);
 		});
 	}

@@ -46,13 +46,16 @@ class Core {
 			return;
 		}
 		this._getVendors();
-		this.init();
+
+		Input.getInstance();
+		//this.init();
 
 		Core._instance = this;
 	}
 
 	public initialize(color: Array<number>) {
 		const gl = this._gl;
+		this.init();
 		// ToneMap.init(gl);
 		gl.clearColor(color[0], color[1], color[2], color[3]);
 	}
@@ -70,7 +73,8 @@ class Core {
 		const gl = this._gl;
 
 		gl.enable(gl.DEPTH_TEST);
-		gl.depthFunc(gl.LESS);
+		gl.depthFunc(ComparisonFunc.Less);
+		//gl.depthFunc(gl.LESS);
 		// gl.depthFunc(gl.LEQUAL);
 
 		// Set images to flip y axis to match the texture coordinate space.
@@ -79,8 +83,6 @@ class Core {
 		gl.enable(gl.CULL_FACE);
 		gl.disable(gl.BLEND);
 
-
-		Input.getInstance();
 	}
 
 	public static getInstance(): Core {
@@ -124,4 +126,109 @@ class Core {
 			}
 		}
 	}
+}
+
+const gl = Core.getInstance().getGL();
+
+// Stencil operation
+enum StencilOp {
+	Keep = gl.KEEP,               			///< Keep the stencil value
+	Zero = gl.ZERO,               			///< Set the stencil value to zero
+	Replace = gl.REPLACE,            		///< Replace the stencil value with the reference value
+	Increase = gl.INCR,           			///< Increase the stencil value by one, wrap if necessary
+	IncreaseSaturate = gl.INCR_WRAP,   		///< Increase the stencil value by one, clamp if necessary
+	Decrease = gl.DECR,           			///< Decrease the stencil value by one, wrap if necessary
+	DecreaseSaturate = gl.DECR_WRAP,   		///< Decrease the stencil value by one, clamp if necessary
+	Invert = gl.INVERT              		///< Invert the stencil data (bitwise not)
+};
+
+// Comparison function
+enum ComparisonFunc {
+	// TODO (glDisable(gl.DEPTH_TEST) Disabled,       ///< Comparison is disabled
+	Never = gl.NEVER,          				///< Comparison always fails
+	Always = gl.ALWAYS,         			///< Comparison always succeeds
+	Less = gl.LESS,           				///< Passes if source is less than the destination
+	Equal = gl.EQUAL,          				///< Passes if source is equal to the destination
+	NotEqual = gl.NOTEQUAL,     			///< Passes if source is not equal to the destination
+	LessEqual = gl.LEQUAL,      			///< Passes if source is less than or equal to the destination
+	Greater = gl.GREATER,       			///< Passes if source is greater than to the destination
+	GreaterEqual = gl.GEQUAL   				///< Passes if source is greater than or equal to the destination
+}
+
+// Cull mode
+enum CullMode {
+	// TODO (glDisable(gl.CULL_FACE) None = gl.NONE,               ///< No culling
+	Front = gl.FRONT,              			///< Cull front-facing primitives
+	Back = gl.BACK,               			///< Cull back-facing primitives
+	FrontAndBack = gl.FRONT_AND_BACK       	///< Cull Front and back-facing primitives
+};
+
+// Front face directions
+enum FaceDir {
+	Clockwise = gl.CW,						///< Passed to frontFace to specify the front face of a polygon is drawn in the clockwise direction
+	InvClockwise = gl.CCW					///< Passed to frontFace to specify the front face of a polygon is drawn in the counter clockwise direction
+}
+
+// Array buffer type
+enum BufferType {
+	Array = gl.ARRAY_BUFFER,
+	ElementArray = gl.ELEMENT_ARRAY_BUFFER,
+	TransformFeedback = (<any>gl).TRANSFORM_FEEDBACK_BUFFER,
+	Uniform = (<any>gl).UNIFORM_BUFFER,
+	PixelPack = (<any>gl).PIXEL_PACK_BUFFER,
+	PixelUnpack = (<any>gl).PIXEL_UNPACK_BUFFER,
+	CopyRead = (<any>gl).COPY_READ_BUFFER,
+	CopyWrite = (<any>gl).COPY_WRITE_BUFFER,
+};
+
+// Usage type
+enum UsageType {
+	StaticDraw = gl.STATIC_DRAW,
+	DynamicDraw = gl.DYNAMIC_DRAW,
+	StreamDraw = gl.STREAM_DRAW,
+
+	StaticRead = (<any>gl).STATIC_READ,
+	DynamicRead = (<any>gl).DYNAMIC_READ,
+	StreamRead = (<any>gl).STREAM_READ,
+
+	StaticCopy = (<any>gl).STATIC_COPY,
+	DynamicCopy = (<any>gl).DYNAMIC_COPY,
+	StreamCopy = (<any>gl).STREAM_COPY,
+};
+
+// Blending type
+enum BlendingType {
+	Zero = gl.ZERO,
+	One = gl.ONE,
+	SrcColor = gl.SRC_COLOR,
+	OneMinusSrcColor = gl.ONE_MINUS_SRC_COLOR,
+	SrcAlpha = gl.SRC_ALPHA,
+	OneMinusSrcAlpha = gl.ONE_MINUS_SRC_ALPHA,
+	DstAlpha = gl.DST_ALPHA,
+	OneMinusDstAlpha = gl.ONE_MINUS_DST_ALPHA,
+	DstColor = gl.DST_COLOR,
+	OneMinusDstColor = gl.ONE_MINUS_DST_COLOR,
+	SrcAlphaSaturate = gl.SRC_ALPHA_SATURATE,
+	CteColor = gl.CONSTANT_COLOR,
+	OneMinusCteColor = gl.ONE_MINUS_CONSTANT_COLOR,
+	CteAlpha = gl.CONSTANT_ALPHA,
+	OneMinusCteAlpha = gl.ONE_MINUS_CONSTANT_ALPHA,
+};
+
+// Render Primitive type
+enum RenderType {
+	Points = gl.POINTS,
+	Lines = gl.LINES,
+	LineLoop = gl.LINE_LOOP,
+	LineStrip = gl.LINE_STRIP,
+	Triangles = gl.TRIANGLES,
+	TriangleStrip = gl.TRIANGLE_STRIP,
+	TriangleFan = gl.TRIANGLE_FAN,
+};
+
+// Blending equaiton
+enum BlendingEq {
+	FuncAdd = gl.FUNC_ADD,
+	FuncSub = gl.FUNC_SUBTRACT,
+	FuncRevSub = gl.FUNC_REVERSE_SUBTRACT,
 }

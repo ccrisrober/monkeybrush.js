@@ -14,15 +14,14 @@
 /// <reference path="core/gbufferSSAO.ts" />
 /// <reference path="core/postprocess.ts" />
 /// <reference path="extras/timer.ts" />
+/// <reference path="resources/audioClip.ts" />
 
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
-/// <reference path="extras/vertexBuffer.ts" />
 
 let camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
-
-var gl_;
+let audiosSystem = new AudioClip();
 
 let stats: Stats = new Stats();
 stats.setMode(0);
@@ -33,7 +32,11 @@ let ssao: GBufferSSAO;
 let esferita: Sphere;
 
 let SimpleConfig = function() {
-    return {
+	return {
+        drawButton: function() {
+            draw();
+            audiosSystem.playSound("clip.mp3");
+        },
         max: 10
     };
 };
@@ -57,40 +60,16 @@ let angle = 0;
 let text = SimpleConfig();
 function loadAssets() {
     myImageLoader("matcap.jpg");
+    audiosSystem.loadAudio("clip.mp3");
 }
 
 const mainShader: string = "prog";
 
-let offsetBuffer: VertexBuffer;
-let numInstancias: number;
-
-function maxOffsetUpdate() {
-    let varvar = text.max;
-    var offsetData = [];
-    numInstancias = 0;
-    for (var i = -varvar; i < varvar; i += 5.0) {
-        for (var j = -varvar; j < varvar; j += 5.0) {
-            for (var k = -varvar; k < varvar; k += 5.0) {
-                offsetData.push(i * 1.0);
-                offsetData.push(j * 1.0);
-                offsetData.push(k * 1.0);
-                numInstancias += 1;
-            }
-        }
-    }
-    console.log("NUM INSTANCES: " + numInstancias);
-    // A nice little line of monkeys down the X axis
-    // Optional (unnecesary): offsetBuffer.bind();
-    var offsets = new Float32Array(offsetData);
-    offsetBuffer.bufferData(offsets, UsageType.StaticDraw);
-}
-
 function initialize() {
-    esferita = new Sphere(1.0, 20, 20);
-    torito = new Torus(3.7, 2.3, 25, 10);
-    planito = new Quad(100.0, 100.0, 2.0, 2.0);
-    m = new Model("teddy.json");
-    gl_ = Core.getInstance().getGL();
+    //esferita = new Sphere(1.0, 20, 20);
+    //torito = new Torus(3.7, 2.3, 25, 10);
+    //planito = new Quad(100.0, 100.0, 2.0, 2.0);
+    //m = new Model("teddy.json");
 
     ShaderManager.addWithFun("prog", (): ShaderProgram => {
         let prog: ShaderProgram = new ShaderProgram();
@@ -100,6 +79,28 @@ function initialize() {
 
         prog.addUniforms(["projection", "view", "model", 
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
+        return prog;
+    });
+
+    ShaderManager.addWithFun("tf", (): ShaderProgram => {
+        let prog: ShaderProgram = new ShaderProgram();
+        prog.addShader("./shaders/transformFeedback.vert", shader_type.vertex, mode.read_file);
+        prog.addShader(`#version 300 es
+precision highp float;
+  out vec4 fragColor;
+void main(void) {
+   fragColor = vec4( 1.,0.,0., 1. );
+}`, shader_type.fragment, mode.read_text);
+
+        var gl = Core.getInstance().getGL();
+        
+        prog.compile();
+
+        (<any>gl).transformFeedbackVaryings(prog.program(), ["gl_Position"], 
+            (<any>gl).SEPARATE_ATTRIBS);
+
+        prog.addAttributes(["position"]);
+
         return prog;
     });
 
@@ -114,11 +115,49 @@ function initialize() {
 
     //audio.playBackgroundAudio("music.mp3");
 
-    offsetBuffer = new VertexBuffer(BufferType.Array);
+    let prog = ShaderManager.get("tf");
+    prog.use();
 
-    maxOffsetUpdate();
+    gl.enableVertexAttribArray(prog.attribLocations["position"]);
 
-    cameraUpdateCb();
+    bufA = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufA);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([.8,0,0]), (<any>gl).DYNAMIC_COPY)
+
+    bufB = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufB);
+    gl.bufferData(gl.ARRAY_BUFFER, 3 * Float32Array.BYTES_PER_ELEMENT, (<any>gl).DYNAMIC_COPY);
+
+    var tff = (<any>gl).createTransformFeedback();
+    (<any>gl).bindTransformFeedback((<any>gl).TRANSFORM_FEEDBACK, tff);
+
+    draw();
+
+    //cameraUpdateCb();
+}
+
+var bufA, bufB;
+
+function draw() {
+    const gl = Core.getInstance().getGL();
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    let prog = ShaderManager.get("tf");
+    prog.use();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufA);
+    gl.vertexAttribPointer(prog.attribLocations["position"], 3, gl.FLOAT, false, 0, 0);
+    (<any>gl).bindBufferBase((<any>gl).TRANSFORM_FEEDBACK_BUFFER, 0, bufB);
+
+    (<any>gl).beginTransformFeedback(gl.POINTS);
+    gl.drawArrays(gl.POINTS, 0, 1);
+    (<any>gl).endTransformFeedback();
+
+    (<any>gl).bindBufferBase((<any>gl).TRANSFORM_FEEDBACK_BUFFER, 0, null);
+
+    var t = bufA;
+    bufA = bufB;
+    bufB = t;
 }
 
 function cameraUpdateCb() {
@@ -140,42 +179,45 @@ function drawScene(dt: number) {
 
     camera.update(cameraUpdateCb);
 
+    const prog = ShaderManager.get(mainShader);
+
     light.addTransform(
         Math.sin(dt) * 0.06,
         Math.cos(dt) * 0.06,
         0.0 //5.0 + Math.cos(dt) * 0.06
     );
 
-    Core.getInstance().clearColorAndDepth();
+    prog.use();
 
-    ShaderManager.getCB(mainShader, function(prog: ShaderProgram) {
-        prog.use();
+    prog.sendUniformVec3("lightPosition", light.position);
 
-        prog.sendUniformVec3("lightPosition", light.position);
+    tex2d.bind(0);
+    prog.sendUniform1i("tex", 0);
 
-        tex2d.bind(0);
-        prog.sendUniform1i("tex", 0);
+    angle += Timer.deltaTime() * 0.001;
 
-        angle += Timer.deltaTime() * 0.001;
+    prog.sendUniform1b("usemc", true);
 
-        prog.sendUniform1b("usemc", true);
+    /**
+    let varvar = text.max;
+    let i = 0, j = 0, k = 0;
+    let dd = -1;
+    for (i = -varvar; i < varvar; i += 5.0) {
+        for (j = -varvar; j < varvar; j += 5.0) {
+            for (k = -varvar; k < varvar; k += 5.0) {
+                dd *= -1;
+                mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
+                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+                mat4.rotateY(model, model, angle * dd);
+                mat4.scale(model, model, vec3.fromValues(0.23, 0.35, 0.35));
 
-        let varvar = text.max;
-        let i = 0, j = 0, k = 0;
+                prog.sendUniformMat4("model", model);
 
-        mat4.translate(model, identityMatrix, vec3.create());
-        mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-        mat4.rotateY(model, model, angle);
-        mat4.scale(model, model, vec3.fromValues(0.33, 0.33, 0.33));
-
-        prog.sendUniformMat4("model", model);
-        // Bind the instance position data
-        // Optional (unnecesary): offsetBuffer.bind();
-        offsetBuffer.attribDivisor(3, 3, 1);
-
-        // Draw the instanced meshes
-        torito.renderArrayInstance(numInstancias);
-    });
+                torito.render();
+            }
+        }
+    }
+    /**/
 }
 
 // ============================================================================================ //
@@ -204,7 +246,7 @@ function myImageLoader(src) {
 };
 
 window.onload = () => {
-    Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
+    Core.getInstance().initialize([0.0, 1.0, 0.0, 1.0]);
 
 
     if (Object.keys(text).length > 0) {
@@ -213,7 +255,8 @@ window.onload = () => {
         /*for (var index in text) { 
             gui.add(text, index);
         }*/
-        gui.add(text, "max", 5, 100).onChange(maxOffsetUpdate);
+        gui.add(text, "max", 5, 100);
+        gui.add(text, "drawButton");
     }
 
     loadAssets();
@@ -236,26 +279,26 @@ window.onload = () => {
         document.getElementById("spinner").remove();
 
         initialize();
-        requestAnimationFrame(loop);
+        //requestAnimationFrame(loop);
     });
 };
 
 function loop(dt: number) {
     Input.getInstance().update();
 
-    stats.begin();
+	stats.begin();
     dt *= 0.001; // convert to seconds
 
     Timer.update();
     
 
     //resize();
-    
+	
 
     drawScene(dt);    // Draw user function
 
-    stats.end();
-    requestAnimationFrame(loop);
+	stats.end();
+	requestAnimationFrame(loop);
 }
 function resize() {
     let canvas: HTMLCanvasElement = Core.getInstance().canvas();

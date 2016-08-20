@@ -1,5 +1,4 @@
 /// <reference path="resourceMap.ts" />
-
 class AudioClip {
 	protected _audioContext: AudioContext;
 	protected _bgAudioNode: AudioBufferSourceNode = null;
@@ -17,14 +16,8 @@ class AudioClip {
 
 			// Async request the data from server
 			var request = new XMLHttpRequest();
-			/*request.onreadystatechange = function() {
-    			if (request.status < 200 || request.status > 299) {
-                    alert(clipName + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
-                        "The index.html file must be loaded by a web-server.]");
-                }
-			};*/
-
 			request.open("GET", clipName, true);
+
             // Specify that the request retrieves binary data.
 			request.responseType = "arraybuffer";
 
@@ -43,10 +36,24 @@ class AudioClip {
 		ResourceMap.unloadAsset(clipName);
 	}
 	public stopBackgroundAudio() {
-
+		// Check if the audio is playing
+		if(this._bgAudioNode !== null) {
+			this._bgAudioNode.stop(0);
+			this._bgAudioNode = null;
+		}
 	}
-	public isBackgroundAudioPlaying() {
-
+	public playSound(clipName: string) {
+		var clip = ResourceMap.retrieveAsset(clipName);
+		if(clip) {
+			var sourceNode = this._audioContext.createBufferSource();
+			sourceNode.buffer = clip;
+			sourceNode.connect(this._audioContext.destination);
+			// TODO: Volume!!
+			sourceNode.start(0);
+		}
+	}
+	public isBackgroundAudioPlaying(): boolean {
+		return this._bgAudioNode !== null;
 	}
 	public playBackgroundAudio(clipName: string) {
 		var clipInfo = ResourceMap.retrieveAsset(clipName);

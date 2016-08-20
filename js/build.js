@@ -665,11 +665,13 @@ var Core = (function () {
             return;
         }
         this._getVendors();
-        this.init();
+        Input.getInstance();
+        //this.init();
         Core._instance = this;
     }
     Core.prototype.initialize = function (color) {
         var gl = this._gl;
+        this.init();
         // ToneMap.init(gl);
         gl.clearColor(color[0], color[1], color[2], color[3]);
     };
@@ -685,13 +687,13 @@ var Core = (function () {
     Core.prototype.init = function () {
         var gl = this._gl;
         gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LESS);
+        gl.depthFunc(ComparisonFunc.Less);
+        //gl.depthFunc(gl.LESS);
         // gl.depthFunc(gl.LEQUAL);
         // Set images to flip y axis to match the texture coordinate space.
         // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.enable(gl.CULL_FACE);
         gl.disable(gl.BLEND);
-        Input.getInstance();
     };
     Core.getInstance = function () {
         return Core._instance;
@@ -735,6 +737,114 @@ var Core = (function () {
     Core._instance = new Core();
     return Core;
 })();
+var gl = Core.getInstance().getGL();
+// Stencil operation
+var StencilOp;
+(function (StencilOp) {
+    StencilOp[StencilOp["Keep"] = gl.KEEP] = "Keep";
+    StencilOp[StencilOp["Zero"] = gl.ZERO] = "Zero";
+    StencilOp[StencilOp["Replace"] = gl.REPLACE] = "Replace";
+    StencilOp[StencilOp["Increase"] = gl.INCR] = "Increase";
+    StencilOp[StencilOp["IncreaseSaturate"] = gl.INCR_WRAP] = "IncreaseSaturate";
+    StencilOp[StencilOp["Decrease"] = gl.DECR] = "Decrease";
+    StencilOp[StencilOp["DecreaseSaturate"] = gl.DECR_WRAP] = "DecreaseSaturate";
+    StencilOp[StencilOp["Invert"] = gl.INVERT] = "Invert"; ///< Invert the stencil data (bitwise not)
+})(StencilOp || (StencilOp = {}));
+;
+// Comparison function
+var ComparisonFunc;
+(function (ComparisonFunc) {
+    // TODO (glDisable(gl.DEPTH_TEST) Disabled,       ///< Comparison is disabled
+    ComparisonFunc[ComparisonFunc["Never"] = gl.NEVER] = "Never";
+    ComparisonFunc[ComparisonFunc["Always"] = gl.ALWAYS] = "Always";
+    ComparisonFunc[ComparisonFunc["Less"] = gl.LESS] = "Less";
+    ComparisonFunc[ComparisonFunc["Equal"] = gl.EQUAL] = "Equal";
+    ComparisonFunc[ComparisonFunc["NotEqual"] = gl.NOTEQUAL] = "NotEqual";
+    ComparisonFunc[ComparisonFunc["LessEqual"] = gl.LEQUAL] = "LessEqual";
+    ComparisonFunc[ComparisonFunc["Greater"] = gl.GREATER] = "Greater";
+    ComparisonFunc[ComparisonFunc["GreaterEqual"] = gl.GEQUAL] = "GreaterEqual"; ///< Passes if source is greater than or equal to the destination
+})(ComparisonFunc || (ComparisonFunc = {}));
+// Cull mode
+var CullMode;
+(function (CullMode) {
+    // TODO (glDisable(gl.CULL_FACE) None = gl.NONE,               ///< No culling
+    CullMode[CullMode["Front"] = gl.FRONT] = "Front";
+    CullMode[CullMode["Back"] = gl.BACK] = "Back";
+    CullMode[CullMode["FrontAndBack"] = gl.FRONT_AND_BACK] = "FrontAndBack"; ///< Cull Front and back-facing primitives
+})(CullMode || (CullMode = {}));
+;
+// Front face directions
+var FaceDir;
+(function (FaceDir) {
+    FaceDir[FaceDir["Clockwise"] = gl.CW] = "Clockwise";
+    FaceDir[FaceDir["InvClockwise"] = gl.CCW] = "InvClockwise"; ///< Passed to frontFace to specify the front face of a polygon is drawn in the counter clockwise direction
+})(FaceDir || (FaceDir = {}));
+// Array buffer type
+var BufferType;
+(function (BufferType) {
+    BufferType[BufferType["Array"] = gl.ARRAY_BUFFER] = "Array";
+    BufferType[BufferType["ElementArray"] = gl.ELEMENT_ARRAY_BUFFER] = "ElementArray";
+    BufferType[BufferType["TransformFeedback"] = gl.TRANSFORM_FEEDBACK_BUFFER] = "TransformFeedback";
+    BufferType[BufferType["Uniform"] = gl.UNIFORM_BUFFER] = "Uniform";
+    BufferType[BufferType["PixelPack"] = gl.PIXEL_PACK_BUFFER] = "PixelPack";
+    BufferType[BufferType["PixelUnpack"] = gl.PIXEL_UNPACK_BUFFER] = "PixelUnpack";
+    BufferType[BufferType["CopyRead"] = gl.COPY_READ_BUFFER] = "CopyRead";
+    BufferType[BufferType["CopyWrite"] = gl.COPY_WRITE_BUFFER] = "CopyWrite";
+})(BufferType || (BufferType = {}));
+;
+// Usage type
+var UsageType;
+(function (UsageType) {
+    UsageType[UsageType["StaticDraw"] = gl.STATIC_DRAW] = "StaticDraw";
+    UsageType[UsageType["DynamicDraw"] = gl.DYNAMIC_DRAW] = "DynamicDraw";
+    UsageType[UsageType["StreamDraw"] = gl.STREAM_DRAW] = "StreamDraw";
+    UsageType[UsageType["StaticRead"] = gl.STATIC_READ] = "StaticRead";
+    UsageType[UsageType["DynamicRead"] = gl.DYNAMIC_READ] = "DynamicRead";
+    UsageType[UsageType["StreamRead"] = gl.STREAM_READ] = "StreamRead";
+    UsageType[UsageType["StaticCopy"] = gl.STATIC_COPY] = "StaticCopy";
+    UsageType[UsageType["DynamicCopy"] = gl.DYNAMIC_COPY] = "DynamicCopy";
+    UsageType[UsageType["StreamCopy"] = gl.STREAM_COPY] = "StreamCopy";
+})(UsageType || (UsageType = {}));
+;
+// Blending type
+var BlendingType;
+(function (BlendingType) {
+    BlendingType[BlendingType["Zero"] = gl.ZERO] = "Zero";
+    BlendingType[BlendingType["One"] = gl.ONE] = "One";
+    BlendingType[BlendingType["SrcColor"] = gl.SRC_COLOR] = "SrcColor";
+    BlendingType[BlendingType["OneMinusSrcColor"] = gl.ONE_MINUS_SRC_COLOR] = "OneMinusSrcColor";
+    BlendingType[BlendingType["SrcAlpha"] = gl.SRC_ALPHA] = "SrcAlpha";
+    BlendingType[BlendingType["OneMinusSrcAlpha"] = gl.ONE_MINUS_SRC_ALPHA] = "OneMinusSrcAlpha";
+    BlendingType[BlendingType["DstAlpha"] = gl.DST_ALPHA] = "DstAlpha";
+    BlendingType[BlendingType["OneMinusDstAlpha"] = gl.ONE_MINUS_DST_ALPHA] = "OneMinusDstAlpha";
+    BlendingType[BlendingType["DstColor"] = gl.DST_COLOR] = "DstColor";
+    BlendingType[BlendingType["OneMinusDstColor"] = gl.ONE_MINUS_DST_COLOR] = "OneMinusDstColor";
+    BlendingType[BlendingType["SrcAlphaSaturate"] = gl.SRC_ALPHA_SATURATE] = "SrcAlphaSaturate";
+    BlendingType[BlendingType["CteColor"] = gl.CONSTANT_COLOR] = "CteColor";
+    BlendingType[BlendingType["OneMinusCteColor"] = gl.ONE_MINUS_CONSTANT_COLOR] = "OneMinusCteColor";
+    BlendingType[BlendingType["CteAlpha"] = gl.CONSTANT_ALPHA] = "CteAlpha";
+    BlendingType[BlendingType["OneMinusCteAlpha"] = gl.ONE_MINUS_CONSTANT_ALPHA] = "OneMinusCteAlpha";
+})(BlendingType || (BlendingType = {}));
+;
+// Render Primitive type
+var RenderType;
+(function (RenderType) {
+    RenderType[RenderType["Points"] = gl.POINTS] = "Points";
+    RenderType[RenderType["Lines"] = gl.LINES] = "Lines";
+    RenderType[RenderType["LineLoop"] = gl.LINE_LOOP] = "LineLoop";
+    RenderType[RenderType["LineStrip"] = gl.LINE_STRIP] = "LineStrip";
+    RenderType[RenderType["Triangles"] = gl.TRIANGLES] = "Triangles";
+    RenderType[RenderType["TriangleStrip"] = gl.TRIANGLE_STRIP] = "TriangleStrip";
+    RenderType[RenderType["TriangleFan"] = gl.TRIANGLE_FAN] = "TriangleFan";
+})(RenderType || (RenderType = {}));
+;
+// Blending equaiton
+var BlendingEq;
+(function (BlendingEq) {
+    BlendingEq[BlendingEq["FuncAdd"] = gl.FUNC_ADD] = "FuncAdd";
+    BlendingEq[BlendingEq["FuncSub"] = gl.FUNC_SUBTRACT] = "FuncSub";
+    BlendingEq[BlendingEq["FuncRevSub"] = gl.FUNC_REVERSE_SUBTRACT] = "FuncRevSub";
+})(BlendingEq || (BlendingEq = {}));
 var Vector2 = (function () {
     function Vector2(x, y) {
         this.x = x;
@@ -759,6 +869,9 @@ var Texture = (function () {
     Texture.prototype.handle = function () {
         return this._handle;
     };
+    // TODO: Move to abstract methods
+    Texture.prototype.getHeight = function () { return -1; };
+    Texture.prototype.getWidth = function () { return -1; };
     return Texture;
 })();
 /// <reference path="../extras/Vector2.ts" />
@@ -810,10 +923,6 @@ var Framebuffer = (function () {
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, target, texture.handle(), 0);
             texture.unbind(); // TODO: Unbind debería ser un abstract de texture
         });
-        // Attachment indices
-        /*this._attachments = textures.map((texture: Texture, i: number) => {
-            return gl.COLOR_ATTACHMENT0 + i;
-        });*/
         // TODO: Check no texture attachments (default render buffer storage)
         if (depth) {
             this._renderBuffer = new RenderBufferTexture(size, gl.DEPTH_COMPONENT16, gl.DEPTH_ATTACHMENT);
@@ -1047,7 +1156,7 @@ var GBuffer = (function () {
 // TODO: Es necesario realmente el tamaño??
 var Texture2D = (function (_super) {
     __extends(Texture2D, _super);
-    function Texture2D(image, options) {
+    function Texture2D(data /*: ImageData*/, options) {
         if (options === void 0) { options = {}; }
         var gl = Core.getInstance().getGL();
         _super.call(this, gl.TEXTURE_2D);
@@ -1073,7 +1182,7 @@ var Texture2D = (function (_super) {
         _internalformat, // Internal format
         _format, // Format
         _type, // Size of each channel
-        image);
+        data);
         gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this._minFilter);
         gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this._magFilter);
         this.wrap(wraps);
@@ -1283,7 +1392,34 @@ var GBufferSSAO = (function () {
     };
     return GBufferSSAO;
 })();
+/// <reference path="../core/core.ts" />
+var VertexArray = (function () {
+    function VertexArray() {
+        var gl = Core.getInstance().getGL();
+        this._handle = gl.createVertexArray();
+        this.bind();
+    }
+    VertexArray.prototype.bind = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(this._handle);
+    };
+    VertexArray.prototype.unbind = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindVertexArray(null);
+    };
+    VertexArray.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.deleteVertexArray(this._handle);
+    };
+    VertexArray.prototype.is = function () {
+        var gl = Core.getInstance().getGL();
+        return gl.isVertexArray(this._handle);
+    };
+    return VertexArray;
+})();
 /// <reference path="core.ts" />
+/// <reference path="../extras/vertexArray.ts" />
 "use strict";
 var Model = (function () {
     function Model(fileRoute) {
@@ -1310,8 +1446,7 @@ var Model = (function () {
     };
     Model.prototype.createVAO = function (model, indicesArray) {
         var gl = Core.getInstance().getGL();
-        this.vao = gl.createVertexArray();
-        gl.bindVertexArray(this.vao);
+        this.vao = new VertexArray();
         var indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicesArray), gl.STATIC_DRAW);
@@ -1345,20 +1480,85 @@ var Model = (function () {
     };
     Model.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this.vao);
+        this.vao.bind();
         gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-        gl.bindVertexArray(null);
+        this.vao.unbind();
     };
     Model.prototype.renderArrayInstance = function (numInstances) {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this.vao);
-        gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 100);
-        gl.bindVertexArray(null);
+        this.vao.bind();
+        gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, 
+        //indexCount, 
+        gl.UNSIGNED_SHORT, 0, numInstances);
+        //this.vao.unbind();
     };
     return Model;
 })();
 ;
+/// <reference path="../core/core.ts" />
+var VertexBuffer = (function () {
+    function VertexBuffer(type) {
+        this._type = BufferType.Array;
+        var gl = Core.getInstance().getGL();
+        this._buffer = gl.createBuffer();
+        this._type = type;
+        this.bind();
+    }
+    VertexBuffer.prototype.bind = function (type) {
+        var gl = Core.getInstance().getGL();
+        if (type !== undefined) {
+            this._type = type;
+        }
+        gl.bindBuffer(this._type, this._buffer);
+    };
+    VertexBuffer.prototype.unbind = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindBuffer(this._type, null);
+    };
+    VertexBuffer.prototype.getBufferType = function () {
+        return this._type;
+    };
+    VertexBuffer.prototype.getBuffer = function () {
+        return this._buffer;
+    };
+    VertexBuffer.prototype.destroy = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindBuffer(this._type, 0);
+        if (!this._buffer) {
+            gl.deleteBuffer(this._buffer);
+        }
+        this._buffer = null;
+    };
+    VertexBuffer.prototype.bufferData = function (data, usage) {
+        if (usage === void 0) { usage = UsageType.StaticDraw; }
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.bufferData(this._type, data, usage);
+    };
+    VertexBuffer.prototype.attribDivisor = function (position, length, divisor) {
+        var gl = Core.getInstance().getGL();
+        this.bind();
+        gl.enableVertexAttribArray(position);
+        gl.vertexAttribPointer(position, length, gl.FLOAT, false, length * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.vertexAttribDivisor(position, divisor);
+    };
+    VertexBuffer.prototype.vertexAttribPointer = function (attribLocation, numElems, type, normalized, offset) {
+        if (normalized === void 0) { normalized = false; }
+        if (offset === void 0) { offset = 0; }
+        this.bind();
+        gl.enableVertexAttribArray(attribLocation);
+        gl.vertexAttribPointer(attribLocation, // Attribute location
+        numElems, // Number of elements per attribute
+        type, // Type of elements
+        normalized, numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
+        offset // Offset from the beginning of a single vertex to this attribute
+        );
+    };
+    return VertexBuffer;
+})();
 /// <reference path="core.ts" />
+/// <reference path="../extras/vertexBuffer.ts" />
+/// <reference path="../extras/vertexArray.ts" />
 "use strict";
 /**
 * This class wrap PostProcess effects
@@ -1371,29 +1571,33 @@ var PostProcess = (function () {
     PostProcess.initialize = function () {
         var gl = Core.getInstance().getGL();
         if (!PostProcess._planeVAO) {
-            var positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
-            PostProcess._planeVAO = gl.createVertexArray();
-            gl.bindVertexArray(PostProcess._planeVAO);
-            var planeVertexVBO = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexVBO);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-            gl.enableVertexAttribArray(0);
-            gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-            gl.bindVertexArray(null);
+            var positions = [
+                -1.0, -1.0,
+                1.0, -1.0,
+                -1.0, 1.0,
+                1.0, 1.0
+            ];
+            PostProcess._planeVAO = new VertexArray();
+            // Unnecesary (<any>gl).bindVertexArray(PostProcess._planeVAO);  
+            this._planeVertexVBO = new VertexBuffer(BufferType.Array);
+            // Unnecesary gl.bindBuffer(gl.ARRAY_BUFFER, this._planeVertexVBO);
+            this._planeVertexVBO.bufferData(new Float32Array(positions), UsageType.StaticDraw);
+            this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
+            PostProcess._planeVAO.unbind();
         }
     };
     PostProcess.bind = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(PostProcess._planeVAO);
+        PostProcess._planeVAO.bind();
     };
     PostProcess.render = function () {
         // console.log("DRAW QUAD");
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(PostProcess._planeVAO);
+        PostProcess._planeVAO.bind();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        gl.bindVertexArray(null);
+        PostProcess._planeVAO.unbind();
     };
-    PostProcess._planeVAO = null; // TODO: WebGLVertexArrayObject
+    PostProcess._planeVAO = null;
     PostProcess._planeVertexVBO = null;
     return PostProcess;
 })();
@@ -1409,6 +1613,36 @@ var Scene = (function () {
         return this._animate;
     };
     return Scene;
+})();
+/// <reference path="core.ts" />
+var Stencil = (function () {
+    function Stencil() {
+    }
+    Stencil.prototype.use = function () {
+        var gl = Core.getInstance().getGL();
+        gl.enable(gl.STENCIL_TEST);
+    };
+    Stencil.prototype.func = function (compFun, ref, mask) {
+        var gl = Core.getInstance().getGL();
+        gl.stencilFunc(compFun, ref, mask);
+    };
+    Stencil.prototype.operation = function (fail, zfail, zpass) {
+        var gl = Core.getInstance().getGL();
+        gl.stencilOp(fail, zfail, zpass);
+    };
+    Stencil.prototype.mask = function (mask) {
+        var gl = Core.getInstance().getGL();
+        gl.stencilMask(mask);
+    };
+    Stencil.prototype.clear = function () {
+        var gl = Core.getInstance().getGL();
+        gl.clear(gl.STENCIL_BUFFER_BIT);
+    };
+    Stencil.prototype.unuse = function () {
+        var gl = Core.getInstance().getGL();
+        gl.disable(gl.STENCIL_TEST);
+    };
+    return Stencil;
 })();
 // TODO: Change _color to Vector3
 var Color = (function () {
@@ -1565,45 +1799,10 @@ var Vector4 = (function () {
     };
     return Vector4;
 })();
-/// <reference path="../core/core.ts" />
-var VertexBuffer = (function () {
-    function VertexBuffer() {
-        this._type = 0;
-        var gl = Core.getInstance().getGL();
-        this._buffer = gl.createBuffer();
-    }
-    VertexBuffer.prototype.bind = function (type) {
-        var gl = Core.getInstance().getGL();
-        this._type = type;
-        gl.bindBuffer(this._type, this._buffer);
-    };
-    VertexBuffer.prototype.getBufferType = function () {
-        return this._type;
-    };
-    VertexBuffer.prototype.getBuffer = function () {
-        return this._buffer;
-    };
-    VertexBuffer.prototype.destroy = function () {
-        var gl = Core.getInstance().getGL();
-        if (this._type !== 0) {
-            switch (this._type) {
-                case gl.ARRAY_BUFFER:
-                    gl.bindBuffer(this._type, 0);
-                    break;
-                case gl.ELEMENT_ARRAY_BUFFER:
-                    gl.bindBuffer(this._type, 0);
-                    break;
-            }
-        }
-        if (!this._buffer) {
-            gl.deleteBuffer(this._buffer);
-        }
-        this._buffer = null;
-    };
-    return VertexBuffer;
-})();
 /// <reference path="../core/shaderProgram.ts" />
 "use strict";
+;
+;
 var ShaderManager;
 (function (ShaderManager) {
     var _progDictionary = {};
@@ -1629,6 +1828,11 @@ var ShaderManager;
         }
     }
     ShaderManager.destroy = destroy;
+    function getCB(name, cb) {
+        var prog = get(name);
+        cb(prog);
+    }
+    ShaderManager.getCB = getCB;
 })(ShaderManager || (ShaderManager = {}));
 ;
 "use strict";
@@ -1744,40 +1948,20 @@ var ResourceMap;
     ;
 })(ResourceMap || (ResourceMap = {}));
 /// <reference path="../core/core.ts" />
+/// <reference path="../extras/vertexArray.ts" />
+/// <reference path="../extras/vertexBuffer.ts" />
 var Drawable = (function () {
+    // TODO: Crear el VAO en el constructor y llamar a super
     function Drawable() {
+        this._vao = new VertexArray();
     }
-    // TODO: unused DELETE PLS
-    Drawable.prototype.addAttrib = function (attribLocation, buffer, data, numElems) {
-        var gl = Core.getInstance().getGL();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
-        gl.vertexAttribPointer(attribLocation, // Attribute location
-        numElems, // Number of elements per attribute
-        gl.FLOAT, // Type of elements
-        false, numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-        0 // Offset from the beginning of a single vertex to this attribute
-        );
-        gl.enableVertexAttribArray(attribLocation);
-    };
-    // TODO: USED?
     Drawable.prototype.createBuffer = function (data, handle) {
-        var gl = Core.getInstance().getGL();
-        gl.bindBuffer(gl.ARRAY_BUFFER, handle);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+        handle.bufferData(data, UsageType.StaticDraw);
         return handle;
     };
-    // TODO: USED?
     Drawable.prototype.addAttrib_ = function (attribLocation, buffer, numElems) {
         var gl = Core.getInstance().getGL();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.vertexAttribPointer(attribLocation, // Attribute location
-        numElems, // Number of elements per attribute
-        gl.FLOAT, // Type of elements
-        false, numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-        0 // Offset from the beginning of a single vertex to this attribute
-        );
-        gl.enableVertexAttribArray(attribLocation);
+        buffer.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
     };
     return Drawable;
 })();
@@ -1850,28 +2034,21 @@ var Torus = (function (_super) {
         }
         var gl = Core.getInstance().getGL();
         this._handle = new Array(4);
-        for (var i = 0; i < 4; i++) {
-            this._handle[i] = gl.createBuffer();
+        var i = 0;
+        this._handle[i] = new VertexBuffer(BufferType.ElementArray);
+        for (i = 1; i < 4; i++) {
+            this._handle[i] = new VertexBuffer(BufferType.Array);
         }
-        this._vao = gl.createVertexArray();
-        gl.bindVertexArray(this._vao);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
-        this.addAttrib_(0, this.createBuffer(verts, this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(norms, this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this._vao.bind();
+        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
+        this.addAttrib_(0, this.createBuffer(new Float32Array(verts), this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(new Float32Array(norms), this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
         this._indicesLen = el.length;
-        // TODO: Clear v, n, tex and el
-        /*console.log({
-            vertices: verts,
-            normal: norms,
-            textureCoords: tex,
-            indices: el
-        });*/
     }
     Torus.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
+        this._vao.bind();
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         // offset the filled object to avoid the stitching that can arise when the wireframe lines are drawn
         // gl.enable(gl.POLYGON_OFFSET_FILL);
@@ -1882,13 +2059,111 @@ var Torus = (function (_super) {
         // gl.lineWidth(1.0);
         // gl.drawElements(gl.LINE_LOOP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
-    Torus.prototype.render2 = function (counter) {
-        // console.log(counter);
+    Torus.prototype.renderArrayInstance = function (numInstances) {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
-        gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, counter);
+        this._vao.bind();
+        gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, 
+        //indexCount, 
+        gl.UNSIGNED_SHORT, 0, numInstances);
+        //this.vao.unbind();
     };
     return Torus;
+})(Drawable);
+/// <reference path="drawable.ts" />
+var Sphere = (function (_super) {
+    __extends(Sphere, _super);
+    function Sphere(radius, slices, stacks) {
+        _super.call(this);
+        var nv = (slices + 1) * (stacks + 1);
+        var elements = (slices * 2 * (stacks - 1)) * 3;
+        // v
+        var v = new Array(3 * nv);
+        // Normals
+        var n = new Array(3 * nv);
+        // Tex coords
+        var tex = new Array(2 * nv);
+        // Elements
+        var el = new Array(elements);
+        // Generate the vertex data
+        // Generate positions and normals
+        var theta, phi;
+        var thetaFac = Math.PI * 2.0 / slices;
+        var phiFac = Math.PI / stacks;
+        var nx, ny, nz, s, t;
+        var idx = 0, tIdx = 0;
+        for (var i_1 = 0; i_1 <= slices; i_1++) {
+            theta = i_1 * thetaFac;
+            s = i_1 / slices;
+            for (var j = 0; j <= stacks; j++) {
+                phi = j * phiFac;
+                t = j / stacks;
+                nx = Math.sin(phi) * Math.cos(theta);
+                ny = Math.sin(phi) * Math.sin(theta);
+                nz = Math.cos(phi);
+                v[idx] = radius * nx;
+                v[idx + 1] = radius * ny;
+                v[idx + 2] = radius * nz;
+                n[idx] = nx;
+                n[idx + 1] = ny;
+                n[idx + 2] = nz;
+                idx += 3;
+                tex[tIdx] = s;
+                tex[tIdx + 1] = t;
+                tIdx += 2;
+            }
+        }
+        // Generate the element list
+        idx = 0;
+        for (var i_2 = 0; i_2 < slices; i_2++) {
+            var stackStart = i_2 * (stacks + 1);
+            var nextStackStart = (i_2 + 1) * (stacks + 1);
+            for (var j = 0; j < stacks; j++) {
+                if (j === 0) {
+                    el[idx] = stackStart;
+                    el[idx + 1] = stackStart + 1;
+                    el[idx + 2] = nextStackStart + 1;
+                    idx += 3;
+                }
+                else if (j === stacks - 1) {
+                    el[idx] = stackStart + j;
+                    el[idx + 1] = stackStart + j + 1;
+                    el[idx + 2] = nextStackStart + j;
+                    idx += 3;
+                }
+                else {
+                    el[idx] = stackStart + j;
+                    el[idx + 1] = stackStart + j + 1;
+                    el[idx + 2] = nextStackStart + j + 1;
+                    el[idx + 3] = nextStackStart + j;
+                    el[idx + 4] = stackStart + j;
+                    el[idx + 5] = nextStackStart + j + 1;
+                    idx += 6;
+                }
+            }
+        }
+        var gl = Core.getInstance().getGL();
+        this._handle = new Array(4);
+        var i = 0;
+        this._handle[i] = new VertexBuffer(BufferType.ElementArray);
+        for (i = 1; i < 4; i++) {
+            this._handle[i] = new VertexBuffer(BufferType.Array);
+        }
+        this._vao.bind();
+        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
+        this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(new Float32Array(n), this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
+        this._indicesLen = el.length;
+    }
+    Sphere.prototype.render = function () {
+        var gl = Core.getInstance().getGL();
+        this._vao.bind();
+        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        // gl.lineWidth(1.0);
+        // Puts vertices to buffer and links it to attribute letiable 'ppos'
+        // gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    };
+    return Sphere;
 })(Drawable);
 /// <reference path="drawable.ts" />
 var Quad = (function (_super) {
@@ -1909,8 +2184,8 @@ var Quad = (function (_super) {
         var texj = tmax / xdivs;
         var x, z;
         var vidx = 0, tidx = 0;
-        for (var i = 0; i <= zdivs; i++) {
-            z = iFactor * i - z2;
+        for (var i_3 = 0; i_3 <= zdivs; i_3++) {
+            z = iFactor * i_3 - z2;
             for (var j = 0; j <= xdivs; j++) {
                 x = jFactor * j - x2;
                 v[vidx] = x;
@@ -1921,15 +2196,15 @@ var Quad = (function (_super) {
                 n[vidx + 2] = 0.0;
                 vidx += 3;
                 tex[tidx] = j * texi;
-                tex[tidx + 1] = i * texj;
+                tex[tidx + 1] = i_3 * texj;
                 tidx += 2;
             }
         }
         var rowStart, nextRowStart;
         var idx = 0;
-        for (var i = 0; i < zdivs; i++) {
-            rowStart = i * (xdivs + 1);
-            nextRowStart = (i + 1) * (xdivs + 1);
+        for (var i_4 = 0; i_4 < zdivs; i_4++) {
+            rowStart = i_4 * (xdivs + 1);
+            nextRowStart = (i_4 + 1) * (xdivs + 1);
             for (var j = 0; j < xdivs; j++) {
                 el[idx] = rowStart + j;
                 el[idx + 1] = nextRowStart + j;
@@ -1942,28 +2217,21 @@ var Quad = (function (_super) {
         }
         var gl = Core.getInstance().getGL();
         this._handle = new Array(4);
-        for (var i = 0; i < 4; i++) {
-            this._handle[i] = gl.createBuffer();
+        var i = 0;
+        this._handle[i] = new VertexBuffer(BufferType.ElementArray);
+        for (i = 1; i < 4; i++) {
+            this._handle[i] = new VertexBuffer(BufferType.Array);
         }
-        this._vao = gl.createVertexArray();
-        gl.bindVertexArray(this._vao);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
-        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this._vao.bind();
+        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
+        this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(new Float32Array(n), this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
         this._indicesLen = el.length;
-        // TODO: Clear v, n, tex and el
-        /*console.log({
-            vertices: v,
-            normal: n,
-            textureCoords: tex,
-            indices: el
-        });*/
     }
     Quad.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
+        this._vao.bind();
         // gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);	// TODO: UNSIGNED_INT => https://developer.mozilla.org/en-US/docs/Web/API/OES_element_index_uint
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
@@ -2019,67 +2287,6 @@ var PointLight = (function (_super) {
     };
     return PointLight;
 })(Light);
-/// <reference path="resourceMap.ts" />
-var AudioClip = (function () {
-    function AudioClip() {
-        this._bgAudioNode = null;
-        this.initAudioContext();
-    }
-    AudioClip.prototype.initAudioContext = function () {
-        this._audioContext = new (window["AudioContext"] || window["webkitAudioContext"])();
-    };
-    AudioClip.prototype.loadAudio = function (clipName) {
-        if (!(ResourceMap.isAssetLoaded(clipName))) {
-            // Update resources in load counter
-            ResourceMap.asyncLoadRequested(clipName);
-            // Async request the data from server
-            var request = new XMLHttpRequest();
-            /*request.onreadystatechange = function() {
-                if (request.status < 200 || request.status > 299) {
-                    alert(clipName + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
-                        "The index.html file must be loaded by a web-server.]");
-                }
-            };*/
-            request.open("GET", clipName, true);
-            // Specify that the request retrieves binary data.
-            request.responseType = "arraybuffer";
-            request.onload = function () {
-                // Asynchronously decode, then call the function in parameter.
-                this._audioContext.decodeAudioData(request.response, function (buffer) {
-                    ResourceMap.asyncLoadCompleted(clipName, buffer);
-                });
-            }.bind(this);
-            request.send();
-        }
-    };
-    AudioClip.prototype.unloadAudio = function (clipName) {
-        ResourceMap.unloadAsset(clipName);
-    };
-    AudioClip.prototype.stopBackgroundAudio = function () {
-    };
-    AudioClip.prototype.isBackgroundAudioPlaying = function () {
-    };
-    AudioClip.prototype.playBackgroundAudio = function (clipName) {
-        var clipInfo = ResourceMap.retrieveAsset(clipName);
-        if (clipInfo !== null) {
-            // Stop audio if playing.
-            this._stopBackgroundAudio();
-            this._bgAudioNode = this._audioContext.createBufferSource();
-            this._bgAudioNode.buffer = clipInfo;
-            this._bgAudioNode.connect(this._audioContext.destination);
-            this._bgAudioNode.loop = true;
-            this._bgAudioNode.start(0);
-        }
-    };
-    AudioClip.prototype._stopBackgroundAudio = function () {
-        // Check if audio is playing
-        if (this._bgAudioNode !== null) {
-            this._bgAudioNode.stop(0);
-            this._bgAudioNode = null;
-        }
-    };
-    return AudioClip;
-})();
 /// <reference path="core/core.ts" />
 /// <reference path="stats.d.ts" />
 /// <reference path="dat-gui.d.ts" />
@@ -2087,6 +2294,7 @@ var AudioClip = (function () {
 /// <reference path="resources/shaderManager.ts" />
 /// <reference path="resources/resourceMap.ts" />
 /// <reference path="models/torus.ts" />
+/// <reference path="models/sphere.ts" />
 /// <reference path="models/quad.ts" />
 /// <reference path="core/model.ts" />
 /// <reference path="textures/texture2d.ts" />
@@ -2097,14 +2305,15 @@ var AudioClip = (function () {
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
-/// <reference path="resources/audioClip.ts" />
-var audioClip = new AudioClip();
+/// <reference path="extras/vertexBuffer.ts" />
 var camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
+var gl_;
 var stats = new Stats();
 stats.setMode(0);
 document.body.appendChild(stats.domElement);
 var deferred;
 var ssao;
+var esferita;
 var SimpleConfig = function () {
     return {
         max: 10
@@ -2117,36 +2326,44 @@ var m;
 var view;
 var projection;
 var tex2d;
-var light = new PointLight(new Float32Array([-2.5, -2.5, 0.0]));
+var light = new PointLight(new Float32Array([-5.0, 0.0, 0.0]));
 var identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
 var model = mat4.create();
 var angle = 0;
 var text = SimpleConfig();
 function loadAssets() {
-    myImageLoader("crystal.jpg");
-    audioClip.loadAudio("music.mp3");
+    myImageLoader("matcap.jpg");
 }
-var mainShader = "prepass";
+var mainShader = "prog";
+var offsetBuffer;
+var numInstancias;
+function maxOffsetUpdate() {
+    var varvar = text.max;
+    var offsetData = [];
+    numInstancias = 0;
+    for (var i = -varvar; i < varvar; i += 5.0) {
+        for (var j = -varvar; j < varvar; j += 5.0) {
+            for (var k = -varvar; k < varvar; k += 5.0) {
+                offsetData.push(i * 1.0);
+                offsetData.push(j * 1.0);
+                offsetData.push(k * 1.0);
+                numInstancias += 1;
+            }
+        }
+    }
+    console.log("NUM INSTANCES: " + numInstancias);
+    // A nice little line of monkeys down the X axis
+    // Optional (unnecesary): offsetBuffer.bind();
+    var offsets = new Float32Array(offsetData);
+    offsetBuffer.bufferData(offsets, UsageType.StaticDraw);
+}
 function initialize() {
+    esferita = new Sphere(1.0, 20, 20);
     torito = new Torus(3.7, 2.3, 25, 10);
     planito = new Quad(100.0, 100.0, 2.0, 2.0);
     m = new Model("teddy.json");
-    var canvas = Core.getInstance().canvas();
-    deferred = new GBuffer(new Vector2(canvas.width, canvas.height));
-    /*ssao = new GBufferSSAO(new Vector2<number>(
-        canvas.width,
-        canvas.height
-    ));*/
-    ShaderManager.addWithFun("prepass", function () {
-        var prog = new ShaderProgram();
-        prog.addShader("./shaders/gBufferShader.vert", shader_type.vertex, mode.read_file);
-        prog.addShader("./shaders/gBufferShader.frag", shader_type.fragment, mode.read_file);
-        prog.compile();
-        prog.addUniforms(["tex", "usemc"]);
-        prog.addUniforms(["projection", "view", "model", "normalMatrix"]);
-        return prog;
-    });
+    gl_ = Core.getInstance().getGL();
     ShaderManager.addWithFun("prog", function () {
         var prog = new ShaderProgram();
         prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
@@ -2156,23 +2373,7 @@ function initialize() {
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
         return prog;
     });
-    ShaderManager.addWithFun("pp", function () {
-        var prog = new ShaderProgram();
-        prog.addShader("./shaders/postprocessShader.vert", shader_type.vertex, mode.read_file);
-        prog.addShader("./shaders/postprocessShader.frag", shader_type.fragment, mode.read_file);
-        prog.compile();
-        prog.addUniforms(["time"]);
-        prog.addUniforms(["gPosition", "gNormal", "gAlbedoSpec"]);
-        prog.use();
-        prog.sendUniform1i("gPosition", 0);
-        prog.sendUniform1i("gNormal", 1);
-        prog.sendUniform1i("gAlbedoSpec", 2);
-        console.log(prog.uniformLocations);
-        return prog;
-    });
-    var prog = ShaderManager.get("prog");
-    prog.use();
-    var cubeImage = ResourceMap.retrieveAsset("crystal.jpg");
+    var cubeImage = ResourceMap.retrieveAsset("matcap.jpg");
     var gl = Core.getInstance().getGL();
     tex2d = new Texture2D(cubeImage, {
         flipY: true,
@@ -2180,7 +2381,9 @@ function initialize() {
         magFilter: gl.LINEAR,
         wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
     });
-    audioClip.playBackgroundAudio("music.mp3");
+    //audio.playBackgroundAudio("music.mp3");
+    offsetBuffer = new VertexBuffer(BufferType.Array);
+    maxOffsetUpdate();
     cameraUpdateCb();
 }
 function cameraUpdateCb() {
@@ -2198,41 +2401,29 @@ function drawScene(dt) {
     var gl = Core.getInstance().getGL();
     camera.timeElapsed = Timer.deltaTime() / 10.0;
     camera.update(cameraUpdateCb);
-    deferred.bindForWriting();
+    light.addTransform(Math.sin(dt) * 0.06, Math.cos(dt) * 0.06, 0.0 //5.0 + Math.cos(dt) * 0.06
+    );
     Core.getInstance().clearColorAndDepth();
-    var prog = ShaderManager.get(mainShader);
-    prog.use();
-    tex2d.bind(0);
-    prog.sendUniform1i("tex", 0);
-    angle += Timer.deltaTime() * 0.001;
-    prog.sendUniform1b("usemc", true);
-    var varvar = text.max;
-    var i = 0, j = 0, k = 0;
-    var dd = -1;
-    for (i = -varvar; i < varvar; i += 5.0) {
-        for (j = -varvar; j < varvar; j += 5.0) {
-            for (k = -varvar; k < varvar; k += 5.0) {
-                dd *= -1;
-                mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
-                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                mat4.rotateY(model, model, angle * dd);
-                mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
-                prog.sendUniformMat4("model", model);
-                m.render();
-            }
-        }
-    }
-    mat4.translate(model, identityMatrix, vec3.fromValues(0.0, (-varvar - 5.0) * 1.0, 0.0));
-    mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-    prog.sendUniform1b("usemc", false);
-    prog.sendUniformMat4("model", model);
-    planito.render();
-    tex2d.unbind();
-    deferred.bindForReading();
-    Core.getInstance().clearColorAndDepth();
-    var prog2 = ShaderManager.get("pp");
-    prog2.use();
-    PostProcess.render();
+    ShaderManager.getCB(mainShader, function (prog) {
+        prog.use();
+        prog.sendUniformVec3("lightPosition", light.position);
+        tex2d.bind(0);
+        prog.sendUniform1i("tex", 0);
+        angle += Timer.deltaTime() * 0.001;
+        prog.sendUniform1b("usemc", true);
+        var varvar = text.max;
+        var i = 0, j = 0, k = 0;
+        mat4.translate(model, identityMatrix, vec3.create());
+        mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+        mat4.rotateY(model, model, angle);
+        mat4.scale(model, model, vec3.fromValues(0.33, 0.33, 0.33));
+        prog.sendUniformMat4("model", model);
+        // Bind the instance position data
+        // Optional (unnecesary): offsetBuffer.bind();
+        offsetBuffer.attribDivisor(3, 3, 1);
+        // Draw the instanced meshes
+        torito.renderArrayInstance(numInstancias);
+    });
 }
 // ============================================================================================ //
 // ============================================================================================ //
@@ -2260,13 +2451,13 @@ function myImageLoader(src) {
 }
 ;
 window.onload = function () {
-    Core.getInstance().initialize([0.0, 1.0, 0.0, 1.0]);
+    Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
     if (Object.keys(text).length > 0) {
         gui = new dat.GUI();
         /*for (var index in text) {
             gui.add(text, index);
         }*/
-        gui.add(text, "max", 5, 100);
+        gui.add(text, "max", 5, 100).onChange(maxOffsetUpdate);
     }
     loadAssets();
     ResourceMap.setLoadCompleteCallback(function () {
@@ -2583,136 +2774,24 @@ var Cube = (function (_super) {
         ];
         var gl = Core.getInstance().getGL();
         this._handle = new Array(4);
-        for (var i = 0, size = this._handle.length; i < size; i++) {
-            this._handle[i] = gl.createBuffer();
+        var i = 0;
+        this._handle[i] = new VertexBuffer(BufferType.ElementArray);
+        for (i = 1; i < 4; i++) {
+            this._handle[i] = new VertexBuffer(BufferType.Array);
         }
-        this._vao = gl.createVertexArray();
-        gl.bindVertexArray(this._vao);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
-        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this._vao.bind();
+        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
+        this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(new Float32Array(n), this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
         this._indicesLen = el.length;
-        gl.bindVertexArray(null);
-        // TODO: Clear v, n, tex and el
-        /*console.log({
-            vertices: v,
-            normal: n,
-            textureCoords: tex,
-            indices: el,
-            vao: this._handle
-        });*/
     }
     Cube.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
+        this._vao.bind();
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
     };
     return Cube;
-})(Drawable);
-/// <reference path="drawable.ts" />
-var Sphere = (function (_super) {
-    __extends(Sphere, _super);
-    function Sphere(radius, slices, stacks) {
-        _super.call(this);
-        var nv = (slices + 1) * (stacks + 1);
-        var elements = (slices * 2 * (stacks - 1)) * 3;
-        // v
-        var v = new Array(3 * nv);
-        // Normals
-        var n = new Array(3 * nv);
-        // Tex coords
-        var tex = new Array(2 * nv);
-        // Elements
-        var el = new Array(elements);
-        // Generate the vertex data
-        // Generate positions and normals
-        var theta, phi;
-        var thetaFac = Math.PI * 2.0 / slices;
-        var phiFac = Math.PI / stacks;
-        var nx, ny, nz, s, t;
-        var idx = 0, tIdx = 0;
-        for (var i = 0; i <= slices; i++) {
-            theta = i * thetaFac;
-            s = i / slices;
-            for (var j = 0; j <= stacks; j++) {
-                phi = j * phiFac;
-                t = j / stacks;
-                nx = Math.sin(phi) * Math.cos(theta);
-                ny = Math.sin(phi) * Math.sin(theta);
-                nz = Math.cos(phi);
-                v[idx] = radius * nx;
-                v[idx + 1] = radius * ny;
-                v[idx + 2] = radius * nz;
-                n[idx] = nx;
-                n[idx + 1] = ny;
-                n[idx + 2] = nz;
-                idx += 3;
-                tex[tIdx] = s;
-                tex[tIdx + 1] = t;
-                tIdx += 2;
-            }
-        }
-        // Generate the element list
-        idx = 0;
-        for (var i = 0; i < slices; i++) {
-            var stackStart = i * (stacks + 1);
-            var nextStackStart = (i + 1) * (stacks + 1);
-            for (var j = 0; j < stacks; j++) {
-                if (j === 0) {
-                    el[idx] = stackStart;
-                    el[idx + 1] = stackStart + 1;
-                    el[idx + 2] = nextStackStart + 1;
-                    idx += 3;
-                }
-                else if (j === stacks - 1) {
-                    el[idx] = stackStart + j;
-                    el[idx + 1] = stackStart + j + 1;
-                    el[idx + 2] = nextStackStart + j;
-                    idx += 3;
-                }
-                else {
-                    el[idx] = stackStart + j;
-                    el[idx + 1] = stackStart + j + 1;
-                    el[idx + 2] = nextStackStart + j + 1;
-                    el[idx + 3] = nextStackStart + j;
-                    el[idx + 4] = stackStart + j;
-                    el[idx + 5] = nextStackStart + j + 1;
-                    idx += 6;
-                }
-            }
-        }
-        var gl = Core.getInstance().getGL();
-        this._handle = new Array(4);
-        for (var i = 0; i < 4; i++) {
-            this._handle[i] = gl.createBuffer();
-        }
-        this._vao = gl.createVertexArray();
-        gl.bindVertexArray(this._vao);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
-        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
-        this._indicesLen = el.length;
-        // TODO: Clear v, n, tex and el
-        /*console.log({
-            vertices: v,
-            normal: n,
-            textureCoords: tex,
-            indices: el
-        });*/
-    }
-    Sphere.prototype.render = function () {
-        var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
-        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-        // gl.lineWidth(1.0);
-        // Puts vertices to buffer and links it to attribute letiable 'ppos'
-        // gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-    };
-    return Sphere;
 })(Drawable);
 /// <reference path="drawable.ts" />
 var Teaspot = (function (_super) {
@@ -2722,14 +2801,87 @@ var Teaspot = (function (_super) {
     }
     Teaspot.prototype.render = function () {
         var gl = Core.getInstance().getGL();
-        gl.bindVertexArray(this._vao);
+        this._vao.bind();
         gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);
     };
     return Teaspot;
 })(Drawable);
 /// <reference path="resourceMap.ts" />
+var AudioClip = (function () {
+    function AudioClip() {
+        this._bgAudioNode = null;
+        this.initAudioContext();
+    }
+    AudioClip.prototype.initAudioContext = function () {
+        this._audioContext = new (window["AudioContext"] || window["webkitAudioContext"])();
+    };
+    AudioClip.prototype.loadAudio = function (clipName) {
+        if (!(ResourceMap.isAssetLoaded(clipName))) {
+            // Update resources in load counter
+            ResourceMap.asyncLoadRequested(clipName);
+            // Async request the data from server
+            var request = new XMLHttpRequest();
+            request.open("GET", clipName, true);
+            // Specify that the request retrieves binary data.
+            request.responseType = "arraybuffer";
+            request.onload = function () {
+                // Asynchronously decode, then call the function in parameter.
+                this._audioContext.decodeAudioData(request.response, function (buffer) {
+                    ResourceMap.asyncLoadCompleted(clipName, buffer);
+                });
+            }.bind(this);
+            request.send();
+        }
+    };
+    AudioClip.prototype.unloadAudio = function (clipName) {
+        ResourceMap.unloadAsset(clipName);
+    };
+    AudioClip.prototype.stopBackgroundAudio = function () {
+        // Check if the audio is playing
+        if (this._bgAudioNode !== null) {
+            this._bgAudioNode.stop(0);
+            this._bgAudioNode = null;
+        }
+    };
+    AudioClip.prototype.playSound = function (clipName) {
+        var clip = ResourceMap.retrieveAsset(clipName);
+        if (clip) {
+            var sourceNode = this._audioContext.createBufferSource();
+            sourceNode.buffer = clip;
+            sourceNode.connect(this._audioContext.destination);
+            // TODO: Volume!!
+            sourceNode.start(0);
+        }
+    };
+    AudioClip.prototype.isBackgroundAudioPlaying = function () {
+        return this._bgAudioNode !== null;
+    };
+    AudioClip.prototype.playBackgroundAudio = function (clipName) {
+        var clipInfo = ResourceMap.retrieveAsset(clipName);
+        if (clipInfo !== null) {
+            // Stop audio if playing.
+            this._stopBackgroundAudio();
+            this._bgAudioNode = this._audioContext.createBufferSource();
+            this._bgAudioNode.buffer = clipInfo;
+            this._bgAudioNode.connect(this._audioContext.destination);
+            this._bgAudioNode.loop = true;
+            this._bgAudioNode.start(0);
+        }
+    };
+    AudioClip.prototype._stopBackgroundAudio = function () {
+        // Check if audio is playing
+        if (this._bgAudioNode !== null) {
+            this._bgAudioNode.stop(0);
+            this._bgAudioNode = null;
+        }
+    };
+    return AudioClip;
+})();
+/// <reference path="resourceMap.ts" />
 var Font = (function () {
-    function Font(fontName) {
+    function Font() {
+    }
+    Font.prototype.loadFont = function (fontName) {
         if (!(ResourceMap.isAssetLoaded(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
             var texSrcStr = fontName + ".png";
@@ -2738,7 +2890,7 @@ var Font = (function () {
         else {
             ResourceMap.incAssetRefCount(fontName);
         }
-    }
+    };
     Font.prototype.unloadFont = function (fontName) {
         if (!(ResourceMap.unloadAsset(fontName))) {
             var fontInfoSrcStr = fontName + ".fnt";
@@ -2918,6 +3070,30 @@ var Skybox = (function () {
     };
     return Skybox;
 })();
+/// <reference path="../core/shaderProgram.ts" />
+/// <reference path="../extras/vertexBuffer.ts" />
+var Sprite = (function () {
+    function Sprite() {
+    }
+    Sprite.initialize = function () {
+        Sprite.prog = new ShaderProgram();
+        Sprite.prog.addShader("#version 300 es\nprecision mediump float;\n\nlayout(location = 0) in vec3 position;\nlayout(location = 2) in vec2 texCoord;\n\nuniform mat4 projection;\nuniform mat4 view;\nuniform mat4 model;\n\nout vec2 outTexCoord;\n\nvoid main() {\n\tgl_Position = projection * view * model * vec4(position, 1.0);\n\toutTexCoord = texCoord;\n}", shader_type.vertex, mode.read_text);
+        Sprite.prog.addShader("#version 300 es\nprecision mediump float;\n\nuniform sampler2D tex;\n\nin vec2 outTexCoord;\n\nout vec4 fragColor;\n\nvoid main() {\n\tfragColor = texture(tex, outTexCoord);\n}", shader_type.fragment, mode.read_text);
+        var gl = Core.getInstance().getGL();
+        var initTC = [
+            1.0, 1.0,
+            0.0, 1.0,
+            1.0, 0.0,
+            0.0, 0.0
+        ];
+        Sprite.buffer = new VertexBuffer(BufferType.Array);
+        Sprite.buffer.bufferData(new Float32Array(initTC), gl.DYNAMIC_DRAW);
+        Sprite.buffer.unbind();
+    };
+    return Sprite;
+})();
+;
+Sprite.initialize();
 /// <reference path="texture2d.ts" />
 var FloatTexture = (function (_super) {
     __extends(FloatTexture, _super);
@@ -2964,3 +3140,24 @@ var Texture3D = (function (_super) {
     };
     return Texture3D;
 })(Texture);
+/// <reference path="texture2d.ts" />
+var VideoTexture = (function (_super) {
+    __extends(VideoTexture, _super);
+    function VideoTexture(data, options) {
+        if (options === void 0) { options = {}; }
+        var gl = Core.getInstance().getGL();
+        options["minFilter"] = gl.LINEAR;
+        options["magFilter"] = gl.LINEAR;
+        options["wrap"] = [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
+        this._videoElem.play();
+        _super.call(this, data, options);
+    }
+    VideoTexture.prototype.updateTexture = function () {
+        var gl = Core.getInstance().getGL();
+        gl.bindTexture(this.target, this._handle);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.texImage2D(this.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._videoElem // TODO: videoElement
+        );
+    };
+    return VideoTexture;
+})(Texture2D);

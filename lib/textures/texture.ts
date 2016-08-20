@@ -16,4 +16,8 @@ abstract class Texture {
 	public handle(): WebGLTexture {
 		return this._handle;
 	}
+
+	// TODO: Move to abstract methods
+	public getHeight(): number { return -1; }
+	public getWidth(): number { return -1; }
 }

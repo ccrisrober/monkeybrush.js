@@ -178,6 +178,88 @@ declare class Core {
     protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext;
     private _getVendors();
 }
+declare const gl: WebGLRenderingContext;
+declare enum StencilOp {
+    Keep,
+    Zero,
+    Replace,
+    Increase,
+    IncreaseSaturate,
+    Decrease,
+    DecreaseSaturate,
+    Invert,
+}
+declare enum ComparisonFunc {
+    Never,
+    Always,
+    Less,
+    Equal,
+    NotEqual,
+    LessEqual,
+    Greater,
+    GreaterEqual,
+}
+declare enum CullMode {
+    Front,
+    Back,
+    FrontAndBack,
+}
+declare enum FaceDir {
+    Clockwise,
+    InvClockwise,
+}
+declare enum BufferType {
+    Array,
+    ElementArray,
+    TransformFeedback,
+    Uniform,
+    PixelPack,
+    PixelUnpack,
+    CopyRead,
+    CopyWrite,
+}
+declare enum UsageType {
+    StaticDraw,
+    DynamicDraw,
+    StreamDraw,
+    StaticRead,
+    DynamicRead,
+    StreamRead,
+    StaticCopy,
+    DynamicCopy,
+    StreamCopy,
+}
+declare enum BlendingType {
+    Zero,
+    One,
+    SrcColor,
+    OneMinusSrcColor,
+    SrcAlpha,
+    OneMinusSrcAlpha,
+    DstAlpha,
+    OneMinusDstAlpha,
+    DstColor,
+    OneMinusDstColor,
+    SrcAlphaSaturate,
+    CteColor,
+    OneMinusCteColor,
+    CteAlpha,
+    OneMinusCteAlpha,
+}
+declare enum RenderType {
+    Points,
+    Lines,
+    LineLoop,
+    LineStrip,
+    Triangles,
+    TriangleStrip,
+    TriangleFan,
+}
+declare enum BlendingEq {
+    FuncAdd,
+    FuncSub,
+    FuncRevSub,
+}
 declare class Vector2<T> {
     x: T;
     y: T;
@@ -193,6 +275,8 @@ declare abstract class Texture {
     abstract destroy(): void;
     abstract bind(slot?: number): any;
     handle(): WebGLTexture;
+    getHeight(): number;
+    getWidth(): number;
 }
 declare class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
@@ -245,7 +329,7 @@ declare class Texture2D extends Texture {
     protected _minFilter: number;
     protected _magFilter: number;
     protected _wraps: Array<number>;
-    constructor(image: ImageData, options?: {});
+    constructor(data: any, options?: {});
     genMipMap(): void;
     wrap(modes: Array<number>): void;
     minFilter(filter: number): void;
@@ -275,8 +359,16 @@ declare class GBufferSSAO {
     sendSamplesSSAOTexture(progName: string): void;
     destroy(): void;
 }
+declare class VertexArray {
+    protected _handle: any;
+    constructor();
+    bind(): void;
+    unbind(): void;
+    destroy(): void;
+    is(): boolean;
+}
 declare class Model {
-    indices: any;
+    indices: Array<number>;
     vao: any;
     constructor(fileRoute: string);
     private createBuffer(data);
@@ -284,7 +376,20 @@ declare class Model {
     private createVAO(model, indicesArray);
     private loadJSON(url);
     render(): void;
-    renderArrayInstance(numInstances: any): void;
+    renderArrayInstance(numInstances: number): void;
+}
+declare class VertexBuffer {
+    constructor(type: BufferType);
+    bind(type?: BufferType): void;
+    unbind(): void;
+    getBufferType(): BufferType;
+    getBuffer(): WebGLBuffer;
+    destroy(): void;
+    bufferData(data: Float32Array | Uint16Array, usage?: UsageType): void;
+    attribDivisor(position: number, length: number, divisor: number): void;
+    vertexAttribPointer(attribLocation: number, numElems: number, type: number, normalized?: boolean, offset?: number): void;
+    protected _buffer: WebGLBuffer;
+    protected _type: BufferType;
 }
 /**
 * This class wrap PostProcess effects
@@ -295,8 +400,8 @@ declare class PostProcess {
     static initialize(): void;
     static bind(): void;
     static render(): void;
-    protected static _planeVAO: any;
-    protected static _planeVertexVBO: WebGLBuffer;
+    protected static _planeVAO: VertexArray;
+    protected static _planeVertexVBO: VertexBuffer;
 }
 declare abstract class Scene {
     abstract initScene(): any;
@@ -307,6 +412,14 @@ declare abstract class Scene {
     animate(value: boolean): void;
     animating(): boolean;
     protected _animate: boolean;
+}
+declare class Stencil {
+    use(): void;
+    func(compFun: ComparisonFunc, ref: number, mask: number): void;
+    operation(fail: StencilOp, zfail: StencilOp, zpass: StencilOp): void;
+    mask(mask: number): void;
+    clear(): void;
+    unuse(): void;
 }
 declare class Color {
     protected _color: any[];
@@ -339,43 +452,18 @@ declare class Vector4<T> {
     constructor(x: T, y: T, z: T, w: T);
     isEqual(other: Vector4<T>): boolean;
 }
-declare class VertexBuffer {
-    constructor();
-    bind(type: number): void;
-    getBufferType(): number;
-    getBuffer(): WebGLBuffer;
-    destroy(): void;
-    protected _buffer: WebGLBuffer;
-    protected _type: number;
-}
-/**
-class ShaderManager {
-    public static get(name: string): ShaderProgram {
-        return ShaderManager._progDictionary[name];
-    }
-    public static add(name: string, prog: ShaderProgram) {
-        //if (name in ShaderManager._progDictionary) {
-        if (ShaderManager._progDictionary.hasOwnProperty(name)) {
-            console.warn(name + " key exist ...");
-        }
-        ShaderManager._progDictionary[name] = prog;
-    }
-    public static destroy() {
-        for (var key in ShaderManager._progDictionary) {
-            ShaderManager._progDictionary[key].destroy();
-        }
-    }
-    protected static _progDictionary: { [ key:string ]: ShaderProgram; };
-};
-/**/
 interface ShaderCallback {
     (): ShaderProgram;
+}
+interface ShaderUseCallback {
+    (prog: ShaderProgram): void;
 }
 declare namespace ShaderManager {
     function get(name: string): ShaderProgram;
     function addWithFun(name: string, fn: ShaderCallback): void;
     function add(name: string, prog: ShaderProgram): void;
     function destroy(): void;
+    function getCB(name: string, cb: ShaderUseCallback): void;
 }
 declare var VanillaToasts: any;
 declare namespace ResourceMap {
@@ -399,22 +487,28 @@ declare namespace ResourceMap {
     function unloadAsset(resName: string): number;
 }
 declare abstract class Drawable {
-    protected _vao: any;
+    protected _vao: VertexArray;
+    constructor();
     abstract render(): any;
-    protected addAttrib(attribLocation: any, buffer: any, data: any, numElems: any): void;
-    protected createBuffer(data: any, handle: any): any;
-    protected addAttrib_(attribLocation: any, buffer: any, numElems: any): void;
+    protected createBuffer(data: Float32Array | Uint16Array, handle: VertexBuffer): VertexBuffer;
+    protected addAttrib_(attribLocation: any, buffer: VertexBuffer, numElems: any): void;
 }
 declare class Torus extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
+    protected _handle: Array<VertexBuffer>;
     protected _faces: number;
     constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
     protected _indicesLen: any;
     render(): void;
-    render2(counter: number): void;
+    renderArrayInstance(numInstances: number): void;
+}
+declare class Sphere extends Drawable {
+    protected _handle: Array<VertexBuffer>;
+    constructor(radius: number, slices: number, stacks: number);
+    protected _indicesLen: any;
+    render(): void;
 }
 declare class Quad extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
+    protected _handle: Array<VertexBuffer>;
     constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
     protected _indicesLen: any;
     render(): void;
@@ -432,23 +526,12 @@ declare class PointLight extends Light {
     position: Float32Array;
     addTransform(x?: number, y?: number, z?: number): void;
 }
-declare class AudioClip {
-    protected _audioContext: AudioContext;
-    protected _bgAudioNode: AudioBufferSourceNode;
-    constructor();
-    initAudioContext(): void;
-    loadAudio(clipName: string): void;
-    unloadAudio(clipName: string): void;
-    stopBackgroundAudio(): void;
-    isBackgroundAudioPlaying(): void;
-    playBackgroundAudio(clipName: string): void;
-    protected _stopBackgroundAudio(): void;
-}
-declare let audioClip: AudioClip;
 declare let camera: Camera;
+declare var gl_: any;
 declare let stats: Stats;
 declare let deferred: GBuffer;
 declare let ssao: GBufferSSAO;
+declare let esferita: Sphere;
 declare let SimpleConfig: () => {
     max: number;
 };
@@ -468,6 +551,9 @@ declare let text: {
 };
 declare function loadAssets(): void;
 declare const mainShader: string;
+declare let offsetBuffer: VertexBuffer;
+declare let numInstancias: number;
+declare function maxOffsetUpdate(): void;
 declare function initialize(): void;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
@@ -501,25 +587,32 @@ declare class PhongMat extends Material {
 declare class ShaderMat extends Material {
 }
 declare class Cube extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
+    protected _handle: Array<VertexBuffer>;
     constructor(side?: number);
     protected _indicesLen: any;
     render(): void;
 }
-declare class Sphere extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
-    constructor(radius: number, slices: number, stacks: number);
-    protected _indicesLen: any;
-    render(): void;
-}
 declare class Teaspot extends Drawable {
-    protected _handle: Array<WebGLBuffer>;
+    protected _handle: Array<VertexBuffer>;
     protected _faces: number;
     constructor();
     render(): void;
 }
+declare class AudioClip {
+    protected _audioContext: AudioContext;
+    protected _bgAudioNode: AudioBufferSourceNode;
+    constructor();
+    initAudioContext(): void;
+    loadAudio(clipName: string): void;
+    unloadAudio(clipName: string): void;
+    stopBackgroundAudio(): void;
+    playSound(clipName: string): void;
+    isBackgroundAudioPlaying(): boolean;
+    playBackgroundAudio(clipName: string): void;
+    protected _stopBackgroundAudio(): void;
+}
 declare class Font {
-    constructor(fontName: string);
+    loadFont(fontName: string): void;
     unloadFont(fontName: string): void;
 }
 declare module Font {
@@ -557,6 +650,11 @@ declare class Skybox {
     protected cubeMapTexture: CubeMapTexture;
     protected _loadCubemap(faces: Array<string>): void;
 }
+declare class Sprite {
+    static prog: ShaderProgram;
+    static buffer: VertexBuffer;
+    static initialize(): void;
+}
 declare class FloatTexture extends Texture2D {
     constructor(image: any, size: Vector2<number>, options?: {});
 }
@@ -564,4 +662,9 @@ declare class Texture3D extends Texture {
     constructor(data: any, size: Vector3<number>, options?: {});
     bind(slot?: number): void;
     destroy(): void;
+}
+declare class VideoTexture extends Texture2D {
+    _videoElem: HTMLVideoElement;
+    constructor(data: any, options?: {});
+    updateTexture(): void;
 }

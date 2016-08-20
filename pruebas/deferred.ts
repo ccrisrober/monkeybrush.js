@@ -5,7 +5,6 @@
 /// <reference path="resources/shaderManager.ts" />
 /// <reference path="resources/resourceMap.ts" />
 /// <reference path="models/torus.ts" />
-/// <reference path="models/sphere.ts" />
 /// <reference path="models/quad.ts" />
 /// <reference path="core/model.ts" />
 /// <reference path="textures/texture2d.ts" />
@@ -18,11 +17,11 @@
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
-/// <reference path="extras/vertexBuffer.ts" />
+/// <reference path="resources/audioClip.ts" />
+
+//let audio = new AudioClip();
 
 let camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
-
-var gl_;
 
 let stats: Stats = new Stats();
 stats.setMode(0);
@@ -30,10 +29,9 @@ document.body.appendChild(stats.domElement);
 
 let deferred: GBuffer;
 let ssao: GBufferSSAO;
-let esferita: Sphere;
 
 let SimpleConfig = function() {
-    return {
+	return {
         max: 10
     };
 };
@@ -47,7 +45,7 @@ let projection;
 
 let tex2d: Texture2D;
 
-let light = new PointLight(new Float32Array( [-5.0, 0.0, 0.0] ));
+let light = new PointLight(new Float32Array( [-2.5, -2.5, 0.0] ));
 
 let identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
@@ -56,41 +54,40 @@ let angle = 0;
 
 let text = SimpleConfig();
 function loadAssets() {
-    myImageLoader("matcap.jpg");
+    myImageLoader("crystal.jpg");
+    //audio.loadAudio("music.mp3");
 }
 
-const mainShader: string = "prog";
-
-let offsetBuffer: VertexBuffer;
-let numInstancias: number;
-
-function maxOffsetUpdate() {
-    let varvar = text.max;
-    var offsetData = [];
-    numInstancias = 0;
-    for (var i = -varvar; i < varvar; i += 5.0) {
-        for (var j = -varvar; j < varvar; j += 5.0) {
-            for (var k = -varvar; k < varvar; k += 5.0) {
-                offsetData.push(i * 1.0);
-                offsetData.push(j * 1.0);
-                offsetData.push(k * 1.0);
-                numInstancias += 1;
-            }
-        }
-    }
-    console.log("NUM INSTANCES: " + numInstancias);
-    // A nice little line of monkeys down the X axis
-    // Optional (unnecesary): offsetBuffer.bind();
-    var offsets = new Float32Array(offsetData);
-    offsetBuffer.bufferData(offsets, UsageType.StaticDraw);
-}
+const mainShader: string = "prepass";
 
 function initialize() {
-    esferita = new Sphere(1.0, 20, 20);
     torito = new Torus(3.7, 2.3, 25, 10);
     planito = new Quad(100.0, 100.0, 2.0, 2.0);
     m = new Model("teddy.json");
-    gl_ = Core.getInstance().getGL();
+
+    let canvas: HTMLCanvasElement = Core.getInstance().canvas();
+    deferred = new GBuffer(new Vector2<number>(
+        canvas.width,
+        canvas.height
+    ));
+
+    /*ssao = new GBufferSSAO(new Vector2<number>(
+        canvas.width,
+        canvas.height
+    ));*/
+
+    ShaderManager.addWithFun("prepass", (): ShaderProgram => {
+        let prog: ShaderProgram = new ShaderProgram();
+        prog.addShader("./shaders/gBufferShader.vert", shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/gBufferShader.frag", shader_type.fragment, mode.read_file);
+        prog.compile();
+
+        prog.addUniforms(["tex", "usemc"]);
+
+        prog.addUniforms(["projection", "view", "model", "normalMatrix"]);
+
+        return prog;
+    });
 
     ShaderManager.addWithFun("prog", (): ShaderProgram => {
         let prog: ShaderProgram = new ShaderProgram();
@@ -103,7 +100,31 @@ function initialize() {
         return prog;
     });
 
-    let cubeImage = ResourceMap.retrieveAsset("matcap.jpg");
+    ShaderManager.addWithFun("pp", (): ShaderProgram => {
+        let prog: ShaderProgram = new ShaderProgram();
+        prog.addShader("./shaders/postprocessShader.vert", 
+            shader_type.vertex, mode.read_file);
+        prog.addShader("./shaders/postprocessShader.frag", 
+            shader_type.fragment, mode.read_file);
+        prog.compile();
+
+        prog.addUniforms(["time"]);
+        prog.addUniforms(["gPosition", "gNormal", "gAlbedoSpec"]);
+
+        prog.use();
+
+        prog.sendUniform1i("gPosition", 0);
+        prog.sendUniform1i("gNormal", 1);
+        prog.sendUniform1i("gAlbedoSpec", 2);
+        console.log(prog.uniformLocations);
+        return prog;
+    });
+
+    let prog = ShaderManager.get("prog");
+
+    prog.use();
+
+    let cubeImage = ResourceMap.retrieveAsset("crystal.jpg");
     const gl = Core.getInstance().getGL();
     tex2d = new Texture2D(cubeImage, {
         flipY: true,
@@ -113,10 +134,6 @@ function initialize() {
     });
 
     //audio.playBackgroundAudio("music.mp3");
-
-    offsetBuffer = new VertexBuffer(BufferType.Array);
-
-    maxOffsetUpdate();
 
     cameraUpdateCb();
 }
@@ -140,42 +157,51 @@ function drawScene(dt: number) {
 
     camera.update(cameraUpdateCb);
 
-    light.addTransform(
-        Math.sin(dt) * 0.06,
-        Math.cos(dt) * 0.06,
-        0.0 //5.0 + Math.cos(dt) * 0.06
-    );
+    deferred.bindForWriting();
 
     Core.getInstance().clearColorAndDepth();
 
-    ShaderManager.getCB(mainShader, function(prog: ShaderProgram) {
-        prog.use();
+    const prog = ShaderManager.get(mainShader);
+    prog.use();
 
-        prog.sendUniformVec3("lightPosition", light.position);
+    tex2d.bind(0);
+    prog.sendUniform1i("tex", 0);
 
-        tex2d.bind(0);
-        prog.sendUniform1i("tex", 0);
+    angle += Timer.deltaTime() * 0.001;
 
-        angle += Timer.deltaTime() * 0.001;
+    prog.sendUniform1b("usemc", true);
 
-        prog.sendUniform1b("usemc", true);
+    let varvar = text.max;
+    let i = 0, j = 0, k = 0;
+    let dd = -1;
+    for (i = -varvar; i < varvar; i += 5.0) {
+        for (j = -varvar; j < varvar; j += 5.0) {
+            for (k = -varvar; k < varvar; k += 5.0) {
+                dd *= -1;
+                mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
+                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+                mat4.rotateY(model, model, angle * dd);
+                mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
 
-        let varvar = text.max;
-        let i = 0, j = 0, k = 0;
+                prog.sendUniformMat4("model", model);
 
-        mat4.translate(model, identityMatrix, vec3.create());
-        mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-        mat4.rotateY(model, model, angle);
-        mat4.scale(model, model, vec3.fromValues(0.33, 0.33, 0.33));
+                m.render();
+            }
+        }
+    }
+    mat4.translate(model, identityMatrix, vec3.fromValues(0.0, (-varvar - 5.0) * 1.0, 0.0));
+    mat4.rotateY(model, model, 90.0 * Math.PI / 180);
 
-        prog.sendUniformMat4("model", model);
-        // Bind the instance position data
-        // Optional (unnecesary): offsetBuffer.bind();
-        offsetBuffer.attribDivisor(3, 3, 1);
+    prog.sendUniform1b("usemc", false);
+    prog.sendUniformMat4("model", model);
+    planito.render();
 
-        // Draw the instanced meshes
-        torito.renderArrayInstance(numInstancias);
-    });
+    tex2d.unbind();
+    deferred.bindForReading();
+    Core.getInstance().clearColorAndDepth();
+    var prog2 = ShaderManager.get("pp");
+    prog2.use();
+    PostProcess.render();
 }
 
 // ============================================================================================ //
@@ -204,7 +230,7 @@ function myImageLoader(src) {
 };
 
 window.onload = () => {
-    Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
+    Core.getInstance().initialize([0.0, 1.0, 0.0, 1.0]);
 
 
     if (Object.keys(text).length > 0) {
@@ -213,7 +239,7 @@ window.onload = () => {
         /*for (var index in text) { 
             gui.add(text, index);
         }*/
-        gui.add(text, "max", 5, 100).onChange(maxOffsetUpdate);
+        gui.add(text, "max", 5, 100);
     }
 
     loadAssets();
@@ -243,19 +269,19 @@ window.onload = () => {
 function loop(dt: number) {
     Input.getInstance().update();
 
-    stats.begin();
+	stats.begin();
     dt *= 0.001; // convert to seconds
 
     Timer.update();
     
 
     //resize();
-    
+	
 
     drawScene(dt);    // Draw user function
 
-    stats.end();
-    requestAnimationFrame(loop);
+	stats.end();
+	requestAnimationFrame(loop);
 }
 function resize() {
     let canvas: HTMLCanvasElement = Core.getInstance().canvas();

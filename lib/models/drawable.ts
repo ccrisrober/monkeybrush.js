@@ -1,44 +1,21 @@
 /// <reference path="../core/core.ts" />
+/// <reference path="../extras/vertexArray.ts" />
+/// <reference path="../extras/vertexBuffer.ts" />
+
 abstract class Drawable {
-	protected _vao: any; // TODO: WebGLVertexArrayObject;
-	abstract render();
-    // TODO: unused DELETE PLS
-    protected addAttrib(attribLocation, buffer, data, numElems) {
-        const gl = Core.getInstance().getGL();
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
-
-        gl.vertexAttribPointer(
-            attribLocation, // Attribute location
-            numElems, // Number of elements per attribute
-            gl.FLOAT, // Type of elements
-            false,
-            numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-            0 // Offset from the beginning of a single vertex to this attribute
-        );
-        gl.enableVertexAttribArray(attribLocation);
+	protected _vao: VertexArray; // TODO: WebGLVertexArrayObject;
+    // TODO: Crear el VAO en el constructor y llamar a super
+    constructor() {
+        this._vao = new VertexArray();
     }
-    // TODO: USED?
-    protected createBuffer(data, handle) {
-        const gl = Core.getInstance().getGL();
-        gl.bindBuffer(gl.ARRAY_BUFFER, handle);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+	abstract render();
+    protected createBuffer(data: Float32Array | Uint16Array, handle: VertexBuffer) {
+        handle.bufferData(data, UsageType.StaticDraw);
         return handle;
     }
-    // TODO: USED?
-    protected addAttrib_(attribLocation, buffer, numElems) {
+    protected addAttrib_(attribLocation, buffer: VertexBuffer, numElems) {
         const gl = Core.getInstance().getGL();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.vertexAttribPointer(
-            attribLocation, // Attribute location
-            numElems, // Number of elements per attribute
-            gl.FLOAT, // Type of elements
-            false,
-            numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-            0 // Offset from the beginning of a single vertex to this attribute
-        );
-        gl.enableVertexAttribArray(attribLocation);
+        buffer.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
     }
 
 }

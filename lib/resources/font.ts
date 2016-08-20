@@ -1,7 +1,7 @@
 /// <reference path="resourceMap.ts" />
 
 class Font {
-	constructor(fontName: string) {
+	public loadFont(fontName: string) {
 		if (!(ResourceMap.isAssetLoaded(fontName))) {
 			var fontInfoSrcStr = fontName + ".fnt";
 			var texSrcStr = fontName + ".png";

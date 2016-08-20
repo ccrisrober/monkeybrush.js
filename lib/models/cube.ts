@@ -1,7 +1,7 @@
 /// <reference path="drawable.ts" />
 
 class Cube extends Drawable {
-	protected _handle: Array<WebGLBuffer>;
+	protected _handle: Array<VertexBuffer>;
 	constructor(side: number = 1.0) {
 		super();
 	    const side2 = side / 2.0;
@@ -117,39 +117,27 @@ class Cube extends Drawable {
 	    const gl = Core.getInstance().getGL();
 
 		this._handle = new Array(4);
-		for (let i = 0, size = this._handle.length; i < size; i++) {
-			this._handle[i] = gl.createBuffer();
+		let i = 0;
+		this._handle[i] = new VertexBuffer(BufferType.ElementArray);
+		for (i = 1; i < 4; i++) {
+			this._handle[i] = new VertexBuffer(BufferType.Array);
 		}
+        this._vao.bind();
 
-		this._vao = (<any>gl).createVertexArray();
-        (<any>gl).bindVertexArray(this._vao);
+        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(el), gl.STATIC_DRAW);
-
-        this.addAttrib_(0, this.createBuffer(v, this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(n, this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(tex, this._handle[3]), 2);
+        this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(new Float32Array(n), this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
 
         this._indicesLen = el.length;
-
-        (<any>gl).bindVertexArray(null);
-        
-		// TODO: Clear v, n, tex and el
-		/*console.log({
-			vertices: v,
-			normal: n,
-			textureCoords: tex,
-			indices: el,
-			vao: this._handle
-		});*/
 	}
 
 
 	protected _indicesLen;
 	public render() {
 		const gl = Core.getInstance().getGL();
-		(<any>gl).bindVertexArray(this._vao);
+        this._vao.bind();
 		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 }

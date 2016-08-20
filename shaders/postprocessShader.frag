@@ -47,5 +47,10 @@ void main() {
 	vec3 color = ((ambient + diffuse) * attenuation) * objectColor;
 
 	fragColor = vec4(color.rgb, 1.0);
+
+	
+    // apply gamma correction
+    float gamma = 2.2;
+    fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
 	/**/
 }

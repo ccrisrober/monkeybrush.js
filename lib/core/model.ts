@@ -1,9 +1,10 @@
 /// <reference path="core.ts" />
+/// <reference path="../extras/vertexArray.ts" />
 
 "use strict";
 
 class Model {
-    public indices;
+    public indices: Array<number>;
     public vao: any; // TODO: WebGLVertexArrayObject;
     constructor(fileRoute: string) {
         console.log("Loading file");
@@ -33,8 +34,7 @@ class Model {
 
     private createVAO(model, indicesArray) {
         const gl: any = Core.getInstance().getGL();
-        this.vao = gl.createVertexArray();
-        gl.bindVertexArray(this.vao);
+        this.vao = new VertexArray();
 
         let indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -70,14 +70,21 @@ class Model {
 
     public render() {
         const gl = Core.getInstance().getGL();
-        (<any>gl).bindVertexArray(this.vao);
+        this.vao.bind();
         gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-        (<any>gl).bindVertexArray(null);
+        this.vao.unbind();
     }
-    public renderArrayInstance(numInstances) {
-        const gl: any = Core.getInstance().getGL();
-        gl.bindVertexArray(this.vao);
-        gl.drawElementsInstanced(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 100);
-        gl.bindVertexArray(null);
+    public renderArrayInstance(numInstances: number) {
+        const gl = Core.getInstance().getGL();
+        this.vao.bind();
+        (<any>gl).drawElementsInstanced(
+            gl.TRIANGLES, 
+            this.indices.length,
+            //indexCount, 
+            gl.UNSIGNED_SHORT, 
+            0, 
+            numInstances
+        );
+        //this.vao.unbind();
     }
 };
