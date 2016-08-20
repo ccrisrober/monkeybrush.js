@@ -72,16 +72,14 @@ class Core {
 	protected init() {
 		const gl = this._gl;
 
-		gl.enable(gl.DEPTH_TEST);
-		gl.depthFunc(ComparisonFunc.Less);
-		//gl.depthFunc(gl.LESS);
-		// gl.depthFunc(gl.LEQUAL);
+		Depth.enable();
+		Depth.comparison(ComparisonFunc.Less);
 
 		// Set images to flip y axis to match the texture coordinate space.
 		// gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-		gl.enable(gl.CULL_FACE);
-		gl.disable(gl.BLEND);
+		Cull.enable();
+		Blend.disable();
 
 	}
 
@@ -231,4 +229,12 @@ enum BlendingEq {
 	FuncAdd = gl.FUNC_ADD,
 	FuncSub = gl.FUNC_SUBTRACT,
 	FuncRevSub = gl.FUNC_REVERSE_SUBTRACT,
+	/**
+	When using the EXT_blend_minmax extension:
+	ext.MIN_EXT: Minimum of source and destination,
+	ext.MAX_EXT: Maximum of source and destination.
+	When using a WebGL 2 context, the following values are available additionally:
+	gl.MIN: Minimum of source and destination,
+	gl.MAX: Maximum of source and destination.
+	/**/
 }

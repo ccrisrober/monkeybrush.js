@@ -8,7 +8,7 @@
 - [x] Add cube model
 - [x] Add sphere model
 - [x] Add torus model
-- [ ] Add object parser
+- [x] Add object parser (faces: x1/y1/z1 x2/y2/z2 x3/y3/z3)
 - [ ] Finish Perspective Camera
 - [ ] Finish Orthographic Camera
 - [x] Add texture 2D

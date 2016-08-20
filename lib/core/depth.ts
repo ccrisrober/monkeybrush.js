@@ -3,7 +3,7 @@
 class Depth {
 	static gl = Core.getInstance().getGL();
 	public static use() {
-		gl.enable(gl.STENCIL_TEST);
+		gl.depthMask(true);
 	}
 
 	public static comparison(compFunc: ComparisonFunc) {
@@ -11,11 +11,11 @@ class Depth {
 	}
 
 	public static enable() {
-		gl.depthMask(true);
+		gl.enable(gl.DEPTH_TEST);
 	}
 
 	public static disable() {
-		gl.depthMask(false);
+		gl.disable(gl.DEPTH_TEST);
 	}
 
 	public static depthRange(znear: number = 0.0, zfar: number = 1.0) {
@@ -31,6 +31,6 @@ class Depth {
 	}
 
 	public static unuse() {
-		gl.disable(gl.DEPTH_TEST);
+		gl.depthMask(false);
 	}
 }

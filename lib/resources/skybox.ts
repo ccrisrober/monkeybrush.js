@@ -3,6 +3,7 @@
 /// <reference path="resourceMap.ts" />
 /// <reference path="../textures/cubemapTexture.ts" />
 /// <reference path="../gl-matrix.d.ts" />
+/// <reference path="../core/depth.ts" />
 
 class Skybox {
 	constructor(dir: string) {
@@ -101,7 +102,7 @@ class Skybox {
 	}
 	public render(view: Float32Array, projection: Float32Array) {
 		const gl: WebGLRenderingContext = Core.getInstance().getGL();
-		gl.depthFunc(gl.LEQUAL);
+		Depth.comparison(ComparisonFunc.LessEqual);
 		this._prog.use();
 
 		let auxView = mat3.create();
@@ -119,7 +120,7 @@ class Skybox {
 		this.cubeMapTexture.bind(0);
     	gl.drawArrays(gl.TRIANGLES, 0, 36);
 
-		gl.depthFunc(gl.LESS);
+		Depth.comparison(ComparisonFunc.Less);
 	}
 	public destroy() {
 		const gl: WebGLRenderingContext = Core.getInstance().getGL();

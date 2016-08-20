@@ -118,6 +118,6 @@ class Torus extends Drawable {
             0, 
             numInstances
         );
-        //this.vao.unbind();
+        //this._vao.unbind();
     }
 }

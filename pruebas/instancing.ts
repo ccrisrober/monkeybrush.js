@@ -18,10 +18,11 @@
 /// <reference path="lights/pointLight.ts" />
 /// <reference path="_demoCamera.ts" />
 /// <reference path="core/postProcess.ts" />
+/// <reference path="resources/skybox.ts" />
 /// <reference path="extras/vertexBuffer.ts" />
-/// <reference path="extras/objLoader.ts" />
 
 let camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
+var skybox: Skybox;
 
 var gl_;
 
@@ -58,8 +59,13 @@ let angle = 0;
 let text = SimpleConfig();
 function loadAssets() {
     myImageLoader("matcap.jpg");
-    var obj = ObjLoader.loadObj("omg.obj");
-    console.log(obj);
+    // skybox
+    myImageLoader("canyon/back.jpg");
+    myImageLoader("canyon/bottom.jpg");
+    myImageLoader("canyon/front.jpg");
+    myImageLoader("canyon/left.jpg");
+    myImageLoader("canyon/right.jpg");
+    myImageLoader("canyon/top.jpg");
 }
 
 const mainShader: string = "prog";
@@ -120,6 +126,7 @@ function initialize() {
     offsetBuffer = new VertexBuffer(BufferType.Array);
 
     maxOffsetUpdate();
+    skybox = new Skybox("canyon");
 
     cameraUpdateCb();
 }
@@ -150,6 +157,7 @@ function drawScene(dt: number) {
     );
 
     Core.getInstance().clearColorAndDepth();
+    skybox.render(view, projection);
 
     ShaderManager.getCB(mainShader, function(prog: ShaderProgram) {
         prog.use();

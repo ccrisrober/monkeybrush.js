@@ -1,5 +1,6 @@
 /// <reference path="core.ts" />
 /// <reference path="../extras/vertexArray.ts" />
+/// <reference path="../extras/objLoader.ts" />
 
 "use strict";
 
