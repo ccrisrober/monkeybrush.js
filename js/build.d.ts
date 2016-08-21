@@ -1,6 +1,4 @@
-/// <reference path="../lib/gl-matrix.d.ts" />
-/// <reference path="../lib/stats.d.ts" />
-/// <reference path="../lib/dat-gui.d.ts" />
+/// <reference path="../lib/library/tsd.d.ts" />
 declare class Input {
     private static _instance;
     constructor();
@@ -50,62 +48,6 @@ declare class Input {
     protected _onKeyUp(ev: KeyboardEvent): void;
     static getInstance(): Input;
 }
-declare class Camera {
-    position: Float32Array;
-    protected front: Float32Array;
-    protected up: Float32Array;
-    protected right: Float32Array;
-    protected worldUp: Float32Array;
-    protected yaw: number;
-    protected pitch: number;
-    protected movSpeed: number;
-    protected mouseSensivity: number;
-    protected _updateCamera: boolean;
-    timeElapsed: number;
-    private view;
-    private proj;
-    GetPos(): Float32Array;
-    constructor(position?: Float32Array, up?: Float32Array, yaw?: number, pitch?: number);
-    update(callback: Function): void;
-    processKeyboard(direction: number, speed?: number): void;
-    processMouseMovement(xOffset: number, yOffset: number): void;
-    updateCameraVectors(): void;
-    GetViewMatrix(): Float32Array;
-    GetProjectionMatrix(w: number, h: number): Float32Array;
-}
-declare abstract class ICamera {
-    protected _position: Float32Array;
-    protected _view: Float32Array;
-    protected _projection: Float32Array;
-    protected _fov: number;
-    protected _ar: number;
-    protected _look: Float32Array;
-    protected _up: Float32Array;
-    protected _right: Float32Array;
-    constructor(pos: Float32Array);
-    position: Float32Array;
-    getViewMatrix(): Float32Array;
-    getProjectionMatrix(): Float32Array;
-    getFOV(): number;
-    getAspectRatio(): number;
-    setupProjection(fovy: number, aspRatio: number): void;
-}
-declare class FreeCamera extends ICamera {
-    constructor(pos: Float32Array);
-    update(): void;
-    rotate(yaw: number, pitch: number, roll: number): void;
-    walk(amount: number): void;
-    strafe(amount: number): void;
-    lift(amount: number): void;
-    protected _yaw: number;
-    protected _pitch: number;
-    protected _roll: number;
-    protected _translation: Float32Array;
-}
-declare class OrthoCamera extends ICamera {
-}
-declare class PerspectiveCamera extends ICamera {
-}
 declare enum mode {
     read_file = 0,
     read_script = 1,
@@ -115,7 +57,11 @@ declare enum shader_type {
     vertex = 0,
     fragment = 1,
 }
-declare class ShaderProgram {
+/**
+ * Program class
+ * @class Program
+ */
+declare class Program {
     constructor();
     private _compiledShader;
     private _shaders;
@@ -127,32 +73,105 @@ declare class ShaderProgram {
     attribLocations: {
         [key: string]: number;
     };
+    /**
+     * @param {string[]}
+     */
+    addAttributesArgs(...attrs: string[]): void;
+    /**
+     * @param {Array<string>}
+     */
     addAttributes(attrs: Array<string>): void;
+    /**
+     * @param {string[]}
+     */
+    addUniformsArgs(...unifs: string[]): void;
+    /**
+     * @param {Array<string>}
+     */
     addUniforms(unifs: Array<string>): void;
+    /**
+     * @return {WebGLProgram}
+     */
     program(): WebGLProgram;
+    /**
+     * @param {string}
+     * @param {shader_type}
+     * @param {mode}
+     */
     addShader(shader_: string, st: shader_type, _mode: mode): void;
+    /**
+     * Compile and link program
+     * @return {boolean}: True if not errors
+     */
     compile(): boolean;
+    /**
+     * @param {string}
+     * @param {number}
+     */
     private loadAndCompileWithFile(filePath, shaderType);
+    /**
+     * @param {string}
+     * @param {number}
+     */
     private loadAndCompileFromText(shaderSource, shaderType);
+    /**
+     * @param {string}
+     * @param {number}
+     */
     private loadAndCompile(id, shaderType);
+    /**
+     * @param {string}
+     * @param {number}
+     */
     private compileShader(shaderSource, shaderType);
+    /**
+     *
+     */
     use(): void;
+    /**
+     *
+     */
     destroy(): void;
+    /**
+     * @param {string}
+     * @param {number}
+     */
     sendUniform1f(name: string, value: number): void;
+    /**
+     * @param {string}
+     * @param {number}
+     */
     sendUniform1i(name: string, value: number): void;
+    /**
+     * @param {string}
+     * @param {boolean}
+     */
     sendUniform1b(name: string, value: boolean): void;
+    /**
+     * @param {string}
+     * @param {Float32Array}
+     */
     sendUniformVec3(name: string, value: Float32Array): void;
+    /**
+     * @param {string}
+     * @param {Float32Array}
+     * @param {boolean   = false}
+     */
     sendUniformMat4(name: string, value: Float32Array, transpose?: boolean): void;
 }
 declare namespace ToneMap {
+    /**
+     * @param {WebGLRenderingContext}
+     */
     function init(gl: WebGLRenderingContext): void;
-    let textureQuadSimpleProgram: ShaderProgram;
-    let textureQuadGammaProgram: ShaderProgram;
-    let textureQuadReinhardProgram: ShaderProgram;
-    let textureQuadFilmicProgram: ShaderProgram;
-    let textureQuadsRGBProgram: ShaderProgram;
-    let textureQuadUncharted2Program: ShaderProgram;
+    let textureQuadSimpleProgram: Program;
+    let textureQuadGammaProgram: Program;
+    let textureQuadReinhardProgram: Program;
+    let textureQuadFilmicProgram: Program;
+    let textureQuadsRGBProgram: Program;
+    let textureQuadUncharted2Program: Program;
 }
+declare var WebGL2RenderingContext: any;
 /**
 * This class get WebGL2 context and animationFrame for your navigator.
 *
@@ -169,7 +188,7 @@ declare class Core {
     protected init(): void;
     static getInstance(): Core;
     /**
-    * Return global WebGL2 context
+    * Return global WebGL context
     *
     * @method getGL
     * @return {WebGLRenderingContext} Returns WebGL rendering context
@@ -199,7 +218,7 @@ declare enum ComparisonFunc {
     Greater,
     GreaterEqual,
 }
-declare enum CullMode {
+declare enum Face {
     Front,
     Back,
     FrontAndBack,
@@ -246,6 +265,13 @@ declare enum BlendingType {
     CteAlpha,
     OneMinusCteAlpha,
 }
+declare enum BlendingEqu {
+    Add,
+    Substract,
+    RevSubstract,
+    Min,
+    Max,
+}
 declare enum RenderType {
     Points,
     Lines,
@@ -260,10 +286,246 @@ declare enum BlendingEq {
     FuncSub,
     FuncRevSub,
 }
+interface ShaderCallback {
+    (): Program;
+}
+interface ShaderUseCallback {
+    (prog: Program): void;
+}
+declare namespace ShaderManager {
+    /**
+     * @param  {string}
+     * @return {Program}
+     */
+    function get(name: string): Program;
+    /**
+     * @param {string}
+     * @param {ShaderCallback}
+     */
+    function addWithFun(name: string, fn: ShaderCallback): void;
+    /**
+     * @param {string}
+     * @param {Program}
+     */
+    function add(name: string, prog: Program): void;
+    /**
+     *
+     */
+    function destroy(): void;
+    /**
+     * @param {string}
+     * @param {ShaderUseCallback}
+     */
+    function getCB(name: string, cb: ShaderUseCallback): void;
+}
+declare var VanillaToasts: any;
+declare namespace ResourceMap {
+    class MapEntry {
+        _asset: string;
+        _refCount: number;
+        constructor(resName: string);
+        getAsset(): string;
+        setAsset(name: string): void;
+        count(): number;
+        incCount(): void;
+        decCount(): void;
+    }
+    /**
+     * @param {string}
+     */
+    function asyncLoadRequested(resName: string): void;
+    /**
+     * @param {string}
+     */
+    function asyncLoadFailed(resName: string): void;
+    /**
+     * @param {string}
+     * @param {[type]}
+     */
+    function asyncLoadCompleted(resName: string, loadedAsset: any): void;
+    /**
+     * @param {Function}
+     */
+    function setLoadCompleteCallback(fn: any): void;
+    /**
+     * @param {string}
+     */
+    function retrieveAsset(resName: string): any;
+    /**
+     * @param {string}
+     */
+    function isAssetLoaded(resName: string): boolean;
+    /**
+     * @param {string}
+     */
+    function incAssetRefCount(resName: string): void;
+    /**
+     * @param {string}
+     */
+    function unloadAsset(resName: string): number;
+}
+declare namespace loaders {
+    /**
+     * @param {string}
+     * @param {string = ""}
+     */
+    function loadImage(imageSrc: string, alias?: string): void;
+    /**
+     * @param {string}
+     */
+    function unloadImage(imageSrc: string): void;
+    /**
+     * @param {string}
+     */
+    function loadAudio(clipName: string, alias?: string): void;
+    /**
+     * @param {string}
+     */
+    function unloadAudio(clipName: string): void;
+    /**
+     * @param {string}
+     * @param {number}
+     * @param {number}
+     * @param {string = ""}
+     */
+    function loadHDRImage(imageSrc: string, width: number, height: number, alias?: string): void;
+    /**
+     * @param {string}
+     */
+    function unloadHDRImage(imageSrc: string): void;
+}
+declare class VertexArray {
+    /**
+     * [_handle description]
+     * @type {WebGLVertexArrayObject}
+     */
+    protected _handle: any;
+    /**
+     * @param {WebGLVertexArrayObject}
+     */
+    constructor(vao?: any);
+    /**
+     * @param {WebGLVertexArrayObject}
+     */
+    static wrap(vao: any): VertexArray;
+    /**
+     *
+     */
+    bind(): void;
+    /**
+     *
+     */
+    unbind(): void;
+    /**
+     *
+     */
+    destroy(): void;
+    /**
+     * @return {boolean}
+     */
+    static isSupported(): boolean;
+    /**
+     * @return {boolean}
+     */
+    is(): boolean;
+}
+declare class VertexBuffer {
+    static gl: WebGLRenderingContext;
+    /**
+     * [_buffer description]
+     * @type {WebGLBuffer}
+     */
+    protected _buffer: WebGLBuffer;
+    /**
+     * [_type description]
+     * @type {BufferType}
+     */
+    protected _type: BufferType;
+    /**
+     * @param {BufferType = BufferType.Array}
+     */
+    constructor(type?: BufferType);
+    /**
+     * @param {BufferType}
+     */
+    bind(type?: BufferType): void;
+    /**
+     *
+     */
+    unbind(): void;
+    /**
+     * @return {BufferType}
+     */
+    getBufferType(): BufferType;
+    /**
+     * @return {WebGLBuffer}
+     */
+    getBuffer(): WebGLBuffer;
+    /**
+     *
+     */
+    destroy(): void;
+    /**
+     * @param {Float32Array | Uint16Array}
+     * @param {UsageType    = UsageType.StaticDraw}
+     */
+    bufferData(data: Float32Array | Uint16Array, usage?: UsageType): void;
+    /**
+     * @param {number}
+     * @param {number}
+     * @param {number}
+     * @param {number = 0}
+     */
+    attribDivisor(position: number, length: number, divisor: number, stride?: number): void;
+    /**
+     * @param {number}
+     * @param {number}
+     * @param {number}
+     * @param {boolean = false}
+     * @param {number  = 0}
+     */
+    vertexAttribPointer(attribLocation: number, numElems: number, type: number, normalized?: boolean, offset?: number): void;
+}
+declare abstract class Drawable {
+    protected _indicesLen: number;
+    protected _handle: Array<VertexBuffer>;
+    protected _vao: VertexArray;
+    constructor();
+    protected createBuffer(data: Float32Array | Uint16Array, handle: VertexBuffer): VertexBuffer;
+    protected addAttrib_(attribLocation: any, buffer: VertexBuffer, numElems: any): void;
+    render(): void;
+    renderArrayInstance(numInstances: number): void;
+}
+declare class Torus extends Drawable {
+    protected _faces: number;
+    constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
+}
+declare class Sphere extends Drawable {
+    constructor(radius: number, slices: number, stacks: number);
+}
+declare class Quad extends Drawable {
+    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
+}
+declare namespace ObjLoader {
+    function loadObj(filename: string): Object;
+}
+declare class Mesh extends Drawable {
+    constructor(fileRoute: string);
+    private createVAO(model, el);
+    private loadJSON(url);
+}
 declare class Vector2<T> {
     x: T;
     y: T;
+    /**
+     * @param {T}
+     * @param {T}
+     */
     constructor(x: T, y: T);
+    /**
+     * @param  {Vector2<T>}
+     * @return {boolean}
+     */
     isEqual(other: Vector2<T>): boolean;
 }
 declare abstract class Texture {
@@ -278,23 +540,39 @@ declare abstract class Texture {
     getHeight(): number;
     getWidth(): number;
 }
-declare class RenderBufferTexture {
-    protected _handle: WebGLRenderbuffer;
-    constructor(size: Vector2<number>, format: number, attachment: number);
+declare class Texture2D extends Texture {
+    protected _flipY: boolean;
+    protected _minFilter: number;
+    protected _magFilter: number;
+    protected _wraps: Array<number>;
+    constructor(data: any, options?: {});
+    genMipMap(): void;
+    wrap(modes: Array<number>): void;
+    minFilter(filter: number): void;
+    magFilter(filter: number): void;
+    bind(slot?: number): void;
+    unbind(): void;
     destroy(): void;
 }
-declare class Framebuffer {
-    protected _size: Vector2<number>;
-    protected _handle: WebGLFramebuffer;
-    protected _attachments: Array<number>;
-    _renderBuffer: RenderBufferTexture;
-    _colors: Array<Texture>;
-    constructor(textures: Array<Texture>, size: Vector2<number>, depth?: boolean, stencil?: boolean, options?: {});
-    private _throwFBOError(status);
-    bind(): void;
-    onlyBindTextures(): void;
-    unbind(): void;
-    rebuild(size: Vector2<number>): void;
+declare class Vector3<T> {
+    x: T;
+    y: T;
+    z: T;
+    /**
+     * @param {T}
+     * @param {T}
+     * @param {T}
+     */
+    constructor(x: T, y: T, z: T);
+    /**
+     * @param  {Vector3<T>}
+     * @return {boolean}
+     */
+    isEqual(other: Vector3<T>): boolean;
+}
+declare class Texture3D extends Texture {
+    constructor(data: any, size: Vector3<number>, options?: {});
+    bind(slot?: number): void;
     destroy(): void;
 }
 declare class SimpleTexture2D extends Texture {
@@ -311,6 +589,26 @@ declare class SimpleTexture2D extends Texture {
     unbind(): void;
     destroy(): void;
 }
+declare class RenderBufferTexture {
+    protected _handle: WebGLRenderbuffer;
+    constructor(size: Vector2<number>, format: number, attachment: number);
+    destroy(): void;
+}
+declare class Framebuffer {
+    protected _size: Vector2<number>;
+    protected _handle: WebGLFramebuffer;
+    protected _attachments: Array<number>;
+    _renderBuffer: RenderBufferTexture;
+    _depth: SimpleTexture2D;
+    _colors: Array<Texture>;
+    constructor(textures: Array<Texture>, size: Vector2<number>, depth?: boolean, stencil?: boolean, options?: {});
+    private checkStatus(status);
+    bind(): void;
+    onlyBindTextures(): void;
+    unbind(): void;
+    rebuild(size: Vector2<number>): void;
+    destroy(): void;
+}
 declare enum gbuffer_type {
     position = 0,
     normal = 1,
@@ -318,24 +616,26 @@ declare enum gbuffer_type {
     num_textures = 3,
 }
 declare class GBuffer {
+    /**
+     * [framebuffer description]
+     * @type {Framebuffer}
+     */
     protected framebuffer: Framebuffer;
+    /**
+     * @param {Vector2<number>}
+     */
     constructor(size: Vector2<number>);
+    /**
+     *
+     */
     bindForReading(): void;
+    /**
+     *
+     */
     bindForWriting(): void;
-    destroy(): void;
-}
-declare class Texture2D extends Texture {
-    protected _flipY: boolean;
-    protected _minFilter: number;
-    protected _magFilter: number;
-    protected _wraps: Array<number>;
-    constructor(data: any, options?: {});
-    genMipMap(): void;
-    wrap(modes: Array<number>): void;
-    minFilter(filter: number): void;
-    magFilter(filter: number): void;
-    bind(slot?: number): void;
-    unbind(): void;
+    /**
+     *
+     */
     destroy(): void;
 }
 declare enum gbufferssao_type {
@@ -359,186 +659,227 @@ declare class GBufferSSAO {
     sendSamplesSSAOTexture(progName: string): void;
     destroy(): void;
 }
-declare class VertexArray {
-    protected _handle: any;
-    constructor();
-    bind(): void;
-    unbind(): void;
-    destroy(): void;
-    is(): boolean;
-}
-declare class Model {
-    indices: Array<number>;
-    vao: any;
-    constructor(fileRoute: string);
-    private createBuffer(data);
-    private addAttrib(attribLocation, buffer, numElems);
-    private createVAO(model, indicesArray);
-    private loadJSON(url);
-    render(): void;
-    renderArrayInstance(numInstances: number): void;
-}
-declare class VertexBuffer {
-    constructor(type: BufferType);
-    bind(type?: BufferType): void;
-    unbind(): void;
-    getBufferType(): BufferType;
-    getBuffer(): WebGLBuffer;
-    destroy(): void;
-    bufferData(data: Float32Array | Uint16Array, usage?: UsageType): void;
-    attribDivisor(position: number, length: number, divisor: number): void;
-    vertexAttribPointer(attribLocation: number, numElems: number, type: number, normalized?: boolean, offset?: number): void;
-    protected _buffer: WebGLBuffer;
-    protected _type: BufferType;
-}
 /**
 * This class wrap PostProcess effects
 *
 * @class core.PostProcess
 */
 declare class PostProcess {
+    /**
+     *
+     */
     static initialize(): void;
+    /**
+     *
+     */
     static bind(): void;
+    /**
+     *
+     */
     static render(): void;
+    /**
+     * [_planeVAO description]
+     * @type {VertexArray}
+     */
     protected static _planeVAO: VertexArray;
+    /**
+     * [_planeVertexVBO description]
+     * @type {VertexBuffer}
+     */
     protected static _planeVertexVBO: VertexBuffer;
 }
-declare abstract class Scene {
-    abstract initScene(): any;
-    abstract update(t: number): any;
-    abstract render(): any;
-    abstract resize(width: number, height: number): any;
-    constructor();
-    animate(value: boolean): void;
-    animating(): boolean;
-    protected _animate: boolean;
-}
-declare class Stencil {
-    use(): void;
-    func(compFun: ComparisonFunc, ref: number, mask: number): void;
-    operation(fail: StencilOp, zfail: StencilOp, zpass: StencilOp): void;
-    mask(mask: number): void;
-    clear(): void;
-    unuse(): void;
-}
-declare class Color {
-    protected _color: any[];
-    constructor(r: number, g: number, b: number);
-    r: number;
-    g: number;
-    b: number;
-    setRGB(r: number, g: number, b: number): void;
-    toHSL(): Color;
-}
-declare namespace extensions {
-    function get(name: string): any;
-}
 declare namespace Timer {
+    /**
+     *
+     */
     function update(): void;
+    /**
+     * @return {number}
+     */
     function deltaTime(): number;
 }
-declare class Vector3<T> {
-    x: T;
-    y: T;
-    z: T;
-    constructor(x: T, y: T, z: T);
-    isEqual(other: Vector3<T>): boolean;
+declare class Color {
+    /**
+     * @param {[type]}
+     */
+    protected _color: any[];
+    /**
+     * @param {number}
+     * @param {number}
+     * @param {number}
+     */
+    constructor(r: number, g: number, b: number);
+    /**
+     * @return {number}
+     */
+    /**
+     * @param {number}
+     */
+    r: number;
+    /**
+     * @return {number}
+     */
+    /**
+     * @param {number}
+     */
+    g: number;
+    /**
+     * @return {number}
+     */
+    /**
+     * @param {number}
+     */
+    b: number;
+    /**
+     * @param {number}
+     * @param {number}
+     * @param {number}
+     */
+    setRGB(r: number, g: number, b: number): void;
+    /**
+     * @return {Color}
+     */
+    toHSL(): Color;
 }
-declare class Vector4<T> {
-    x: T;
-    y: T;
-    z: T;
-    w: T;
-    constructor(x: T, y: T, z: T, w: T);
-    isEqual(other: Vector4<T>): boolean;
-}
-interface ShaderCallback {
-    (): ShaderProgram;
-}
-interface ShaderUseCallback {
-    (prog: ShaderProgram): void;
-}
-declare namespace ShaderManager {
-    function get(name: string): ShaderProgram;
-    function addWithFun(name: string, fn: ShaderCallback): void;
-    function add(name: string, prog: ShaderProgram): void;
-    function destroy(): void;
-    function getCB(name: string, cb: ShaderUseCallback): void;
-}
-declare var VanillaToasts: any;
-declare namespace ResourceMap {
-    class MapEntry {
-        _asset: string;
-        _refCount: number;
-        constructor(resName: string);
-        getAsset(): string;
-        setAsset(name: string): void;
-        count(): number;
-        incCount(): void;
-        decCount(): void;
-    }
-    function asyncLoadRequested(resName: string): void;
-    function asyncLoadFailed(resName: string): void;
-    function asyncLoadCompleted(resName: string, loadedAsset: any): void;
-    function setLoadCompleteCallback(fn: any): void;
-    function retrieveAsset(resName: string): any;
-    function isAssetLoaded(resName: string): boolean;
-    function incAssetRefCount(resName: string): void;
-    function unloadAsset(resName: string): number;
-}
-declare abstract class Drawable {
-    protected _vao: VertexArray;
-    constructor();
-    abstract render(): any;
-    protected createBuffer(data: Float32Array | Uint16Array, handle: VertexBuffer): VertexBuffer;
-    protected addAttrib_(attribLocation: any, buffer: VertexBuffer, numElems: any): void;
-}
-declare class Torus extends Drawable {
-    protected _handle: Array<VertexBuffer>;
-    protected _faces: number;
-    constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
-    protected _indicesLen: any;
-    render(): void;
-    renderArrayInstance(numInstances: number): void;
-}
-declare class Sphere extends Drawable {
-    protected _handle: Array<VertexBuffer>;
-    constructor(radius: number, slices: number, stacks: number);
-    protected _indicesLen: any;
-    render(): void;
-}
-declare class Quad extends Drawable {
-    protected _handle: Array<VertexBuffer>;
-    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
-    protected _indicesLen: any;
-    render(): void;
-}
+/**
+ * Light abstract class
+ * @class Light
+ */
 declare abstract class Light {
+    /**
+     * [Intensity value]
+     * @type {number}
+     */
     protected _intensity: number;
+    /**
+     * [Light color]
+     * @type {Color}
+     */
     protected _color: Color;
+    protected _enable: boolean;
+    /**
+     * [Attenuation light value]
+     * @type {Vector3<number>}
+     */
+    protected _attenuation: Vector3<number>;
     constructor();
+    /**
+     * Set constant attenuation value.
+     * @param {number} v: Constant attenuation value.
+     */
+    setConstantAtt(value: number): void;
+    /**
+     * Set linear attenuation value.
+     * @param {number} v: Linear attenuation value.
+     */
+    setLinearAtt(value: number): void;
+    /**
+     * Set quadratic attenuation value.
+     * @param {number} v: Quadratic attenuation value.
+     */
+    setQuadraticAtt(value: number): void;
+    /**
+     * Get light attenuation value.
+     * @return {Vector3<number>}
+     */
+    attenuation: Vector3<number>;
+    /**
+     * Get light intensity.
+     * @return {number}
+     */
+    /**
+     * Set light intensity.
+     * @param {number} intensity: Light intensity.
+     */
     intensity: number;
+    /**
+     * Get light color.
+     * @return {Color}
+     */
+    /**
+     * Set light color
+     * @param {Color} color: Color value
+     */
     color: Color;
 }
+/**
+ * Point light class
+ * @class PointLight
+ */
 declare class PointLight extends Light {
-    protected _position: Float32Array;
-    constructor(position?: Float32Array);
-    position: Float32Array;
+    /**
+     * [Light position]
+     * @type {Vector3<number>}
+     */
+    protected _position: Vector3<number>;
+    /**
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
+     */
+    constructor(position?: Vector3<number>);
+    /**
+     * Get light position
+     * @return {Vector3<number>}
+     */
+    /**
+     * Set light position
+     * @param {Vector3<number>} position
+     */
+    position: Vector3<number>;
+    /**
+     * Increment position from current position
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     * @param {number = 0.0} z
+     */
     addTransform(x?: number, y?: number, z?: number): void;
 }
+declare class Camera {
+    position: Float32Array;
+    protected front: Float32Array;
+    protected up: Float32Array;
+    protected right: Float32Array;
+    protected worldUp: Float32Array;
+    protected yaw: number;
+    protected pitch: number;
+    protected movSpeed: number;
+    protected mouseSensivity: number;
+    protected _updateCamera: boolean;
+    timeElapsed: number;
+    private view;
+    private proj;
+    GetPos(): Float32Array;
+    constructor(position?: Float32Array, up?: Float32Array, yaw?: number, pitch?: number);
+    update(callback: Function): void;
+    processKeyboard(direction: number, speed?: number): void;
+    processMouseMovement(xOffset: number, yOffset: number): void;
+    updateCameraVectors(): void;
+    GetViewMatrix(): Float32Array;
+    GetOrthoProjectionMatrix(w: number, h: number): Float32Array;
+    GetProjectionMatrix(w: number, h: number): Float32Array;
+}
+interface LoadAssets {
+    (): void;
+}
+interface Initialize {
+    (): void;
+}
+interface DrawCallback {
+    (dt: number): void;
+}
+declare namespace _init__ {
+    function init(loadAssets: LoadAssets, text: any): void;
+    function start(initialize: Initialize, drawScene: DrawCallback): void;
+    function render(dt: number): void;
+}
 declare let camera: Camera;
-declare var gl_: any;
-declare let stats: Stats;
-declare let deferred: GBuffer;
-declare let ssao: GBufferSSAO;
+declare let gl_: any;
 declare let esferita: Sphere;
 declare let SimpleConfig: () => {
     max: number;
 };
-declare let gui: dat.GUI;
 declare let torito: Torus;
 declare let planito: Quad;
-declare let m: Model;
+declare let m: Mesh;
 declare let view: any;
 declare let projection: any;
 declare let tex2d: Texture2D;
@@ -551,31 +892,432 @@ declare let text: {
 };
 declare function loadAssets(): void;
 declare const mainShader: string;
-declare let offsetBuffer: VertexBuffer;
-declare let numInstancias: number;
-declare function maxOffsetUpdate(): void;
+declare let framebuffer: Framebuffer;
 declare function initialize(): void;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
-declare function myImageLoader(src: any): void;
-declare function loop(dt: number): void;
-declare function resize(): void;
-declare class DirectionalLight extends Light {
-    protected _direction: Float32Array;
-    constructor(direction?: Float32Array);
-    direction: Float32Array;
-}
-declare class SpotLight extends Light {
+declare abstract class ICamera {
     protected _position: Float32Array;
-    protected _direction: Float32Array;
-    constructor(position?: Float32Array, direction?: Float32Array);
+    protected _view: Float32Array;
+    protected _projection: Float32Array;
+    protected _fov: number;
+    protected _ar: number;
+    protected _near: number;
+    protected _far: number;
+    protected _up: Float32Array;
+    protected _look: Float32Array;
+    /**
+     * @param {Float32Array}
+     * @param {number = 45.0}
+     * @param {number = 0.01}
+     * @param {number = 1000.0}
+     * @param {number = 1.0}
+     * @param {Float32Array = new Float32Array([0.0, 0.0, -1.0])}
+     * @param {Float32Array = new Float32Array([0.0, 1.0, 0.0])}
+     */
+    constructor(pos: Float32Array, fovy?: number, near?: number, far?: number, aspRatio?: number, target?: Float32Array, up?: Float32Array);
+    /**
+     *
+     */
+    abstract update(): any;
+    /**
+     * @return {Float32Array}
+     */
+    /**
+     * @param {Float32Array}
+     */
     position: Float32Array;
-    direction: Float32Array;
+    /**
+     * @return {Float32Array}
+     */
+    getViewMatrix(): Float32Array;
+    /**
+     * @return {Float32Array}
+     */
+    getProjectionMatrix(): Float32Array;
+    /**
+     * @return {number}
+     */
+    getFOV(): number;
+    /**
+     * @return {number}
+     */
+    getAspectRatio(): number;
+    /**
+     * @param {number}
+     * @param {number}
+     */
+    setup2(near: number, far: number): void;
+    /**
+     * @param {number}
+     * @param {number}
+     */
+    setup(fovy: number, aspRatio: number): void;
+}
+declare class OrthoCamera extends ICamera {
+    /**
+     *
+     */
+    update(): void;
+}
+declare class PerspectiveCamera extends ICamera {
+    /**
+     *
+     */
+    update(): void;
+}
+/**
+ * Blend wrapper
+ * @class Blend
+ */
+declare class Blend {
+    static gl: WebGLRenderingContext;
+    /**
+     * Enable blending
+     */
+    static enable(): void;
+    /**
+     * Specify the equation used for both the RGB blend equation and the Alpha blend equation
+     * @param {BlendingEq} mode: Specifies how source and destination colors are combined
+     */
+    static equation(mode: BlendingEq): void;
+    /**
+     * Set the RGB blend equation and the alpha blend equation separately
+     * @param {BlendingEqu} modeRGB: Specifies the RGB blend equation, how the red, green, and blue
+     * 		components of the source and destination colors are combined.
+     * @param {BlendingEqu} modeAlpha: Specifies the alpha blend equation, how the alpha component
+     * 		of the source and destination colors are combined.
+     */
+    static equationSeparate(modeRGB: BlendingEqu, modeAlpha: BlendingEqu): void;
+    getBlendEquRGB(): BlendingEqu;
+    getBlendEquAlpha(): BlendingEqu;
+    /**
+     * Set the blend color
+     * @param {number = 0.0} red
+     * @param {number = 0.0} green
+     * @param {number = 0.0} blue
+     * @param {number = 0.0} alpha
+     */
+    static color(red?: number, green?: number, blue?: number, alpha?: number): void;
+    /**
+     * Specify pixel arithmetic.
+     * @param {BlendingType = BlendingType.One} sfactor: Specifies how the red, green, blue, and alpha source blending factors are computed.
+     * @param {BlendingType = BlendingType.Zero} dfactor: Specifies how the red, green, blue, and alpha destination blending factors are computed.
+     */
+    static func(sfactor?: BlendingType, dfactor?: BlendingType): void;
+    /**
+     * Specify pixel arithmetic for RGB and alpha components separately.
+     * @param {BlendingType = BlendingType.One} rcRGB: Specifies how the red, green, and blue blending factors are computed.
+     * @param {BlendingType = BlendingType.Zero} dstRGB: Specifies how the red, green, and blue destination blending factors are computed.
+     * @param {BlendingType = BlendingType.One} srcAlpha: Specified how the alpha source blending factor is computed.
+     * @param {BlendingType = BlendingType.Zero} dstAlpha: Specified how the alpha destination blending factor is computed.
+     */
+    static funcSeparate(srcRGB?: BlendingType, dstRGB?: BlendingType, srcAlpha?: BlendingType, dstAlpha?: BlendingType): void;
+    /**
+     * Disable blending
+     */
+    static disable(): void;
+    /**
+     * Checks if blending is activated
+     * @return {boolean}: True if activated
+     */
+    static isEnabled(): boolean;
+}
+declare class Cull {
+    static gl: WebGLRenderingContext;
+    /**
+     * Enable cullFace test.
+     */
+    static enable(): void;
+    /**
+     * Get current cullFace mode
+     * @return {Face}: Current cullFace mode
+     */
+    static getMode(): Face;
+    /**
+     * Specify whether front/back-facing facets can be culled.
+     * @param {Face} mode: Cull face mode
+     */
+    static setMode(mode: Face): void;
+    /**
+     * Disable cullFace test.
+     */
+    static disable(): void;
+    /**
+     * Checks if cullFace is activated
+     * @return {boolean}: True if activated
+     */
+    static isEnabled(): boolean;
+}
+declare class Depth {
+    static gl: WebGLRenderingContext;
+    /**
+     * Enable depth testing.
+     */
+    static enable(): void;
+    /**
+     * Enable writing into the depth buffer.
+     */
+    static use(): void;
+    /**
+     * Specify the mode used for depth buffer comparisons.
+     * @param {ComparisonFunc} compFunc: Comparisor mode.
+     */
+    static comparison(compFunc: ComparisonFunc): void;
+    /**
+     * Specify mapping of depth values from normalized device coordinates to window coordinates.
+     * @param {number = 0.0} znear: Specifies the mapping of the near clipping plane to window coordinates.
+     * @param {number = 1.0} zfar: Specifies the mapping of the far clipping plane to window coordinates.
+     */
+    static depthRange(znear?: number, zfar?: number): void;
+    /**
+     * Clear depth buffer.
+     */
+    static clear(): void;
+    /**
+     * Disable writing into the depth buffer.
+     */
+    static unuse(): void;
+    /**
+     * Disable depth testing.
+     */
+    static disable(): void;
+    /**
+     * Checks if depth test is activated
+     * @return {boolean}: True if activated
+     */
+    static isEnabled(): boolean;
+}
+/**
+ * scissor wrapper
+ * @class Scissor
+ */
+declare class Scissor {
+    static gl: WebGLRenderingContext;
+    /**
+     * Enable scissor test.
+     */
+    static use(): void;
+    /**
+     * Define the scissor box.
+     * @param {number} x: Specifying the horizontal coordinate for the lower left corner of the box.
+     * @param {number} y: Specifying the vertical coordinate for the lower left corner of the box.
+     * @param {number} width: Specifying the width of the scissor box.
+     * @param {number} height: Specifying the height of the scissor box.
+     */
+    setRectangle(x: number, y: number, width: number, height: number): void;
+    /**
+     * Get scissor rectangle in use.
+     * @return {Int32Array}: Scissor box size [x, y, width, height]
+     */
+    getRectangle(): Int32Array;
+    /**
+     * Disable scissor test.
+     */
+    static unuse(): void;
+    /**
+     * Checks if scissor test is activated
+     * @return {boolean}: True if activated
+     */
+    static isEnabled(): boolean;
+}
+/**
+ * Stencil wrapper
+ * @class Stencil
+ */
+declare class Stencil {
+    static gl: WebGLRenderingContext;
+    /**
+     * Enable stencil test
+     */
+    static use(): void;
+    /**
+     * Set front and back function and reference value for stencil testing
+     * @param {ComparisonFunc} compFunc: Specifies the test function.
+     * @param {number} ref: Specifies the reference value for the stencil test
+     * @param {number} mask: Specifies a mask that is ANDed with both the reference value and the stored stencil value when the test is done.
+     */
+    static func(compFun: ComparisonFunc, ref: number, mask: number): void;
+    /**
+     * Set front and back stencil test actions.
+     * @param {StencilOp} fail: Action to take when the stencil test fails.
+     * @param {StencilOp} zfail: Stencil action when the stencil test passes, but the depth test fails.
+     * @param {StencilOp} zpass: Specifies the stencil action when both the stencil and depth test passes.
+     */
+    static operation(fail: StencilOp, zfail: StencilOp, zpass: StencilOp): void;
+    /**
+     * Control the front and back writing of individual bits in the stencil planes
+     * @param {number} mask: Specifies a bit mask to enable and disable writing of individual bits in the stencil planes.
+     */
+    static mask(mask: number): void;
+    /**
+     * Fontrol the front and/or back writing of individual bits in the stencil planes
+     * @param {Face} face: Specifies whether the front and/or back stencil writemask is updated
+     * @param {number} mask: Specifies a bit mask to enable and disable writing of individual bits in the stencil planes.
+     */
+    static maskFace(face: Face, mask: number): void;
+    static getFrontWriteMasks(): number;
+    static getBackWriteMask(): number;
+    static getBits(): number;
+    /**
+     * Clear stencil values
+     */
+    static clear(): void;
+    /**
+     * Disable stencil test
+     */
+    static unuse(): void;
+    /**
+     * Checks if stencil test is activated
+     * @return {boolean}: True if activated
+     */
+    static isEnabled(): boolean;
+}
+declare namespace extensions {
+    /**
+     * @param {string}
+     */
+    function get(name: string): any;
+}
+declare enum LogLevel {
+    ALL = 0,
+    DEBUG = 1,
+    ERROR = 2,
+    WARN = 3,
+    INFO = 4,
+    OFF = 5,
+}
+declare class Query {
+    protected handle: any;
+    constructor();
+    destroy(): void;
+    begin(target: any): void;
+    end(target: any): void;
+    oneUse(target: any, cb: any): void;
+    getParameters(param: string): any;
+    isResultAvailable(): any;
+    getResult(): any;
+}
+declare class TransformFeedback {
+    static gl: WebGLRenderingContext;
+    protected _handle: any;
+    constructor();
+    destroy(): void;
+    bind(target: number): void;
+    unbind(target: any): void;
+    begin(primitiveMode: any): void;
+    pause(): void;
+    resume(): void;
+    end(): void;
+    varyings(program: number, varyings: any, bufferMode: any): any;
+    getVarying(program: number, idx: any): any;
+}
+declare class Vector4<T> {
+    x: T;
+    y: T;
+    z: T;
+    w: T;
+    /**
+     * @param {T}
+     * @param {T}
+     * @param {T}
+     * @param {T}
+     */
+    constructor(x: T, y: T, z: T, w: T);
+    /**
+     * @param  {Vector4<T>}
+     * @return {boolean}
+     */
+    isEqual(other: Vector4<T>): boolean;
+}
+declare class Woit {
+    constructor();
+    resize(size: Vector2<number>): void;
+    firstStep(prog: Program, near: number, far: number, cullFace: boolean, alfa: number, w: number): void;
+    secondStep(prog: Program, near: any, far: any): void;
+    protected clearBuffers(): void;
+    protected initPlane(): void;
+    fbo: any;
+    accBufTexId: any;
+    depthBuffTexId: any;
+    revealBuffId: any;
+    planeVAO: any;
+    planeVBO: any;
+    color0: any;
+    color1: any;
+}
+/**
+ * Directional light class
+ * @class DirectionalLight
+ */
+declare class DirectionalLight extends Light {
+    /**
+     * [Light direction]
+     * @type {Vector3<number>}
+     */
+    protected _direction: Vector3<number>;
+    /**
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction
+     */
+    constructor(direction?: Vector3<number>);
+    /**
+     * Get light direction
+     * @return {Vector3<number>}
+     */
+    /**
+     * Set light direction
+     * @param {Vector3<number>} direction
+     */
+    direction: Vector3<number>;
+}
+/**
+ * Spot light class
+ * @class SpotLight
+ */
+declare class SpotLight extends Light {
+    /**
+     * [Light position]
+     * @type {Vector3<number>}
+     */
+    protected _position: Vector3<number>;
+    /**
+     * [Light direction]
+     * @type {Vector3<number>}
+     */
+    protected _direction: Vector3<number>;
+    /**
+     * [CutOff flashlight]
+     * @type {number}
+     */
+    protected _cutOff: number;
+    /**
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction
+     */
+    constructor(position?: Vector3<number>, direction?: Vector3<number>);
+    /**
+     * Get light position
+     * @return {Vector3<number>}
+     */
+    /**
+     * Set light position
+     * @param {Vector3<number>} position
+     */
+    position: Vector3<number>;
+    /**
+     * Get light direction
+     * @return {Vector3<number>}
+     */
+    /**
+     * Set light direction
+     * @param {Vector3<number>} direction
+     */
+    direction: Vector3<number>;
 }
 declare abstract class Material {
 }
 declare class DepthMat extends Material {
-    static ss: ShaderProgram;
+    static ss: Program;
     static initialize(): void;
 }
 declare class LambertMat extends Material {
@@ -587,35 +1329,56 @@ declare class PhongMat extends Material {
 declare class ShaderMat extends Material {
 }
 declare class Cube extends Drawable {
-    protected _handle: Array<VertexBuffer>;
     constructor(side?: number);
-    protected _indicesLen: any;
-    render(): void;
 }
-declare class Teaspot extends Drawable {
-    protected _handle: Array<VertexBuffer>;
-    protected _faces: number;
-    constructor();
-    render(): void;
+declare class Icosphere extends Drawable {
+    constructor(its?: number);
 }
-declare class AudioClip {
+declare class AudioSource {
+    /**
+     * [_audioContext description]
+     * @type {AudioContext}
+     */
     protected _audioContext: AudioContext;
+    /**
+     * [_bgAudioNode description]
+     * @type {AudioBufferSourceNode}
+     */
     protected _bgAudioNode: AudioBufferSourceNode;
+    /**
+     *
+     */
     constructor();
+    /**
+     *
+     */
     initAudioContext(): void;
-    loadAudio(clipName: string): void;
-    unloadAudio(clipName: string): void;
+    /**
+     *
+     */
     stopBackgroundAudio(): void;
+    /**
+     * @param {string}
+     */
     playSound(clipName: string): void;
+    /**
+     * @return {boolean}
+     */
     isBackgroundAudioPlaying(): boolean;
+    /**
+     * @param {string}
+     */
     playBackgroundAudio(clipName: string): void;
+    /**
+     *
+     */
     protected _stopBackgroundAudio(): void;
 }
 declare class Font {
     loadFont(fontName: string): void;
     unloadFont(fontName: string): void;
 }
-declare module Font {
+declare namespace Font {
     class CharacterInfo {
         protected _texCoordLeft: number;
         protected _texCoordRight: number;
@@ -642,24 +1405,78 @@ declare class CubeMapTexture extends Texture {
     finishTex(): void;
 }
 declare class Skybox {
-    constructor(dir: string);
-    render(view: Float32Array, projection: Float32Array): void;
-    destroy(): void;
+    /**
+     * [skyboxVBO description]
+     * @type {WebGLBuffer}
+     */
     protected skyboxVBO: WebGLBuffer;
-    protected _prog: ShaderProgram;
+    /**
+     * [_prog description]
+     * @type {Program}
+     */
+    protected _prog: Program;
+    /**
+     * [cubeMapTexture description]
+     * @type {CubeMapTexture}
+     */
     protected cubeMapTexture: CubeMapTexture;
+    /**
+     * @param {string}
+     */
+    constructor(dir: string);
+    /**
+     * @param {Float32Array}
+     * @param {Float32Array}
+     */
+    render(view: Float32Array, projection: Float32Array): void;
+    /**
+     *
+     */
+    destroy(): void;
+    /**
+     * @param {Array<string>}
+     */
     protected _loadCubemap(faces: Array<string>): void;
 }
 declare class Sprite {
-    static prog: ShaderProgram;
+    static prog: Program;
     static buffer: VertexBuffer;
     static initialize(): void;
+}
+declare class Object3D {
+    protected _childs: Array<Object3D>;
+    _id: string;
+    constructor();
+    add(...childs: Object3D[]): void;
+    remove(child: Object3D): void;
+    removeAll(): void;
+    protected static uidCounters: {};
+    protected static uid(id?: string): string;
+}
+declare abstract class Scene {
+    abstract initScene(): any;
+    abstract update(t: number): any;
+    abstract render(): any;
+    abstract resize(width: number, height: number): any;
+    constructor();
+    animate(value: boolean): void;
+    animating(): boolean;
+    protected _animate: boolean;
+}
+declare class SceneGraph {
+    protected _root: Object3D;
+    protected _lights: Array<Light>;
+    constructor();
+    addLight(l: Light): void;
 }
 declare class FloatTexture extends Texture2D {
     constructor(image: any, size: Vector2<number>, options?: {});
 }
-declare class Texture3D extends Texture {
-    constructor(data: any, size: Vector3<number>, options?: {});
+declare class SimpleTexture3D extends Texture3D {
+    constructor(size: Vector3<number>, options?: {});
+}
+declare class Texture2DArray extends Texture {
+    constructor();
     bind(slot?: number): void;
     destroy(): void;
 }

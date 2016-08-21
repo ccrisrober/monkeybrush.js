@@ -33,9 +33,11 @@
 - [ ] Occlusion Query
 - [ ] Multi context
 - [ ] Picking
+- [ ] Workers
 - [ ] Basic Transparency
 - [ ] Woit Transparency
 - [ ] Transform feedback
+- [ ] Shader extraction (https://github.com/mattdesl/gl-shader-extract)
 - [ ] UBO (projection, view, model, normalMatrix)
 
 ```bash

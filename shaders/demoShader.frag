@@ -98,7 +98,7 @@ void main() {
     // apply gamma correction
     //float gamma = 2.2;
     //fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
-    //fragColor = texture(texSampler, matcap(outPosition, outNormal));
+    fragColor = texture(texSampler, matcap(outPosition, norm));
     // Apply fog
     //colorWithFog(fragColor.rgb);
 

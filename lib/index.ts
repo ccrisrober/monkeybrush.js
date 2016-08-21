@@ -1,26 +1,26 @@
-/// <reference path="core/core.ts" />
-/// <reference path="stats.d.ts" />
-/// <reference path="dat-gui.d.ts" />
-/// <reference path="core/shaderProgram.ts" />
-/// <reference path="resources/shaderManager.ts" />
-/// <reference path="resources/resourceMap.ts" />
-/// <reference path="resources/loaders.ts" />
-/// <reference path="models/torus.ts" />
-/// <reference path="models/sphere.ts" />
-/// <reference path="models/quad.ts" />
-/// <reference path="models/mesh.ts" />
-/// <reference path="textures/texture2d.ts" />
-/// <reference path="textures/texture3d.ts" />
+/// <reference path="library/core/core.ts" />
+/// <reference path="library/core/program.ts" />
+/// <reference path="library/resources/shaderManager.ts" />
+/// <reference path="library/resources/resourceMap.ts" />
+/// <reference path="library/resources/loaders.ts" />
+/// <reference path="library/models/torus.ts" />
+/// <reference path="library/models/sphere.ts" />
+/// <reference path="library/models/quad.ts" />
+/// <reference path="library/models/mesh.ts" />
+/// <reference path="library/textures/texture2d.ts" />
+/// <reference path="library/textures/texture3d.ts" />
 
-/// <reference path="core/gbuffer.ts" />
-/// <reference path="core/gbufferSSAO.ts" />
-/// <reference path="core/postprocess.ts" />
-/// <reference path="extras/timer.ts" />
+/// <reference path="library/core/gbuffer.ts" />
+/// <reference path="library/core/gbufferSSAO.ts" />
+/// <reference path="library/core/postprocess.ts" />
+/// <reference path="library/extras/timer.ts" />
 
-/// <reference path="lights/pointLight.ts" />
-/// <reference path="_demoCamera.ts" />
-/// <reference path="core/postProcess.ts" />
-/// <reference path="_init_.ts" />
+/// <reference path="library/lights/pointLight.ts" />
+/// <reference path="library/_demoCamera.ts" />
+/// <reference path="library/core/postProcess.ts" />
+/// <reference path="library/_init_.ts" />
+
+"use strict";
 
 let camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
 
@@ -42,7 +42,7 @@ let projection;
 
 let tex2d: Texture2D;
 
-let light = new PointLight(new Float32Array( [-5.0, 0.0, 0.0] ));
+let light = new PointLight(new Vector3<number>( -5.0, 0.0, 0.0 ));
 
 let identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
@@ -51,7 +51,7 @@ let angle = 0;
 
 let text = SimpleConfig();
 function loadAssets() {
-    loaders.loadImage("example.png");
+    loaders.loadImage("assets/images/example.png", "exampleImg");
 }
 
 const mainShader: string = "prog";
@@ -63,7 +63,7 @@ function initialize() {
     esferita = new Sphere(1.0, 20, 20);
     torito = new Torus(3.7, 2.3, 25, 10);
     planito = new Quad(100.0, 100.0, 2.0, 2.0);
-    m = new Mesh("teddy.json");
+    m = new Mesh("assets/objects/teddy.json");
 
     let canvasSize = new Vector2<number>(
         gl_.canvas.width,
@@ -82,8 +82,8 @@ function initialize() {
 
     const vsize = new Vector3<number>(100, 100, 100);
 
-    ShaderManager.addWithFun("prog", (): ShaderProgram => {
-        let prog: ShaderProgram = new ShaderProgram();
+    ShaderManager.addWithFun("prog", (): Program => {
+        let prog: Program = new Program();
         prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
         prog.addShader("./shaders/demoShader.frag", shader_type.fragment, mode.read_file);
         prog.compile();
@@ -92,8 +92,8 @@ function initialize() {
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
         return prog;
     }); 
-    ShaderManager.addWithFun("blur", (): ShaderProgram => {
-        let prog2: ShaderProgram = new ShaderProgram();
+    ShaderManager.addWithFun("blur", (): Program => {
+        let prog2: Program = new Program();
         prog2.addShader(`#version 300 es
             precision highp float;
             layout(location = 0) in vec3 vertPosition;
@@ -128,13 +128,16 @@ function initialize() {
 
                 //fragColor = vec4(texture(dataTexture, texCoord).rgb, 0.5);
 
-                vec2 ts = vec2(1.0) / vec2 (800, 800);
-                vec4 color = vec4 (0.0);
-                for (uint i = 0u; i < MASK_SIZE; i++) {
-                    vec2 iidx = texCoord + ts * texIdx[i];
-                    color += texture(dataTexture, iidx,0.0) * mask[i];
-                }
-                fragColor = color;
+                //vec2 ts = vec2(1.0) / vec2 (800, 800);
+                //vec4 color = vec4 (0.0);
+                //for (uint i = 0u; i < MASK_SIZE; i++) {
+                //    vec2 iidx = texCoord + ts * texIdx[i];
+                //    color += texture(dataTexture, iidx,0.0) * mask[i];
+                //}
+                //fragColor = color;
+
+                fragColor = vec4(vec3(1.0) - texture(dataTexture, texCoord).rgb, 1.0);
+
             }`, shader_type.fragment, mode.read_text);
         prog2.compile();
 
@@ -142,7 +145,7 @@ function initialize() {
         return prog2;
     });
 
-    let cubeImage = ResourceMap.retrieveAsset("example.png");
+    let cubeImage = ResourceMap.retrieveAsset("exampleImg");
     const gl = Core.getInstance().getGL();
     tex2d = new Texture2D(cubeImage, {
         flipY: true,
