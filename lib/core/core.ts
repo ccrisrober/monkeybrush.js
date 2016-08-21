@@ -2,6 +2,7 @@
 /// <reference path="../resources/quadToneMap.ts" />
 /// <reference path="../stats.d.ts" />
 
+declare var WebGL2RenderingContext: any;
 "use strict";
 /**
 * This class get WebGL2 context and animationFrame for your navigator.
@@ -48,7 +49,7 @@ class Core {
 		this._getVendors();
 
 		Input.getInstance();
-		//this.init();
+		// this.init();
 
 		Core._instance = this;
 	}
@@ -88,7 +89,7 @@ class Core {
 	}
 
 	/**
-	* Return global WebGL2 context
+	* Return global WebGL context
 	*
 	* @method getGL
 	* @return {WebGLRenderingContext} Returns WebGL rendering context
@@ -124,20 +125,20 @@ class Core {
 			}
 		}
 		// Manual fallback
-		if(!window.requestAnimationFrame) {
-			var lastTime = 0;
+		if (!window.requestAnimationFrame) {
+			let lastTime = 0;
 			window.requestAnimationFrame = function(cb) {
-				var currTime = Date.now();
-				var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-				var id = window.setTimeout(function() {
+				const currTime = Date.now();
+				const timeToCall = Math.max(0, 16 - (currTime - lastTime));
+				const id = window.setTimeout(function() {
 					cb(currTime + timeToCall);
 				}, timeToCall);
 				lastTime = currTime + timeToCall;
 				return id;
-			}
+			};
 		}
 
-		if(!window.cancelAnimationFrame) {
+		if (!window.cancelAnimationFrame) {
 			window.cancelAnimationFrame = function(id) {
 				clearTimeout(id);
 			};

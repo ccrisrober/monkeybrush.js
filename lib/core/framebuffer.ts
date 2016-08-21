@@ -1,5 +1,6 @@
 /// <reference path="core.ts" />
 /// <reference path="../textures/texture.ts" />
+/// <reference path="../textures/simpleTexture2D.ts" />
 /// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="../extras/Vector2.ts" />
 
@@ -9,12 +10,12 @@ class Framebuffer {
 	protected _size: Vector2<number>;
 	protected _handle: WebGLFramebuffer;
 	protected _attachments: Array<number>;
-	//protected _depth: Texture;
-	public _renderBuffer : RenderBufferTexture;
-	// protected _colorBuffer: Texture;
+	public _renderBuffer: RenderBufferTexture;
+	public _depth: SimpleTexture2D;
 
 	public _colors: Array<Texture>;
-
+	
+	// TODO: Stencil unused
 	constructor(textures: Array<Texture>, size: Vector2<number>, depth: boolean = false, stencil: boolean = false, options = {}) {
 		const gl = Core.getInstance().getGL();
 
@@ -30,6 +31,7 @@ class Framebuffer {
 		options = options || {};
 
 		this._colors = textures;
+		this._size = size;
 
 		this._handle = gl.createFramebuffer();
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
@@ -52,7 +54,7 @@ class Framebuffer {
 
 		// TODO: Check no texture attachments (default render buffer storage)
 
-		if(depth) {
+		if (depth) {
 			this._renderBuffer = new RenderBufferTexture(
 				size,
 				gl.DEPTH_COMPONENT16,
@@ -61,13 +63,35 @@ class Framebuffer {
 		}
 
 		/**
+		// TODO
 		if (depth && stencil) {
-				// TODO options.floatDepth ??
-			this._depth = initTexture2D(size, gl.UNSIGNED_INT_24_8, gl.DEPTH_STENCIL, gl.DEPTH_STENCIL_ATTACHMENT);
+			this._depth = new SimpleTexture2D(size, {
+				type: (<any>gl).UNSIGNED_INT_24_8,
+				format: gl.DEPTH_STENCIL
+			});
+			let target = this._depth.target;
+
+			gl.framebufferTexture2D(gl.FRAMEBUFFER,
+				gl.DEPTH_STENCIL_ATTACHMENT,
+				target,
+				this._depth.handle(), 0);
 		} else if (depth && !stencil) {
-			this._depth = initTexture2D(size, gl.UNSIGNED_SHORT, gl.DEPTH_ATTACHMENT, gl.DEPTH_ATTACHMENT);
-		} else if (!depth && stencil) {
-			this._renderBuffer = this.createRenderBuffer(size, gl.STENCIL_INDEX, gl.STENCIL_ATTACHMENT);
+			this._depth = new SimpleTexture2D(size, {
+				type: (<any>gl).UNSIGNED_SHORT,
+				format: gl.DEPTH_COMPONENT
+			});
+			let target = this._depth.target;
+
+			gl.framebufferTexture2D(gl.FRAMEBUFFER,
+				gl.DEPTH_ATTACHMENT,
+				target,
+				this._depth.handle(), 0);
+		} else {
+			this._renderBuffer = new RenderBufferTexture(
+				size,
+				gl.STENCIL_INDEX,
+				gl.STENCIL_ATTACHMENT
+			);
 		}
 		/**/
 
@@ -83,12 +107,12 @@ class Framebuffer {
 		let status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 		if (status !== gl.FRAMEBUFFER_COMPLETE) {
 			this.destroy();
-			this._throwFBOError(status);
+			this.checkStatus(status);
 		}
 		this.unbind();
 	}
 
-	private _throwFBOError(status: number) {
+	private checkStatus(status: number) {
 		const gl = Core.getInstance().getGL();
 		switch (status) {
 			case gl.FRAMEBUFFER_UNSUPPORTED:
@@ -143,17 +167,16 @@ class Framebuffer {
 
 		gl.deleteFramebuffer(this._handle);
 
-		/*if (this._depth) {
-			this._depth.destroy();
-			this._depth = null;
-		}*/
-
 		// Destroy depth/stencil
 		if (this._renderBuffer) {
 			this._renderBuffer.destroy();
 			this._renderBuffer = null;
 		}
 
-		// Color buffer default TODO
+		// Destroy depth
+		if (this._depth) {
+			this._depth.destroy();
+			this._depth = null;
+		}
 	}
 }

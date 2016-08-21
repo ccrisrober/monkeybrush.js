@@ -1,8 +1,6 @@
 /// <reference path="drawable.ts" />
 
 class Quad extends Drawable {
-	protected _handle: Array<VertexBuffer>;
-
 	constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax = 1.0, tmax = 1.0) {
 		super();
 		let v = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
@@ -70,12 +68,5 @@ class Quad extends Drawable {
         this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
 
         this._indicesLen = el.length;
-	}
-	protected _indicesLen;
-	public render() {
-		const gl = Core.getInstance().getGL();
-        this._vao.bind();
-		// gl.drawElements(gl.TRIANGLES, 6 * this._faces, gl.UNSIGNED_INT, 0);	// TODO: UNSIGNED_INT => https://developer.mozilla.org/en-US/docs/Web/API/OES_element_index_uint
-		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 }

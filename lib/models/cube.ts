@@ -1,7 +1,6 @@
 /// <reference path="drawable.ts" />
 
 class Cube extends Drawable {
-	protected _handle: Array<VertexBuffer>;
 	constructor(side: number = 1.0) {
 		super();
 	    const side2 = side / 2.0;
@@ -131,13 +130,5 @@ class Cube extends Drawable {
         this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
 
         this._indicesLen = el.length;
-	}
-
-
-	protected _indicesLen;
-	public render() {
-		const gl = Core.getInstance().getGL();
-        this._vao.bind();
-		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 	}
 }

@@ -1,8 +1,6 @@
 /// <reference path="drawable.ts" />
 
 class Sphere extends Drawable {
-	protected _handle: Array<VertexBuffer>;
-
 	constructor(radius: number, slices: number, stacks: number) {
 		super();
 
@@ -91,14 +89,8 @@ class Sphere extends Drawable {
 
         this._indicesLen = el.length;
 	}
-	protected _indicesLen;
-	public render() {
-		const gl = Core.getInstance().getGL();
-        this._vao.bind();
-		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-		
+	// public render() {
 		// gl.lineWidth(1.0);
 		// Puts vertices to buffer and links it to attribute letiable 'ppos'
 		// gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-	}
 }

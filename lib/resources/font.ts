@@ -3,8 +3,8 @@
 class Font {
 	public loadFont(fontName: string) {
 		if (!(ResourceMap.isAssetLoaded(fontName))) {
-			var fontInfoSrcStr = fontName + ".fnt";
-			var texSrcStr = fontName + ".png";
+			const fontInfoSrcStr = fontName + ".fnt";
+			const texSrcStr = fontName + ".png";
 
 			ResourceMap.asyncLoadRequested(fontName);
 
@@ -16,8 +16,8 @@ class Font {
 	}
 	public unloadFont(fontName: string) {
 		if (!(ResourceMap.unloadAsset(fontName))) {
-			var fontInfoSrcStr = fontName + ".fnt";
-			var texSrcStr = fontName + ".png";
+			const fontInfoSrcStr = fontName + ".fnt";
+			const texSrcStr = fontName + ".png";
 
 			// Destroy texture
 			// Destroy text file
@@ -25,7 +25,7 @@ class Font {
 	}
 }
 
-module Font {
+namespace Font {
 	export class CharacterInfo {
 		// in texture coordinate (0 to 1) maps to the entier image
 		protected _texCoordLeft = 0;

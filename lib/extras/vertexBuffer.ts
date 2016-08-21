@@ -9,7 +9,7 @@ class VertexBuffer {
 	}
 	public bind(type?: BufferType) {
 		const gl = Core.getInstance().getGL();
-		if(type !== undefined) {
+		if (type !== undefined) {
 			this._type = type;
 		}
 		gl.bindBuffer(this._type, this._buffer);
