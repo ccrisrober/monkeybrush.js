@@ -44,6 +44,8 @@ void colorWithFog(out vec3 color) {
     color = mix(fogColor, color, fogFactor);
 }
 
+const float levels = 5.0;
+const float thickness = 0.1;
 
 void main() {
 	/*fragColor = vec4(normalize(outNormal), 1.0);
@@ -54,7 +56,7 @@ void main() {
 	fragColor = vec4(color, 1.0);*/
 
 	vec3 ambColor = vec3(0.24725, 0.1995, 0.0745);
-	vec3 objectColor = texture(texSampler, outUV).rgb;//vec3(0.75164, 0.60648, 0.22648);
+	vec3 objectColor = /*texture(texSampler, outUV).rgb;//*/vec3(1.0, 0.0, 0.0);
 	vec3 specColor = vec3(0.628281, 0.555802, 0.366065);
 	float shininess = 0.4;
 
@@ -64,12 +66,20 @@ void main() {
 
     // Diffuse 
     vec3 norm = normalize(outNormal);
+
+
+    vec3 viewDir = normalize(viewPos - outPosition);
+    if (abs(dot(viewDir, norm)) < thickness) {
+        fragColor = vec4(vec3(0.0), 1.0);
+        return;
+    }
+
     vec3 lightDir = normalize(lp - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
+    diff = floor(diff * levels) * (1.0 / levels);
     vec3 diffuse = diff * lightColor;
 
     // Specular
-    vec3 viewDir = normalize(viewPos - outPosition);
     /*vec3 reflectDir = reflect(-lightDir, norm);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);*/
     vec3 halfwayDir = normalize(lightDir + viewDir);  
@@ -85,7 +95,7 @@ void main() {
 
     float attenuation = 1.0 / (constant + linear * dist + quadratic * (dist * dist));    
 
-    attenuation = 1.0;
+    //attenuation = 1.0;
 
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
@@ -98,7 +108,7 @@ void main() {
     // apply gamma correction
     //float gamma = 2.2;
     //fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
-    fragColor = texture(texSampler, matcap(outPosition, norm));
+    //fragColor = texture(texSampler, matcap(outPosition, norm));
     // Apply fog
     //colorWithFog(fragColor.rgb);
 

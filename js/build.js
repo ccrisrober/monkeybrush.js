@@ -728,57 +728,72 @@ var BlendingEq;
 "use strict";
 ;
 ;
-var ShaderManager;
-(function (ShaderManager) {
+var ProgramManager;
+(function (ProgramManager) {
     /**
-     * [Program description]
-     * @type {[type]}
+     * [Program cache]
      */
     var _progDictionary = {};
     /**
-     * @param  {string}
+     * Get program from name
+     * @param  {string} name: Program name
      * @return {Program}
      */
     function get(name) {
-        return _progDictionary[name];
+        var prog = _progDictionary[name];
+        if (!prog) {
+            throw new Error("Program " + name + " undefined");
+        }
+        return prog;
     }
-    ShaderManager.get = get;
+    ProgramManager.get = get;
     /**
-     * @param {string}
-     * @param {ShaderCallback}
+     * Execute a callback function using the specified program (name).
+     * @param  {string} name: Program name
+     * @param {ProgramUseCallback}: Function to execute
+     */
+    function getCB(name, cb) {
+        var prog = get(name);
+        if (!prog) {
+            throw new Error("Program " + name + " undefined");
+        }
+        cb(prog);
+    }
+    ProgramManager.getCB = getCB;
+    /**
+     * Add a new program with his name and a function that creates the program.
+     * @param {string} name: Program name
+     * @param {ProgramCallback}: Function that creates the program (return program)
      */
     function addWithFun(name, fn) {
-        _progDictionary[name] = fn();
+        add(name, fn());
     }
-    ShaderManager.addWithFun = addWithFun;
+    ProgramManager.addWithFun = addWithFun;
     /**
-     * @param {string}
-     * @param {Program}
+     * Add a existing program with his name and the program.
+     * @param {string} name: Program name.
+     * @param {Program} prog: Existing program.
      */
     function add(name, prog) {
+        if (!prog) {
+            throw new Error("Program " + name + " undefined");
+        }
         _progDictionary[name] = prog;
     }
-    ShaderManager.add = add;
+    ProgramManager.add = add;
     /**
-     *
+     * Destroy all programs and clear cache.
      */
     function destroy() {
         for (var key in _progDictionary) {
             _progDictionary[key].destroy();
         }
+        _progDictionary = {};
     }
-    ShaderManager.destroy = destroy;
-    /**
-     * @param {string}
-     * @param {ShaderUseCallback}
-     */
-    function getCB(name, cb) {
-        var prog = get(name);
-        cb(prog);
-    }
-    ShaderManager.getCB = getCB;
-})(ShaderManager || (ShaderManager = {}));
+    ProgramManager.destroy = destroy;
+})(ProgramManager || (ProgramManager = {}));
 ;
+/// <reference path="../../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 "use strict";
 var ResourceMap;
 (function (ResourceMap) {
@@ -833,6 +848,7 @@ var ResourceMap;
     function asyncLoadFailed(resName) {
         VanillaToasts.create({
             title: resName + " completed",
+            text: "",
             type: "error",
             timeout: 2500
         });
@@ -848,12 +864,14 @@ var ResourceMap;
         if (!isAssetLoaded(resName)) {
             VanillaToasts.create({
                 title: "asyncLoadCompleted: [" + resName + "] not in map!",
+                text: "",
                 type: "error",
                 timeout: 2500
             });
         }
         VanillaToasts.create({
             title: resName + " completed",
+            text: "",
             type: "success",
             timeout: 1500
         });
@@ -875,6 +893,7 @@ var ResourceMap;
     }
     ;
     /**
+     * Set callback function that called when all assets have finished loading.
      * @param {Function}
      */
     function setLoadCompleteCallback(fn) {
@@ -884,7 +903,8 @@ var ResourceMap;
     ResourceMap.setLoadCompleteCallback = setLoadCompleteCallback;
     ;
     /**
-     * @param {string}
+     * Get asset from alias/name
+     * @param {string} resName
      */
     function retrieveAsset(resName) {
         var r = null;
@@ -899,7 +919,9 @@ var ResourceMap;
     ResourceMap.retrieveAsset = retrieveAsset;
     ;
     /**
-     * @param {string}
+     * Check whether the resource has already been loaded.
+     * @param  {string} resName: Resource name
+     * @return {boolean}: True if resource exist
      */
     function isAssetLoaded(resName) {
         return (resName in _resourceMap);
@@ -915,6 +937,7 @@ var ResourceMap;
     ResourceMap.incAssetRefCount = incAssetRefCount;
     ;
     /**
+     * Unload a existing resource.
      * @param {string}
      */
     function unloadAsset(resName) {
@@ -1268,8 +1291,11 @@ var VertexBuffer = (function () {
 /// <reference path="../extras/vertexArray.ts" />
 /// <reference path="../extras/vertexBuffer.ts" />
 "use strict";
+/**
+ * Drawable abstract class
+ * @class Drawable
+ */
 var Drawable = (function () {
-    // TODO: Crear el VAO en el constructor y llamar a super
     function Drawable() {
         this._vao = new VertexArray();
     }
@@ -1281,21 +1307,30 @@ var Drawable = (function () {
         var gl = Core.getInstance().getGL();
         buffer.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
     };
+    /**
+     * Normal render
+     */
     Drawable.prototype.render = function () {
         var gl = Core.getInstance().getGL();
         this._vao.bind();
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
+    /**
+     * Render with array instance mode
+     * @param {number} numInstances: Instances to render
+     */
     Drawable.prototype.renderArrayInstance = function (numInstances) {
         var gl = Core.getInstance().getGL();
         this._vao.bind();
         if (gl instanceof WebGL2RenderingContext) {
             gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
         }
-        var ext = gl.getExtension("ANGLE_instanced_arrays");
-        if (ext) {
-            ext.drawElementsInstancedANGLE(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
+        else {
+            var ext = gl.getExtension("ANGLE_instanced_arrays");
+            if (ext) {
+                ext.drawElementsInstancedANGLE(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
+            }
         }
         // this.vao.unbind();
     };
@@ -1308,6 +1343,10 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/**
+ * Torus class
+ * @class Torus
+ */
 var Torus = (function (_super) {
     __extends(Torus, _super);
     function Torus(outerRadius, innerRadius, sides, rings) {
@@ -1392,6 +1431,10 @@ var Torus = (function (_super) {
 })(Drawable);
 /// <reference path="drawable.ts" />
 "use strict";
+/**
+ * Sphere class
+ * @class Sphere
+ */
 var Sphere = (function (_super) {
     __extends(Sphere, _super);
     function Sphere(radius, slices, stacks) {
@@ -1481,9 +1524,13 @@ var Sphere = (function (_super) {
 })(Drawable);
 /// <reference path="drawable.ts" />
 "use strict";
-var Quad = (function (_super) {
-    __extends(Quad, _super);
-    function Quad(xsize, zsize, xdivs, zdivs, smax, tmax) {
+/**
+ * Quad class
+ * @class Quad
+ */
+var Plane = (function (_super) {
+    __extends(Plane, _super);
+    function Plane(xsize, zsize, xdivs, zdivs, smax, tmax) {
         if (smax === void 0) { smax = 1.0; }
         if (tmax === void 0) { tmax = 1.0; }
         _super.call(this);
@@ -1544,7 +1591,142 @@ var Quad = (function (_super) {
         this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
         this._indicesLen = el.length;
     }
-    return Quad;
+    return Plane;
+})(Drawable);
+/// <reference path="drawable.ts" />
+"use strict";
+/**
+ * Cube class
+ * @class Cube
+ */
+var Cube = (function (_super) {
+    __extends(Cube, _super);
+    /**
+     * @param {number = 1.0} side: Number of sides
+     */
+    function Cube(side) {
+        if (side === void 0) { side = 1.0; }
+        _super.call(this);
+        var side2 = side / 2.0;
+        var v = [
+            // Front
+            -side2, -side2, side2,
+            side2, -side2, side2,
+            side2, side2, side2,
+            -side2, side2, side2,
+            // Right
+            side2, -side2, side2,
+            side2, -side2, -side2,
+            side2, side2, -side2,
+            side2, side2, side2,
+            // Back
+            -side2, -side2, -side2,
+            -side2, side2, -side2,
+            side2, side2, -side2,
+            side2, -side2, -side2,
+            // Left
+            -side2, -side2, side2,
+            -side2, side2, side2,
+            -side2, side2, -side2,
+            -side2, -side2, -side2,
+            // Bottom
+            -side2, -side2, side2,
+            -side2, -side2, -side2,
+            side2, -side2, -side2,
+            side2, -side2, side2,
+            // Top
+            -side2, side2, side2,
+            side2, side2, side2,
+            side2, side2, -side2,
+            -side2, side2, -side2
+        ];
+        var n = [
+            // Front
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            // Right
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            // Back
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            // Left
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
+            // Bottom
+            0.0, -1.0, 0.0,
+            0.0, -1.0, 0.0,
+            0.0, -1.0, 0.0,
+            0.0, -1.0, 0.0,
+            // Top
+            0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0
+        ];
+        var tex = [
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0
+        ];
+        var el = [
+            0, 1, 2, 0, 2, 3,
+            4, 5, 6, 4, 6, 7,
+            8, 9, 10, 8, 10, 11,
+            12, 13, 14, 12, 14, 15,
+            16, 17, 18, 16, 18, 19,
+            20, 21, 22, 20, 22, 23
+        ];
+        var gl = Core.getInstance().getGL();
+        this._handle = new Array(4);
+        var i = 0;
+        this._handle[i] = new VertexBuffer(BufferType.ElementArray);
+        for (i = 1; i < 4; i++) {
+            this._handle[i] = new VertexBuffer(BufferType.Array);
+        }
+        this._vao.bind();
+        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
+        this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
+        this.addAttrib_(1, this.createBuffer(new Float32Array(n), this._handle[2]), 3);
+        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
+        this._indicesLen = el.length;
+    }
+    return Cube;
 })(Drawable);
 "use strict";
 var ObjLoader;
@@ -1649,6 +1831,10 @@ var ObjLoader;
 /// <reference path="../extras/vertexArray.ts" />
 /// <reference path="../extras/objLoader.ts" />
 "use strict";
+/**
+ * Mesh class
+ * @class Mesh
+ */
 var Mesh = (function (_super) {
     __extends(Mesh, _super);
     function Mesh(fileRoute) {
@@ -1703,18 +1889,24 @@ var Mesh = (function (_super) {
 })(Drawable);
 ;
 "use strict";
+/**
+ * Vector2<T> class
+ * @class Vector2<T>
+ */
 var Vector2 = (function () {
     /**
-     * @param {T}
-     * @param {T}
+     * Vector2<T> constructor
+     * @param {T} x: First value
+     * @param {T} y: Second value
      */
     function Vector2(x, y) {
         this.x = x;
         this.y = y;
     }
     /**
-     * @param  {Vector2<T>}
-     * @return {boolean}
+     * Check if two vector2<T> are equals
+     * @param  {Vector2<T>} other: Second vector
+     * @return {boolean}: True if both equals
      */
     Vector2.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y;
@@ -1722,7 +1914,7 @@ var Vector2 = (function () {
     return Vector2;
 })();
 /// <reference path="../core/core.ts" />
-/// <reference path="../extras/Vector2.ts" />
+/// <reference path="..//maths/vector2.ts" />
 "use strict";
 // TODO: Redimension
 var Texture = (function () {
@@ -1832,11 +2024,16 @@ var Texture2D = (function (_super) {
     return Texture2D;
 })(Texture);
 "use strict";
+/**
+ * Vector3<T> class
+ * @class Vector3<T>
+ */
 var Vector3 = (function () {
     /**
-     * @param {T}
-     * @param {T}
-     * @param {T}
+     * Vector3<T> constructor
+     * @param {T} x: First value
+     * @param {T} y: Second value
+     * @param {T} z: Third value
      */
     function Vector3(x, y, z) {
         this.x = x;
@@ -1844,8 +2041,9 @@ var Vector3 = (function () {
         this.z = z;
     }
     /**
-     * @param  {Vector3<T>}
-     * @return {boolean}
+     * Check if two vector3<T> are equals
+     * @param  {Vector3<T>} other: Second vector
+     * @return {boolean}: True if both equals
      */
     Vector3.prototype.isEqual = function (other) {
         return this.x === other.x && this.y === other.y && this.z === other.z;
@@ -1853,7 +2051,7 @@ var Vector3 = (function () {
     return Vector3;
 })();
 /// <reference path="texture.ts" />
-/// <reference path="../extras/Vector3.ts" />
+/// <reference path="..//maths/vector3.ts" />
 "use strict";
 var Texture3D = (function (_super) {
     __extends(Texture3D, _super);
@@ -1878,13 +2076,13 @@ var Texture3D = (function (_super) {
             /*(<any>gl).texSubImage3D(
                 this.target,
                 0,  // level
-                _internalformat,	// Internal format A GLenum specifying the format of the texel data
+                _internalformat,    // Internal format A GLenum specifying the format of the texel data
                 size.x,
                 size.y,
                 size.z,
                 0,
-                _format,	// Format2
-                _type,	// A GLenum specifying the data type of the texel data
+                _format,    // Format2
+                _type,  // A GLenum specifying the data type of the texel data
                 data
             );*/
             gl.texImage3D(this.target, 0, _internalformat, size.x, size.y, size.z, 0, _format, _type, data);
@@ -1991,7 +2189,7 @@ var SimpleTexture2D = (function (_super) {
     };
     return SimpleTexture2D;
 })(Texture);
-/// <reference path="../extras/Vector2.ts" />
+/// <reference path="..//maths/vector2.ts" />
 /// <reference path="../core/Core.ts" />
 "use strict";
 var RenderBufferTexture = (function () {
@@ -2013,7 +2211,7 @@ var RenderBufferTexture = (function () {
 /// <reference path="../textures/texture.ts" />
 /// <reference path="../textures/simpleTexture2D.ts" />
 /// <reference path="../textures/renderBufferTexture.ts" />
-/// <reference path="../extras/Vector2.ts" />
+/// <reference path="..//maths/vector2.ts" />
 "use strict";
 // TODO: Redimension
 // TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
@@ -2155,7 +2353,7 @@ var Framebuffer = (function () {
     };
     return Framebuffer;
 })();
-/// <reference path="../extras/Vector2.ts" />
+/// <reference path="..//maths/vector2.ts" />
 /// <reference path="../textures/simpleTexture2D.ts" />
 /// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="core.ts" />
@@ -2226,7 +2424,7 @@ var GBuffer = (function () {
     return GBuffer;
 })();
 /// <reference path="core.ts" />
-/// <reference path="../extras/Vector2.ts" />
+/// <reference path="..//maths/vector2.ts" />
 /// <reference path="../textures/simpleTexture2D.ts" />
 /// <reference path="../textures/texture2D.ts" />
 /// <reference path="../textures/renderBufferTexture.ts" />
@@ -2555,7 +2753,7 @@ var Color = (function () {
     return Color;
 })();
 /// <reference path="../extras/color.ts" />
-/// <reference path="../extras/Vector3.ts" />
+/// <reference path="..//maths/vector3.ts" />
 "use strict";
 /**
  * Light abstract class
@@ -2680,8 +2878,8 @@ var PointLight = (function (_super) {
 })(Light);
 /// <reference path="core/input.ts" />
 "use strict";
-var Camera = (function () {
-    function Camera(position, up, yaw, pitch) {
+var Camera2 = (function () {
+    function Camera2(position, up, yaw, pitch) {
         if (position === void 0) { position = vec3.fromValues(0, 0, 0); }
         if (up === void 0) { up = vec3.fromValues(0, 1, 0); }
         if (yaw === void 0) { yaw = -90.0; }
@@ -2701,10 +2899,10 @@ var Camera = (function () {
         this.up = vec3.create();
         this.updateCameraVectors();
     }
-    Camera.prototype.GetPos = function () {
+    Camera2.prototype.GetPos = function () {
         return this.position;
     };
-    Camera.prototype.update = function (callback) {
+    Camera2.prototype.update = function (callback) {
         // TODO: Move input here
         this._updateCamera = false;
         var speed = 1.0;
@@ -2757,7 +2955,7 @@ var Camera = (function () {
             callback();
         }
     };
-    Camera.prototype.processKeyboard = function (direction, speed) {
+    Camera2.prototype.processKeyboard = function (direction, speed) {
         if (speed === void 0) { speed = 1.0; }
         if (this.timeElapsed > 25) {
             return;
@@ -2783,7 +2981,7 @@ var Camera = (function () {
             this.position = vec3.scaleAndAdd(this.position, this.position, this.up, -velocity);
         }
     };
-    Camera.prototype.processMouseMovement = function (xOffset, yOffset) {
+    Camera2.prototype.processMouseMovement = function (xOffset, yOffset) {
         xOffset *= this.movSpeed * 2.0 * this.timeElapsed;
         yOffset *= this.movSpeed * 2.0 * this.timeElapsed;
         this.yaw += xOffset;
@@ -2796,7 +2994,7 @@ var Camera = (function () {
         }
         this.updateCameraVectors();
     };
-    Camera.prototype.updateCameraVectors = function () {
+    Camera2.prototype.updateCameraVectors = function () {
         var front = vec3.fromValues(Math.cos(glMatrix.toRadian(this.yaw)) * Math.cos(glMatrix.toRadian(this.pitch)), Math.sin(glMatrix.toRadian(this.pitch)), Math.sin(glMatrix.toRadian(this.yaw)) * Math.cos(glMatrix.toRadian(this.pitch)));
         this.front = vec3.normalize(this.front, front);
         // Recalculate right and up vector
@@ -2805,12 +3003,12 @@ var Camera = (function () {
         this.up = vec3.cross(this.up, this.right, this.front);
         this.up = vec3.normalize(this.up, this.up);
     };
-    Camera.prototype.GetViewMatrix = function () {
+    Camera2.prototype.GetViewMatrix = function () {
         var aux = vec3.create();
         this.view = mat4.lookAt(this.view, this.position, vec3.add(aux, this.position, this.front), this.up);
         return this.view;
     };
-    Camera.prototype.GetOrthoProjectionMatrix = function (w, h) {
+    Camera2.prototype.GetOrthoProjectionMatrix = function (w, h) {
         var ymax = 0.001 * Math.tan(45.0 * Math.PI / 360);
         var ymin = -ymax;
         var xmin = ymin * (w * 1.0) / (h * 1.0);
@@ -2818,12 +3016,12 @@ var Camera = (function () {
         this.proj = mat4.ortho(this.proj, xmin, xmax, ymin, ymax, 0.001, 1000.0);
         return this.proj;
     };
-    Camera.prototype.GetProjectionMatrix = function (w, h) {
+    Camera2.prototype.GetProjectionMatrix = function (w, h) {
         this.proj = mat4.perspective(this.proj, 45.0, (w * 1.0) / (h * 1.0), 0.001, 1000.0);
         // this.proj = mat4.ortho(this.proj, -10.0, 10.0, -10.0, 10.0, 0.001, 1000.0);
         return this.proj;
     };
-    return Camera;
+    return Camera2;
 })();
 /// <reference path="core/core.ts" />
 /// <reference path="resources/resourceMap.ts" />
@@ -2906,12 +3104,13 @@ var _init__;
 })(_init__ || (_init__ = {}));
 /// <reference path="library/core/core.ts" />
 /// <reference path="library/core/program.ts" />
-/// <reference path="library/resources/shaderManager.ts" />
+/// <reference path="library/resources/programManager.ts" />
 /// <reference path="library/resources/resourceMap.ts" />
 /// <reference path="library/resources/loaders.ts" />
 /// <reference path="library/models/torus.ts" />
 /// <reference path="library/models/sphere.ts" />
-/// <reference path="library/models/quad.ts" />
+/// <reference path="library/models/plane.ts" />
+/// <reference path="library/models/cube.ts" />
 /// <reference path="library/models/mesh.ts" />
 /// <reference path="library/textures/texture2d.ts" />
 /// <reference path="library/textures/texture3d.ts" />
@@ -2924,9 +3123,10 @@ var _init__;
 /// <reference path="library/core/postProcess.ts" />
 /// <reference path="library/_init_.ts" />
 "use strict";
-var camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
+var camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 var gl_;
 var esferita;
+var cubito;
 var SimpleConfig = function () {
     return {
         max: 10
@@ -2953,8 +3153,9 @@ function initialize() {
     gl_ = Core.getInstance().getGL();
     esferita = new Sphere(1.0, 20, 20);
     torito = new Torus(3.7, 2.3, 25, 10);
-    planito = new Quad(100.0, 100.0, 2.0, 2.0);
+    planito = new Plane(100.0, 100.0, 2.0, 2.0);
     m = new Mesh("assets/objects/teddy.json");
+    cubito = new Cube(1.0);
     var canvasSize = new Vector2(gl_.canvas.width, gl_.canvas.height);
     framebuffer = new Framebuffer([
         new SimpleTexture2D(canvasSize, {
@@ -2966,7 +3167,7 @@ function initialize() {
         })
     ], canvasSize, true, true, {});
     var vsize = new Vector3(100, 100, 100);
-    ShaderManager.addWithFun("prog", function () {
+    ProgramManager.addWithFun("prog", function () {
         var prog = new Program();
         prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
         prog.addShader("./shaders/demoShader.frag", shader_type.fragment, mode.read_file);
@@ -2975,10 +3176,10 @@ function initialize() {
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
         return prog;
     });
-    ShaderManager.addWithFun("blur", function () {
+    ProgramManager.addWithFun("blur", function () {
         var prog2 = new Program();
         prog2.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 texCoord;\n            void main(void) {\n                texCoord = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", shader_type.vertex, mode.read_text);
-        prog2.addShader("#version 300 es\n            precision highp float;\n            uniform sampler2D dataTexture;\n\n            out vec4 fragColor;\n            in vec2 texCoord;\n\n\n            \n            #define MASK_SIZE 9u\n            const vec2 texIdx[MASK_SIZE] = vec2[](\n                vec2(-1.0,1.0), vec2(0.0,1.0), vec2(1.0,1.0),\n                vec2(-1.0,0.0), vec2(0.0,0.0), vec2(1.0,1.0),\n                vec2(-1.0,-1.0), vec2(0.0,-1.0), vec2(1.0,-1.0));\n\n            const float mask[MASK_SIZE] = float[](\n            0.0, -1.0, 0.0,\n            -1.0, 5.0, -1.0,\n            0.0, -1.0, 0.0);\n\n            void main() {\n                //fragColor = vec4(texCoord, 0.0, 1.0);\n                //fragColor = texture(dataTexture, texCoord);\n\n                //fragColor = vec4(texture(dataTexture, texCoord).rgb, 0.5);\n\n                //vec2 ts = vec2(1.0) / vec2 (800, 800);\n                //vec4 color = vec4 (0.0);\n                //for (uint i = 0u; i < MASK_SIZE; i++) {\n                //    vec2 iidx = texCoord + ts * texIdx[i];\n                //    color += texture(dataTexture, iidx,0.0) * mask[i];\n                //}\n                //fragColor = color;\n\n                fragColor = vec4(vec3(1.0) - texture(dataTexture, texCoord).rgb, 1.0);\n\n            }", shader_type.fragment, mode.read_text);
+        prog2.addShader("#version 300 es\n            precision highp float;\n            uniform sampler2D dataTexture;\n\n            out vec4 fragColor;\n            in vec2 texCoord;\n\n            void main() {\n\n                fragColor = vec4(texture(dataTexture, texCoord).rgb, 1.0);\n\n            }", shader_type.fragment, mode.read_text);
         prog2.compile();
         prog2.addUniforms(["time"]);
         return prog2;
@@ -2997,7 +3198,7 @@ function cameraUpdateCb() {
     var canvas = Core.getInstance().canvas();
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(canvas.width, canvas.height);
-    var prog = ShaderManager.get(mainShader);
+    var prog = ProgramManager.get(mainShader);
     prog.use();
     prog.sendUniformMat4("view", view);
     prog.sendUniformMat4("projection", projection);
@@ -3010,7 +3211,7 @@ function drawScene(dt) {
     camera.update(cameraUpdateCb);
     framebuffer.bind();
     Core.getInstance().clearColorAndDepth();
-    var prog = ShaderManager.get(mainShader);
+    var prog = ProgramManager.get(mainShader);
     prog.use();
     tex2d.bind(0);
     prog.sendUniform1i("tex", 0);
@@ -3045,7 +3246,7 @@ function drawScene(dt) {
     tex2d.unbind();
     framebuffer.onlyBindTextures();
     Core.getInstance().clearColorAndDepth();
-    var prog2 = ShaderManager.get("blur");
+    var prog2 = ProgramManager.get("blur");
     prog2.use();
     PostProcess.render();
 }
@@ -3061,8 +3262,13 @@ window.onload = function () {
 };
 /// <reference path="../tsd.d.ts" />
 "use strict";
-var ICamera = (function () {
+/**
+ * Camera abstract class
+ * @class Camera
+ */
+var Camera = (function () {
     /**
+     * Camera definition
      * @param {Float32Array}
      * @param {number = 45.0}
      * @param {number = 0.01}
@@ -3071,7 +3277,7 @@ var ICamera = (function () {
      * @param {Float32Array = new Float32Array([0.0, 0.0, -1.0])}
      * @param {Float32Array = new Float32Array([0.0, 1.0, 0.0])}
      */
-    function ICamera(pos, fovy, near, far, aspRatio, target, up) {
+    function Camera(pos, fovy, near, far, aspRatio, target, up) {
         if (fovy === void 0) { fovy = 45.0; }
         if (near === void 0) { near = 0.01; }
         if (far === void 0) { far = 1000.0; }
@@ -3083,16 +3289,20 @@ var ICamera = (function () {
         this._view = mat4.create();
         this._up = up;
         this._look = target;
-        this.setup(fovy, aspRatio);
-        this.setup2(near, far);
+        this._fov = fovy;
+        this._ar = aspRatio;
+        this._near = near;
+        this._far = far;
         this.update();
     }
-    Object.defineProperty(ICamera.prototype, "position", {
+    Object.defineProperty(Camera.prototype, "position", {
         /**
+         * Get current camera position
          * @return {Float32Array}
          */
         get: function () { return this._position; },
         /**
+         * Set camera position
          * @param {Float32Array}
          */
         set: function (pos) { this._position = pos; },
@@ -3100,57 +3310,85 @@ var ICamera = (function () {
         configurable: true
     });
     /**
+     * Get current view matrix from camera
      * @return {Float32Array}
      */
-    ICamera.prototype.getViewMatrix = function () {
+    Camera.prototype.getViewMatrix = function () {
         return this._view;
     };
     /**
+     * Get current projection matrix from camera
      * @return {Float32Array}
      */
-    ICamera.prototype.getProjectionMatrix = function () {
+    Camera.prototype.getProjectionMatrix = function () {
         return this._projection;
     };
     /**
+     * Get current field of view from camera
      * @return {number}
      */
-    ICamera.prototype.getFOV = function () {
+    Camera.prototype.getFOV = function () {
         return this._fov;
     };
     /**
+     * Get current aspect radio from camera
      * @return {number}
      */
-    ICamera.prototype.getAspectRatio = function () {
+    Camera.prototype.getAspectRatio = function () {
         return this._ar;
     };
-    /**
-     * @param {number}
-     * @param {number}
-     */
-    ICamera.prototype.setup2 = function (near, far) {
-        this._near = near;
-        this._far = far;
-    };
-    /**
-     * @param {number}
-     * @param {number}
-     */
-    ICamera.prototype.setup = function (fovy, aspRatio) {
-        this._fov = fovy;
-        this._ar = aspRatio;
-    };
-    return ICamera;
+    Object.defineProperty(Camera.prototype, "near", {
+        /**
+         * Set near
+         * @param {number} near
+         */
+        set: function (near) { this._near = near; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Camera.prototype, "far", {
+        /**
+         * Set far
+         * @param {number} far
+         */
+        set: function (far) { this._far = far; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Camera.prototype, "fov", {
+        /**
+         * Set field of view
+         * @param {number} fovy
+         */
+        set: function (fovy) { this._fov = fovy; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Camera.prototype, "aspRatio", {
+        /**
+         * Set aspect ratio
+         * @param {number} ar
+         */
+        set: function (ar) { this._ar = ar; },
+        enumerable: true,
+        configurable: true
+    });
+    return Camera;
 })();
 ;
-/// <reference path="icamera.ts" />
+/// <reference path="camera.ts" />
 "use strict";
+/**
+ * Orthograhic camera class
+ * @class OrthoCamera
+ */
 var OrthoCamera = (function (_super) {
     __extends(OrthoCamera, _super);
     function OrthoCamera() {
         _super.apply(this, arguments);
     }
     /**
-     *
+     * Update view and projection matrix based on orthographic projection
      */
     OrthoCamera.prototype.update = function () {
         var yMin = -this._near * Math.tan(this._fov * Math.PI / 360.0);
@@ -3162,16 +3400,20 @@ var OrthoCamera = (function (_super) {
         // target: vec3.add(vec3.create(), this.position, this._front) /* 
     };
     return OrthoCamera;
-})(ICamera);
-/// <reference path="icamera.ts" />
+})(Camera);
+/// <reference path="camera.ts" />
 "use strict";
+/**
+ * Perspective camera class
+ * @class PerspectiveCamera
+ */
 var PerspectiveCamera = (function (_super) {
     __extends(PerspectiveCamera, _super);
     function PerspectiveCamera() {
         _super.apply(this, arguments);
     }
     /**
-     *
+     * Update view and projection matrix based on perspective projection
      */
     PerspectiveCamera.prototype.update = function () {
         this._projection = mat4.perspective(this._projection, this._fov, this.getAspectRatio(), this._near, this._far);
@@ -3179,7 +3421,7 @@ var PerspectiveCamera = (function (_super) {
         // target: vec3.add(vec3.create(), this.position, this._front) /* 
     };
     return PerspectiveCamera;
-})(ICamera);
+})(Camera);
 /// <reference path="core.ts" />
 "use strict";
 /**
@@ -3205,9 +3447,9 @@ var Blend = (function () {
     /**
      * Set the RGB blend equation and the alpha blend equation separately
      * @param {BlendingEqu} modeRGB: Specifies the RGB blend equation, how the red, green, and blue
-     * 		components of the source and destination colors are combined.
+     *      components of the source and destination colors are combined.
      * @param {BlendingEqu} modeAlpha: Specifies the alpha blend equation, how the alpha component
-     * 		of the source and destination colors are combined.
+     *      of the source and destination colors are combined.
      */
     Blend.equationSeparate = function (modeRGB, modeAlpha) {
         gl.blendEquationSeparate(modeRGB, modeAlpha);
@@ -3272,7 +3514,7 @@ var Blend = (function () {
     Blend.gl = Core.getInstance().getGL();
     return Blend;
 })();
-//colormask, clear, ...
+// colormask, clear, ...
 "use strict";
 /// <reference path="core.ts" />
 "use strict";
@@ -3553,7 +3795,7 @@ var LogLevel;
 namespace logger {
     let priority: LogLevel = LogLevel.ALL;
     //export function trace(...args: string[]) {
-    //	console.trace("", args);
+    //  console.trace("", args);
     //}
     export function log(...args: string[]) {
         console.log(args);
@@ -3649,6 +3891,31 @@ var Query = (function () {
     };
     return Query;
 })();
+/// <reference path="../maths/vector3.ts" />
+var Ray = (function () {
+    function Ray(origin, direction) {
+        if (origin === void 0) { origin = new Vector3(0.0, 0.0, 0.0); }
+        if (direction === void 0) { direction = new Vector3(0.0, 0.0, 0.0); }
+        this._origin = origin;
+        this._direction = direction;
+    }
+    Object.defineProperty(Ray.prototype, "origin", {
+        get: function () { return this._origin; },
+        set: function (origin) { this._origin = origin; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Ray.prototype, "direction", {
+        get: function () { return this._direction; },
+        set: function (direction) { this._direction = direction; },
+        enumerable: true,
+        configurable: true
+    });
+    Ray.prototype.point_at = function (t) {
+        return new Vector3(this._origin.x + t * this._direction.x, this._origin.y + t * this._direction.y, this._origin.z + t * this._direction.z);
+    };
+    return Ray;
+})();
 /// <reference path="../core/core.ts" />
 "use strict";
 var TransformFeedback = (function () {
@@ -3685,31 +3952,8 @@ var TransformFeedback = (function () {
     TransformFeedback.gl = Core.getInstance().getGL();
     return TransformFeedback;
 })();
-"use strict";
-var Vector4 = (function () {
-    /**
-     * @param {T}
-     * @param {T}
-     * @param {T}
-     * @param {T}
-     */
-    function Vector4(x, y, z, w) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
-    }
-    /**
-     * @param  {Vector4<T>}
-     * @return {boolean}
-     */
-    Vector4.prototype.isEqual = function (other) {
-        return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
-    };
-    return Vector4;
-})();
 /// <reference path="../core/core.ts" />
-/// <reference path="vector2.ts" />
+/// <reference path="../maths/vector2.ts" />
 /// <reference path="../core/program.ts" />
 /// <reference path="../core/blend.ts" />
 /// <reference path="../core/cull.ts" />
@@ -3747,7 +3991,7 @@ var Woit = (function () {
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.accBufTexId, 0);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthBuffTexId, 0);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, this.revealBuffId, 0);
-        /*const GLenum buffs[2] = { gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1 };
+        /* const GLenum buffs[2] = { gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1 };
         glDrawBuffers(2, buffs);
 
         if (gl.FRAMEBUFFER_COMPLETE != glCheckFramebufferStatus(gl.FRAMEBUFFER))
@@ -3768,49 +4012,49 @@ var Woit = (function () {
         var gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
         Core.getInstance().clearColorAndDepth();
-        //fwShader.add_uniform("near");
-        //fwShader.add_uniform("far");
-        //fwShader.add_uniform("alfa");
-        //fwShader.add_uniform("ww");
-        //glUniform1f(fwShader.uniform("near"), near_);
-        //glUniform1f(fwShader.uniform("far"), far_);
-        //glUniform1f(fwShader.uniform("alfa"), alfa);
-        //glUniform1f(fwShader.uniform("ww"), ww);
+        // fwShader.add_uniform("near");
+        // fwShader.add_uniform("far");
+        // fwShader.add_uniform("alfa");
+        // fwShader.add_uniform("ww");
+        // glUniform1f(fwShader.uniform("near"), near_);
+        // glUniform1f(fwShader.uniform("far"), far_);
+        // glUniform1f(fwShader.uniform("alfa"), alfa);
+        // glUniform1f(fwShader.uniform("ww"), ww);
         Depth.unuse();
         Blend.enable();
-        //glBlendFunci(0, GL_ONE, GL_ONE);
-        //glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+        // glBlendFunci(0, GL_ONE, GL_ONE);
+        // glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
     };
     Woit.prototype.secondStep = function (prog, near, far) {
         var gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
         Blend.disable();
         Blend.func(BlendingType.OneMinusSrcAlpha, BlendingType.SrcAlpha);
-        //postShader.use();
-        //postShader.add_uniform("accumTexture");
-        //postShader.add_uniform("revealageTexture");
-        //postShader.add_uniform("near");
-        //postShader.add_uniform("far");
-        //if (postShader.uniform("accumTexture") != -1) {
-        //	glActiveTexture(GL_TEXTURE0);
-        //	glBindTexture(GL_TEXTURE_2D, accumBuffTexId);
-        //	glUniform1i(postShader.uniform("accumTexture"), 0);
-        //}
-        //if (postShader.uniform("revealageTexture") != -1) {
-        //	glActiveTexture(GL_TEXTURE1);
-        //	glBindTexture(GL_TEXTURE_2D, revealageBuffTexId);
-        //	glUniform1i(postShader.uniform("revealageTexture"), 1);
-        //}
-        //glUniform1f(postShader.uniform("near"), near_);
-        //glUniform1f(postShader.uniform("far"), far_);
+        // postShader.use();
+        // postShader.add_uniform("accumTexture");
+        // postShader.add_uniform("revealageTexture");
+        // postShader.add_uniform("near");
+        // postShader.add_uniform("far");
+        // if (postShader.uniform("accumTexture") != -1) {
+        //  glActiveTexture(GL_TEXTURE0);
+        //  glBindTexture(GL_TEXTURE_2D, accumBuffTexId);
+        //  glUniform1i(postShader.uniform("accumTexture"), 0);
+        // }
+        // if (postShader.uniform("revealageTexture") != -1) {
+        //  glActiveTexture(GL_TEXTURE1);
+        //  glBindTexture(GL_TEXTURE_2D, revealageBuffTexId);
+        //  glUniform1i(postShader.uniform("revealageTexture"), 1);
+        // }
+        // glUniform1f(postShader.uniform("near"), near_);
+        // glUniform1f(postShader.uniform("far"), far_);
         Cull.disable();
         Blend.disable();
-        //glBindVertexArray(planeVAO);
-        //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        //glDepthMask(GL_TRUE);
-        //glDisable(GL_BLEND);
-        ////glEnable(GL_CULL_FACE);	// TODO: Activar/desactivar cullface
-        //postShader.unuse();
+        // glBindVertexArray(planeVAO);
+        // glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        // glDepthMask(GL_TRUE);
+        // glDisable(GL_BLEND);
+        //// glEnable(GL_CULL_FACE);    // TODO: Activar/desactivar cullface
+        // postShader.unuse();
     };
     Woit.prototype.clearBuffers = function () {
         var gl = Core.getInstance().getGL();
@@ -3907,58 +4151,442 @@ var SpotLight = (function (_super) {
 /// <reference path="pointLight.ts" />
 /// <reference path="spotLight.ts" />
 "use strict";
-var Material = (function () {
-    function Material() {
+/// <reference path="../../typings/gl-matrix.d.ts" />
+"use strict";
+/**
+ * Mat2 class
+ * @class Mat2
+ */
+var Mat2 = (function () {
+    function Mat2() {
+        var _this = this;
+        this.toString = function () {
+            return mat2.str(_this._value);
+        };
+        this._value = mat2.create();
     }
-    return Material;
-})();
-/// <reference path="material.ts" />
-/// <reference path="../core/program.ts" />
-var DepthMat = (function (_super) {
-    __extends(DepthMat, _super);
-    function DepthMat() {
-        _super.apply(this, arguments);
-    }
-    DepthMat.initialize = function () {
-        // const gl = Core.getInstance().getGL();
-        // DepthMat.ss.addShader("shaders/depthShader.vert", shader_type.vertex, mode.read_file);
+    Mat2.prototype.identity = function () {
+        mat2.identity(this._value);
     };
-    DepthMat.ss = new Program();
-    return DepthMat;
-})(Material);
-// DepthMat.initialize(); 
-/// <reference path="material.ts" />
-var LambertMat = (function (_super) {
-    __extends(LambertMat, _super);
-    function LambertMat() {
-        _super.apply(this, arguments);
+    Mat2.prototype.transpose = function () {
+        mat2.transpose(this._value, this._value);
+    };
+    Mat2.prototype.isExactEqual = function (other) {
+        return this._value[0] === this._value[0] &&
+            this._value[1] === this._value[1] &&
+            this._value[2] === this._value[2] &&
+            this._value[3] === this._value[3];
+    };
+    Mat2.prototype.isEqual = function (other) {
+        return false; // this.x == other.x && this.y == other.y;
+    };
+    return Mat2;
+})();
+/// <reference path="../../typings/gl-matrix.d.ts" />
+"use strict";
+/**
+ * Mat3 class
+ * @class Mat3
+ */
+var Mat3 = (function () {
+    function Mat3() {
+        var _this = this;
+        this.toString = function () {
+            return mat3.str(_this._value);
+        };
+        this._value = mat3.create();
     }
-    return LambertMat;
-})(Material);
-/// <reference path="material.ts" />
-var NormalMat = (function (_super) {
-    __extends(NormalMat, _super);
-    function NormalMat() {
-        _super.apply(this, arguments);
+    return Mat3;
+})();
+/// <reference path="../../typings/gl-matrix.d.ts" />
+"use strict";
+/**
+ * Mat4 class
+ * @class Mat4
+ */
+var Mat4 = (function () {
+    function Mat4() {
+        var _this = this;
+        this.toString = function () {
+            return mat4.str(_this._value);
+        };
+        this._value = mat4.create();
     }
-    return NormalMat;
-})(Material);
-/// <reference path="material.ts" />
-var PhongMat = (function (_super) {
-    __extends(PhongMat, _super);
-    function PhongMat() {
-        _super.apply(this, arguments);
+    return Mat4;
+})();
+/// <reference path="../../typings/gl-matrix.d.ts" />
+"use strict";
+/**
+ * Quaternion class
+ * @class Quaternion
+ */
+var Quaternion = (function () {
+    /**
+     * Creates a new quaternion
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     * @param {number = 0.0} z
+     * @param {number = 0.0} w
+     */
+    function Quaternion(x, y, z, w) {
+        var _this = this;
+        if (x === void 0) { x = 0.0; }
+        if (y === void 0) { y = 0.0; }
+        if (z === void 0) { z = 0.0; }
+        if (w === void 0) { w = 0.0; }
+        this.toString = function () {
+            return quat.str(_this._value);
+        };
+        this._value = quat.fromValues(x, y, z, w);
     }
-    return PhongMat;
-})(Material);
-/// <reference path="material.ts" />
-var ShaderMat = (function (_super) {
-    __extends(ShaderMat, _super);
-    function ShaderMat() {
-        _super.apply(this, arguments);
+    /**
+     * Sets a quaternion to represent the shortest rotation from one
+     *      vector to another.
+     * @param {Float32Array} init: Initial vector
+     * @param {Float32Array} dest: Destination vector
+     */
+    Quaternion.prototype.rotationTo = function (init, dest) {
+        quat.rotationTo(this._value, init, dest);
+    };
+    /**
+     * Set quaternion value to identity
+     */
+    Quaternion.prototype.setIdentity = function () {
+        quat.identity(this._value);
+    };
+    /**
+     * Create a copy of this quaternion
+     * @return {Quaternion}
+     */
+    Quaternion.prototype.clone = function () {
+        return new Quaternion(this._value[0], this._value[1], this._value[2], this._value[3]);
+    };
+    /**
+     * Calculate dot product with another quaternion
+     * @param {Quaternion}
+     */
+    Quaternion.prototype.dot = function (q) {
+        quat.dot(this._value, q._value);
+    };
+    /**
+     * Calculate multiplication with another quaternion
+     * @param {Quaternion}
+     */
+    Quaternion.prototype.mult = function (q) {
+        quat.multiply(this._value, this._value, q._value);
+    };
+    /**
+     * Normalize quaternion
+     */
+    Quaternion.prototype.normalize = function () {
+        quat.normalize(this._value, this._value);
+    };
+    /**
+     * Invert quaternion
+     */
+    Quaternion.prototype.invert = function () {
+        quat.invert(this._value, this._value);
+    };
+    /**
+     * Rotates quaternion by the given angle (in radians) about the X axis
+     * @param {number} angle: Angle (in radians) to rotate
+     */
+    Quaternion.prototype.rotateX = function (angle) {
+        quat.rotateX(this._value, this._value, angle);
+    };
+    /**
+     * Rotates quaternion by the given angle (in radians) about the Y axis
+     * @param {number} angle: Angle (in radians) to rotate
+     */
+    Quaternion.prototype.rotateY = function (angle) {
+        quat.rotateY(this._value, this._value, angle);
+    };
+    /**
+     * Rotates quaternion by the given angle (in radians) about the Z axis
+     * @param {number} angle: Angle (in radians) to rotate
+     */
+    Quaternion.prototype.rotateZ = function (angle) {
+        quat.rotateZ(this._value, this._value, angle);
+    };
+    /**
+     * Performs a linear interpolation between this and another Quaternion
+     * @param {Quaternion}
+     * @param {number} t: Intepolation amount between quaternions
+     */
+    Quaternion.prototype.lerp = function (q, t) {
+        // TODO
+    };
+    return Quaternion;
+})();
+/// <reference path="../../typings/gl-matrix.d.ts" />
+"use strict";
+/**
+ * Vect2 class
+ * @class Vect2
+ */
+var Vect2 = (function () {
+    /**
+     * Creates a new vect2
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     */
+    function Vect2(x, y) {
+        var _this = this;
+        if (x === void 0) { x = 0.0; }
+        if (y === void 0) { y = 0.0; }
+        this.toString = function () {
+            return vec2.str(_this._value);
+        };
+        this._value = vec2.fromValues(x, y);
     }
-    return ShaderMat;
-})(Material);
+    Vect2.prototype.add = function (v) {
+        vec2.add(this._value, this._value, v._value);
+    };
+    Vect2.prototype.sub = function (v) {
+        vec2.sub(this._value, this._value, v._value);
+    };
+    Vect2.prototype.mult = function (other) {
+        vec2.multiply(this._value, this._value, other._value);
+    };
+    Vect2.prototype.div = function (other) {
+        vec2.div(this._value, this._value, other._value);
+    };
+    Vect2.prototype.negate = function () {
+        vec2.negate(this._value, this._value);
+    };
+    Vect2.prototype.scale = function (value) {
+        vec2.scale(this._value, this._value, value);
+    };
+    Vect2.prototype.distance = function () {
+        return vec2.squaredLength(this._value);
+    };
+    Object.defineProperty(Vect2.prototype, "x", {
+        get: function () { return this._value[0]; },
+        set: function (value) {
+            this._value[0] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Vect2.prototype, "y", {
+        get: function () { return this._value[1]; },
+        set: function (value) {
+            this._value[1] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Vect2.prototype.lerp = function (other, t) {
+        var ax = this._value[0], ay = this._value[1];
+        return new Vect2(ax + t * (other.x - ax), ay + t * (other.y - ay));
+    };
+    Vect2.prototype.isEqual = function (other) {
+        return this.x === other.x && this.y === other.y;
+    };
+    Vect2.prototype.dot = function (other) {
+        return vec2.dot(this._value, other._value);
+    };
+    return Vect2;
+})();
+/// <reference path="../../typings/gl-matrix.d.ts" />
+"use strict";
+/**
+ * Vect3 class
+ * @class Vect3
+ */
+var Vect3 = (function () {
+    /**
+     * Creates a new vect3
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     * @param {number = 0.0} z
+     */
+    function Vect3(x, y, z) {
+        var _this = this;
+        if (x === void 0) { x = 0.0; }
+        if (y === void 0) { y = 0.0; }
+        if (z === void 0) { z = 0.0; }
+        this.toString = function () {
+            return vec3.str(_this._value);
+        };
+        this._value = vec3.fromValues(x, y, z);
+    }
+    Vect3.prototype.add = function (v) {
+        vec3.add(this._value, this._value, v._value);
+    };
+    Vect3.prototype.sub = function (v) {
+        vec3.sub(this._value, this._value, v._value);
+    };
+    Vect3.prototype.mult = function (other) {
+        vec3.multiply(this._value, this._value, other._value);
+    };
+    Vect3.prototype.div = function (other) {
+        vec3.div(this._value, this._value, other._value);
+    };
+    Vect3.prototype.negate = function () {
+        vec3.negate(this._value, this._value);
+    };
+    Vect3.prototype.scale = function (value) {
+        vec3.scale(this._value, this._value, value);
+    };
+    Vect3.prototype.distance = function () {
+        return vec3.squaredLength(this._value);
+    };
+    Object.defineProperty(Vect3.prototype, "x", {
+        get: function () { return this._value[0]; },
+        set: function (value) {
+            this._value[0] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Vect3.prototype, "y", {
+        get: function () { return this._value[1]; },
+        set: function (value) {
+            this._value[1] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Vect3.prototype, "z", {
+        get: function () { return this._value[2]; },
+        set: function (value) {
+            this._value[2] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Vect3.prototype.lerp = function (other, t) {
+        var ax = this._value[0], ay = this._value[1], az = this._value[2];
+        return new Vect3(ax + t * (other.x - ax), ay + t * (other.y - ay), az + t * (other.z - az));
+    };
+    Vect3.prototype.isEqual = function (other) {
+        return this.x === other.x && this.y === other.y && this.z === other.z;
+    };
+    Vect3.prototype.dot = function (other) {
+        return vec3.dot(this._value, other._value);
+    };
+    return Vect3;
+})();
+/// <reference path="../../typings/gl-matrix.d.ts" />
+"use strict";
+/**
+ * Vect4 class
+ * @class Vect4
+ */
+var Vect4 = (function () {
+    /**
+     * Creates a new vect2
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     * @param {number = 0.0} z
+     * @param {number = 0.0} w
+     */
+    function Vect4(x, y, z, w) {
+        var _this = this;
+        if (x === void 0) { x = 0.0; }
+        if (y === void 0) { y = 0.0; }
+        if (z === void 0) { z = 0.0; }
+        if (w === void 0) { w = 0.0; }
+        this.toString = function () {
+            return vec4.str(_this._value);
+        };
+        this._value = vec4.fromValues(x, y, z, w);
+    }
+    Vect4.prototype.add = function (v) {
+        vec4.add(this._value, this._value, v._value);
+    };
+    Vect4.prototype.sub = function (v) {
+        vec4.sub(this._value, this._value, v._value);
+    };
+    Vect4.prototype.mult = function (other) {
+        vec4.multiply(this._value, this._value, other._value);
+    };
+    Vect4.prototype.div = function (other) {
+        vec4.div(this._value, this._value, other._value);
+    };
+    Vect4.prototype.negate = function () {
+        vec4.negate(this._value, this._value);
+    };
+    Vect4.prototype.scale = function (value) {
+        vec4.scale(this._value, this._value, value);
+    };
+    Vect4.prototype.distance = function () {
+        return vec4.squaredLength(this._value);
+    };
+    Object.defineProperty(Vect4.prototype, "x", {
+        get: function () { return this._value[0]; },
+        set: function (value) {
+            this._value[0] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Vect4.prototype, "y", {
+        get: function () { return this._value[1]; },
+        set: function (value) {
+            this._value[1] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Vect4.prototype, "z", {
+        get: function () { return this._value[2]; },
+        set: function (value) {
+            this._value[2] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Vect4.prototype, "w", {
+        get: function () { return this._value[3]; },
+        set: function (value) {
+            this._value[3] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Vect4.prototype.lerp = function (other, t) {
+        var ax = this._value[0], ay = this._value[1], az = this._value[2], aw = this._value[3];
+        return new Vect4(ax + t * (other.x - ax), ay + t * (other.y - ay), az + t * (other.z - az), aw + t * (other.w - aw));
+    };
+    Vect4.prototype.isEqual = function (other) {
+        return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
+    };
+    Vect4.prototype.dot = function (other) {
+        return vec4.dot(this._value, other._value);
+    };
+    return Vect4;
+})();
+"use strict";
+/**
+ * Vector4<T> class
+ * @class Vector4<T>
+ */
+var Vector4 = (function () {
+    /**
+     * Vector4<T> constructor
+     * @param {T} x: First value
+     * @param {T} y: Second value
+     * @param {T} z: Third value
+     * @param {T} z: Fourth value
+     */
+    function Vector4(x, y, z, w) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+    }
+    /**
+     * Check if two vector4<T> are equals
+     * @param  {Vector4<T>} other: Second vector
+     * @return {boolean}: True if both equals
+     */
+    Vector4.prototype.isEqual = function (other) {
+        return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
+    };
+    return Vector4;
+})();
 /// <reference path="drawable.ts" />
 /*
 class Capsule extends Drawable {
@@ -4021,134 +4649,6 @@ class Capsule extends Drawable {
     }
 }
 */ 
-/// <reference path="drawable.ts" />
-"use strict";
-var Cube = (function (_super) {
-    __extends(Cube, _super);
-    function Cube(side) {
-        if (side === void 0) { side = 1.0; }
-        _super.call(this);
-        var side2 = side / 2.0;
-        var v = [
-            // Front
-            -side2, -side2, side2,
-            side2, -side2, side2,
-            side2, side2, side2,
-            -side2, side2, side2,
-            // Right
-            side2, -side2, side2,
-            side2, -side2, -side2,
-            side2, side2, -side2,
-            side2, side2, side2,
-            // Back
-            -side2, -side2, -side2,
-            -side2, side2, -side2,
-            side2, side2, -side2,
-            side2, -side2, -side2,
-            // Left
-            -side2, -side2, side2,
-            -side2, side2, side2,
-            -side2, side2, -side2,
-            -side2, -side2, -side2,
-            // Bottom
-            -side2, -side2, side2,
-            -side2, -side2, -side2,
-            side2, -side2, -side2,
-            side2, -side2, side2,
-            // Top
-            -side2, side2, side2,
-            side2, side2, side2,
-            side2, side2, -side2,
-            -side2, side2, -side2
-        ];
-        var n = [
-            // Front
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            // Right
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            // Back
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            // Left
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            // Bottom
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            // Top
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0
-        ];
-        var tex = [
-            // Front
-            0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            // Right
-            0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            // Back
-            0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            // Left
-            0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            // Bottom
-            0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            // Top
-            0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0
-        ];
-        var el = [
-            0, 1, 2, 0, 2, 3,
-            4, 5, 6, 4, 6, 7,
-            8, 9, 10, 8, 10, 11,
-            12, 13, 14, 12, 14, 15,
-            16, 17, 18, 16, 18, 19,
-            20, 21, 22, 20, 22, 23
-        ];
-        var gl = Core.getInstance().getGL();
-        this._handle = new Array(4);
-        var i = 0;
-        this._handle[i] = new VertexBuffer(BufferType.ElementArray);
-        for (i = 1; i < 4; i++) {
-            this._handle[i] = new VertexBuffer(BufferType.Array);
-        }
-        this._vao.bind();
-        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
-        this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(new Float32Array(n), this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
-        this._indicesLen = el.length;
-    }
-    return Cube;
-})(Drawable);
 /// <reference path="drawable.ts" />
 "use strict";
 var Icosphere = (function (_super) {
@@ -4364,9 +4864,9 @@ var Skybox = (function () {
         faces.push(dir + "/front.jpg");
         var gl = Core.getInstance().getGL();
         this._prog = new Program();
-        var vs = "#version 300 es\n    \tprecision highp float;\n\t\tlayout (location = 0) in vec3 position;\n\t\tout vec3 TexCoords;\n\t\tuniform mat4 projection;\n\t\tuniform mat4 view;\n\t\tvoid main() {\n\t\t\tvec4 pos = projection * view * vec4(position, 1.0);\n\t\t\tgl_Position = pos.xyww;\n\t\t\tTexCoords = position;\n\t\t}";
+        var vs = "#version 300 es\n        precision highp float;\n        layout (location = 0) in vec3 position;\n        out vec3 TexCoords;\n        uniform mat4 projection;\n        uniform mat4 view;\n        void main() {\n            vec4 pos = projection * view * vec4(position, 1.0);\n            gl_Position = pos.xyww;\n            TexCoords = position;\n        }";
         this._prog.addShader(vs, shader_type.vertex, mode.read_text);
-        var fg = "#version 300 es\n    \tprecision highp float;\n\t\tin vec3 TexCoords;\n\t\tout vec4 color;\n\t\tuniform samplerCube skybox;\n\t\tvoid main() { \n\t\t\tcolor = texture(skybox, TexCoords);\n\t\t}";
+        var fg = "#version 300 es\n        precision highp float;\n        in vec3 TexCoords;\n        out vec4 color;\n        uniform samplerCube skybox;\n        void main() { \n            color = texture(skybox, TexCoords);\n        }";
         this._prog.addShader(fg, shader_type.fragment, mode.read_text);
         this._prog.compile();
         this._prog.addUniforms(["view", "projection"]);
@@ -4469,8 +4969,8 @@ var Sprite = (function () {
     }
     Sprite.initialize = function () {
         Sprite.prog = new Program();
-        Sprite.prog.addShader("#version 300 es\nprecision mediump float;\n\nlayout(location = 0) in vec3 position;\nlayout(location = 2) in vec2 texCoord;\n\nuniform mat4 projection;\nuniform mat4 view;\nuniform mat4 model;\n\nout vec2 outTexCoord;\n\nvoid main() {\n\tgl_Position = projection * view * model * vec4(position, 1.0);\n\toutTexCoord = texCoord;\n}", shader_type.vertex, mode.read_text);
-        Sprite.prog.addShader("#version 300 es\nprecision mediump float;\n\nuniform sampler2D tex;\n\nin vec2 outTexCoord;\n\nout vec4 fragColor;\n\nvoid main() {\n\tfragColor = texture(tex, outTexCoord);\n}", shader_type.fragment, mode.read_text);
+        Sprite.prog.addShader("#version 300 es\nprecision mediump float;\n\nlayout(location = 0) in vec3 position;\nlayout(location = 2) in vec2 texCoord;\n\nuniform mat4 projection;\nuniform mat4 view;\nuniform mat4 model;\n\nout vec2 outTexCoord;\n\nvoid main() {\n    gl_Position = projection * view * model * vec4(position, 1.0);\n    outTexCoord = texCoord;\n}", shader_type.vertex, mode.read_text);
+        Sprite.prog.addShader("#version 300 es\nprecision mediump float;\n\nuniform sampler2D tex;\n\nin vec2 outTexCoord;\n\nout vec4 fragColor;\n\nvoid main() {\n    fragColor = texture(tex, outTexCoord);\n}", shader_type.fragment, mode.read_text);
         var gl = Core.getInstance().getGL();
         var initTC = [
             1.0, 1.0,
@@ -4486,6 +4986,58 @@ var Sprite = (function () {
 })();
 ;
 Sprite.initialize();
+var Material = (function () {
+    function Material() {
+    }
+    return Material;
+})();
+/// <reference path="material.ts" />
+/// <reference path="../../core/program.ts" />
+var DepthMat = (function (_super) {
+    __extends(DepthMat, _super);
+    function DepthMat() {
+        _super.apply(this, arguments);
+    }
+    DepthMat.initialize = function () {
+        // const gl = Core.getInstance().getGL();
+        // DepthMat.ss.addShader("shaders/depthShader.vert", shader_type.vertex, mode.read_file);
+    };
+    DepthMat.ss = new Program();
+    return DepthMat;
+})(Material);
+// DepthMat.initialize(); 
+/// <reference path="material.ts" />
+var LambertMat = (function (_super) {
+    __extends(LambertMat, _super);
+    function LambertMat() {
+        _super.apply(this, arguments);
+    }
+    return LambertMat;
+})(Material);
+/// <reference path="material.ts" />
+var NormalMat = (function (_super) {
+    __extends(NormalMat, _super);
+    function NormalMat() {
+        _super.apply(this, arguments);
+    }
+    return NormalMat;
+})(Material);
+/// <reference path="material.ts" />
+var PhongMat = (function (_super) {
+    __extends(PhongMat, _super);
+    function PhongMat() {
+        _super.apply(this, arguments);
+    }
+    return PhongMat;
+})(Material);
+/// <reference path="material.ts" />
+var ShaderMat = (function (_super) {
+    __extends(ShaderMat, _super);
+    function ShaderMat() {
+        _super.apply(this, arguments);
+    }
+    return ShaderMat;
+})(Material);
 "use strict";
 var Object3D = (function () {
     function Object3D() {
@@ -4570,7 +5122,7 @@ var SimpleTexture3D = (function (_super) {
     return SimpleTexture3D;
 })(Texture3D);
 /// <reference path="texture.ts" />
-/// <reference path="../extras/Vector3.ts" />
+/// <reference path="..//maths/vector3.ts" />
 "use strict";
 var Texture2DArray = (function (_super) {
     __extends(Texture2DArray, _super);

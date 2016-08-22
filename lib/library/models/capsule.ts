@@ -1,9 +1,9 @@
 /// <reference path="drawable.ts" />
 /*
 class Capsule extends Drawable {
-	protected _handle: Array<WebGLBuffer>;
-	constructor(segments: number = 0, radius: number = 0.0, length: number = 0.0) {
-		super();
+    protected _handle: Array<WebGLBuffer>;
+    constructor(segments: number = 0, radius: number = 0.0, length: number = 0.0) {
+        super();
 
         // Ensure odd
         segments = (segments + 1) &~1;
@@ -11,23 +11,23 @@ class Capsule extends Drawable {
         var doubleSegments = segments * 2;
         var halfLength = length / 2;
 
-	    
-	    var vertices = new Array(3 * doubleSegments);
-	    var normals = new Array(3 * doubleSegments);
-	    var texCoords = new Array(3 * doubleSegments);
-	    var el;
+        
+        var vertices = new Array(3 * doubleSegments);
+        var normals = new Array(3 * doubleSegments);
+        var texCoords = new Array(3 * doubleSegments);
+        var el;
 
 
 
 
-	    const gl = Core.getInstance().getGL();
+        const gl = Core.getInstance().getGL();
 
-		this._handle = new Array(4);
-		for (var i = 0, size = this._handle.length; i < size; i++) {
-			this._handle[i] = gl.createBuffer();
-		}
+        this._handle = new Array(4);
+        for (var i = 0, size = this._handle.length; i < size; i++) {
+            this._handle[i] = gl.createBuffer();
+        }
 
-		this._vao = (<any>gl).createVertexArray();
+        this._vao = (<any>gl).createVertexArray();
         (<any>gl).bindVertexArray(this._vao);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._handle[0]);
@@ -41,22 +41,22 @@ class Capsule extends Drawable {
 
         (<any>gl).bindVertexArray(null);
         
-		// TODO: Clear v, n, tex and el
-		console.log({
-			vertices: vertices,
-			normal: normals,
-			textureCoords: texCoords,
-			indices: el,
-			vao: this._handle
-		});
-	}
+        // TODO: Clear v, n, tex and el
+        console.log({
+            vertices: vertices,
+            normal: normals,
+            textureCoords: texCoords,
+            indices: el,
+            vao: this._handle
+        });
+    }
 
 
-	protected _indicesLen;
-	public render() {
-		const gl = Core.getInstance().getGL();
-		(<any>gl).bindVertexArray(this._vao);
-		gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-	}
+    protected _indicesLen;
+    public render() {
+        const gl = Core.getInstance().getGL();
+        (<any>gl).bindVertexArray(this._vao);
+        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    }
 }
 */

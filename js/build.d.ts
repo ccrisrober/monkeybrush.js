@@ -1,4 +1,6 @@
 /// <reference path="../lib/library/tsd.d.ts" />
+/// <reference path="../lib/typings/vanilla-toasts/vanilla-toasts.d.ts" />
+/// <reference path="../lib/typings/gl-matrix.d.ts" />
 declare class Input {
     private static _instance;
     constructor();
@@ -286,39 +288,42 @@ declare enum BlendingEq {
     FuncSub,
     FuncRevSub,
 }
-interface ShaderCallback {
+interface ProgramCallback {
     (): Program;
 }
-interface ShaderUseCallback {
+interface ProgramUseCallback {
     (prog: Program): void;
 }
-declare namespace ShaderManager {
+declare namespace ProgramManager {
     /**
-     * @param  {string}
+     * Get program from name
+     * @param  {string} name: Program name
      * @return {Program}
      */
     function get(name: string): Program;
     /**
-     * @param {string}
-     * @param {ShaderCallback}
+     * Execute a callback function using the specified program (name).
+     * @param  {string} name: Program name
+     * @param {ProgramUseCallback}: Function to execute
      */
-    function addWithFun(name: string, fn: ShaderCallback): void;
+    function getCB(name: string, cb: ProgramUseCallback): void;
     /**
-     * @param {string}
-     * @param {Program}
+     * Add a new program with his name and a function that creates the program.
+     * @param {string} name: Program name
+     * @param {ProgramCallback}: Function that creates the program (return program)
+     */
+    function addWithFun(name: string, fn: ProgramCallback): void;
+    /**
+     * Add a existing program with his name and the program.
+     * @param {string} name: Program name.
+     * @param {Program} prog: Existing program.
      */
     function add(name: string, prog: Program): void;
     /**
-     *
+     * Destroy all programs and clear cache.
      */
     function destroy(): void;
-    /**
-     * @param {string}
-     * @param {ShaderUseCallback}
-     */
-    function getCB(name: string, cb: ShaderUseCallback): void;
 }
-declare var VanillaToasts: any;
 declare namespace ResourceMap {
     class MapEntry {
         _asset: string;
@@ -344,15 +349,19 @@ declare namespace ResourceMap {
      */
     function asyncLoadCompleted(resName: string, loadedAsset: any): void;
     /**
+     * Set callback function that called when all assets have finished loading.
      * @param {Function}
      */
     function setLoadCompleteCallback(fn: any): void;
     /**
-     * @param {string}
+     * Get asset from alias/name
+     * @param {string} resName
      */
     function retrieveAsset(resName: string): any;
     /**
-     * @param {string}
+     * Check whether the resource has already been loaded.
+     * @param  {string} resName: Resource name
+     * @return {boolean}: True if resource exist
      */
     function isAssetLoaded(resName: string): boolean;
     /**
@@ -360,6 +369,7 @@ declare namespace ResourceMap {
      */
     function incAssetRefCount(resName: string): void;
     /**
+     * Unload a existing resource.
      * @param {string}
      */
     function unloadAsset(resName: string): number;
@@ -486,45 +496,88 @@ declare class VertexBuffer {
      */
     vertexAttribPointer(attribLocation: number, numElems: number, type: number, normalized?: boolean, offset?: number): void;
 }
+/**
+ * Drawable abstract class
+ * @class Drawable
+ */
 declare abstract class Drawable {
     protected _indicesLen: number;
     protected _handle: Array<VertexBuffer>;
     protected _vao: VertexArray;
     constructor();
     protected createBuffer(data: Float32Array | Uint16Array, handle: VertexBuffer): VertexBuffer;
-    protected addAttrib_(attribLocation: any, buffer: VertexBuffer, numElems: any): void;
+    protected addAttrib_(attribLocation: number, buffer: VertexBuffer, numElems: number): void;
+    /**
+     * Normal render
+     */
     render(): void;
+    /**
+     * Render with array instance mode
+     * @param {number} numInstances: Instances to render
+     */
     renderArrayInstance(numInstances: number): void;
 }
+/**
+ * Torus class
+ * @class Torus
+ */
 declare class Torus extends Drawable {
     protected _faces: number;
     constructor(outerRadius?: number, innerRadius?: number, sides?: number, rings?: number);
 }
+/**
+ * Sphere class
+ * @class Sphere
+ */
 declare class Sphere extends Drawable {
     constructor(radius: number, slices: number, stacks: number);
 }
-declare class Quad extends Drawable {
+/**
+ * Quad class
+ * @class Quad
+ */
+declare class Plane extends Drawable {
     constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax?: number, tmax?: number);
+}
+/**
+ * Cube class
+ * @class Cube
+ */
+declare class Cube extends Drawable {
+    /**
+     * @param {number = 1.0} side: Number of sides
+     */
+    constructor(side?: number);
 }
 declare namespace ObjLoader {
     function loadObj(filename: string): Object;
 }
+/**
+ * Mesh class
+ * @class Mesh
+ */
 declare class Mesh extends Drawable {
     constructor(fileRoute: string);
     private createVAO(model, el);
     private loadJSON(url);
 }
+/**
+ * Vector2<T> class
+ * @class Vector2<T>
+ */
 declare class Vector2<T> {
     x: T;
     y: T;
     /**
-     * @param {T}
-     * @param {T}
+     * Vector2<T> constructor
+     * @param {T} x: First value
+     * @param {T} y: Second value
      */
     constructor(x: T, y: T);
     /**
-     * @param  {Vector2<T>}
-     * @return {boolean}
+     * Check if two vector2<T> are equals
+     * @param  {Vector2<T>} other: Second vector
+     * @return {boolean}: True if both equals
      */
     isEqual(other: Vector2<T>): boolean;
 }
@@ -554,19 +607,25 @@ declare class Texture2D extends Texture {
     unbind(): void;
     destroy(): void;
 }
+/**
+ * Vector3<T> class
+ * @class Vector3<T>
+ */
 declare class Vector3<T> {
     x: T;
     y: T;
     z: T;
     /**
-     * @param {T}
-     * @param {T}
-     * @param {T}
+     * Vector3<T> constructor
+     * @param {T} x: First value
+     * @param {T} y: Second value
+     * @param {T} z: Third value
      */
     constructor(x: T, y: T, z: T);
     /**
-     * @param  {Vector3<T>}
-     * @return {boolean}
+     * Check if two vector3<T> are equals
+     * @param  {Vector3<T>} other: Second vector
+     * @return {boolean}: True if both equals
      */
     isEqual(other: Vector3<T>): boolean;
 }
@@ -833,7 +892,7 @@ declare class PointLight extends Light {
      */
     addTransform(x?: number, y?: number, z?: number): void;
 }
-declare class Camera {
+declare class Camera2 {
     position: Float32Array;
     protected front: Float32Array;
     protected up: Float32Array;
@@ -871,14 +930,15 @@ declare namespace _init__ {
     function start(initialize: Initialize, drawScene: DrawCallback): void;
     function render(dt: number): void;
 }
-declare let camera: Camera;
+declare let camera: Camera2;
 declare let gl_: any;
 declare let esferita: Sphere;
+declare let cubito: Cube;
 declare let SimpleConfig: () => {
     max: number;
 };
 declare let torito: Torus;
-declare let planito: Quad;
+declare let planito: Plane;
 declare let m: Mesh;
 declare let view: any;
 declare let projection: any;
@@ -896,7 +956,11 @@ declare let framebuffer: Framebuffer;
 declare function initialize(): void;
 declare function cameraUpdateCb(): void;
 declare function drawScene(dt: number): void;
-declare abstract class ICamera {
+/**
+ * Camera abstract class
+ * @class Camera
+ */
+declare abstract class Camera {
     protected _position: Float32Array;
     protected _view: Float32Array;
     protected _projection: Float32Array;
@@ -907,6 +971,7 @@ declare abstract class ICamera {
     protected _up: Float32Array;
     protected _look: Float32Array;
     /**
+     * Camera definition
      * @param {Float32Array}
      * @param {number = 45.0}
      * @param {number = 0.01}
@@ -917,52 +982,76 @@ declare abstract class ICamera {
      */
     constructor(pos: Float32Array, fovy?: number, near?: number, far?: number, aspRatio?: number, target?: Float32Array, up?: Float32Array);
     /**
-     *
+     * Update view and projection matrix
      */
     abstract update(): any;
     /**
+     * Get current camera position
      * @return {Float32Array}
      */
     /**
+     * Set camera position
      * @param {Float32Array}
      */
     position: Float32Array;
     /**
+     * Get current view matrix from camera
      * @return {Float32Array}
      */
     getViewMatrix(): Float32Array;
     /**
+     * Get current projection matrix from camera
      * @return {Float32Array}
      */
     getProjectionMatrix(): Float32Array;
     /**
+     * Get current field of view from camera
      * @return {number}
      */
     getFOV(): number;
     /**
+     * Get current aspect radio from camera
      * @return {number}
      */
     getAspectRatio(): number;
     /**
-     * @param {number}
-     * @param {number}
+     * Set near
+     * @param {number} near
      */
-    setup2(near: number, far: number): void;
+    near: number;
     /**
-     * @param {number}
-     * @param {number}
+     * Set far
+     * @param {number} far
      */
-    setup(fovy: number, aspRatio: number): void;
+    far: number;
+    /**
+     * Set field of view
+     * @param {number} fovy
+     */
+    fov: number;
+    /**
+     * Set aspect ratio
+     * @param {number} ar
+     */
+    aspRatio: number;
 }
-declare class OrthoCamera extends ICamera {
+/**
+ * Orthograhic camera class
+ * @class OrthoCamera
+ */
+declare class OrthoCamera extends Camera {
     /**
-     *
+     * Update view and projection matrix based on orthographic projection
      */
     update(): void;
 }
-declare class PerspectiveCamera extends ICamera {
+/**
+ * Perspective camera class
+ * @class PerspectiveCamera
+ */
+declare class PerspectiveCamera extends Camera {
     /**
-     *
+     * Update view and projection matrix based on perspective projection
      */
     update(): void;
 }
@@ -984,9 +1073,9 @@ declare class Blend {
     /**
      * Set the RGB blend equation and the alpha blend equation separately
      * @param {BlendingEqu} modeRGB: Specifies the RGB blend equation, how the red, green, and blue
-     * 		components of the source and destination colors are combined.
+     *      components of the source and destination colors are combined.
      * @param {BlendingEqu} modeAlpha: Specifies the alpha blend equation, how the alpha component
-     * 		of the source and destination colors are combined.
+     *      of the source and destination colors are combined.
      */
     static equationSeparate(modeRGB: BlendingEqu, modeAlpha: BlendingEqu): void;
     getBlendEquRGB(): BlendingEqu;
@@ -1198,6 +1287,14 @@ declare class Query {
     isResultAvailable(): any;
     getResult(): any;
 }
+declare class Ray {
+    protected _origin: Vector3<number>;
+    protected _direction: Vector3<number>;
+    constructor(origin?: Vector3<number>, direction?: Vector3<number>);
+    origin: Vector3<number>;
+    direction: Vector3<number>;
+    point_at(t: number): Vector3<number>;
+}
 declare class TransformFeedback {
     static gl: WebGLRenderingContext;
     protected _handle: any;
@@ -1211,24 +1308,6 @@ declare class TransformFeedback {
     end(): void;
     varyings(program: number, varyings: any, bufferMode: any): any;
     getVarying(program: number, idx: any): any;
-}
-declare class Vector4<T> {
-    x: T;
-    y: T;
-    z: T;
-    w: T;
-    /**
-     * @param {T}
-     * @param {T}
-     * @param {T}
-     * @param {T}
-     */
-    constructor(x: T, y: T, z: T, w: T);
-    /**
-     * @param  {Vector4<T>}
-     * @return {boolean}
-     */
-    isEqual(other: Vector4<T>): boolean;
 }
 declare class Woit {
     constructor();
@@ -1314,22 +1393,215 @@ declare class SpotLight extends Light {
      */
     direction: Vector3<number>;
 }
-declare abstract class Material {
+/**
+ * Mat2 class
+ * @class Mat2
+ */
+declare class Mat2 {
+    protected _value: Float32Array;
+    constructor();
+    identity(): void;
+    transpose(): void;
+    toString: () => string;
+    isExactEqual(other: Mat2): boolean;
+    isEqual(other: Mat2): boolean;
 }
-declare class DepthMat extends Material {
-    static ss: Program;
-    static initialize(): void;
+/**
+ * Mat3 class
+ * @class Mat3
+ */
+declare class Mat3 {
+    protected _value: Float32Array;
+    constructor();
+    toString: () => string;
 }
-declare class LambertMat extends Material {
+/**
+ * Mat4 class
+ * @class Mat4
+ */
+declare class Mat4 {
+    protected _value: Float32Array;
+    constructor();
+    toString: () => string;
 }
-declare class NormalMat extends Material {
+/**
+ * Quaternion class
+ * @class Quaternion
+ */
+declare class Quaternion {
+    protected _value: Float32Array;
+    /**
+     * Creates a new quaternion
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     * @param {number = 0.0} z
+     * @param {number = 0.0} w
+     */
+    constructor(x?: number, y?: number, z?: number, w?: number);
+    /**
+     * Sets a quaternion to represent the shortest rotation from one
+     *      vector to another.
+     * @param {Float32Array} init: Initial vector
+     * @param {Float32Array} dest: Destination vector
+     */
+    rotationTo(init: Float32Array, dest: Float32Array): void;
+    /**
+     * Set quaternion value to identity
+     */
+    setIdentity(): void;
+    /**
+     * Create a copy of this quaternion
+     * @return {Quaternion}
+     */
+    clone(): Quaternion;
+    /**
+     * Calculate dot product with another quaternion
+     * @param {Quaternion}
+     */
+    dot(q: Quaternion): void;
+    /**
+     * Calculate multiplication with another quaternion
+     * @param {Quaternion}
+     */
+    mult(q: Quaternion): void;
+    /**
+     * Normalize quaternion
+     */
+    normalize(): void;
+    /**
+     * Invert quaternion
+     */
+    invert(): void;
+    /**
+     * Rotates quaternion by the given angle (in radians) about the X axis
+     * @param {number} angle: Angle (in radians) to rotate
+     */
+    rotateX(angle: number): void;
+    /**
+     * Rotates quaternion by the given angle (in radians) about the Y axis
+     * @param {number} angle: Angle (in radians) to rotate
+     */
+    rotateY(angle: number): void;
+    /**
+     * Rotates quaternion by the given angle (in radians) about the Z axis
+     * @param {number} angle: Angle (in radians) to rotate
+     */
+    rotateZ(angle: number): void;
+    toString: () => string;
+    /**
+     * Performs a linear interpolation between this and another Quaternion
+     * @param {Quaternion}
+     * @param {number} t: Intepolation amount between quaternions
+     */
+    lerp(q: Quaternion, t: number): void;
 }
-declare class PhongMat extends Material {
+/**
+ * Vect2 class
+ * @class Vect2
+ */
+declare class Vect2 {
+    protected _value: Float32Array;
+    /**
+     * Creates a new vect2
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     */
+    constructor(x?: number, y?: number);
+    toString: () => string;
+    add(v: Vect2): void;
+    sub(v: Vect2): void;
+    mult(other: Vect2): void;
+    div(other: Vect2): void;
+    negate(): void;
+    scale(value: number): void;
+    distance(): number;
+    x: number;
+    y: number;
+    lerp(other: Vect2, t: number): Vect2;
+    isEqual(other: Vect2): boolean;
+    dot(other: Vect2): number;
 }
-declare class ShaderMat extends Material {
+/**
+ * Vect3 class
+ * @class Vect3
+ */
+declare class Vect3 {
+    protected _value: Float32Array;
+    /**
+     * Creates a new vect3
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     * @param {number = 0.0} z
+     */
+    constructor(x?: number, y?: number, z?: number);
+    toString: () => string;
+    add(v: Vect3): void;
+    sub(v: Vect3): void;
+    mult(other: Vect3): void;
+    div(other: Vect3): void;
+    negate(): void;
+    scale(value: number): void;
+    distance(): number;
+    x: number;
+    y: number;
+    z: number;
+    lerp(other: Vect3, t: number): Vect3;
+    isEqual(other: Vect3): boolean;
+    dot(other: Vect3): number;
 }
-declare class Cube extends Drawable {
-    constructor(side?: number);
+/**
+ * Vect4 class
+ * @class Vect4
+ */
+declare class Vect4 {
+    protected _value: Float32Array;
+    /**
+     * Creates a new vect2
+     * @param {number = 0.0} x
+     * @param {number = 0.0} y
+     * @param {number = 0.0} z
+     * @param {number = 0.0} w
+     */
+    constructor(x?: number, y?: number, z?: number, w?: number);
+    toString: () => string;
+    add(v: Vect4): void;
+    sub(v: Vect4): void;
+    mult(other: Vect4): void;
+    div(other: Vect4): void;
+    negate(): void;
+    scale(value: number): void;
+    distance(): number;
+    x: number;
+    y: number;
+    z: number;
+    w: number;
+    lerp(other: Vect4, t: number): Vect4;
+    isEqual(other: Vect4): boolean;
+    dot(other: Vect4): number;
+}
+/**
+ * Vector4<T> class
+ * @class Vector4<T>
+ */
+declare class Vector4<T> {
+    x: T;
+    y: T;
+    z: T;
+    w: T;
+    /**
+     * Vector4<T> constructor
+     * @param {T} x: First value
+     * @param {T} y: Second value
+     * @param {T} z: Third value
+     * @param {T} z: Fourth value
+     */
+    constructor(x: T, y: T, z: T, w: T);
+    /**
+     * Check if two vector4<T> are equals
+     * @param  {Vector4<T>} other: Second vector
+     * @return {boolean}: True if both equals
+     */
+    isEqual(other: Vector4<T>): boolean;
 }
 declare class Icosphere extends Drawable {
     constructor(its?: number);
@@ -1442,6 +1714,20 @@ declare class Sprite {
     static prog: Program;
     static buffer: VertexBuffer;
     static initialize(): void;
+}
+declare abstract class Material {
+}
+declare class DepthMat extends Material {
+    static ss: Program;
+    static initialize(): void;
+}
+declare class LambertMat extends Material {
+}
+declare class NormalMat extends Material {
+}
+declare class PhongMat extends Material {
+}
+declare class ShaderMat extends Material {
 }
 declare class Object3D {
     protected _childs: Array<Object3D>;

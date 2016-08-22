@@ -7,27 +7,27 @@
  * @class PointLight
  */
 class PointLight extends Light {
-	/**
-	 * [Light position]
-	 * @type {Vector3<number>}
-	 */
-	protected _position: Vector3<number>;
-	/**
-	 * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
-	 */
-	constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
-		super();
-		this.position = position;
-	}
-	/**
-	 * Get light position
-	 * @return {Vector3<number>}
-	 */
-	get position(): Vector3<number> { return this._position; }
-	/**
-	 * Set light position
-	 * @param {Vector3<number>} position
-	 */
+    /**
+     * [Light position]
+     * @type {Vector3<number>}
+     */
+    protected _position: Vector3<number>;
+    /**
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
+     */
+    constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
+        super();
+        this.position = position;
+    }
+    /**
+     * Get light position
+     * @return {Vector3<number>}
+     */
+    get position(): Vector3<number> { return this._position; }
+    /**
+     * Set light position
+     * @param {Vector3<number>} position
+     */
     set position(position: Vector3<number>) { this._position = position; }
 
     /**
@@ -37,8 +37,8 @@ class PointLight extends Light {
      * @param {number = 0.0} z
      */
     public addTransform(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
-    	this._position.x += x;
-    	this._position.y += y;
-    	this._position.z += z;
+        this._position.x += x;
+        this._position.y += y;
+        this._position.z += z;
     }
 }

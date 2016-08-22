@@ -47,6 +47,13 @@ grunt serve # Only open server (http://localhost:3030/index.html)
 - [ ] Transform feedback
 - [ ] Shader extraction (https://github.com/mattdesl/gl-shader-extract)
 - [ ] UBO (projection, view, model, normalMatrix)
+- [x] Vect2
+- [x] Vect3
+- [x] Vect3
+- [x] Quaternion
+- [ ] Mat2
+- [ ] Mat3
+- [ ] Mat4
 
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt

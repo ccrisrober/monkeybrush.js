@@ -11,7 +11,7 @@
 abstract class Drawable {
     protected _indicesLen: number;
     protected _handle: Array<VertexBuffer>;
-	protected _vao: VertexArray;
+    protected _vao: VertexArray;
     constructor() {
         this._vao = new VertexArray();
     }

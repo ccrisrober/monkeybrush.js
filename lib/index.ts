@@ -6,6 +6,7 @@
 /// <reference path="library/models/torus.ts" />
 /// <reference path="library/models/sphere.ts" />
 /// <reference path="library/models/plane.ts" />
+/// <reference path="library/models/cube.ts" />
 /// <reference path="library/models/mesh.ts" />
 /// <reference path="library/textures/texture2d.ts" />
 /// <reference path="library/textures/texture3d.ts" />
@@ -27,6 +28,7 @@ let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 let gl_;
 
 let esferita: Sphere;
+let cubito: Cube;
 
 let SimpleConfig = function() {
     return {
@@ -64,6 +66,7 @@ function initialize() {
     torito = new Torus(3.7, 2.3, 25, 10);
     planito = new Plane(100.0, 100.0, 2.0, 2.0);
     m = new Mesh("assets/objects/teddy.json");
+    cubito = new Cube(1.0);
 
     let canvasSize = new Vector2<number>(
         gl_.canvas.width,
@@ -109,34 +112,9 @@ function initialize() {
             out vec4 fragColor;
             in vec2 texCoord;
 
-
-            
-            #define MASK_SIZE 9u
-            const vec2 texIdx[MASK_SIZE] = vec2[](
-                vec2(-1.0,1.0), vec2(0.0,1.0), vec2(1.0,1.0),
-                vec2(-1.0,0.0), vec2(0.0,0.0), vec2(1.0,1.0),
-                vec2(-1.0,-1.0), vec2(0.0,-1.0), vec2(1.0,-1.0));
-
-            const float mask[MASK_SIZE] = float[](
-            0.0, -1.0, 0.0,
-            -1.0, 5.0, -1.0,
-            0.0, -1.0, 0.0);
-
             void main() {
-                //fragColor = vec4(texCoord, 0.0, 1.0);
-                //fragColor = texture(dataTexture, texCoord);
 
-                //fragColor = vec4(texture(dataTexture, texCoord).rgb, 0.5);
-
-                //vec2 ts = vec2(1.0) / vec2 (800, 800);
-                //vec4 color = vec4 (0.0);
-                //for (uint i = 0u; i < MASK_SIZE; i++) {
-                //    vec2 iidx = texCoord + ts * texIdx[i];
-                //    color += texture(dataTexture, iidx,0.0) * mask[i];
-                //}
-                //fragColor = color;
-
-                fragColor = vec4(vec3(1.0) - texture(dataTexture, texCoord).rgb, 1.0);
+                fragColor = vec4(texture(dataTexture, texCoord).rgb, 1.0);
 
             }`, shader_type.fragment, mode.read_text);
         prog2.compile();
