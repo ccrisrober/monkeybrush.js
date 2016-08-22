@@ -1,4 +1,4 @@
-# webgl2template
+# monkeybrush.js
 
 ![alt tag](descarga.png)
 
@@ -43,5 +43,3 @@
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt
 ```
-
-https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants
