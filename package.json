@@ -1,13 +1,28 @@
 {
-  "name": "webgl2template",
-  "version": "1.3.0",
-  "description": "",
-  "main": "index.js",
+  "name": "monkeybrush.js",
+  "version": "1.4.0",
+  "description": "WebGL wrapper for Data visualization",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maldicion069/monkeybrush.js.git"
+  },
+  "keywords": [
+    "webgl2",
+    "rendering",
+    "webgl",
+    "shader",
+    "graphics"
+  ],
+  "author": "maldicion069 (Cristian Rodríguez Bernal)",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maldicion069/monkeybrush.js/issues"
+  },
+  "homepage": "https://github.com/maldicion069/monkeybrush.js#readme",
   "devDependencies": {
     "bluebird": "^3.4.1",
     "grunt": "^1.0.1",
@@ -19,8 +34,5 @@
     "grunt-typescript": "^0.8.0",
     "parse-obj": "0.0.0",
     "typescript": "^1.8.10"
-  },
-  "dependencies": {
-    "wavefront-obj-parser": "^0.3.0"
   }
 }
