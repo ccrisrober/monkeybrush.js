@@ -1,7 +1,7 @@
+/// <reference path="../../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 
 "use strict";
 
-declare var VanillaToasts: any;
 namespace ResourceMap {
     export class MapEntry {
         public _asset: string;
@@ -52,6 +52,7 @@ namespace ResourceMap {
     export function asyncLoadFailed(resName: string) {
         VanillaToasts.create({
             title: `${resName} completed`,
+            text: "",
             type: "error",
             timeout: 2500
         });
@@ -66,12 +67,14 @@ namespace ResourceMap {
         if (!isAssetLoaded(resName)) {
             VanillaToasts.create({
                 title: `asyncLoadCompleted: [${resName}] not in map!`,
+                text: "",
                 type: "error",
                 timeout: 2500
             });
         }
         VanillaToasts.create({
             title: `${resName} completed`,
+            text: "",
             type: "success",
             timeout: 1500
         });
@@ -90,6 +93,7 @@ namespace ResourceMap {
         }
     };
     /**
+     * Set callback function that called when all assets have finished loading.
      * @param {Function}
      */
     export function setLoadCompleteCallback(fn) {
@@ -97,7 +101,8 @@ namespace ResourceMap {
         _checkForAllLoadCompleted();
     };
     /**
-     * @param {string}
+     * Get asset from alias/name
+     * @param {string} resName
      */
     export function retrieveAsset(resName: string) {
         let r = null;
@@ -109,9 +114,11 @@ namespace ResourceMap {
         return r;
     };
     /**
-     * @param {string}
+     * Check whether the resource has already been loaded.
+     * @param  {string} resName: Resource name
+     * @return {boolean}: True if resource exist
      */
-    export function isAssetLoaded(resName: string) {
+    export function isAssetLoaded(resName: string): boolean {
         return (resName in _resourceMap);
     };
     /**
@@ -121,6 +128,7 @@ namespace ResourceMap {
         _resourceMap[resName].incCount();
     };
     /**
+     * Unload a existing resource.
      * @param {string}
      */
     export function unloadAsset (resName: string) {

@@ -1,10 +1,14 @@
-/// <reference path="icamera.ts" />
+/// <reference path="camera.ts" />
 
 "use strict";
 
-class PerspectiveCamera extends ICamera {
+/**
+ * Perspective camera class
+ * @class PerspectiveCamera
+ */
+class PerspectiveCamera extends Camera {
 	/**
-	 * 
+	 * Update view and projection matrix based on perspective projection
 	 */
 	public update() {
 		this._projection = mat4.perspective(this._projection, this._fov, this.getAspectRatio(), 

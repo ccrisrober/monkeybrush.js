@@ -2,6 +2,10 @@
 
 "use strict";
 
+/**
+ * Torus class
+ * @class Torus
+ */
 class Torus extends Drawable {
 	protected _faces: number;
 	constructor(outerRadius: number = 1.0, innerRadius: number = 0.5, 

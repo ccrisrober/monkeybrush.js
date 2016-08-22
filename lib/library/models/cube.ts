@@ -2,7 +2,14 @@
 
 "use strict";
 
+/**
+ * Cube class
+ * @class Cube
+ */
 class Cube extends Drawable {
+	/**
+	 * @param {number = 1.0} side: Number of sides
+	 */
 	constructor(side: number = 1.0) {
 		super();
 	    const side2 = side / 2.0;

@@ -1,8 +1,11 @@
 /// <reference path="../tsd.d.ts" />
 
 "use strict";
-
-abstract class ICamera {
+/**
+ * Camera abstract class
+ * @class Camera
+ */
+abstract class Camera {
 	protected _position: Float32Array;
 	protected _view: Float32Array;
 	protected _projection: Float32Array;
@@ -14,6 +17,7 @@ abstract class ICamera {
 	protected _up: Float32Array;
 	protected _look: Float32Array;
 	/**
+	 * Camera definition
 	 * @param {Float32Array}
 	 * @param {number = 45.0}
 	 * @param {number = 0.01}
@@ -34,61 +38,73 @@ abstract class ICamera {
 
 		this._up = up;
 		this._look = target;
-		this.setup(fovy, aspRatio);
-		this.setup2(near, far);
+		this._fov = fovy;
+		this._ar = aspRatio;
+		this._near = near;
+		this._far = far;
 
 		this.update();
 	}
 	/**
-	 * 
+	 * Update view and projection matrix
 	 */
 	abstract update();
 	/**
+	 * Get current camera position
 	 * @return {Float32Array}
 	 */
 	get position(): Float32Array { return this._position; }
 	/**
+	 * Set camera position
 	 * @param {Float32Array}
 	 */
 	set position(pos: Float32Array) { this._position = pos; }
 	/**
+	 * Get current view matrix from camera
 	 * @return {Float32Array}
 	 */
 	public getViewMatrix(): Float32Array {
 		return this._view;
 	}
 	/**
+	 * Get current projection matrix from camera
 	 * @return {Float32Array}
 	 */
 	public getProjectionMatrix(): Float32Array {
 		return this._projection;
 	}
 	/**
+	 * Get current field of view from camera
 	 * @return {number}
 	 */
 	public getFOV(): number {
 		return this._fov;
 	}
 	/**
+	 * Get current aspect radio from camera
 	 * @return {number}
 	 */
 	public getAspectRatio(): number {
 		return this._ar;
 	}
 	/**
-	 * @param {number}
-	 * @param {number}
+	 * Set near
+	 * @param {number} near
 	 */
-	public setup2(near: number, far: number) {
-		this._near = near;
-		this._far = far;
-	}
+	public set near(near: number) { this._near = near; }
 	/**
-	 * @param {number}
-	 * @param {number}
+	 * Set far
+	 * @param {number} far
 	 */
-	public setup(fovy: number, aspRatio: number) {
-		this._fov = fovy;
-		this._ar = aspRatio;
-	}
+	public set far(far: number) { this._far = far; }
+	/**
+	 * Set field of view
+	 * @param {number} fovy
+	 */
+	public set fov(fovy: number) { this._fov = fovy; }
+	/**
+	 * Set aspect ratio
+	 * @param {number} ar
+	 */
+	public set aspRatio(ar: number) { this._ar = ar; }
 };

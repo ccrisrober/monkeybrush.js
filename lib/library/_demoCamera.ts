@@ -2,7 +2,7 @@
 
 "use strict";
 
-class Camera {
+class Camera2 {
 	// Camera attrs
 	public position: Float32Array;
 	protected front: Float32Array;

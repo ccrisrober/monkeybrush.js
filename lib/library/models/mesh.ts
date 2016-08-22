@@ -5,6 +5,10 @@
 
 "use strict";
 
+/**
+ * Mesh class
+ * @class Mesh
+ */
 class Mesh extends Drawable {
     constructor(fileRoute: string) {
         super();

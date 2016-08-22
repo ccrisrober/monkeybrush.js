@@ -1,4 +1,4 @@
-/// <reference path="../extras/Vector2.ts" />
+/// <reference path="..//maths/vector2.ts" />
 /// <reference path="../textures/simpleTexture2D.ts" />
 /// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="core.ts" />

@@ -1,5 +1,5 @@
 /// <reference path="../core/core.ts" />
-/// <reference path="vector2.ts" />
+/// <reference path="../maths/vector2.ts" />
 /// <reference path="../core/program.ts" />
 /// <reference path="../core/blend.ts" />
 /// <reference path="../core/cull.ts" />

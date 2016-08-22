@@ -2,6 +2,10 @@
 
 "use strict";
 
+/**
+ * Sphere class
+ * @class Sphere
+ */
 class Sphere extends Drawable {
 	constructor(radius: number, slices: number, stacks: number) {
 		super();

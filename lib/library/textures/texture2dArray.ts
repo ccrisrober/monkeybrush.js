@@ -1,5 +1,5 @@
 /// <reference path="texture.ts" />
-/// <reference path="../extras/Vector3.ts" />
+/// <reference path="..//maths/vector3.ts" />
 
 "use strict";
 

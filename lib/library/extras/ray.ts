@@ -1,4 +1,4 @@
-/// <reference path="vector3.ts" />
+/// <reference path="../maths/vector3.ts" />
 
 class Ray {
 	protected _origin: Vector3<number>;

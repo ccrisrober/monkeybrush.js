@@ -2,7 +2,11 @@
 
 "use strict";
 
-class Quad extends Drawable {
+/**
+ * Quad class
+ * @class Quad
+ */
+class Plane extends Drawable {
 	constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax = 1.0, tmax = 1.0) {
 		super();
 		let v = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));

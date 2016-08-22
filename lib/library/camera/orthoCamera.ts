@@ -1,10 +1,14 @@
-/// <reference path="icamera.ts" />
+/// <reference path="camera.ts" />
 
 "use strict";
 
-class OrthoCamera extends ICamera {
+/**
+ * Orthograhic camera class
+ * @class OrthoCamera
+ */
+class OrthoCamera extends Camera {
 	/**
-	 * 
+	 * Update view and projection matrix based on orthographic projection
 	 */
 	public update() {
 		const yMin = -this._near * Math.tan(this._fov * Math.PI / 360.0);

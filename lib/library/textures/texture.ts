@@ -1,5 +1,5 @@
 /// <reference path="../core/core.ts" />
-/// <reference path="../extras/Vector2.ts" />
+/// <reference path="..//maths/vector2.ts" />
 
 "use strict";
 

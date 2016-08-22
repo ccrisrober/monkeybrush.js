@@ -1,11 +1,11 @@
 /// <reference path="library/core/core.ts" />
 /// <reference path="library/core/program.ts" />
-/// <reference path="library/resources/shaderManager.ts" />
+/// <reference path="library/resources/programManager.ts" />
 /// <reference path="library/resources/resourceMap.ts" />
 /// <reference path="library/resources/loaders.ts" />
 /// <reference path="library/models/torus.ts" />
 /// <reference path="library/models/sphere.ts" />
-/// <reference path="library/models/quad.ts" />
+/// <reference path="library/models/plane.ts" />
 /// <reference path="library/models/mesh.ts" />
 /// <reference path="library/textures/texture2d.ts" />
 /// <reference path="library/textures/texture3d.ts" />
@@ -22,7 +22,7 @@
 
 "use strict";
 
-let camera = new Camera(new Float32Array([-2.7, -1.4, 11.8]));
+let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
 let gl_;
 
@@ -34,7 +34,7 @@ let SimpleConfig = function() {
     };
 };
 let torito: Torus;
-let planito: Quad;
+let planito: Plane;
 let m: Mesh;
 
 let view;
@@ -62,7 +62,7 @@ function initialize() {
     gl_ = Core.getInstance().getGL();
     esferita = new Sphere(1.0, 20, 20);
     torito = new Torus(3.7, 2.3, 25, 10);
-    planito = new Quad(100.0, 100.0, 2.0, 2.0);
+    planito = new Plane(100.0, 100.0, 2.0, 2.0);
     m = new Mesh("assets/objects/teddy.json");
 
     let canvasSize = new Vector2<number>(
@@ -82,7 +82,7 @@ function initialize() {
 
     const vsize = new Vector3<number>(100, 100, 100);
 
-    ShaderManager.addWithFun("prog", (): Program => {
+    ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();
         prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
         prog.addShader("./shaders/demoShader.frag", shader_type.fragment, mode.read_file);
@@ -92,7 +92,7 @@ function initialize() {
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
         return prog;
     }); 
-    ShaderManager.addWithFun("blur", (): Program => {
+    ProgramManager.addWithFun("blur", (): Program => {
         let prog2: Program = new Program();
         prog2.addShader(`#version 300 es
             precision highp float;
@@ -162,7 +162,7 @@ function cameraUpdateCb() {
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(canvas.width, canvas.height);
 
-    let prog = ShaderManager.get(mainShader);
+    let prog = ProgramManager.get(mainShader);
     prog.use();
     prog.sendUniformMat4("view", view);
     prog.sendUniformMat4("projection", projection);
@@ -180,7 +180,7 @@ function drawScene(dt: number) {
 
     Core.getInstance().clearColorAndDepth();
 
-    const prog = ShaderManager.get(mainShader);
+    const prog = ProgramManager.get(mainShader);
     prog.use();
 
     tex2d.bind(0);
@@ -224,7 +224,7 @@ function drawScene(dt: number) {
     framebuffer.onlyBindTextures();
 
     Core.getInstance().clearColorAndDepth();
-    let prog2 = ShaderManager.get("blur");
+    let prog2 = ProgramManager.get("blur");
     prog2.use();
     PostProcess.render();
 }

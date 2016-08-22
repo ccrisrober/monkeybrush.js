@@ -1,5 +1,5 @@
 /// <reference path="material.ts" />
-/// <reference path="../core/program.ts" />
+/// <reference path="../../core/program.ts" />
 
 class DepthMat extends Material {
 	static ss: Program = new Program();
