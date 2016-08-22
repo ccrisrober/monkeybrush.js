@@ -1,5 +1,12 @@
 # monkeybrush.js
 
+## init
+```bash
+npm install && bower install
+grunt # Open server and open webpage
+grunt serve # Only open server (http://localhost:3030/index.html)
+```
+![Logo](logo.png)
 ![alt tag](descarga.png)
 
 ## TODO
@@ -9,10 +16,10 @@
 - [x] Add sphere model
 - [x] Add torus model
 - [x] Add object parser (faces: x1/y1/z1 x2/y2/z2 x3/y3/z3)
-- [ ] Finish Perspective Camera
-- [ ] Finish Orthographic Camera
+- [x] Finish Perspective Camera
+- [x] Finish Orthographic Camera
 - [x] Add texture 2D
-- [ ] Add texture 3D
+- [x] Add texture 3D
 - [x] Add framebuffer
 - [ ] Float texture (gl.getExtension("OES_texture_float_linear");) (?)
 - [x] Instancing
@@ -28,6 +35,7 @@
 - [ ] Fonts
 - [x] Audio supporting (Background)
 - [x] Audio supporting (SimpleAudio)
+- [x] HDR images supporting
 - [ ] Webcam texture
 - [ ] Video texture
 - [ ] Occlusion Query
