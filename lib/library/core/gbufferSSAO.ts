@@ -124,7 +124,7 @@ class GBufferSSAO {
             return Math.random() * (max - min) + min;
         }
 
-        for (let i = 0; i < this.kernelSize; i++) {
+        for (let i = 0; i < this.kernelSize; ++i) {
             let sample = vec3.fromValues(
                 randomFloats(0.0, 1.0) * 2.0 - 1.0,
                 randomFloats(0.0, 1.0) * 2.0 - 1.0,

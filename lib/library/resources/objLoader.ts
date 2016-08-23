@@ -65,13 +65,13 @@ namespace ObjLoader {
 
         // Unindex
         for (let i = 0, size = ret.indices.length / 3; i < size; ++i) {
-            for (let j = 0; j < verts[ret.indices[i * 3]].length; j++) {
+            for (let j = 0; j < verts[ret.indices[i * 3]].length; ++j) {
                 ret.vertices.push(verts[ret.indices[i * 3]][j]);
             }
-            for (let j = 0; j < norms[ret.indices[i * 3 + 2]].length; j++) {
+            for (let j = 0; j < norms[ret.indices[i * 3 + 2]].length; ++j) {
                 ret.normals.push(norms[ret.indices[i * 3 + 2]][j]);
             }
-            for (let j = 0; j < tcs[ret.indices[i * 3 + 1]].length; j++) {
+            for (let j = 0; j < tcs[ret.indices[i * 3 + 1]].length; ++j) {
                 ret.texCoords.push(tcs[ret.indices[i * 3 + 1]][j]);
             }
         }
@@ -95,7 +95,7 @@ namespace ObjLoader {
     function splitFace(line: string): Array<number> {
         let values = [];
         let split = line.split(" ");
-        for (let i = 1; i < split.length; i++) {
+        for (let i = 1; i < split.length; ++i) {
             let splitFace = split[i].split("/");
             splitFace.forEach((value: any) => {
                 if (!isNaN(value)) {

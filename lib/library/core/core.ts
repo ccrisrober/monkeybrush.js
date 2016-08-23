@@ -21,22 +21,8 @@ class Core {
             throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
         }
         this._gl = Context.getContext();
-        //  var canvas = <HTMLCanvasElement>document.getElementById("canvas");
-        // let canvas = document.createElement("canvas");
-        // canvas.width = 800;
-        // canvas.height = 800;
-        // 
-        // document.body.appendChild(canvas);
-        // 
-        // this._gl = this._getContext(canvas);
-        // if (!this._gl) {
-        //     document.write("<br><b>WebGL is not supported!</b>");
-        //     return;
-        // }
-        // this._getVendors();
-
+        
         Input.getInstance();
-        // this.init();
 
         console.log("GL OBTAINED");
 
@@ -70,7 +56,6 @@ class Core {
 
         Cull.enable();
         Blend.disable();
-
     }
 
     public static getInstance(): Core {
@@ -90,56 +75,9 @@ class Core {
     public getGL(): WebGLRenderingContext {
         return this._gl;
     }
-
-    // protected _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
-    //     let contexts: string[] = "webgl2,experimental-webgl2".split(",");
-    //     let gl: WebGLRenderingContext;
-    //     let ctx;
-    //     for (let i = 0; i < contexts.length; i++) {
-    //         ctx = contexts[i];
-    //         gl = <WebGLRenderingContext>canvas.getContext(contexts[i]);
-    //         if (gl) {
-    //             return gl;
-    //         }
-    //     }
-    //     return null;
-    // }
-    // private _getVendors() {
-    //     let vendors: string[] = "ms,moz,webkit,o".split(",");
-    //     if (!window.requestAnimationFrame) {
-    //         let vendor;
-    //         for (let i = 0; i < vendors.length; i++) {
-    //             vendor = vendors[i];
-    //             window.requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
-    //             window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];
-    //             if (window.requestAnimationFrame) {
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     // Manual fallback
-    //     if (!window.requestAnimationFrame) {
-    //         let lastTime = 0;
-    //         window.requestAnimationFrame = function(cb) {
-    //             const currTime = Date.now();
-    //             const timeToCall = Math.max(0, 16 - (currTime - lastTime));
-    //             const id = window.setTimeout(function() {
-    //                 cb(currTime + timeToCall);
-    //             }, timeToCall);
-    //             lastTime = currTime + timeToCall;
-    //             return id;
-    //         };
-    //     }
-    // 
-    //     if (!window.cancelAnimationFrame) {
-    //         window.cancelAnimationFrame = function(id) {
-    //             clearTimeout(id);
-    //         };
-    //     };
-    // }
 };
-// Context.getContext();
-// Core.getInstance();
+Context.getContext();
+Core.getInstance();
 
 import Depth from "./depth";
 import Cull from "./cull";

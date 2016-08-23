@@ -5,6 +5,7 @@
 /// <reference path="../core/depth.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 /// <reference path="../constants/ComparisonFunc.ts" />
+/// <reference path="./vertexArray.ts" />
 
 import Core from "../core/core.ts";
 import Program from "../core/program.ts";
@@ -14,10 +15,16 @@ import Depth from "../core/depth.ts";
 
 import ProgramCte from "../constants/ProgramCte";
 import ComparisonFunc from "../constants/ComparisonFunc";
+import VertexArray from "./vertexArray";
 
 "use strict";
 
 class Skybox {
+    /**
+     * [skyboxVAO description]
+     * @type {VertexArray}
+     */
+    protected skyboxVAO: VertexArray;
     /**
      * [skyboxVBO description]
      * @type {WebGLBuffer}
@@ -152,12 +159,18 @@ class Skybox {
              1.0, -1.0,  1.0
         ]);
 
+        this.skyboxVAO = new VertexArray();
+        this.skyboxVAO.bind();
+
+        // TODO: Use VertexBuffer
         this.skyboxVBO = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.skyboxVBO);
         gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
         this._loadCubemap(faces);
+
+        this.skyboxVAO.unbind();
     }
     /**
      * @param {Float32Array}
@@ -182,7 +195,10 @@ class Skybox {
         this._prog.sendUniformMat4("projection", projection);
 
         this.cubeMapTexture.bind(0);
+        
+        this.skyboxVAO.bind();
         gl.drawArrays(gl.TRIANGLES, 0, 36);
+        this.skyboxVAO.unbind();
 
         gl.depthFunc(gl.LESS); // Depth.comparison(ComparisonFunc.Less);
     }

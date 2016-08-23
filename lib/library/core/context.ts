@@ -1,23 +1,21 @@
 class Context {
     static _gl: WebGLRenderingContext = null;
-    static getContext(canvasName?: string) {
+    static _canvas: HTMLCanvasElement = null;
+    static getContext(canvasName?: string): WebGLRenderingContext {
         if (!Context._gl) {
-            let canvas;
             if (!canvasName) {
-                canvas = document.createElement("canvas");
-                canvas.width = 800;
-                canvas.height = 800;
+                this._canvas = document.createElement("canvas");
+                this._canvas.width = 800;
+                this._canvas.height = 800;
 
-                document.body.appendChild(canvas);
+                document.body.appendChild(this._canvas);
             } else {
-                canvas = <HTMLCanvasElement>document.getElementById(canvasName);
+                this._canvas = <HTMLCanvasElement>document.getElementById(canvasName);
             }
-            Context._gl = Context._getContext(canvas);
+            Context._gl = Context._getContext(this._canvas);
             if (!Context._gl) {
                 document.write("<br><b>WebGL is not supported!</b>");
-
                 throw new Error("WebGL is not supported!");
-                // return;
             }
             Context._getVendors();
         }
@@ -27,7 +25,7 @@ class Context {
         let contexts: string[] = "webgl,webgl2,experimental-webgl2".split(",");
         let gl: WebGLRenderingContext;
         let ctx;
-        for (let i = 0; i < contexts.length; i++) {
+        for (let i = 0; i < contexts.length; ++i) {
             ctx = contexts[i];
             gl = <WebGLRenderingContext>canvas.getContext(contexts[i]);
             if (gl) {
@@ -40,7 +38,7 @@ class Context {
         let vendors: string[] = "ms,moz,webkit,o".split(",");
         if (!window.requestAnimationFrame) {
             let vendor;
-            for (let i = 0; i < vendors.length; i++) {
+            for (let i = 0; i < vendors.length; ++i) {
                 vendor = vendors[i];
                 window.requestAnimationFrame = window[vendor + "RequestAnimationFrame"];
                 window.cancelAnimationFrame = window[vendor + "CancelAnimationFrame"] || window[vendor + "CancelRequestAnimationFrame"];

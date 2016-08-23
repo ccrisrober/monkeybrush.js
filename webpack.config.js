@@ -11,14 +11,12 @@ module.exports = {
 	// Turn on sourcemaps
 	devtool: 'source-map',
 	// Add minification
-	/*plugins: [
-		new webpack.optimize.UglifyJsPlugin()
-	],*/
-	/*plugins: [
+	plugins: [
+		//new webpack.optimize.UglifyJsPlugin(),
 		new CircularDependencyPlugin({
 			exclude: /a\.js/
 		})
-	],*/
+	],
 	module: {
 		loaders: [
 			{ test: /\.ts(x?)$/, loader: 'ts-loader' }

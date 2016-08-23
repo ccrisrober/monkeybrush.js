@@ -138,9 +138,8 @@ function initialize() {
         wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
     });
 
-    //const ext = gl_.getExtension("OES_draw_buffers_indexed");
-    //console.log(ext);
-    //
+    // const ext = gl_.getExtension("OES_draw_buffers_indexed");
+    // console.log(ext);
     
     /*let arr = [
         'OES_element_index_uint',
@@ -201,28 +200,31 @@ function drawScene(dt: number) {
     let prog = ProgramManager.get(mainShader);
     prog.use();
 
-    //prog.sendUniformVec3("lightPosition", light.position);
+    // prog.sendUniformVec3("lightPosition", light.position);
 
     angle += Timer.deltaTime() * 0.001;
-    //console.log(angle);
+    // console.log(angle);
 
     tex2d.bind(0);
     prog.sendUniform1i("texSampler", 0);
 
     let varvar = text.max;
-    let i = 0, j = 0;
+    let i = 0, j = 0, k = 0;
     let dd = -1;
     for (i = -varvar; i < varvar; i += 5.0) {
         for (j = -varvar; j < varvar; j += 5.0) {
-            dd *= -1;
-            mat4.translate(model,identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
-            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-            mat4.rotateY(model, model, angle * dd);
-            mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
+            for (k = -varvar; k < varvar; k += 5.0) {
+                dd *= -1;
+                mat4.translate(model, identityMatrix, 
+                    vec3.fromValues(i * 1.0, j * 1.0, k * 1.0));
+                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+                mat4.rotateY(model, model, angle * dd);
+                mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
 
-            prog.sendUniformMat4("model", model);
+                prog.sendUniformMat4("model", model);
 
-            m.render();
+                m.render();
+            }
         }
     }
     skybox.render(view, projection);

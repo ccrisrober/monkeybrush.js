@@ -1,5 +1,9 @@
-"use strict";
+/// <reference path="context.ts" />
 
+import Context from "./context";
+
+"use strict";
+// TODO: Remove Input singleton mode :S
 class Input {
     private static _instance: Input = new Input();
 
@@ -8,29 +12,55 @@ class Input {
             throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
         }
         
-        for (let i = 0; i < this.keys["LastKeyCode"]; i++) {
+        for (let i = 0; i < this.keys["LastKeyCode"]; ++i) {
             this._isKeyPressed[i] = false;
             this._keyPreviusState[i] = false;
             this._isKeyClicked[i] = false;
         }
 
+        for (let i = 0; i < 3; ++i) {
+            this._buttonPreviousState[i] = false;
+            this._isButtonClicked[i] = false;
+            this._isButtonPressed[i] = false;
+        }
+
         let self = this;
         // Register handles
-        window.addEventListener("keyup", function(ev) {
+        window.addEventListener("keyup", function(ev: KeyboardEvent) {
             if (ev.keyCode === 40 || ev.keyCode === 38) {
                 ev.preventDefault();
             }
             self._onKeyUp(ev);
         });
-        window.addEventListener("keydown", function(ev) {
+        window.addEventListener("keydown", function(ev: KeyboardEvent) {
             if (ev.keyCode === 40 || ev.keyCode === 38) {
                 ev.preventDefault();
             }
             self._onKeyDown(ev);
         });
+        window.addEventListener("mousedown", function(ev: MouseEvent) {
+            self._onMouseDown(ev);
+        });
+        window.addEventListener("mousemove", function(ev: MouseEvent) {
+            self._onMouseMove(ev);
+        });
+        window.addEventListener("mouseup", function(ev: MouseEvent) {
+            self._onMouseUp(ev);
+        });
+
+
+        Context.getContext();
+        this._canvas = Context._canvas;
 
         Input._instance = this;
     }
+
+    // Mouse states
+    public mouseButton = {
+        Left: 0,
+        Middle: 1,
+        Right: 2
+    };
 
     // Key code constants
     public keys = {
@@ -78,9 +108,13 @@ class Input {
     };
 
     public update() {
-        for (let i = 0; i < this.keys["LastKeyCode"]; i++) {
+        for (let i = 0; i < this.keys["LastKeyCode"]; ++i) {
             this._isKeyClicked[i] = (!this._keyPreviusState[i]) && this._isKeyPressed[i];
             this._keyPreviusState[i] = this._isKeyPressed[i];
+        }
+        for (let i = 0; i < 3; ++i) {
+            this._isButtonClicked[i] = (!this._buttonPreviousState[i]) && this._isButtonPressed[i];
+            this._buttonPreviousState[i] = this._isButtonPressed[i];
         }
     }
 
@@ -106,9 +140,51 @@ class Input {
     protected _onKeyUp(ev: KeyboardEvent) {
         this._isKeyPressed[ev.keyCode] = false;
     }
+    public _canvas: HTMLCanvasElement;
+    public _buttonPreviousState: Array<boolean> = [];
+    public _isButtonPressed: Array<boolean> = [];
+    public _isButtonClicked: Array<boolean> = [];
+    public _mousePosX = -1;
+    public _mousePosY = -1;
+    protected _onMouseMove(ev: MouseEvent): boolean {
+        let inside = false;
+        let bbox = this._canvas.getBoundingClientRect();
 
+        const x = Math.round((ev.clientX - bbox.left) * (this._canvas.width / bbox.width));
+        const y = Math.round((ev.clientY - bbox.top) * (this._canvas.width / bbox.width));
+
+        if ((x >= 0) && (x < this._canvas.width) && 
+            (y >= 0) && (y < this._canvas.height)) {
+            this._mousePosX = x;
+            this._mousePosY = this._canvas.height - 1 - y;
+            inside = true;
+        }
+        return inside;
+    }
+
+    protected _onMouseDown(ev: MouseEvent) {
+        if (this._onMouseMove(ev)) {
+            this._isButtonPressed[ev.button] = true;
+        }
+    };
+    protected _onMouseUp(ev: MouseEvent) {
+        this._onMouseMove(ev);
+        this._isButtonPressed[ev.button] = false;
+    };
     public static getInstance(): Input {
         return Input._instance;
+    };
+    public isButtonPressed(button): boolean {
+        return this._isButtonPressed[button];
+    }
+    public isButtonClicked(button): boolean {
+        return this._isButtonClicked[button];
+    }
+    public getMousePosX(): number {
+        return this._mousePosX;
+    }
+    public getMousePosY(): number {
+        return this._mousePosY;
     }
 };
 

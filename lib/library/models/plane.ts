@@ -35,9 +35,9 @@ class Plane extends Drawable {
         let texj = tmax / xdivs;
         let x, z;
         let vidx = 0, tidx = 0;
-        for (let i = 0; i <= zdivs; i++) {
+        for (let i = 0; i <= zdivs; ++i) {
             z = iFactor * i - z2;
-            for (let j = 0; j <= xdivs; j++) {
+            for (let j = 0; j <= xdivs; ++j) {
                 x = jFactor * j - x2;
                 v[vidx] = x;
                 v[vidx + 1] = 0.0;
@@ -54,10 +54,10 @@ class Plane extends Drawable {
 
         let rowStart, nextRowStart;
         let idx = 0;
-        for (let i = 0; i < zdivs; i++) {
+        for (let i = 0; i < zdivs; ++i) {
             rowStart = i * (xdivs + 1);
             nextRowStart = (i + 1) * (xdivs + 1);
-            for (let j = 0; j < xdivs; j++) {
+            for (let j = 0; j < xdivs; ++j) {
                 el[idx] = rowStart + j;
                 el[idx + 1] = nextRowStart + j;
                 el[idx + 2] = nextRowStart + j + 1;
@@ -73,7 +73,7 @@ class Plane extends Drawable {
         this._handle = new Array(4);
         let i = 0;
         this._handle[i] = new VertexBuffer(BufferType.ElementArray);
-        for (i = 1; i < 4; i++) {
+        for (i = 1; i < 4; ++i) {
             this._handle[i] = new VertexBuffer(BufferType.Array);
         }
 

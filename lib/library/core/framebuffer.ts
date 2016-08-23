@@ -105,7 +105,7 @@ class Framebuffer {
 
         if (numColors > 1) {
             let drawBuffs = [];
-            for (let i = 0; i < numColors; i++) {
+            for (let i = 0; i < numColors; ++i) {
                 drawBuffs.push(gl.COLOR_ATTACHMENT0 + i);
             }
             (<any>gl).drawBuffers(drawBuffs);

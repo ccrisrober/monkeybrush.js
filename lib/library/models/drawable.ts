@@ -40,7 +40,7 @@ abstract class Drawable {
     public render() {
         this._vao.bind();
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-        //this._vao.unbind();
+        this._vao.unbind();
     }
     /**
      * Render with array instance mode
@@ -68,7 +68,7 @@ abstract class Drawable {
                 );
             }
         }
-        // this.vao.unbind();
+        this._vao.unbind();
     }
 }
 

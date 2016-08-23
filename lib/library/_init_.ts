@@ -30,16 +30,6 @@ namespace _init__ {
     export function init(loadAssets: LoadAssets, textCB) {
         Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
 
-        /**
-        if (Object.keys(text).length > 0) {
-            gui = new dat.GUI();
-
-            for (let index in text) { 
-                gui.add(text, index);
-            }
-            // gui.add(text, "max", 5, 100);
-        }
-        /**/
         gui = new dat.GUI();
         textCB(gui);
 
@@ -83,7 +73,7 @@ namespace _init__ {
         Timer.update();
         
 
-        // resize();
+        //resize();
         
 
         _drawSceneCB(dt);    // Draw user function

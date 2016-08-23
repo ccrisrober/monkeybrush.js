@@ -139,7 +139,7 @@ class Cube extends Drawable {
         this._handle = new Array(4);
         let i = 0;
         this._handle[i] = new VertexBuffer(BufferType.ElementArray);
-        for (i = 1; i < 4; i++) {
+        for (i = 1; i < 4; ++i) {
             this._handle[i] = new VertexBuffer(BufferType.Array);
         }
         this._vao.bind();

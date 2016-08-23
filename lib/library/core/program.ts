@@ -108,7 +108,7 @@ class Program {
         const gl = Core.getInstance().getGL();
         // Create and compile shader
         this._compiledShader = gl.createProgram();
-        for (let i = 0; i < this._shaders.length; i++) {
+        for (let i = 0; i < this._shaders.length; ++i) {
             gl.attachShader(this._compiledShader, this._shaders[i]);
         }
         gl.linkProgram(this._compiledShader);

@@ -18,7 +18,7 @@ class Texture2D extends Texture {
 
     constructor(data/*: ImageData*/, options: TexOptions = {}, onSuccess: () => void = null) {
         super(gl.TEXTURE_2D);
-        //options = options || {};
+        // options = options || {};
 
         console.log(this._target);
 
@@ -112,8 +112,8 @@ class Texture2D extends Texture {
      */
     public setAnisotropic(level: number = 0) {
         level = Math.floor(level);
-        var ext = gl.getExtension("EXT_texture_filter_anisotropic");
-        var max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        const ext = gl.getExtension("EXT_texture_filter_anisotropic");
+        const max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         if (max_anisotropy < level) {
             gl.texParameterf(this._target, ext.TEXTURE_MAX_ANISOTROPY_EXT, level);
         }

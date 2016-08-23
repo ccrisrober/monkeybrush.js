@@ -41,10 +41,10 @@ class Sphere extends Drawable {
         let phiFac = Math.PI / stacks;
         let nx, ny, nz, s, t;
         let idx = 0, tIdx = 0;
-        for ( let i = 0; i <= slices; i++ ) {
+        for ( let i = 0; i <= slices; ++i ) {
             theta = i * thetaFac;
                     s = i / slices;
-            for ( let j = 0; j <= stacks; j++ ) {
+            for ( let j = 0; j <= stacks; ++j ) {
                 phi = j * phiFac;
                             t = j / stacks;
                 nx = Math.sin(phi) * Math.cos(theta);
@@ -62,10 +62,10 @@ class Sphere extends Drawable {
 
         // Generate the element list
         idx = 0;
-        for ( let i = 0; i < slices; i++ ) {
+        for ( let i = 0; i < slices; ++i ) {
             let stackStart = i * (stacks + 1);
             let nextStackStart = (i + 1) * (stacks + 1);
-            for ( let j = 0; j < stacks; j++ ) {
+            for ( let j = 0; j < stacks; ++j ) {
                 if ( j === 0 ) {
                     el[idx] = stackStart;
                     el[idx + 1] = stackStart + 1;
@@ -93,7 +93,7 @@ class Sphere extends Drawable {
         this._handle = new Array(4);
         let i = 0;
         this._handle[i] = new VertexBuffer(BufferType.ElementArray);
-        for (i = 1; i < 4; i++) {
+        for (i = 1; i < 4; ++i) {
             this._handle[i] = new VertexBuffer(BufferType.Array);
         }
 
