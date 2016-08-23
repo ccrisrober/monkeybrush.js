@@ -1,9 +1,14 @@
 /// <reference path="../core/core.ts" />
+/// <reference path="../constants/_constants.ts" />
+import Core from "../core/core";
+import BufferType from "../constants/BufferType"
+import UsageType from "../constants/UsageType"
 
 "use strict";
 
+const gl = Core.getInstance().getGL();
+
 class VertexBuffer {
-    static gl = Core.getInstance().getGL();
     /**
      * [_buffer description]
      * @type {WebGLBuffer}
@@ -18,7 +23,7 @@ class VertexBuffer {
      * @param {BufferType = BufferType.Array}
      */
     constructor(type: BufferType = BufferType.Array) {
-        this._buffer = VertexBuffer.gl.createBuffer();
+        this._buffer = gl.createBuffer();
         this._type = type;
         this.bind();
     }
@@ -29,13 +34,13 @@ class VertexBuffer {
         if (type !== undefined) {
             this._type = type;
         }
-        VertexBuffer.gl.bindBuffer(this._type, this._buffer);
+        gl.bindBuffer(this._type, this._buffer);
     }
     /**
      * 
      */
     public unbind() {
-        VertexBuffer.gl.bindBuffer(this._type, null);
+        gl.bindBuffer(this._type, null);
     }
     /**
      * @return {BufferType}
@@ -53,9 +58,9 @@ class VertexBuffer {
      * 
      */
     public destroy() {
-        VertexBuffer.gl.bindBuffer(this._type, 0);
+        gl.bindBuffer(this._type, 0);
         if (!this._buffer) {
-            VertexBuffer.gl.deleteBuffer(this._buffer);
+            gl.deleteBuffer(this._buffer);
         }
         this._buffer = null;
     }
@@ -65,7 +70,7 @@ class VertexBuffer {
      */
     public bufferData(data: Float32Array | Uint16Array, usage: UsageType = UsageType.StaticDraw) {
         this.bind();
-        VertexBuffer.gl.bufferData(this._type, data, usage);
+        gl.bufferData(this._type, data, usage);
     }
 
     /**
@@ -76,14 +81,14 @@ class VertexBuffer {
      */
     public attribDivisor(position: number, length: number, divisor: number, stride: number = 0) {
         this.bind();
-        VertexBuffer.gl.enableVertexAttribArray(position);
-        VertexBuffer.gl.vertexAttribPointer(position, 
+        gl.enableVertexAttribArray(position);
+        gl.vertexAttribPointer(position, 
             length, 
-            VertexBuffer.gl.FLOAT, 
+            gl.FLOAT, 
             false, 
             length * Float32Array.BYTES_PER_ELEMENT, 
             0);
-        (<any>VertexBuffer.gl).vertexAttribDivisor(position, divisor); 
+        (<any>gl).vertexAttribDivisor(position, divisor); 
     }
     /**
      * @param {number}
@@ -95,8 +100,8 @@ class VertexBuffer {
     public vertexAttribPointer(attribLocation: number, numElems: number, type: number, 
         normalized: boolean = false, offset: number = 0) {
         this.bind();
-        VertexBuffer.gl.enableVertexAttribArray(attribLocation);
-        VertexBuffer.gl.vertexAttribPointer(
+        gl.enableVertexAttribArray(attribLocation);
+        gl.vertexAttribPointer(
             attribLocation, // Attribute location
             numElems, // Number of elements per attribute
             type, // Type of elements
@@ -106,3 +111,5 @@ class VertexBuffer {
         );
     }
 }
+
+export default VertexBuffer;

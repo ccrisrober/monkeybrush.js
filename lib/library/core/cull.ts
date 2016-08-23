@@ -1,14 +1,16 @@
-/// <reference path="core.ts" />
+/// <reference path="../constants/_constants.ts" />
+/// <reference path="context.ts" />
+
+import Context from "./context";
 
 "use strict";
 
 class Cull {
-    static gl = Core.getInstance().getGL();
-
     /**
      * Enable cullFace test.
      */
     public static enable() {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.enable(gl.CULL_FACE);
     }
 
@@ -17,6 +19,7 @@ class Cull {
      * @return {Face}: Current cullFace mode
      */
     public static getMode(): Face {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         return gl.getParameter(gl.CULL_FACE_MODE);
     }
 
@@ -25,6 +28,7 @@ class Cull {
      * @param {Face} mode: Cull face mode
      */
     public static setMode(mode: Face) {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.cullFace(mode);
     }
 
@@ -32,6 +36,7 @@ class Cull {
      * Disable cullFace test.
      */
     public static disable() {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.disable(gl.CULL_FACE);
     }
 
@@ -40,8 +45,11 @@ class Cull {
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         return gl.isEnabled(gl.CULL_FACE);
     }
+};
 
+import Face from "../constants/Face";
 
-}
+export default Cull;

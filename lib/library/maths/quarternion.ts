@@ -105,4 +105,6 @@ class Quaternion {
     public lerp(q: Quaternion, t: number) {
         // TODO
     }
-}
+};
+
+export default Quaternion;

@@ -1,8 +1,19 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../core/program.ts" />
-/// <reference path="resourceMap.ts" />
+/// <reference path="../resources/resourceMap.ts" />
 /// <reference path="../textures/cubemapTexture.ts" />
 /// <reference path="../core/depth.ts" />
+/// <reference path="../constants/ProgramCte.ts" />
+/// <reference path="../constants/ComparisonFunc.ts" />
+
+import Core from "../core/core.ts"
+import Program from "../core/program.ts"
+import ResourceMap from "../resources/resourceMap.ts"
+import CubeMapTexture from "../textures/cubemapTexture.ts"
+import Depth from "../core/depth.ts"
+
+import ProgramCte from "../constants/ProgramCte";
+import ComparisonFunc from "../constants/ComparisonFunc";
 
 "use strict";
 
@@ -51,7 +62,7 @@ class Skybox {
             TexCoords = position;
         }`;
         
-        this._prog.addShader(vs, shader_type.vertex, mode.read_text);
+        this._prog.addShader(vs, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
 
         let fg: string = `#version 300 es
         precision highp float;
@@ -62,7 +73,7 @@ class Skybox {
             color = texture(skybox, TexCoords);
         }`;
 
-        this._prog.addShader(fg, shader_type.fragment, mode.read_text);
+        this._prog.addShader(fg, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
         this._prog.compile();
 
         this._prog.addUniforms(["view", "projection"]);
@@ -167,4 +178,6 @@ class Skybox {
         this.cubeMapTexture.finishTex();
         this.cubeMapTexture.unbind();
     }
-}
+};
+
+export default Skybox;

@@ -1,4 +1,15 @@
+/// <reference path="../core/core.ts" />
 /// <reference path="drawable.ts" />
+/// <reference path="../extras/vertexArray.ts" />
+/// <reference path="../extras/vertexBuffer.ts" />
+/// <reference path="../constants/_constants.ts" />
+import Core from "../core/core.ts"
+import VertexArray from "../extras/vertexArray.ts"
+import VertexBuffer from "../extras/vertexBuffer.ts"
+import UsageType from "../constants/UsageType.ts"
+import BufferType from "../constants/BufferType.ts"
+
+import Drawable from "./drawable"
 
 "use strict";
 
@@ -140,4 +151,6 @@ class Cube extends Drawable {
 
         this._indicesLen = el.length;
     }
-}
+};
+
+export default Cube;

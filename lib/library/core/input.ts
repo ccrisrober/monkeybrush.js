@@ -110,4 +110,6 @@ class Input {
     public static getInstance(): Input {
         return Input._instance;
     }
-}
+};
+
+export default Input;

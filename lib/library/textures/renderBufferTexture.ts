@@ -1,12 +1,16 @@
-/// <reference path="..//maths/vector2.ts" />
+/// <reference path="../maths/vector2.ts" />
 /// <reference path="../core/Core.ts" />
 
+import Core from "../core/core"
+import Vector2 from "../maths/vector2"
+
 "use strict";
+
+const gl = Core.getInstance().getGL();
 
 class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
     constructor(size: Vector2<number>, format: number, attachment: number) {
-        const gl = Core.getInstance().getGL();
         this._handle = gl.createRenderbuffer();
         gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
         gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
@@ -14,7 +18,8 @@ class RenderBufferTexture {
         gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     }
     public destroy() {
-        const gl = Core.getInstance().getGL();
         gl.deleteTexture(this._handle);
     }
-}
+};
+
+export default RenderBufferTexture;

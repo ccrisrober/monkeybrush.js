@@ -25,4 +25,6 @@ class Vector2<T> {
     public isEqual(other: Vector2<T>): boolean {
         return this.x === other.x && this.y === other.y;
     }
-}
+};
+
+export default Vector2;

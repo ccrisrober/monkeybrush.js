@@ -3,8 +3,16 @@
 /// <reference path="../textures/simpleTexture2D.ts" />
 /// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="..//maths/vector2.ts" />
+/// 
+import Core from "./core"
+import Texture from "../textures/texture"
+import SimpleTexture2D from "../textures/simpleTexture2D"
+import RenderBufferTexture from "../textures/renderBufferTexture"
+import Vector2 from "../maths/vector2"
 
 "use strict";
+        
+const gl = Core.getInstance().getGL();
 
 // TODO: Redimension
 // TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
@@ -19,8 +27,6 @@ class Framebuffer {
     
     // TODO: Stencil unused
     constructor(textures: Array<Texture>, size: Vector2<number>, depth: boolean = false, stencil: boolean = false, options = {}) {
-        const gl = Core.getInstance().getGL();
-
         let numColors = textures.length;
         if (numColors < 0) {
             throw new Error("must specify >= 0 color attachments");
@@ -44,7 +50,7 @@ class Framebuffer {
 
             // Only supported simple textures
             // TODO: Cubemap or texture3D
-            let target = texture.target;
+            let target = texture._target;
 
             gl.framebufferTexture2D(gl.FRAMEBUFFER,
                 gl.COLOR_ATTACHMENT0 + i,
@@ -115,7 +121,6 @@ class Framebuffer {
     }
 
     private checkStatus(status: number) {
-        const gl = Core.getInstance().getGL();
         switch (status) {
             case gl.FRAMEBUFFER_UNSUPPORTED:
                 throw new Error("framebuffer: Framebuffer unsupported");
@@ -131,13 +136,10 @@ class Framebuffer {
     }
 
     public bind() {
-        const gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
     }
 
     public onlyBindTextures() {
-        const gl = Core.getInstance().getGL();
-
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this._colors.forEach((tex: Texture, idx: number) => {
             tex.bind(idx);
@@ -145,7 +147,6 @@ class Framebuffer {
     }
 
     public unbind() {
-        const gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
 
@@ -156,7 +157,6 @@ class Framebuffer {
     }
 
     public destroy() {
-        const gl = Core.getInstance().getGL();
         let oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
         if (oldBinding === this._handle) {
@@ -181,4 +181,6 @@ class Framebuffer {
             this._depth = null;
         }
     }
-}
+};
+
+export default Framebuffer;

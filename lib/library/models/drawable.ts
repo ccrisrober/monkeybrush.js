@@ -1,8 +1,17 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../extras/vertexArray.ts" />
 /// <reference path="../extras/vertexBuffer.ts" />
+/// <reference path="../constants/_constants.ts" />
+import Core from "../core/core.ts"
+import VertexArray from "../extras/vertexArray.ts"
+import VertexBuffer from "../extras/vertexBuffer.ts"
+import UsageType from "../constants/UsageType.ts"
 
 "use strict";
+
+const gl = Core.getInstance().getGL();
+
+declare var WebGL2RenderingContext: any;
 
 /**
  * Drawable abstract class
@@ -22,14 +31,12 @@ abstract class Drawable {
     }
 
     protected addAttrib_(attribLocation: number, buffer: VertexBuffer, numElems: number) {
-        const gl = Core.getInstance().getGL();
         buffer.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
     }
     /**
      * Normal render
      */
     public render() {
-        const gl = Core.getInstance().getGL();
         this._vao.bind();
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
@@ -39,8 +46,6 @@ abstract class Drawable {
      * @param {number} numInstances: Instances to render
      */
     public renderArrayInstance(numInstances: number) {
-        const gl = Core.getInstance().getGL();
-
         this._vao.bind();
         if (gl instanceof WebGL2RenderingContext) {
             (<any>gl).drawElementsInstanced(
@@ -65,3 +70,5 @@ abstract class Drawable {
         // this.vao.unbind();
     }
 }
+
+export default Drawable;

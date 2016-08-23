@@ -1,4 +1,5 @@
 /// <reference path="core/input.ts" />
+import Input from "./core/input"
 
 "use strict";
 
@@ -169,4 +170,6 @@ class Camera2 {
 
         return this.proj;
     }
-}
+};
+
+export default Camera2;

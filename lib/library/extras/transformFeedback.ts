@@ -1,47 +1,52 @@
 /// <reference path="../core/core.ts" />
 
+import Core from "../core/core";
+
 "use strict";
 
+const gl = Core.getInstance().getGL();
+
 class TransformFeedback {
-    static gl = Core.getInstance().getGL();
     protected _handle;
     constructor() {
-        this._handle = (<any>TransformFeedback.gl).createTransformFeedback();
+        this._handle = (<any>gl).createTransformFeedback();
     }
 
     public destroy() {
-        (<any>TransformFeedback.gl).deleteTransformFeedback(this._handle);
+        (<any>gl).deleteTransformFeedback(this._handle);
     }
 
     public bind(target: number) {
-        (<any>TransformFeedback.gl).bindTranformFeedback(target, this._handle);
+        (<any>gl).bindTranformFeedback(target, this._handle);
     }
 
     public unbind(target) {
-        (<any>TransformFeedback.gl).bindTransformFeedback(target, null);
+        (<any>gl).bindTransformFeedback(target, null);
     }
 
     public begin(primitiveMode) {
-        (<any>TransformFeedback.gl).beginTranformFeedback(primitiveMode);
+        (<any>gl).beginTranformFeedback(primitiveMode);
     }
 
     public pause() {
-        (<any>TransformFeedback.gl).pauseTranformFeedback();
+        (<any>gl).pauseTranformFeedback();
     }
 
     public resume() {
-        (<any>TransformFeedback.gl).resumeTransformFeedback();
+        (<any>gl).resumeTransformFeedback();
     }
 
     public end() {
-        (<any>TransformFeedback.gl).endTranformFeedback();
+        (<any>gl).endTranformFeedback();
     }
 
     public varyings(program: number, varyings, bufferMode) {
-        return (<any>TransformFeedback.gl).transformFeedbackVaryings(program, varyings, bufferMode);
+        return (<any>gl).transformFeedbackVaryings(program, varyings, bufferMode);
     }
 
     public getVarying(program: number, idx) {
-        return (<any>TransformFeedback.gl).getTransformFeedbackVarying(program, idx);
+        return (<any>gl).getTransformFeedbackVarying(program, idx);
     }
 }
+
+export default TransformFeedback;

@@ -1,4 +1,8 @@
 /// <reference path="../core/program.ts" />
+/// <reference path="../constants/ProgramCte.ts" />
+
+import Program from "../core/program.ts"
+import ProgramCte from "../constants/ProgramCte";
 
 "use strict";
 
@@ -14,7 +18,7 @@ namespace ToneMap {
    * @param {WebGLRenderingContext}
    */
   export function init(gl: WebGLRenderingContext) {
-    textureQuadSimpleProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
+    textureQuadSimpleProgram.addShader(vertexCode, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
     textureQuadSimpleProgram.addShader(`#version 300 es
       precision highp float;
       in vec2 texCoord;
@@ -22,13 +26,13 @@ namespace ToneMap {
       out vec4 fragColor;
       void main() {
         fragColor = texture( texture_, texCoord );
-      }`, shader_type.fragment, mode.read_text);
+      }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
     textureQuadSimpleProgram.compile();
     textureQuadSimpleProgram.addAttributes(["vertex"]);
     textureQuadSimpleProgram.addUniforms(["texture_"]);
 
 
-    textureQuadGammaProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
+    textureQuadGammaProgram.addShader(vertexCode, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
     textureQuadGammaProgram.addShader(`#version 300 es\n
       precision highp float;
       in vec2 texCoord;
@@ -38,13 +42,13 @@ namespace ToneMap {
       void main() {
         fragColor = texture( texture_, texCoord );
         fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction
-      }`, shader_type.fragment, mode.read_text);
+      }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
     textureQuadGammaProgram.compile();
     textureQuadGammaProgram.addAttributes(["vertex"]);
     textureQuadGammaProgram.addUniforms(["texture_", "brightness"]);
 
 
-    textureQuadReinhardProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
+    textureQuadReinhardProgram.addShader(vertexCode, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
     textureQuadReinhardProgram.addShader(`#version 300 es
       precision highp float;
       in vec2 texCoord;
@@ -55,13 +59,13 @@ namespace ToneMap {
         fragColor = texture( texture_, texCoord );
         fragColor.rgb = fragColor.rgb / ( 1.0 + fragColor.rgb );
         fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction
-      }`, shader_type.fragment, mode.read_text);
+      }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
     textureQuadReinhardProgram.compile();
     textureQuadReinhardProgram.addAttributes(["vertex"]);
     textureQuadReinhardProgram.addUniforms(["texture_", "brightness"]);
 
 
-    textureQuadFilmicProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
+    textureQuadFilmicProgram.addShader(vertexCode, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
     textureQuadFilmicProgram.addShader(`#version 300 es
       precision highp float;
       in vec2 texCoord;
@@ -73,13 +77,13 @@ namespace ToneMap {
         color = max(vec3(0.), color - vec3(0.004));
         color = (color * (6.2 * color + .5)) / (color * (6.2 * color + 1.7) + 0.06);
         fragColor = vec4( color, 1.0 );
-      }`, shader_type.fragment, mode.read_text);
+      }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
     textureQuadFilmicProgram.compile();
     textureQuadFilmicProgram.addAttributes(["vertex"]);
     textureQuadFilmicProgram.addUniforms(["texture_", "brightness"]);
 
 
-    textureQuadsRGBProgram.addShader(vertexCode, shader_type.vertex, mode.read_text);
+    textureQuadsRGBProgram.addShader(vertexCode, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
     textureQuadsRGBProgram.addShader(`#version 300 es
       precision highp float;
       in vec2 texCoord;
@@ -95,13 +99,13 @@ namespace ToneMap {
         fragColor.r = sRGB_gamma_correct(fragColor.r);
         fragColor.g = sRGB_gamma_correct(fragColor.g);
         fragColor.b = sRGB_gamma_correct(fragColor.b);
-      }`, shader_type.fragment, mode.read_text);
+      }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
     textureQuadsRGBProgram.compile();
     textureQuadsRGBProgram.addAttributes(["vertex"]);
     textureQuadsRGBProgram.addUniforms(["texture_", "brightness"]);
 
 
-    textureQuadUncharted2Program.addShader(vertexCode, shader_type.vertex, mode.read_text);
+    textureQuadUncharted2Program.addShader(vertexCode, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
     textureQuadUncharted2Program.addShader(`#version 300 es
       precision highp float;
       in vec2 texCoord;
@@ -125,7 +129,7 @@ namespace ToneMap {
         float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
         fragColor.rgb /= white;
         fragColor.rgb = pow(fragColor.rgb, vec3(1. / 2.2));
-      }`, shader_type.fragment, mode.read_text);
+      }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
     textureQuadUncharted2Program.compile();
     textureQuadUncharted2Program.addAttributes(["vertex"]);
     textureQuadUncharted2Program.addUniforms(["texture_", "brightness"]);
@@ -136,4 +140,6 @@ namespace ToneMap {
   export let textureQuadFilmicProgram: Program = new Program();
   export let textureQuadsRGBProgram: Program = new Program();
   export let textureQuadUncharted2Program: Program = new Program();
-}
+};
+
+export default ToneMap;

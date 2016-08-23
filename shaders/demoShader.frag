@@ -69,10 +69,10 @@ void main() {
 
 
     vec3 viewDir = normalize(viewPos - outPosition);
-    if (abs(dot(viewDir, norm)) < thickness) {
+    /*if (abs(dot(viewDir, norm)) < thickness) {
         fragColor = vec4(vec3(0.0), 1.0);
         return;
-    }
+    }*/
 
     vec3 lightDir = normalize(lp - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
@@ -112,5 +112,5 @@ void main() {
     // Apply fog
     //colorWithFog(fragColor.rgb);
 
-    //fragColor = vec4(normalize(outNormal), 1.0);
+    fragColor = vec4(normalize(outNormal), 1.0);
 }

@@ -1,4 +1,5 @@
 /// <reference path="resourceMap.ts" />
+import ResourceMap from "./resourceMap"
 
 "use strict";
 
@@ -80,4 +81,6 @@ class AudioSource {
             this._bgAudioNode = null;
         }
     }
-}
+};
+
+export default AudioSource;

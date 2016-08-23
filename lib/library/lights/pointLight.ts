@@ -1,4 +1,6 @@
 /// <reference path="light.ts" />
+import Light from "./light"
+import Vector3 from "../maths/vector3"
 
 "use strict";
 
@@ -11,24 +13,24 @@ class PointLight extends Light {
      * [Light position]
      * @type {Vector3<number>}
      */
-    protected _position: Vector3<number>;
+    public/*protected*/ _position: Vector3<number>;
     /**
      * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
      */
     constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
         super();
-        this.position = position;
+        this._position = position;
     }
     /**
      * Get light position
      * @return {Vector3<number>}
      */
-    get position(): Vector3<number> { return this._position; }
+    // TODO: get position(): Vector3<number> { return this._position; }
     /**
      * Set light position
      * @param {Vector3<number>} position
      */
-    set position(position: Vector3<number>) { this._position = position; }
+    // TODO: set position(position: Vector3<number>) { this._position = position; }
 
     /**
      * Increment position from current position
@@ -41,4 +43,6 @@ class PointLight extends Light {
         this._position.y += y;
         this._position.z += z;
     }
-}
+};
+
+export default PointLight;

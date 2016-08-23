@@ -28,4 +28,6 @@ class Vector3<T> {
     public isEqual(other: Vector3<T>): boolean {
         return this.x === other.x && this.y === other.y && this.z === other.z;
     }
-}
+};
+
+export default Vector3;

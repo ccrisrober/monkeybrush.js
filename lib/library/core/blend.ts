@@ -1,4 +1,11 @@
-/// <reference path="core.ts" />
+/// <reference path="../constants/_constants.ts" />
+/// <reference path="context.ts" />
+
+import Context from "./context";
+
+import BlendingEq from "../constants/BlendingEq";
+import BlendingEqu from "../constants/BlendingEqu";
+import BlendingType from "../constants/BlendingType";
 
 "use strict";
 
@@ -7,12 +14,11 @@
  * @class Blend
  */
 class Blend {
-    static gl = Core.getInstance().getGL();
-
     /**
      * Enable blending
      */
     public static enable() {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.enable(gl.BLEND);
     }
     /**
@@ -20,6 +26,7 @@ class Blend {
      * @param {BlendingEq} mode: Specifies how source and destination colors are combined
      */
     public static equation(mode: BlendingEq) {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.blendEquation(mode);
     }
     /**
@@ -30,13 +37,16 @@ class Blend {
      *      of the source and destination colors are combined.
      */
     public static equationSeparate(modeRGB: BlendingEqu, modeAlpha: BlendingEqu) {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.blendEquationSeparate(modeRGB, modeAlpha);
     }
 
     public getBlendEquRGB(): BlendingEqu {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         return gl.getParameter(gl.BLEND_EQUATION_RGB);
     }
     public getBlendEquAlpha(): BlendingEqu {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         return gl.getParameter(gl.BLEND_EQUATION_ALPHA);
     }
     /**
@@ -50,6 +60,7 @@ class Blend {
         green: number = 0.0, 
         blue: number = 0.0, 
         alpha: number = 0.0) {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.blendColor(red, green, blue, alpha);
     }
     /**
@@ -59,6 +70,7 @@ class Blend {
      */
     public static func(sfactor: BlendingType = BlendingType.One, 
         dfactor: BlendingType = BlendingType.Zero) {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.blendFunc(sfactor, dfactor);
     }
 
@@ -73,6 +85,7 @@ class Blend {
         dstRGB: BlendingType = BlendingType.Zero, 
         srcAlpha: BlendingType = BlendingType.One, 
         dstAlpha: BlendingType = BlendingType.Zero) {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
     }
 
@@ -80,6 +93,7 @@ class Blend {
      * Disable blending
      */
     public static disable() {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.disable(gl.BLEND);
     }
 
@@ -88,7 +102,10 @@ class Blend {
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
+        const gl = Context.getContext(); // Core.getInstance().getGL();
         return gl.isEnabled(gl.BLEND);
     }
 
-}
+};
+
+export default Blend;

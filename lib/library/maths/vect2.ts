@@ -42,26 +42,28 @@ class Vect2 {
     public distance(): number {
         return vec2.squaredLength(this._value);
     }
-    public get x(): number { return this._value[0]; }
-    public get y(): number { return this._value[1]; }
-    public set x(value: number) {
-         this._value[0] = value;
-    }
-    public set y(value: number) {
-         this._value[1] = value;
-    }
-    public lerp(other: Vect2, t: number): Vect2 {
-        let ax = this._value[0], 
-            ay = this._value[1];
-        return new Vect2(
-            ax + t * (other.x - ax),
-            ay + t * (other.y - ay)
-        );
-    }
-    public isEqual(other: Vect2): boolean {
-        return this.x === other.x && this.y === other.y;
-    }
+    // TODO: public get x(): number { return this._value[0]; }
+    // TODO: public get y(): number { return this._value[1]; }
+    // TODO: public set x(value: number) {
+    // TODO:      this._value[0] = value;
+    // TODO: }
+    // TODO: public set y(value: number) {
+    // TODO:      this._value[1] = value;
+    // TODO: }
+    // TODO: public lerp(other: Vect2, t: number): Vect2 {
+    // TODO:     let ax = this._value[0], 
+    // TODO:         ay = this._value[1];
+    // TODO:     return new Vect2(
+    // TODO:         ax + t * (other.x - ax),
+    // TODO:         ay + t * (other.y - ay)
+    // TODO:     );
+    // TODO: }
+    // TODO: public isEqual(other: Vect2): boolean {
+    // TODO:     return this.x === other.x && this.y === other.y;
+    // TODO: }
     public dot(other: Vect2): number {
         return vec2.dot(this._value, other._value);
     }
-}
+};
+
+export default Vect2;

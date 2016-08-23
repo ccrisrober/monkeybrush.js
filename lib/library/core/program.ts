@@ -1,17 +1,10 @@
 /// <reference path="core.ts" />
+/// <reference path="../constants/ProgramCte.ts" />
+
+import Core from "./core"
+import ProgramCte from "../constants/ProgramCte";
 
 "use strict";
-
-enum mode {
-    read_file,
-    read_script,
-    read_text
-};
-
-enum shader_type {
-    vertex,
-    fragment
-}
 
 /**
  * Program class
@@ -83,25 +76,26 @@ class Program {
      * @param {shader_type}
      * @param {mode}
      */
-    public addShader(shader_: string, /*type: number*/ st: shader_type, _mode: mode) {
+    public addShader(shader_: string, /*type: number*/ st: ProgramCte.shader_type, _mode: ProgramCte.mode) {
         const gl = Core.getInstance().getGL();
+
         let shader: WebGLShader;
 
         let type: number = -1;
-        if (st === shader_type.vertex) {
+        if (st === ProgramCte.shader_type.vertex) {
             type = gl.VERTEX_SHADER;
-        } else if (st === shader_type.fragment) {
+        } else if (st === ProgramCte.shader_type.fragment) {
             type = gl.FRAGMENT_SHADER;
         }
         if (type < 0) {
             throw new Error("SHADER TYPE UNDEFINED");
         }
 
-        if (_mode === mode.read_file) {
+        if (_mode === ProgramCte.mode.read_file) {
             shader = this.loadAndCompileWithFile(shader_, type);
-        } else if (_mode === mode.read_script) {
+        } else if (_mode === ProgramCte.mode.read_script) {
             shader = this.loadAndCompile(shader_, type);
-        } else if (_mode === mode.read_text) {
+        } else if (_mode === ProgramCte.mode.read_text) {
             shader = this.loadAndCompileFromText(shader_, type);
         }
         this._shaders.push(shader);
@@ -350,4 +344,6 @@ class Program {
         const gl = Core.getInstance().getGL();
         gl.uniformMatrix4fv(this.uniformLocations[name], transpose, value);
     }
-}
+};
+
+export default Program;

@@ -1,3 +1,5 @@
+/// <reference path="library/_init_.ts" />
+
 /// <reference path="library/core/core.ts" />
 /// <reference path="library/core/program.ts" />
 /// <reference path="library/resources/programManager.ts" />
@@ -9,23 +11,47 @@
 /// <reference path="library/models/cube.ts" />
 /// <reference path="library/models/mesh.ts" />
 /// <reference path="library/textures/texture2d.ts" />
-/// <reference path="library/textures/texture3d.ts" />
+/// <reference path="library/extras/skybox.ts" />
 
-/// <reference path="library/core/gbuffer.ts" />
-/// <reference path="library/core/gbufferSSAO.ts" />
 /// <reference path="library/core/postprocess.ts" />
 /// <reference path="library/extras/timer.ts" />
 
 /// <reference path="library/lights/pointLight.ts" />
 /// <reference path="library/_demoCamera.ts" />
 /// <reference path="library/core/postProcess.ts" />
-/// <reference path="library/_init_.ts" />
+/// <reference path="library/constants/ProgramCte.ts" />
+
+import _init__ from "./library/_init_"
+
+import Core from "./library/core/core"
+import Torus from "./library/models/torus"
+import Sphere from "./library/models/sphere"
+import Plane from "./library/models/plane"
+import Cube from "./library/models/cube"
+import Mesh from "./library/models/mesh"
+import Texture2D from "./library/textures/texture2d"
+import SimpleTexture2D from "./library/textures/simpleTexture2d"
+import Program from "./library/core/program"
+import Framebuffer from "./library/core/framebuffer"
+import PostProcess from "./library/core/postProcess"
+import ProgramManager from "./library/resources/programManager"
+import ResourceMap from "./library/resources/resourceMap"
+import loaders from "./library/resources/loaders"
+import Timer from "./library/extras/timer"
+import PointLight from "./library/lights/pointLight"
+import Vector2 from "./library/maths/vector2"
+import Vector3 from "./library/maths/vector3"
+import Camera2 from "./library/_demoCamera"
+import Skybox from "./library/extras/skybox"
+
+import ProgramCte from "./library/constants/ProgramCte";
 
 "use strict";
 
 let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
 let gl_;
+let skybox: Skybox;
 
 let esferita: Sphere;
 let cubito: Cube;
@@ -54,6 +80,13 @@ let angle = 0;
 let text = SimpleConfig();
 function loadAssets() {
     loaders.loadImage("assets/images/example.png", "exampleImg");
+    // skybox
+    loaders.loadImage("assets/images/canyon/back.jpg");
+    loaders.loadImage("assets/images/canyon/bottom.jpg");
+    loaders.loadImage("assets/images/canyon/front.jpg");
+    loaders.loadImage("assets/images/canyon/left.jpg");
+    loaders.loadImage("assets/images/canyon/right.jpg");
+    loaders.loadImage("assets/images/canyon/top.jpg");
 }
 
 const mainShader: string = "prog";
@@ -73,6 +106,8 @@ function initialize() {
         gl_.canvas.height
     );
 
+    skybox = new Skybox("assets/images/canyon");
+
     framebuffer = new Framebuffer([
         new SimpleTexture2D(canvasSize, {
             "internalformat": gl_.RGB,
@@ -87,40 +122,13 @@ function initialize() {
 
     ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();
-        prog.addShader("./shaders/demoShader.vert", shader_type.vertex, mode.read_file);
-        prog.addShader("./shaders/demoShader.frag", shader_type.fragment, mode.read_file);
+        prog.addShader("./shaders/demoShader.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
+        prog.addShader("./shaders/demoShader.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
         prog.compile();
 
         prog.addUniforms(["projection", "view", "model", 
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
         return prog;
-    }); 
-    ProgramManager.addWithFun("blur", (): Program => {
-        let prog2: Program = new Program();
-        prog2.addShader(`#version 300 es
-            precision highp float;
-            layout(location = 0) in vec3 vertPosition;
-            out vec2 texCoord;
-            void main(void) {
-                texCoord = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-                gl_Position = vec4(vertPosition, 1.0);
-            }`, shader_type.vertex, mode.read_text);
-        prog2.addShader(`#version 300 es
-            precision highp float;
-            uniform sampler2D dataTexture;
-
-            out vec4 fragColor;
-            in vec2 texCoord;
-
-            void main() {
-
-                fragColor = vec4(texture(dataTexture, texCoord).rgb, 1.0);
-
-            }`, shader_type.fragment, mode.read_text);
-        prog2.compile();
-
-        prog2.addUniforms(["time"]);
-        return prog2;
     });
 
     let cubeImage = ResourceMap.retrieveAsset("exampleImg");
@@ -154,7 +162,7 @@ function drawScene(dt: number) {
 
     camera.update(cameraUpdateCb);
 
-    framebuffer.bind();
+    //framebuffer.bind();
 
     Core.getInstance().clearColorAndDepth();
 
@@ -166,11 +174,11 @@ function drawScene(dt: number) {
 
     angle += Timer.deltaTime() * 0.001;
 
-    /*light.addTransform(
+    light.addTransform(
         Math.sin(angle) * 0.06,
         Math.cos(angle) * 0.06,
         0.0 //5.0 + Math.cos(dt) * 0.06
-    );*/
+    );
     
     let varvar = text.max;
     let i = 0, j = 0, k = 0;
@@ -191,20 +199,18 @@ function drawScene(dt: number) {
             }
         }
     }
-    /**
-    mat4.translate(model, identityMatrix, light.position);
+    /**/
+    mat4.translate(model, identityMatrix, 
+        new Float32Array([
+            light._position.x,
+            light._position.y,
+            light._position.z
+        ]));
     prog.sendUniformMat4("model", model);
-    torito.render();
+    esferita.render();
     /**/
 
-    tex2d.unbind();
-
-    framebuffer.onlyBindTextures();
-
-    Core.getInstance().clearColorAndDepth();
-    let prog2 = ProgramManager.get("blur");
-    prog2.use();
-    PostProcess.render();
+    skybox.render(view, projection);
 }
 
 // ============================================================================================ //

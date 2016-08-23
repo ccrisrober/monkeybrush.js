@@ -32,4 +32,6 @@ class Object3D {
         const count = Object3D.uidCounters[id]++;
         return `${id}-${count}`;
     }
-}
+};
+
+export default Object3D;
