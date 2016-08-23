@@ -1,13 +1,15 @@
 /// <reference path="texture2d.ts" />
+/// <reference path="texOptions.ts" />
 
 import Texture2D from "./texture2d";
 import Core from "../core/core";
+import TexOptions from "./texOptions";
 
 "use strict";
 
 class VideoTexture extends Texture2D {
     public _videoElem: HTMLVideoElement;
-    constructor(data, options = {}) {
+    constructor(data, options: TexOptions = {}) {
         const gl = Core.getInstance().getGL();
         options["minFilter"] = gl.LINEAR;
         options["magFilter"] = gl.LINEAR;

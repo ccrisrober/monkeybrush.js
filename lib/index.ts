@@ -50,7 +50,7 @@ import ProgramCte from "./library/constants/ProgramCte";
 
 let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
-let gl_;
+let gl_: WebGLRenderingContext;
 let skybox: Skybox;
 
 let esferita: Sphere;
@@ -106,7 +106,7 @@ function initialize() {
         gl_.canvas.height
     );
 
-    // skybox = new Skybox("assets/images/canyon");
+    skybox = new Skybox("assets/images/canyon", false);
 
     /*framebuffer = new Framebuffer([
         new SimpleTexture2D(canvasSize, {
@@ -120,8 +120,8 @@ function initialize() {
 
     ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();
-        prog.addShader("./shaders/demoShader.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-        prog.addShader("./shaders/demoShader.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
+        prog.addShader("./shaders/demowebgl1.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
+        prog.addShader("./shaders/demowebgl1.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
         prog.compile();
 
         prog.addUniforms(["projection", "view", "model", 
@@ -137,6 +137,33 @@ function initialize() {
         magFilter: gl.LINEAR,
         wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
     });
+
+    //const ext = gl_.getExtension("OES_draw_buffers_indexed");
+    //console.log(ext);
+    //
+    
+    /*let arr = [
+        'OES_element_index_uint',
+        'EXT_sRGB',
+        'EXT_blend_minmax',
+        'EXT_frag_depth',
+        'WEBGL_depth_texture',
+        'WEBKIT_WEBGL_depth_texture',
+        'EXT_shader_texture_lod',
+        'OES_standard_derivatives',
+        'OES_texture_float',
+        'OES_texture_half_float',
+        'OES_texture_half_float_linear',
+        'OES_vertex_array_object',
+        'WEBGL_draw_buffers',
+        'OES_fbo_render_mipmap',
+        'ANGLE_instanced_arrays'
+    ];
+
+    arr.forEach((v: string) => {
+        console.log(v);
+        console.log(gl_.getExtension(v));
+    });*/
 
     cameraUpdateCb();
 }
@@ -171,7 +198,7 @@ function drawScene(dt: number) {
     gl.depthMask(true);
     /**/
 
-    var prog = ProgramManager.get(mainShader);
+    let prog = ProgramManager.get(mainShader);
     prog.use();
 
     //prog.sendUniformVec3("lightPosition", light.position);
@@ -182,11 +209,11 @@ function drawScene(dt: number) {
     tex2d.bind(0);
     prog.sendUniform1i("texSampler", 0);
 
-    var varvar = 25;
-    var i = 0, j = 0;
-    var dd = -1;
-    for(i = -varvar; i < varvar; i += 5.0) {
-        for(j = -varvar; j < varvar; j += 5.0) {
+    let varvar = text.max;
+    let i = 0, j = 0;
+    let dd = -1;
+    for (i = -varvar; i < varvar; i += 5.0) {
+        for (j = -varvar; j < varvar; j += 5.0) {
             dd *= -1;
             mat4.translate(model,identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
             mat4.rotateY(model, model, 90.0 * Math.PI / 180);
@@ -198,8 +225,7 @@ function drawScene(dt: number) {
             m.render();
         }
     }
-
-    // skybox.render(view, projection);
+    skybox.render(view, projection);
 
     /**
     const gl = Core.getInstance().getGL();
@@ -263,6 +289,8 @@ function drawScene(dt: number) {
 
 
 window.onload = () => {
-    _init__.init(loadAssets, text);
+    _init__.init(loadAssets, function(gui) {
+        gui.add(text, "max", 5, 100);
+    });
     _init__.start(initialize, drawScene);
 };

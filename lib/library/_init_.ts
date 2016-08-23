@@ -27,10 +27,10 @@ namespace _init__ {
     let stats: Stats;
     let _drawSceneCB: Function;
     let gui: dat.GUI;
-    export function init(loadAssets: LoadAssets, text) {
+    export function init(loadAssets: LoadAssets, textCB) {
         Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
 
-        /**/
+        /**
         if (Object.keys(text).length > 0) {
             gui = new dat.GUI();
 
@@ -40,6 +40,8 @@ namespace _init__ {
             // gui.add(text, "max", 5, 100);
         }
         /**/
+        gui = new dat.GUI();
+        textCB(gui);
 
         stats = new Stats();
         stats.setMode(0);
@@ -62,12 +64,12 @@ namespace _init__ {
                 }
             };
 
-            // Remove loader css3 window
-            document.getElementById("spinner").remove();
-
             initialize();
 
             _drawSceneCB = drawScene;
+
+            // Remove loader css3 window
+            document.getElementById("spinner").remove();
 
             requestAnimationFrame(render);
         });

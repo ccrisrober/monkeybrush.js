@@ -44,7 +44,7 @@ grunt serve # Only open server (http://localhost:3030/index.html)
 - [ ] Workers
 - [ ] Basic Transparency
 - [ ] Woit Transparency
-- [ ] Transform feedback
+- [x] Transform feedback
 - [ ] Shader extraction (https://github.com/mattdesl/gl-shader-extract)
 - [ ] UBO (projection, view, model, normalMatrix)
 - [x] Vect2
@@ -54,6 +54,7 @@ grunt serve # Only open server (http://localhost:3030/index.html)
 - [ ] Mat2
 - [ ] Mat3
 - [ ] Mat4
+- [x] Webpack integration
 
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt

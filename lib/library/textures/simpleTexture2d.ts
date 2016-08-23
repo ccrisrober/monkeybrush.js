@@ -26,6 +26,7 @@ class SimpleTexture2D extends Texture {
         let _internalformat = options["internalformat"] || gl.RGBA;
         let _format = options["format"] || gl.RGBA;
         let _type = options["type"] || gl.UNSIGNED_BYTE;
+        const _level = options["level"] || 0;
 
         this._minFilter = options["minFilter"] || gl.NEAREST;
         this._magFilter = options["magFilter"] || gl.NEAREST;
@@ -41,7 +42,7 @@ class SimpleTexture2D extends Texture {
 
         gl.texImage2D(
             this._target, 
-            0, // Level of details
+            _level, // Level of details
             _internalformat, // Internal format
             size.x, 
             size.y, 

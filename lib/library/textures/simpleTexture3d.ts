@@ -6,7 +6,7 @@ import Texture3D from "./texture3d";
 "use strict";
 
 class SimpleTexture3D extends Texture3D {
-    constructor(size: Vector3<number>, options = {}) {
+    constructor(size: Vector3<number>, options = {}, onSuccess: () => void) {
         super(null, size, options);
     }
 };

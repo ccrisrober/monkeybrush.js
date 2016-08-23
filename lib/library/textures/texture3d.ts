@@ -26,6 +26,7 @@ class Texture3D extends Texture {
         let _internalformat = options["internalformat"] || gl.RGBA;
         let _format = options["format"] || gl.RGBA;
         let _type = options["type"] || gl.UNSIGNED_BYTE;
+        const _level = options["level"] || 0;
 
         this.bind();
 
@@ -54,7 +55,7 @@ class Texture3D extends Texture {
             );*/
             (<any>gl).texImage3D(
                 this._target, 
-                0, 
+                _level, 
                 _internalformat, 
                 size.x, 
                 size.y, 

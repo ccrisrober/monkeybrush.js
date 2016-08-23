@@ -36,7 +36,8 @@ class Skybox {
     /**
      * @param {string}
      */
-    constructor(dir: string) {
+    constructor(dir: string, isWebGL2: boolean = true) {
+        console.log("IsWebGL2 = " + isWebGL2);
         console.log("Load skybox ...");
         let faces: Array<string> = [];
         faces.push(dir + "/right.jpg");
@@ -50,28 +51,56 @@ class Skybox {
 
         this._prog = new Program();
 
-        let vs: string = `#version 300 es
-        precision highp float;
-        layout (location = 0) in vec3 position;
-        out vec3 TexCoords;
-        uniform mat4 projection;
-        uniform mat4 view;
-        void main() {
-            vec4 pos = projection * view * vec4(position, 1.0);
-            gl_Position = pos.xyww;
-            TexCoords = position;
-        }`;
+        let vs: string;
+
+        if (isWebGL2) {
+            vs = `#version 300 es
+            precision highp float;
+            layout (location = 0) in vec3 position;
+            out vec3 TexCoords;
+            uniform mat4 projection;
+            uniform mat4 view;
+            void main() {
+                vec4 pos = projection * view * vec4(position, 1.0);
+                gl_Position = pos.xyww;
+                TexCoords = position;
+            }`;
+        } else {
+            vs = `precision highp float;
+            attribute vec3 position;
+            varying vec3 TexCoords;
+            uniform mat4 projection;
+            uniform mat4 view;
+            void main() {
+                vec4 pos = projection * view * vec4(position, 1.0);
+                gl_Position = pos.xyww;
+                TexCoords = position;
+            }`;
+        }
+
         
         this._prog.addShader(vs, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
 
-        let fg: string = `#version 300 es
-        precision highp float;
-        in vec3 TexCoords;
-        out vec4 color;
-        uniform samplerCube skybox;
-        void main() { 
-            color = texture(skybox, TexCoords);
-        }`;
+        let fg: string;
+
+        if (isWebGL2) {
+            fg = `#version 300 es
+            precision highp float;
+            in vec3 TexCoords;
+            out vec4 color;
+            uniform samplerCube skybox;
+            void main() { 
+                color = texture(skybox, TexCoords);
+            }`;
+        } else {
+            fg = `precision highp float;
+            varying vec3 TexCoords;
+            uniform samplerCube skybox;
+            void main() { 
+                gl_FragColor = textureCube(skybox, TexCoords);
+            }`;
+        }
+
 
         this._prog.addShader(fg, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
         this._prog.compile();
