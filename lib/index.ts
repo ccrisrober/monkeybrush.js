@@ -106,9 +106,9 @@ function initialize() {
         gl_.canvas.height
     );
 
-    skybox = new Skybox("assets/images/canyon");
+    // skybox = new Skybox("assets/images/canyon");
 
-    framebuffer = new Framebuffer([
+    /*framebuffer = new Framebuffer([
         new SimpleTexture2D(canvasSize, {
             "internalformat": gl_.RGB,
             "format": gl_.RGB,
@@ -116,9 +116,7 @@ function initialize() {
             "minFilter": gl_.NEAREST,
             "maxFilter": gl_.NEAREST
         })
-    ], canvasSize, true, true, {});
-
-    const vsize = new Vector3<number>(100, 100, 100);
+    ], canvasSize, true, true, {});*/
 
     ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();
@@ -164,6 +162,53 @@ function drawScene(dt: number) {
 
     Core.getInstance().clearColorAndDepth();
 
+    /**
+    gl.depthMask(false);
+    var prog2 = ShaderManager.get("pp");
+    prog2.use();
+    prog2.sendUniform1f("time", dt);
+    PostProcess.render();
+    gl.depthMask(true);
+    /**/
+
+    var prog = ProgramManager.get(mainShader);
+    prog.use();
+
+    //prog.sendUniformVec3("lightPosition", light.position);
+
+    angle += Timer.deltaTime() * 0.001;
+    //console.log(angle);
+
+    tex2d.bind(0);
+    prog.sendUniform1i("texSampler", 0);
+
+    var varvar = 25;
+    var i = 0, j = 0;
+    var dd = -1;
+    for(i = -varvar; i < varvar; i += 5.0) {
+        for(j = -varvar; j < varvar; j += 5.0) {
+            dd *= -1;
+            mat4.translate(model,identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, 0.0));
+            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+            mat4.rotateY(model, model, angle * dd);
+            mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
+
+            prog.sendUniformMat4("model", model);
+
+            m.render();
+        }
+    }
+
+    // skybox.render(view, projection);
+
+    /**
+    const gl = Core.getInstance().getGL();
+    camera.timeElapsed = Timer.deltaTime() / 10.0;
+
+    camera.update(cameraUpdateCb);
+
+    Core.getInstance().clearColorAndDepth();
+
     const prog = ProgramManager.get(mainShader);
     prog.use();
 
@@ -181,34 +226,32 @@ function drawScene(dt: number) {
     let varvar = text.max;
     let i = 0, j = 0, k = 0;
     let dd = -1;
-    /**/
-    for (i = -varvar; i < varvar; i += 5.0) {
-        for (j = -varvar; j < varvar; j += 5.0) {
-            for (k = -varvar; k < varvar; k += 5.0) {
-                dd *= -1;
-                mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
-                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                mat4.rotateY(model, model, angle * dd);
-                mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
-
-                prog.sendUniformMat4("model", model);
-
-                m.render();
-            }
-        }
-    }
-    /**/
-    mat4.translate(model, identityMatrix, 
-        new Float32Array([
-            light._position.x,
-            light._position.y,
-            light._position.z
-        ]));
-    prog.sendUniformMat4("model", model);
-    esferita.render();
-    /**/
+    //for (i = -varvar; i < varvar; i += 5.0) {
+    //    for (j = -varvar; j < varvar; j += 5.0) {
+    //        for (k = -varvar; k < varvar; k += 5.0) {
+    //            dd *= -1;
+    //            mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
+    //            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+    //            mat4.rotateY(model, model, angle * dd);
+    //            mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
+    //
+    //            prog.sendUniformMat4("model", model);
+    //
+    //            m.render();
+    //        }
+    //    }
+    //}
+    //mat4.translate(model, identityMatrix, 
+    //    new Float32Array([
+    //        light._position.x,
+    //        light._position.y,
+    //        light._position.z
+    //    ]));
+    //prog.sendUniformMat4("model", model);
+    //esferita.render();
 
     skybox.render(view, projection);
+    /**/
 }
 
 // ============================================================================================ //

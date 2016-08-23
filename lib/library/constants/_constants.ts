@@ -8,3 +8,5 @@
 /// <reference path="UsageType.ts" />
 /// <reference path="RenderType.ts" />
 /// <reference path="FaceDir.ts" />
+/// <reference path="TextureType.ts" />
+/// <reference path="DrawBuffer.ts" />

@@ -136,7 +136,8 @@ class Skybox {
      */
     public render(view: Float32Array, projection: Float32Array) {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();
-        Depth.comparison(ComparisonFunc.LessEqual);
+
+        gl.depthFunc(gl.LEQUAL); // Depth.comparison(ComparisonFunc.LessEqual);
         this._prog.use();
 
         let auxView = mat3.create();
@@ -154,7 +155,7 @@ class Skybox {
         this.cubeMapTexture.bind(0);
         gl.drawArrays(gl.TRIANGLES, 0, 36);
 
-        Depth.comparison(ComparisonFunc.Less);
+        gl.depthFunc(gl.LESS); // Depth.comparison(ComparisonFunc.Less);
     }
     /**
      * 

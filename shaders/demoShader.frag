@@ -1,17 +1,21 @@
-#version 300 es
+//#version 300 es
 precision highp float;
 
-in vec3 outPosition;
-in vec3 outNormal;
-in vec2 outUV;
+//in vec3 outPosition;
+//in vec3 outNormal;
+//in vec2 outUV;
+//in vec3 lp;
 
-out vec4 fragColor;
+varying vec3 outPosition;
+varying vec3 outNormal;
+varying vec2 outUV;
+varying vec3 lp;
+
+//out vec4 fragColor;
 
 uniform sampler2D texSampler;
 
 uniform vec3 viewPos;
-
-in vec3 lp;
 
 
 // TODO: Se puede hacer el cálculo en vértices para ahorrar ;)
@@ -99,7 +103,7 @@ void main() {
 
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
-    fragColor = vec4(result, 1.0);
+    gl_FragColor = vec4(result, 1.0);
 
     //float avg = (fragColor.r + fragColor.g + fragColor.b) / 3.0;
     //float avg2 = (0.2126 * fragColor.r + 0.7152 * fragColor.g + 0.0722 * fragColor.b);
@@ -112,5 +116,5 @@ void main() {
     // Apply fog
     //colorWithFog(fragColor.rgb);
 
-    fragColor = vec4(normalize(outNormal), 1.0);
+    gl_FragColor = vec4(normalize(outNormal), 1.0);
 }

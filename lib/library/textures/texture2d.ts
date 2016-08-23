@@ -105,6 +105,19 @@ class Texture2D extends Texture {
         //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
     }*/
+
+    /**
+     * Set texture anisotropic level
+     * @param {number = 0} level: Anisotropic level
+     */
+    public setAnisotropic(level: number = 0) {
+        level = Math.floor(level);
+        var ext = gl.getExtension("EXT_texture_filter_anisotropic");
+        var max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        if (max_anisotropy < level) {
+            gl.texParameterf(this._target, ext.TEXTURE_MAX_ANISOTROPY_EXT, level);
+        }
+    }
 };
 
 export default Texture2D;

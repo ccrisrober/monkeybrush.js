@@ -26,7 +26,7 @@ class VertexArray {
             } else {
                 const ext = gl.getExtension("OES_vertex_array_object");
                 if (ext) {
-                    this._handle = ext.createVertexArray();
+                    this._handle = ext.createVertexArrayOES();
                 }
             }
         }

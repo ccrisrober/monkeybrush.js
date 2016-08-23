@@ -24,7 +24,7 @@ class Context {
         return Context._gl;
     }
     protected static _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
-        let contexts: string[] = "webgl2,experimental-webgl2".split(",");
+        let contexts: string[] = "webgl,webgl2,experimental-webgl2".split(",");
         let gl: WebGLRenderingContext;
         let ctx;
         for (let i = 0; i < contexts.length; i++) {

@@ -117,7 +117,10 @@ class Program {
         if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
             alert("ERROR");
             console.warn("Error in program linking:" + gl.getProgramInfoLog(this._compiledShader));
-            console.log(this._fragmentSource);
+            console.log({
+                vertex: this._vertexSource,
+                fragment: this._fragmentSource
+            });
             throw "SHADER ERROR";
         }
         return true;
@@ -202,7 +205,10 @@ class Program {
         if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
             alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
             console.log("ERROR: " + gl.getShaderInfoLog(compiledShader));
-            console.log(this._fragmentSource);
+            console.log({
+                vertex: this._vertexSource,
+                fragment: this._fragmentSource
+            });
             throw "SHADER ERROR";
         }
         return compiledShader;
