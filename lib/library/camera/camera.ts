@@ -1,4 +1,4 @@
-/// <reference path="../tsd.d.ts" />
+/// <reference path="../../typings/gl-matrix.d.ts" />
 
 "use strict";
 /**
@@ -53,12 +53,12 @@ abstract class Camera {
      * Get current camera position
      * @return {Float32Array}
      */
-    get position(): Float32Array { return this._position; }
+    // TODO: get position(): Float32Array { return this._position; }
     /**
      * Set camera position
      * @param {Float32Array}
      */
-    set position(pos: Float32Array) { this._position = pos; }
+    // TODO: set position(pos: Float32Array) { this._position = pos; }
     /**
      * Get current view matrix from camera
      * @return {Float32Array}
@@ -91,20 +91,22 @@ abstract class Camera {
      * Set near
      * @param {number} near
      */
-    public set near(near: number) { this._near = near; }
+    // TODO: public set near(near: number) { this._near = near; }
     /**
      * Set far
      * @param {number} far
      */
-    public set far(far: number) { this._far = far; }
+    // TODO: public set far(far: number) { this._far = far; }
     /**
      * Set field of view
      * @param {number} fovy
      */
-    public set fov(fovy: number) { this._fov = fovy; }
+    // TODO: public set fov(fovy: number) { this._fov = fovy; }
     /**
      * Set aspect ratio
      * @param {number} ar
      */
-    public set aspRatio(ar: number) { this._ar = ar; }
+    // TODO: public set aspRatio(ar: number) { this._ar = ar; }
 };
+
+export default Camera;

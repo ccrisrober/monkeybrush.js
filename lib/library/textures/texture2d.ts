@@ -1,6 +1,11 @@
 /// <reference path="texture.ts" />
 
+import Core from "../core/core";
+import Texture from "./texture";
+
 "use strict";
+
+const gl = Core.getInstance().getGL();
 
 // TODO: Es necesario realmente el tamaño??
 class Texture2D extends Texture {
@@ -10,11 +15,10 @@ class Texture2D extends Texture {
     protected _wraps: Array<number>;
 
     constructor(data/*: ImageData*/, options = {}) {
-        const gl = Core.getInstance().getGL();
         super(gl.TEXTURE_2D);
         options = options || {};
 
-        console.log(this.target);
+        console.log(this._target);
 
         // Support compression
 
@@ -38,7 +42,7 @@ class Texture2D extends Texture {
         this.bind();
 
         gl.texImage2D(
-            this.target,
+            this._target,
             0, // Level of details
             _internalformat, // Internal format
             _format, // Format
@@ -47,66 +51,73 @@ class Texture2D extends Texture {
         );
 
 
-        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, this._minFilter);
-        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, this._magFilter);
+        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, this._minFilter);
+        gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, this._magFilter);
         this.wrap(wraps);
         
         /*// Prevent NPOT textures
         // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         // Prevents s-coordinate wrapping (repeating).
-        gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         // Prevents t-coordinate wrapping (repeating).
-        gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
+        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
     }
     public genMipMap() {
-        const gl = Core.getInstance().getGL();
         this.bind();
         // TODO: Check NPOT??
-        gl.generateMipmap(this.target);
+        gl.generateMipmap(this._target);
     }
     public wrap(modes: Array<number>) {
         if (modes.length !== 2) {
             throw new Error("Must specify wrapS, wrapT modes");
         }
-        const gl = Core.getInstance().getGL();
         this.bind();
-        gl.texParameteri(this.target, gl.TEXTURE_WRAP_S, modes[0]);
-        gl.texParameteri(this.target, gl.TEXTURE_WRAP_T, modes[1]);
+        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, modes[0]);
+        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, modes[1]);
         this._wraps = modes;
     }
     public minFilter(filter: number) {
-        const gl = Core.getInstance().getGL();
         this.bind();
-        gl.texParameteri(this.target, gl.TEXTURE_MIN_FILTER, filter);
+        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, filter);
         this._minFilter = filter;
     }
     public magFilter(filter: number) {
-        const gl = Core.getInstance().getGL();
         this.bind();
-        gl.texParameteri(this.target, gl.TEXTURE_MAG_FILTER, filter);
+        gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, filter);
         this._magFilter = filter;
     }
     public bind(slot?: number) {
-        const gl = Core.getInstance().getGL();
         if (typeof slot === "number") {
             gl.activeTexture(gl.TEXTURE0 + slot);
         }
-        gl.bindTexture(this.target, this._handle);
+        gl.bindTexture(this._target, this._handle);
     }
     public unbind() {
-        const gl = Core.getInstance().getGL();
-        gl.bindTexture(this.target, null);
+        gl.bindTexture(this._target, null);
     }
     public destroy() {
-        const gl = Core.getInstance().getGL();
         gl.deleteTexture(this._handle);
         this._handle = null;
     }
     /*public setPixelStorage() {
-        const gl = Core.getInstance().getGL();
         //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
         //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
     }*/
-}
+
+    /**
+     * Set texture anisotropic level
+     * @param {number = 0} level: Anisotropic level
+     */
+    public setAnisotropic(level: number = 0) {
+        level = Math.floor(level);
+        var ext = gl.getExtension("EXT_texture_filter_anisotropic");
+        var max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        if (max_anisotropy < level) {
+            gl.texParameterf(this._target, ext.TEXTURE_MAX_ANISOTROPY_EXT, level);
+        }
+    }
+};
+
+export default Texture2D;

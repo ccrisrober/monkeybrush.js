@@ -14,4 +14,6 @@ class Mat4 {
     public toString = () : string => {
         return mat4.str(this._value);
     }
-}
+};
+
+export default Mat4;

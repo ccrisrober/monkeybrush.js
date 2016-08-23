@@ -43,32 +43,34 @@ class Vect3 {
     public distance(): number {
         return vec3.squaredLength(this._value);
     }
-    public get x(): number { return this._value[0]; }
-    public get y(): number { return this._value[1]; }
-    public get z(): number { return this._value[2]; }
-    public set x(value: number) {
-         this._value[0] = value;
-    }
-    public set y(value: number) {
-         this._value[1] = value;
-    }
-    public set z(value: number) {
-         this._value[2] = value;
-    }
-    public lerp(other: Vect3, t: number): Vect3 {
-        let ax = this._value[0], 
-            ay = this._value[1],
-            az = this._value[2];
-        return new Vect3(
-            ax + t * (other.x - ax),
-            ay + t * (other.y - ay),
-            az + t * (other.z - az)
-        );
-    }
-    public isEqual(other: Vect3): boolean {
-        return this.x === other.x && this.y === other.y && this.z === other.z;
-    }
+    // TODO: public get x(): number { return this._value[0]; }
+    // TODO: public get y(): number { return this._value[1]; }
+    // TODO: public get z(): number { return this._value[2]; }
+    // TODO: public set x(value: number) {
+    // TODO:      this._value[0] = value;
+    // TODO: }
+    // TODO: public set y(value: number) {
+    // TODO:      this._value[1] = value;
+    // TODO: }
+    // TODO: public set z(value: number) {
+    // TODO:      this._value[2] = value;
+    // TODO: }
+    // TODO: public lerp(other: Vect3, t: number): Vect3 {
+    // TODO:     let ax = this._value[0], 
+    // TODO:         ay = this._value[1],
+    // TODO:         az = this._value[2];
+    // TODO:     return new Vect3(
+    // TODO:         ax + t * (other.x - ax),
+    // TODO:         ay + t * (other.y - ay),
+    // TODO:         az + t * (other.z - az)
+    // TODO:     );
+    // TODO: }
+    // TODO: public isEqual(other: Vect3): boolean {
+    // TODO:     return this.x === other.x && this.y === other.y && this.z === other.z;
+    // TODO: }
     public dot(other: Vect3): number {
         return vec3.dot(this._value, other._value);
     }
-}
+};
+
+export default Vect3;

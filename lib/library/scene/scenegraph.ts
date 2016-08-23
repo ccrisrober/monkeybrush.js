@@ -1,6 +1,9 @@
 /// <reference path="object3d.ts" />
 /// <reference path="../lights/light.ts" />
 
+import Object3D from "./object3d";
+import Light from "./../lights/light";
+
 "use strict";
 
 class SceneGraph {
@@ -12,4 +15,6 @@ class SceneGraph {
     public addLight(l: Light) {
         this._lights.push(l);
     }
-}
+};
+
+export default SceneGraph;

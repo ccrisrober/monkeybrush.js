@@ -1,5 +1,8 @@
 /// <reference path="light.ts" />
 
+import Light from "./light";
+import Vector3 from "../maths/vector3";
+
 "use strict";
 
 /**
@@ -30,28 +33,30 @@ class SpotLight extends Light {
     constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0), 
         direction: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
         super();
-        this.direction = direction;
-        this.position = position;
+        this._direction = direction;
+        this._position = position;
     }
     /**
      * Get light position
      * @return {Vector3<number>}
      */
-    get position() { return this._position; }
+    // TODO: get position() { return this._position; }
     /**
      * Set light position
      * @param {Vector3<number>} position
      */
-    set position(position: Vector3<number>) { this._position = position; }
+    // TODO: set position(position: Vector3<number>) { this._position = position; }
 
     /**
      * Get light direction
      * @return {Vector3<number>}
      */
-    get direction() { return this._direction; }
+    // TODO: get direction() { return this._direction; }
     /**
      * Set light direction
      * @param {Vector3<number>} direction
      */
-    set direction(direction: Vector3<number>) { this._direction = direction; }
-}
+    // TODO: set direction(direction: Vector3<number>) { this._direction = direction; }
+};
+
+export default SpotLight;

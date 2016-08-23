@@ -22,3 +22,5 @@ namespace Timer {
         return _deltaTime;
     }
 }
+
+export default Timer;

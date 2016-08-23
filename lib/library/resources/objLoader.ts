@@ -105,4 +105,6 @@ namespace ObjLoader {
         }
         return values;
     }
-}
+};
+
+export default ObjLoader;

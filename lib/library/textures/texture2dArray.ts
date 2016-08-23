@@ -1,10 +1,15 @@
 /// <reference path="texture.ts" />
 /// <reference path="..//maths/vector3.ts" />
 
+import vector3 from "../maths/vector3";
+import Texture from "./texture";
+import Core from "../core/core";
+
 "use strict";
 
 class Texture2DArray extends Texture {
     constructor() {
+        const gl = Core.getInstance().getGL();
         super((<any>gl).TEXTURE_2D_ARRAY);
         this._handle = gl.createTexture();
         this.bind();
@@ -14,7 +19,7 @@ class Texture2DArray extends Texture {
         if (typeof slot === "number") {
             gl.activeTexture(gl.TEXTURE0 + slot);
         }
-        gl.bindTexture(this.target, this._handle);
+        gl.bindTexture(this._target, this._handle);
     }
 
     public destroy() {
@@ -22,4 +27,6 @@ class Texture2DArray extends Texture {
         gl.deleteTexture(this._handle);
         this._handle = null;
     }
-}
+};
+
+export default Texture2DArray;

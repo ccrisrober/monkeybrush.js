@@ -1,5 +1,8 @@
 /// <reference path="texture.ts" />
 
+import Texture from "./texture";
+import Core from "../core/core";
+
 "use strict";
 
 // TODO: Es necesario realmente el tamaño??
@@ -16,7 +19,7 @@ class CubeMapTexture extends Texture {
         super(gl.TEXTURE_CUBE_MAP);
         options = options || {};
 
-        console.log(this.target);
+        console.log(this._target);
 
 
         this.finished = false;
@@ -35,11 +38,11 @@ class CubeMapTexture extends Texture {
         if (typeof slot === "number") {
             gl.activeTexture(gl.TEXTURE0 + slot);
         }
-        gl.bindTexture(this.target, this._handle);
+        gl.bindTexture(this._target, this._handle);
     }
     public unbind() {
         const gl = Core.getInstance().getGL();
-        gl.bindTexture(this.target, null);
+        gl.bindTexture(this._target, null);
     }
     public destroy() {
         const gl = Core.getInstance().getGL();
@@ -55,4 +58,6 @@ class CubeMapTexture extends Texture {
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, (<any>gl).TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
         this.finished = true;
     }
-}
+};
+
+export default CubeMapTexture;

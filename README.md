@@ -58,3 +58,5 @@ grunt serve # Only open server (http://localhost:3030/index.html)
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt
 ```
+https://www.npmjs.com/package/webpack-glsl-loader
+http://www.jbrantly.com/es6-modules-with-typescript-and-webpack/

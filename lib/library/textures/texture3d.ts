@@ -1,7 +1,13 @@
 /// <reference path="texture.ts" />
-/// <reference path="..//maths/vector3.ts" />
+/// <reference path="../maths/vector3.ts" />
+
+import Vector3 from "../maths/vector3";
+import Texture from "./texture";
+import Core from "../core/core";
 
 "use strict";
+
+declare var WebGL2RenderingContext: any;
 
 class Texture3D extends Texture {
     constructor (data, size: Vector3<number>, options = {}) {
@@ -12,7 +18,7 @@ class Texture3D extends Texture {
         super((<any>gl).TEXTURE_3D);
         options = options || {};
 
-        console.log(this.target);
+        console.log(this._target);
         this._handle = gl.createTexture();
 
         let compressed = options["compressed"] === true;
@@ -25,7 +31,7 @@ class Texture3D extends Texture {
 
         if (compressed) {
             /*gl.compressedTexImage3D(
-                this.target,
+                this._target,
                 0,  // level
                 format,
                 size.x,
@@ -35,7 +41,7 @@ class Texture3D extends Texture {
                 data);*/
         } else {
             /*(<any>gl).texSubImage3D(
-                this.target, 
+                this._target, 
                 0,  // level
                 _internalformat,    // Internal format A GLenum specifying the format of the texel data
                 size.x,
@@ -47,7 +53,7 @@ class Texture3D extends Texture {
                 data
             );*/
             (<any>gl).texImage3D(
-                this.target, 
+                this._target, 
                 0, 
                 _internalformat, 
                 size.x, 
@@ -65,7 +71,7 @@ class Texture3D extends Texture {
         if (typeof slot === "number") {
             gl.activeTexture(gl.TEXTURE0 + slot);
         }
-        gl.bindTexture(this.target, this._handle);
+        gl.bindTexture(this._target, this._handle);
     }
 
     public destroy() {
@@ -73,4 +79,6 @@ class Texture3D extends Texture {
         gl.deleteTexture(this._handle);
         this._handle = null;
     }
-}
+};
+
+export default Texture3D;

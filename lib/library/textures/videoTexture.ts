@@ -1,5 +1,8 @@
 /// <reference path="texture2d.ts" />
 
+import Texture2D from "./texture2d";
+import Core from "../core/core";
+
 "use strict";
 
 class VideoTexture extends Texture2D {
@@ -14,10 +17,10 @@ class VideoTexture extends Texture2D {
     }
     public updateTexture() {
         const gl = Core.getInstance().getGL();
-        gl.bindTexture(this.target, this._handle);
+        gl.bindTexture(this._target, this._handle);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.texImage2D(
-            this.target,
+            this._target,
             0,
             gl.RGBA,
             gl.RGBA,
@@ -25,4 +28,6 @@ class VideoTexture extends Texture2D {
             this._videoElem // TODO: videoElement
         );
     }
-}
+};
+
+export default VideoTexture;

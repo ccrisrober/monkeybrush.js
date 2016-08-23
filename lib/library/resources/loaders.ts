@@ -1,5 +1,7 @@
 /// <reference path="resourceMap.ts" />
 
+import ResourceMap from "./resourceMap";
+
 "use strict";
 
 namespace loaders {
@@ -138,4 +140,6 @@ namespace loaders {
     export function unloadHDRImage(imageSrc: string) {
         ResourceMap.unloadAsset(imageSrc);
     }
-}
+};
+
+export default loaders;

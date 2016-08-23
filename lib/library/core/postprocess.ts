@@ -1,8 +1,17 @@
 /// <reference path="core.ts" />
 /// <reference path="../extras/vertexBuffer.ts" />
 /// <reference path="../extras/vertexArray.ts" />
+/// <reference path="../constants/_constants.ts" />
+
+import Core from "./core.ts";
+import VertexArray from "../extras/vertexArray.ts";
+import VertexBuffer from "../extras/vertexBuffer.ts";
+import UsageType from "../constants/UsageType.ts";
+import BufferType from "../constants/BufferType.ts";
 
 "use strict";
+
+const gl = Core.getInstance().getGL();
 
 /**
 * This class wrap PostProcess effects
@@ -14,7 +23,6 @@ class PostProcess {
      * 
      */
     static initialize() {
-        const gl = Core.getInstance().getGL();
         if (!PostProcess._planeVAO) {
             const positions = [
                 -1.0, -1.0, 
@@ -35,7 +43,6 @@ class PostProcess {
      * 
      */
     public static bind() {
-        const gl = Core.getInstance().getGL();
         PostProcess._planeVAO.bind();
     }
     /**
@@ -43,7 +50,6 @@ class PostProcess {
      */
     public static render() {
         // console.log("DRAW QUAD");
-        const gl = Core.getInstance().getGL();
         PostProcess._planeVAO.bind();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         PostProcess._planeVAO.unbind();
@@ -58,6 +64,8 @@ class PostProcess {
      * @type {VertexBuffer}
      */
     protected static _planeVertexVBO: VertexBuffer = null;
-}
+};
 
 PostProcess.initialize();
+
+export default PostProcess;

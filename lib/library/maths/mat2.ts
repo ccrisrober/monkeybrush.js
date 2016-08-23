@@ -29,4 +29,6 @@ class Mat2 {
     public isEqual(other: Mat2): boolean {
         return false; // this.x == other.x && this.y == other.y;
     }
-}
+};
+
+export default Mat2;

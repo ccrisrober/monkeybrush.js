@@ -102,9 +102,10 @@ namespace ResourceMap {
     };
     /**
      * Get asset from alias/name
-     * @param {string} resName
+     * @param  {string} resName [description]
+     * @return {any}
      */
-    export function retrieveAsset(resName: string) {
+    export function retrieveAsset(resName: string): any {
         let r = null;
         if (resName in _resourceMap) {
             r = _resourceMap[resName].getAsset();
@@ -142,4 +143,6 @@ namespace ResourceMap {
         }
         return c;
     };
-}
+};
+
+export default ResourceMap;

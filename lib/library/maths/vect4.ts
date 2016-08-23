@@ -44,38 +44,40 @@ class Vect4 {
     public distance(): number {
         return vec4.squaredLength(this._value);
     }
-    public get x(): number { return this._value[0]; }
-    public get y(): number { return this._value[1]; }
-    public get z(): number { return this._value[2]; }
-    public get w(): number { return this._value[3]; }
-    public set x(value: number) {
-         this._value[0] = value;
-    }
-    public set y(value: number) {
-         this._value[1] = value;
-    }
-    public set z(value: number) {
-         this._value[2] = value;
-    }
-    public set w(value: number) {
-         this._value[3] = value;
-    }
-    public lerp(other: Vect4, t: number): Vect4 {
-        let ax = this._value[0], 
-            ay = this._value[1], 
-            az = this._value[2], 
-            aw = this._value[3];
-        return new Vect4(
-            ax + t * (other.x - ax),
-            ay + t * (other.y - ay),
-            az + t * (other.z - az),
-            aw + t * (other.w - aw)
-        );
-    }
-    public isEqual(other: Vect4): boolean {
-        return this.x === other.x && this.y === other.y  && this.z === other.z  && this.w === other.w;
-    }
+    // TODO: public get x(): number { return this._value[0]; }
+    // TODO: public get y(): number { return this._value[1]; }
+    // TODO: public get z(): number { return this._value[2]; }
+    // TODO: public get w(): number { return this._value[3]; }
+    // TODO: public set x(value: number) {
+    // TODO:      this._value[0] = value;
+    // TODO: }
+    // TODO: public set y(value: number) {
+    // TODO:      this._value[1] = value;
+    // TODO: }
+    // TODO: public set z(value: number) {
+    // TODO:      this._value[2] = value;
+    // TODO: }
+    // TODO: public set w(value: number) {
+    // TODO:      this._value[3] = value;
+    // TODO: }
+    // TODO: public lerp(other: Vect4, t: number): Vect4 {
+    // TODO:     let ax = this._value[0], 
+    // TODO:         ay = this._value[1], 
+    // TODO:         az = this._value[2], 
+    // TODO:         aw = this._value[3];
+    // TODO:     return new Vect4(
+    // TODO:         ax + t * (other.x - ax),
+    // TODO:         ay + t * (other.y - ay),
+    // TODO:         az + t * (other.z - az),
+    // TODO:         aw + t * (other.w - aw)
+    // TODO:     );
+    // TODO: }
+    // TODO: public isEqual(other: Vect4): boolean {
+    // TODO:     return this.x === other.x && this.y === other.y  && this.z === other.z  && this.w === other.w;
+    // TODO: }
     public dot(other: Vect4): number {
         return vec4.dot(this._value, other._value);
     }
-}
+};
+
+export default Vect4;

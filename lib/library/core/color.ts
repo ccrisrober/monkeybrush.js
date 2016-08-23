@@ -1,3 +1,0 @@
-// colormask, clear, ...
-
-"use strict";

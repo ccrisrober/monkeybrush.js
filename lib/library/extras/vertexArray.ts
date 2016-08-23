@@ -1,6 +1,12 @@
 /// <reference path="../core/core.ts" />
 
+import Core from "../core/core";
+
 "use strict";
+
+const gl = Core.getInstance().getGL();
+
+declare var WebGL2RenderingContext: any;
 
 class VertexArray {
     /**
@@ -12,7 +18,6 @@ class VertexArray {
      * @param {WebGLVertexArrayObject}
      */
     constructor(vao?: any /**/) {
-        const gl = Core.getInstance().getGL();
         if (vao !== undefined) {
             this._handle = vao;
         } else {
@@ -21,7 +26,7 @@ class VertexArray {
             } else {
                 const ext = gl.getExtension("OES_vertex_array_object");
                 if (ext) {
-                    this._handle = ext.createVertexArray();
+                    this._handle = ext.createVertexArrayOES();
                 }
             }
         }
@@ -37,7 +42,6 @@ class VertexArray {
      * 
      */
     public bind() {
-        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             (<any>gl).bindVertexArray(this._handle);
             return;
@@ -51,7 +55,6 @@ class VertexArray {
      * 
      */
     public unbind() {
-        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             (<any>gl).bindVertexArray(null);
             return;
@@ -65,7 +68,6 @@ class VertexArray {
      * 
      */
     public destroy() {
-        const gl = Core.getInstance().getGL();
         this.bind();
         if (gl instanceof WebGL2RenderingContext) {
             (<any>gl).deleteVertexArray(this._handle);
@@ -80,7 +82,6 @@ class VertexArray {
      * @return {boolean}
      */
     public static isSupported(): boolean {
-        const gl = Core.getInstance().getGL();
         return gl instanceof WebGL2RenderingContext || 
             gl.getExtension("OES_vertex_array_object");
     }
@@ -88,8 +89,6 @@ class VertexArray {
      * @return {boolean}
      */
     public is(): boolean {
-        const gl = Core.getInstance().getGL();
-
         if (gl instanceof WebGL2RenderingContext) {
             return (<any>gl).isVertexArray(this._handle);
         }
@@ -99,4 +98,6 @@ class VertexArray {
         }
         return false;
     }
-}
+};
+
+export default VertexArray;

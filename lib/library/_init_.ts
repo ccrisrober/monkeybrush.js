@@ -1,6 +1,12 @@
 /// <reference path="core/core.ts" />
+/// <reference path="core/input.ts" />
 /// <reference path="resources/resourceMap.ts" />
 /// <reference path="extras/timer.ts" />
+
+import Core from "./core/core";
+import Input from "./core/input";
+import ResourceMap from "./resources/resourceMap";
+import Timer from "./extras/timer";
 
 "use strict";
 
@@ -108,4 +114,6 @@ namespace _init__ {
             // TODO: cameraUpdateCb();
         }
     }
-}
+};
+
+export default _init__;

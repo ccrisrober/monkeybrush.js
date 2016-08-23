@@ -1,4 +1,5 @@
 /// <reference path="core.ts" />
+import Core from "./core";
 
 "use strict";
 
@@ -7,11 +8,11 @@
  * @class Scissor
  */
 class Scissor {
-    static gl = Core.getInstance().getGL();
     /**
      * Enable scissor test.
      */
     public static use() {
+        const gl = Core.getInstance().getGL();
         gl.enable(gl.SCISSOR_TEST);
     }
     /**
@@ -22,6 +23,7 @@ class Scissor {
      * @param {number} height: Specifying the height of the scissor box.
      */
     public setRectangle(x: number, y: number, width: number, height: number) {
+        const gl = Core.getInstance().getGL();
         gl.scissor(x, y, width, height);
     }
     /**
@@ -29,12 +31,14 @@ class Scissor {
      * @return {Int32Array}: Scissor box size [x, y, width, height]
      */
     public getRectangle(): Int32Array {
+        const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.SCISSOR_BOX);
     }
     /**
      * Disable scissor test.
      */
     public static unuse() {
+        const gl = Core.getInstance().getGL();
         gl.disable(gl.SCISSOR_TEST);
     }
 
@@ -43,6 +47,7 @@ class Scissor {
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
+        const gl = Core.getInstance().getGL();
         return gl.isEnabled(gl.SCISSOR_TEST);
     }
 };

@@ -1,5 +1,8 @@
 /// <reference path="../extras/color.ts" />
-/// <reference path="..//maths/vector3.ts" />
+/// <reference path="../maths/vector3.ts" />
+
+import Color from "../extras/color";
+import Vector3 from "../maths/vector3";
 
 "use strict";
 
@@ -25,8 +28,8 @@ abstract class Light {
      */
     protected _attenuation: Vector3<number>;
     constructor() {
-        this.intensity = 1.0;
-        this.color = new Color(1.0, 1.0, 1.0);
+        this._intensity = 1.0;
+        this._color = new Color(1.0, 1.0, 1.0);
         this._enable = true;
         this._attenuation = new Vector3<number>(
             1.0,        // Constant
@@ -60,27 +63,29 @@ abstract class Light {
      * Get light attenuation value.
      * @return {Vector3<number>}
      */
-    get attenuation(): Vector3<number> { return this._attenuation; }
+    // TODO: get attenuation(): Vector3<number> { return this._attenuation; }
     
     /**
      * Get light intensity.
      * @return {number}
      */
-    get intensity(): number { return this._intensity; }
+    // TODO: get intensity(): number { return this._intensity; }
     /**
      * Set light intensity.
      * @param {number} intensity: Light intensity.
      */
-    set intensity(intensity: number) { this._intensity = intensity; }
+    // TODO: set intensity(intensity: number) { this._intensity = intensity; }
     
     /**
      * Get light color.
      * @return {Color}
      */
-    get color(): Color { return this._color; }
+    // TODO: get color(): Color { return this._color; }
     /**
      * Set light color
      * @param {Color} color: Color value
      */
-    set color(color: Color) { this._color = color; }
+    // TODO: set color(color: Color) { this._color = color; }
 };
+
+export default Light;

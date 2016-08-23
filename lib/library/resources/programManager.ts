@@ -1,5 +1,7 @@
 /// <reference path="../core/program.ts" />
 
+import Program from "../core/program";
+
 "use strict";
 
 interface ProgramCallback {
@@ -66,3 +68,5 @@ namespace ProgramManager {
         _progDictionary = {};
     }
 };
+
+export default ProgramManager;

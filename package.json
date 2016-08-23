@@ -24,6 +24,9 @@
   },
   "homepage": "https://github.com/maldicion069/monkeybrush.js#readme",
   "devDependencies": {
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.13.2",
     "bluebird": "^3.4.1",
     "grunt": "^1.0.1",
     "grunt-contrib-connect": "^1.0.2",
@@ -33,6 +36,7 @@
     "grunt-typedoc": "^0.2.4",
     "grunt-typescript": "^0.8.0",
     "parse-obj": "0.0.0",
-    "typescript": "^1.8.10"
+    "typescript": "^1.8.10",
+    "webpack": "^1.13.2"
   }
 }
