@@ -1,5 +1,6 @@
 /// <reference path="../core/core.ts" />
-import Core from "../core/core"
+
+import Core from "../core/core";
 
 "use strict";
 

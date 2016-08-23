@@ -1,9 +1,9 @@
 /// <reference path="texture.ts" />
 /// <reference path="..//maths/vector3.ts" />
 
-import vector3 from "../maths/vector3"
-import Texture from "./texture"
-import Core from "../core/core"
+import vector3 from "../maths/vector3";
+import Texture from "./texture";
+import Core from "../core/core";
 
 "use strict";
 

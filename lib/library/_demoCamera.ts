@@ -1,5 +1,6 @@
 /// <reference path="core/input.ts" />
-import Input from "./core/input"
+
+import Input from "./core/input";
 
 "use strict";
 

@@ -1,8 +1,8 @@
 /// <reference path="material.ts" />
 /// <reference path="../../core/program.ts" />
 
-import Material from "./material"
-import Program from "../../core/program"
+import Material from "./material";
+import Program from "../../core/program";
 
 class DepthMat extends Material {
     static ss: Program = new Program();

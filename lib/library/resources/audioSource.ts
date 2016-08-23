@@ -1,5 +1,6 @@
 /// <reference path="resourceMap.ts" />
-import ResourceMap from "./resourceMap"
+
+import ResourceMap from "./resourceMap";
 
 "use strict";
 

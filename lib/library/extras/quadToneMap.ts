@@ -1,7 +1,7 @@
 /// <reference path="../core/program.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 
-import Program from "../core/program.ts"
+import Program from "../core/program.ts";
 import ProgramCte from "../constants/ProgramCte";
 
 "use strict";

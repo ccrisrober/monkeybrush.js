@@ -21,19 +21,19 @@ class Core {
             throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
         }
         this._gl = Context.getContext();
-        // var canvas = <HTMLCanvasElement>document.getElementById("canvas");
-        //let canvas = document.createElement("canvas");
-        //canvas.width = 800;
-        //canvas.height = 800;
-        //
-        //document.body.appendChild(canvas);
-        //
-        //this._gl = this._getContext(canvas);
-        //if (!this._gl) {
-        //    document.write("<br><b>WebGL is not supported!</b>");
-        //    return;
-        //}
-        //this._getVendors();
+        //  var canvas = <HTMLCanvasElement>document.getElementById("canvas");
+        // let canvas = document.createElement("canvas");
+        // canvas.width = 800;
+        // canvas.height = 800;
+        // 
+        // document.body.appendChild(canvas);
+        // 
+        // this._gl = this._getContext(canvas);
+        // if (!this._gl) {
+        //     document.write("<br><b>WebGL is not supported!</b>");
+        //     return;
+        // }
+        // this._getVendors();
 
         Input.getInstance();
         // this.init();

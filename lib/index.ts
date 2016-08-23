@@ -21,28 +21,28 @@
 /// <reference path="library/core/postProcess.ts" />
 /// <reference path="library/constants/ProgramCte.ts" />
 
-import _init__ from "./library/_init_"
+import _init__ from "./library/_init_";
 
-import Core from "./library/core/core"
-import Torus from "./library/models/torus"
-import Sphere from "./library/models/sphere"
-import Plane from "./library/models/plane"
-import Cube from "./library/models/cube"
-import Mesh from "./library/models/mesh"
-import Texture2D from "./library/textures/texture2d"
-import SimpleTexture2D from "./library/textures/simpleTexture2d"
-import Program from "./library/core/program"
-import Framebuffer from "./library/core/framebuffer"
-import PostProcess from "./library/core/postProcess"
-import ProgramManager from "./library/resources/programManager"
-import ResourceMap from "./library/resources/resourceMap"
-import loaders from "./library/resources/loaders"
-import Timer from "./library/extras/timer"
-import PointLight from "./library/lights/pointLight"
-import Vector2 from "./library/maths/vector2"
-import Vector3 from "./library/maths/vector3"
-import Camera2 from "./library/_demoCamera"
-import Skybox from "./library/extras/skybox"
+import Core from "./library/core/core";
+import Torus from "./library/models/torus";
+import Sphere from "./library/models/sphere";
+import Plane from "./library/models/plane";
+import Cube from "./library/models/cube";
+import Mesh from "./library/models/mesh";
+import Texture2D from "./library/textures/texture2d";
+import SimpleTexture2D from "./library/textures/simpleTexture2d";
+import Program from "./library/core/program";
+import Framebuffer from "./library/core/framebuffer";
+import PostProcess from "./library/core/postProcess";
+import ProgramManager from "./library/resources/programManager";
+import ResourceMap from "./library/resources/resourceMap";
+import loaders from "./library/resources/loaders";
+import Timer from "./library/extras/timer";
+import PointLight from "./library/lights/pointLight";
+import Vector2 from "./library/maths/vector2";
+import Vector3 from "./library/maths/vector3";
+import Camera2 from "./library/_demoCamera";
+import Skybox from "./library/extras/skybox";
 
 import ProgramCte from "./library/constants/ProgramCte";
 
@@ -162,8 +162,6 @@ function drawScene(dt: number) {
 
     camera.update(cameraUpdateCb);
 
-    //framebuffer.bind();
-
     Core.getInstance().clearColorAndDepth();
 
     const prog = ProgramManager.get(mainShader);
@@ -177,7 +175,7 @@ function drawScene(dt: number) {
     light.addTransform(
         Math.sin(angle) * 0.06,
         Math.cos(angle) * 0.06,
-        0.0 //5.0 + Math.cos(dt) * 0.06
+        0.0 // 5.0 + Math.cos(dt) * 0.06
     );
     
     let varvar = text.max;

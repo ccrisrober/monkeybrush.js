@@ -75,7 +75,7 @@ class Color {
     //    }
 
     //    return new Color(h, s, l);
-    //}
+    // }
 };
 
 export default Color;

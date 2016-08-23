@@ -1,6 +1,6 @@
 /// <reference path="../core/program.ts" />
 
-import Program from "../core/program"
+import Program from "../core/program";
 
 "use strict";
 

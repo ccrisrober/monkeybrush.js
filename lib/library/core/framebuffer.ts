@@ -4,11 +4,11 @@
 /// <reference path="../textures/renderBufferTexture.ts" />
 /// <reference path="..//maths/vector2.ts" />
 /// 
-import Core from "./core"
-import Texture from "../textures/texture"
-import SimpleTexture2D from "../textures/simpleTexture2D"
-import RenderBufferTexture from "../textures/renderBufferTexture"
-import Vector2 from "../maths/vector2"
+import Core from "./core";
+import Texture from "../textures/texture";
+import SimpleTexture2D from "../textures/simpleTexture2D";
+import RenderBufferTexture from "../textures/renderBufferTexture";
+import Vector2 from "../maths/vector2";
 
 "use strict";
         

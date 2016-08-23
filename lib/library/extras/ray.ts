@@ -1,5 +1,6 @@
 /// <reference path="../maths/vector3.ts" />
-import Vector3 from "../maths/vector3"
+
+import Vector3 from "../maths/vector3";
 
 class Ray {
     protected _origin: Vector3<number>;

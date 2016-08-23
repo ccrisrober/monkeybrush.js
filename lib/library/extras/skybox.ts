@@ -6,11 +6,11 @@
 /// <reference path="../constants/ProgramCte.ts" />
 /// <reference path="../constants/ComparisonFunc.ts" />
 
-import Core from "../core/core.ts"
-import Program from "../core/program.ts"
-import ResourceMap from "../resources/resourceMap.ts"
-import CubeMapTexture from "../textures/cubemapTexture.ts"
-import Depth from "../core/depth.ts"
+import Core from "../core/core.ts";
+import Program from "../core/program.ts";
+import ResourceMap from "../resources/resourceMap.ts";
+import CubeMapTexture from "../textures/cubemapTexture.ts";
+import Depth from "../core/depth.ts";
 
 import ProgramCte from "../constants/ProgramCte";
 import ComparisonFunc from "../constants/ComparisonFunc";

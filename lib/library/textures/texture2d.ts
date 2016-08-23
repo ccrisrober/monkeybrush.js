@@ -1,7 +1,7 @@
 /// <reference path="texture.ts" />
 
-import Core from "../core/core"
-import Texture from "./texture"
+import Core from "../core/core";
+import Texture from "./texture";
 
 "use strict";
 

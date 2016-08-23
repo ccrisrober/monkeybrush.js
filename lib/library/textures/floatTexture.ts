@@ -1,7 +1,7 @@
 /// <reference path="texture2d.ts" />
 
-import Texture2D from "./texture2d"
-import Vector2 from "../maths/vector2"
+import Texture2D from "./texture2d";
+import Vector2 from "../maths/vector2";
 
 "use strict";
 

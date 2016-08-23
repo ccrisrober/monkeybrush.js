@@ -1,7 +1,7 @@
 /// <reference path="texture3d.ts" />
 
-import Vector3 from "../maths/vector3"
-import Texture3D from "./texture3d"
+import Vector3 from "../maths/vector3";
+import Texture3D from "./texture3d";
 
 "use strict";
 

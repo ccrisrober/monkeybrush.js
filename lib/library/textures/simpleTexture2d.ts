@@ -1,8 +1,8 @@
 /// <reference path="texture.ts" />
 
-import Core from "../core/core"
-import Texture from "./texture"
-import Vector2 from "../maths/vector2"
+import Core from "../core/core";
+import Texture from "./texture";
+import Vector2 from "../maths/vector2";
 
 "use strict";
 

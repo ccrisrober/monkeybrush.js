@@ -2,10 +2,11 @@
 /// <reference path="../extras/vertexArray.ts" />
 /// <reference path="../extras/vertexBuffer.ts" />
 /// <reference path="../constants/_constants.ts" />
-import Core from "../core/core.ts"
-import VertexArray from "../extras/vertexArray.ts"
-import VertexBuffer from "../extras/vertexBuffer.ts"
-import UsageType from "../constants/UsageType.ts"
+/// 
+import Core from "../core/core.ts";
+import VertexArray from "../extras/vertexArray.ts";
+import VertexBuffer from "../extras/vertexBuffer.ts";
+import UsageType from "../constants/UsageType.ts";
 
 "use strict";
 

@@ -1,29 +1,29 @@
 class Context {
-	static _gl: WebGLRenderingContext = null;
-	static getContext(canvasName?: string) {
-		if (!Context._gl) {
-			let canvas;
-			if(!canvasName) {
-		        canvas = document.createElement("canvas");
-		        canvas.width = 800;
-		        canvas.height = 800;
+    static _gl: WebGLRenderingContext = null;
+    static getContext(canvasName?: string) {
+        if (!Context._gl) {
+            let canvas;
+            if (!canvasName) {
+                canvas = document.createElement("canvas");
+                canvas.width = 800;
+                canvas.height = 800;
 
-		        document.body.appendChild(canvas);
-			} else {
-				canvas = <HTMLCanvasElement>document.getElementById(canvasName);
-			}
-	        Context._gl = Context._getContext(canvas);
-	        if (!Context._gl) {
-	            document.write("<br><b>WebGL is not supported!</b>");
+                document.body.appendChild(canvas);
+            } else {
+                canvas = <HTMLCanvasElement>document.getElementById(canvasName);
+            }
+            Context._gl = Context._getContext(canvas);
+            if (!Context._gl) {
+                document.write("<br><b>WebGL is not supported!</b>");
 
-	            throw new Error("WebGL is not supported!");
-	            //return;
-	        }
-	        Context._getVendors();
-		}
-		return Context._gl;
-	}
-   	protected static _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
+                throw new Error("WebGL is not supported!");
+                // return;
+            }
+            Context._getVendors();
+        }
+        return Context._gl;
+    }
+    protected static _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
         let contexts: string[] = "webgl2,experimental-webgl2".split(",");
         let gl: WebGLRenderingContext;
         let ctx;
@@ -36,7 +36,7 @@ class Context {
         }
         return null;
     }
-   	protected static _getVendors() {
+    protected static _getVendors() {
         let vendors: string[] = "ms,moz,webkit,o".split(",");
         if (!window.requestAnimationFrame) {
             let vendor;

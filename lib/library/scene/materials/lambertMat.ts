@@ -1,6 +1,6 @@
 /// <reference path="material.ts" />
 
-import Material from "./material"
+import Material from "./material";
 
 class LambertMat extends Material {
     

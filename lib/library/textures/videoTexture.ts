@@ -1,7 +1,7 @@
 /// <reference path="texture2d.ts" />
 
-import Texture2D from "./texture2d"
-import Core from "../core/core"
+import Texture2D from "./texture2d";
+import Core from "../core/core";
 
 "use strict";
 

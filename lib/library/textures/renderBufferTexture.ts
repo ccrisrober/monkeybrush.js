@@ -1,8 +1,8 @@
 /// <reference path="../maths/vector2.ts" />
 /// <reference path="../core/Core.ts" />
 
-import Core from "../core/core"
-import Vector2 from "../maths/vector2"
+import Core from "../core/core";
+import Vector2 from "../maths/vector2";
 
 "use strict";
 
