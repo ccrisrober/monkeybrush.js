@@ -15,6 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "vanillatoasts": "*"
+    "vanillatoasts": "*",
+    "log4javascript": "^1.4.9"
   }
 }

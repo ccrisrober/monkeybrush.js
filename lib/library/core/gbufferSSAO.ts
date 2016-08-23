@@ -45,37 +45,38 @@ class GBufferSSAO {
 
         // Position color buffer
         (this._textures[gbufferssao_type.position] = new SimpleTexture2D(size, {
-            "internalformat": (gl).RGBA,
-            "format": gl.RGBA,
-            "type": gl.FLOAT,
-            "minFilter": gl.NEAREST,
-            "maxFilter": gl.NEAREST,
-            "wrap": [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
+            internalFormat: (gl).RGBA,
+            format: gl.RGBA,
+            type: gl.FLOAT,
+            minFilter: gl.NEAREST,
+            magFilter: gl.NEAREST,
+            wrapS: gl.CLAMP_TO_EDGE,
+            wrapT: gl.CLAMP_TO_EDGE
         })).unbind();
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, 
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
             gl.TEXTURE_2D, this._textures[gbufferssao_type.position].handle(), 0);
 
         // Normal color buffer
         (this._textures[gbufferssao_type.normal] = new SimpleTexture2D(size, {
-            "internalformat": gl.RGB,
-            "format": gl.RGB,
-            "type": gl.FLOAT,
-            "minFilter": gl.NEAREST,
-            "maxFilter": gl.NEAREST
+            internalFormat: gl.RGB,
+            format: gl.RGB,
+            type: gl.FLOAT,
+            minFilter: gl.NEAREST,
+            magFilter: gl.NEAREST
         })).unbind();
         this._textures[gbufferssao_type.normal].unbind();
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, (<any>gl).COLOR_ATTACHMENT1, 
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, (<any>gl).COLOR_ATTACHMENT1,
             gl.TEXTURE_2D, this._textures[gbufferssao_type.normal].handle(), 0);
 
         // Color + Specular color buffer
         (this._textures[gbufferssao_type.diffuse] = new SimpleTexture2D(size, {
-            "internalformat": gl.RGBA,
-            "format": gl.RGBA,
-            "type": gl.FLOAT,
-            "minFilter": gl.NEAREST,
-            "maxFilter": gl.NEAREST
+            internalFormat: gl.RGBA,
+            format: gl.RGBA,
+            type: gl.FLOAT,
+            minFilter: gl.NEAREST,
+            magFilter: gl.NEAREST
         })).unbind();
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, (<any>gl).COLOR_ATTACHMENT2, 
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, (<any>gl).COLOR_ATTACHMENT2,
             gl.TEXTURE_2D, this._textures[gbufferssao_type.diffuse].handle(), 0);
 
         // create a renderbuffer object to store depth info
@@ -158,15 +159,15 @@ class GBufferSSAO {
         }
         /*let noiseTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, noiseTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, /*gl.RGB16F*/ /*gl.RGBA, 
+        gl.texImage2D(gl.TEXTURE_2D, 0, /*gl.RGB16F*/ /*gl.RGBA,
             4, 4, 0, gl.RGB, gl.FLOAT, new Float32Array(this.ssaoNoise));
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
             gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, 
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER,
             gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, 
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,
             gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, 
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T,
             gl.REPEAT);*/
 
     }

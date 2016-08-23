@@ -22,11 +22,11 @@ class Program {
 
     public uniformLocations: { [key: string]: WebGLUniformLocation; } = {};
     public attribLocations: { [key: string]: number; } = {};
-    
+
     /**
      * @param {string[]}
      */
-    public addAttributesArgs(...attrs: string[]) { 
+    public addAttributesArgs(...attrs: string[]) {
         this.addAttributes(attrs);
     }
     /**
@@ -47,7 +47,7 @@ class Program {
     /**
      * @param {string[]}
      */
-    public addUniformsArgs(...unifs: string[]) { 
+    public addUniformsArgs(...unifs: string[]) {
         this.addUniforms(unifs);
     }
     /**
@@ -100,6 +100,33 @@ class Program {
         }
         this._shaders.push(shader);
     }
+
+    public _compile() {
+        const gl = Core.getInstance().getGL();
+        // Create and compile shader
+        this._compiledShader = gl.createProgram();
+        for (let i = 0; i < this._shaders.length; ++i) {
+            gl.attachShader(this._compiledShader, this._shaders[i]);
+        }
+    }
+
+    public _link(): boolean {
+        const gl = Core.getInstance().getGL();
+        gl.linkProgram(this._compiledShader);
+
+        // Checkin errors
+        if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
+            alert("ERROR");
+            console.warn("Error in program linking:" + gl.getProgramInfoLog(this._compiledShader));
+            console.log({
+                vertex: this._vertexSource,
+                fragment: this._fragmentSource
+            });
+            throw "SHADER ERROR";
+        }
+        return true;
+    }
+
     /**
      * Compile and link program
      * @return {boolean}: True if not errors
@@ -112,7 +139,7 @@ class Program {
             gl.attachShader(this._compiledShader, this._shaders[i]);
         }
         gl.linkProgram(this._compiledShader);
-        
+
         // Checkin errors
         if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
             alert("ERROR");
@@ -145,7 +172,7 @@ class Program {
             console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
-        
+
         return this.compileShader(shaderSource, shaderType);
     }
     /**
@@ -158,7 +185,7 @@ class Program {
             console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
-        
+
         return this.compileShader(shaderSource, shaderType);
     }
     /**
@@ -167,17 +194,17 @@ class Program {
      */
     private loadAndCompile(id: string, shaderType: number) {
         let shaderText: HTMLElement, shaderSource: string;
-        
+
         // Get shader from index.html
         shaderText = document.getElementById(id);
         shaderSource = shaderText.firstChild.textContent;
-        
+
         if (shaderSource === null) {
             alert("WARNING: " + id + " failed");
             console.log(this._fragmentSource);
             throw "SHADER ERROR";
         }
-        
+
         return this.compileShader(shaderSource, shaderType);
     }
     /**
@@ -193,14 +220,14 @@ class Program {
         } else if (shaderType === gl.FRAGMENT_SHADER) {
             this._fragmentSource = shaderSource;
         }
-        
+
         // Create shader
         compiledShader = gl.createShader(shaderType);
-        
+
         // Compilate shader
         gl.shaderSource(compiledShader, shaderSource);
         gl.compileShader(compiledShader);
-        
+
         // Check errors
         if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
             alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
@@ -214,14 +241,14 @@ class Program {
         return compiledShader;
     }
     /**
-     * 
+     *
      */
     public use() {
         const gl = Core.getInstance().getGL();
         gl.useProgram(this._compiledShader);
     }
     /**
-     * 
+     *
      */
     public destroy() {
         const gl = Core.getInstance().getGL();
@@ -277,7 +304,7 @@ class Program {
         let matIdx = type.indexOf('mat');
         count = parseInt(type.charAt(type.length - 1), 10) || -1;
         console.log(count);
-        
+
         if ((matIdx === 0 || matIdx === 1) && (count >= 2 && count <= 4)) {
             return 'gl.uniformMatrix' + count + 'fv(location, Boolean(transposed), value)';
         }
@@ -288,7 +315,7 @@ class Program {
         let path = uniform;
         let location = this.uniformLocations[path];
         let setter = this.getPropSetter(path, location, type);
-        
+
         let srcfn = `
         return function uniformGetSet (value, transposed) {
             transposed = typeof transposed !== 'undefined' ? transposed: false;

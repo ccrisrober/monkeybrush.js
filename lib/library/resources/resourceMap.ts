@@ -38,7 +38,7 @@ namespace ResourceMap {
      * [MapEntry description]
      * @type {[type]}
      */
-    let _resourceMap: { [ key: string ]: MapEntry; } = {};
+    export let _resourceMap: { [ key: string ]: MapEntry; } = {};
     /**
      * @param {string}
      */
@@ -83,7 +83,7 @@ namespace ResourceMap {
         _checkForAllLoadCompleted();
     };
     /**
-     * 
+     *
      */
     function _checkForAllLoadCompleted() {
         if ((_numOutstandingLoads === 0) && (_loadCompleteCallback !== null)) {

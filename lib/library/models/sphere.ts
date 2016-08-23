@@ -19,6 +19,12 @@ import Drawable from "./drawable";
  * @class Sphere
  */
 class Sphere extends Drawable {
+    /**
+     * Sphere constructor
+     * @param {number} radius [description]
+     * @param {number} slices [description]
+     * @param {number} stacks [description]
+     */
     constructor(radius: number, slices: number, stacks: number) {
         super();
 

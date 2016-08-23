@@ -1,6 +1,7 @@
 /// <reference path="library/_init_.ts" />
 
 /// <reference path="library/core/core.ts" />
+/// <reference path="library/core/input.ts" />
 /// <reference path="library/core/program.ts" />
 /// <reference path="library/resources/programManager.ts" />
 /// <reference path="library/resources/resourceMap.ts" />
@@ -24,6 +25,7 @@
 import _init__ from "./library/_init_";
 
 import Core from "./library/core/core";
+import Input from "./library/core/input";
 import Torus from "./library/models/torus";
 import Sphere from "./library/models/sphere";
 import Plane from "./library/models/plane";
@@ -87,6 +89,8 @@ function loadAssets() {
     loaders.loadImage("assets/images/canyon/left.jpg");
     loaders.loadImage("assets/images/canyon/right.jpg");
     loaders.loadImage("assets/images/canyon/top.jpg");
+    // video
+    //loaders.loadVideo("assets/video/Firefox.ogv");
 }
 
 const mainShader: string = "prog";
@@ -118,13 +122,20 @@ function initialize() {
         })
     ], canvasSize, true, true, {});*/
 
+    var webgl2 = true;
+
     ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();
-        prog.addShader("./shaders/demowebgl1.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-        prog.addShader("./shaders/demowebgl1.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
+        if (webgl2) {
+            prog.addShader("./shaders/demoShader.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
+            prog.addShader("./shaders/demoShader.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
+        } else {
+            prog.addShader("./shaders/demowebgl1.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
+            prog.addShader("./shaders/demowebgl1.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
+        }
         prog.compile();
 
-        prog.addUniforms(["projection", "view", "model", 
+        prog.addUniforms(["projection", "view", "model",
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
         return prog;
     });
@@ -135,12 +146,13 @@ function initialize() {
         flipY: true,
         minFilter: gl.LINEAR,
         magFilter: gl.LINEAR,
-        wrap: [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE]
+        wrapS: gl.CLAMP_TO_EDGE,
+        wrapT: gl.CLAMP_TO_EDGE
     });
 
     // const ext = gl_.getExtension("OES_draw_buffers_indexed");
     // console.log(ext);
-    
+
     /*let arr = [
         'OES_element_index_uint',
         'EXT_sRGB',
@@ -163,6 +175,8 @@ function initialize() {
         console.log(v);
         console.log(gl_.getExtension(v));
     });*/
+
+    console.log(ResourceMap._resourceMap);
 
     cameraUpdateCb();
 }
@@ -215,7 +229,7 @@ function drawScene(dt: number) {
         for (j = -varvar; j < varvar; j += 5.0) {
             for (k = -varvar; k < varvar; k += 5.0) {
                 dd *= -1;
-                mat4.translate(model, identityMatrix, 
+                mat4.translate(model, identityMatrix,
                     vec3.fromValues(i * 1.0, j * 1.0, k * 1.0));
                 mat4.rotateY(model, model, 90.0 * Math.PI / 180);
                 mat4.rotateY(model, model, angle * dd);
@@ -228,6 +242,10 @@ function drawScene(dt: number) {
         }
     }
     skybox.render(view, projection);
+
+    if (Input.getInstance().isButtonClicked(Input.mouseButton.Left)) {
+        console.log("Mouse left clicked");
+    }
 
     /**
     const gl = Core.getInstance().getGL();
@@ -250,7 +268,7 @@ function drawScene(dt: number) {
         Math.cos(angle) * 0.06,
         0.0 // 5.0 + Math.cos(dt) * 0.06
     );
-    
+
     let varvar = text.max;
     let i = 0, j = 0, k = 0;
     let dd = -1;
@@ -269,7 +287,7 @@ function drawScene(dt: number) {
     //        }
     //    }
     //}
-    //mat4.translate(model, identityMatrix, 
+    //mat4.translate(model, identityMatrix,
     //    new Float32Array([
     //        light._position.x,
     //        light._position.y,
@@ -289,10 +307,11 @@ function drawScene(dt: number) {
 // ============================================================================================ //
 // ============================================================================================ //
 
-
+/**
 window.onload = () => {
     _init__.init(loadAssets, function(gui) {
         gui.add(text, "max", 5, 100);
     });
     _init__.start(initialize, drawScene);
 };
+/**/

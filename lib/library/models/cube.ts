@@ -20,7 +20,8 @@ import Drawable from "./drawable";
  */
 class Cube extends Drawable {
     /**
-     * @param {number = 1.0} side: Number of sides
+     * Cube constructor
+     * @param {number = 1.0} side: Size length
      */
     constructor(side: number = 1.0) {
         super();

@@ -21,13 +21,22 @@ const gl: any = Core.getInstance().getGL();
  * @class Mesh
  */
 class Mesh extends Drawable {
+    /**
+     * Mesh definition
+     * @param {string} fileRoute: Json file route
+     */
     constructor(fileRoute: string) {
         super();
         console.log("Loading file");
         this.loadJSON(fileRoute);
     }
 
-    private createVAO(model, el) {
+    /**
+     * Vao construction
+     * @param {[type]} model: Model object in JSON format
+     * @param {[type]} el: Indices array
+     */
+    private createVAO(model, el: Array<number>) {
         this._handle = [];
         this._handle.push(new VertexBuffer(BufferType.ElementArray));
         this._vao.bind();
@@ -56,7 +65,11 @@ class Mesh extends Drawable {
         this._indicesLen = el.length;
     }
 
-    private loadJSON(url) {
+    /**
+     * Read JSON file
+     * @param {string} url: Json file route
+     */
+    private loadJSON(url: string) {
         let request = new XMLHttpRequest();
         request.open("GET", url, false);
         let self = this;

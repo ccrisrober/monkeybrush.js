@@ -5,6 +5,9 @@ import Vector3 from "../maths/vector3";
 
 "use strict";
 
+// TODO: Replace Vector3 to Vect3
+
+
 /**
  * Point light class
  * @class PointLight

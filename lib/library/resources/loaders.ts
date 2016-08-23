@@ -9,6 +9,38 @@ namespace loaders {
         return (alias.length < 1) ? imageSrc : alias;
     }
 
+    export function loadVideo(videoSrc: string, alias: string = "") {
+        /*alias = _getAlias(videoSrc, alias);
+        if (!ResourceMap.isAssetLoaded(alias)) {
+            // Update resources in load counter
+            ResourceMap.asyncLoadRequested(alias);
+
+            // Async request the data from server
+            let request = new XMLHttpRequest();
+            request.open("GET", videoSrc, true);
+
+            request.responseType = "arraybuffer";
+
+            request.onload = function () {
+                // Asynchronously decode, then call the function in parameter.
+                var video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
+                video.src = videoSrc;
+                ResourceMap.asyncLoadCompleted(alias, video);
+            }.bind(this);
+
+            request.send();
+        }*/
+        /*// Create HTML Video Element to play the video
+        var video = document.createElement('video');
+        video.addEventListener('canplay', function (e) {
+            videoTexture.setSource(video);
+        });
+        video.src = this.videoUrl;
+        video.crossOrigin = 'anonymous';
+        video.loop = true;
+        video.play();*/
+    }
+
     /**
      * @param {string}
      * @param {string = ""}
@@ -89,7 +121,7 @@ namespace loaders {
 
             request.onload = function () {
                 // Asynchronously decode, then call the function in parameter.
-                
+
                 const arrayBuffer = request.response;
                 if ( arrayBuffer ) {
                     let bytes = new Uint8Array( arrayBuffer );

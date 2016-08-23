@@ -1,7 +1,9 @@
 /// <reference path="texture.ts" />
+/// <reference path="texOptions.ts" />
 
 import Texture from "./texture";
 import Core from "../core/core";
+import TexOptions from "./texOptions";
 
 "use strict";
 
@@ -14,7 +16,7 @@ class CubeMapTexture extends Texture {
 
     protected finished: boolean;
 
-    constructor(options = {}) {
+    constructor(options: TexOptions = {}) {
         const gl = Core.getInstance().getGL();
         super(gl.TEXTURE_CUBE_MAP);
         options = options || {};
@@ -24,13 +26,13 @@ class CubeMapTexture extends Texture {
 
         this.finished = false;
 
-        // TODO: Faltan todo el tema de filtrados o wrap de las opciones 
+        // TODO: Faltan todo el tema de filtrados o wrap de las opciones
             // que me he saltado por falta de tiempo :(
         this._handle = gl.createTexture();
     }
     public addImage(i: number, data) {
         const gl = Core.getInstance().getGL();
-        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
             gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
     }
     public bind(slot?: number) {
@@ -55,7 +57,7 @@ class CubeMapTexture extends Texture {
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        
+
 
         if ((<any>gl).TEXTURE_WRAP_R) {
             // TODO: Only in webgl2

@@ -55,6 +55,8 @@ grunt serve # Only open server (http://localhost:3030/index.html)
 - [ ] Mat3
 - [ ] Mat4
 - [x] Webpack integration
+- [x] Key input
+- [x] Mouse input
 
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt

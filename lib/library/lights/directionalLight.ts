@@ -6,6 +6,8 @@ import Vector3 from "../maths/vector3";
 
 "use strict";
 
+// TODO: Replace Vector3 to Vect3
+
 /**
  * Directional light class
  * @class DirectionalLight
@@ -17,7 +19,8 @@ class DirectionalLight extends Light {
      */
     protected _direction: Vector3<number>;
     /**
-     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction
+     * Directional light constructor
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction [description]
      */
     constructor(direction: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
         super();

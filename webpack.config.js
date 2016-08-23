@@ -6,7 +6,8 @@ module.exports = {
 		filename: "./build/bundle.js"
 	},
 	resolve: {
-		extensions: ["", ".webpack.js", ".web.js", ".ts", ".js"]
+		extensions: ["", ".webpack.js", ".web.js", ".ts", ".js"],
+        moduleDirectories: ["bower_components"]
 	},
 	// Turn on sourcemaps
 	devtool: 'source-map',
@@ -15,11 +16,18 @@ module.exports = {
 		//new webpack.optimize.UglifyJsPlugin(),
 		new CircularDependencyPlugin({
 			exclude: /a\.js/
-		})
+		})/*,
+        new webpack.ResolverPlugin(
+            new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(".bower.json", ["main"])
+        )*/
 	],
 	module: {
 		loaders: [
-			{ test: /\.ts(x?)$/, loader: 'ts-loader' }
+			{
+                test: /\.ts(x?)$/,
+                loader: 'ts-loader',
+                exclude: /node_modules/
+            }
 		]
 	}
 };

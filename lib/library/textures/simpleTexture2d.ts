@@ -1,8 +1,10 @@
 /// <reference path="texture.ts" />
+/// <reference path="texOptions.ts" />
 
 import Core from "../core/core";
 import Texture from "./texture";
 import Vector2 from "../maths/vector2";
+import TexOptions from "./texOptions";
 
 "use strict";
 
@@ -14,39 +16,37 @@ class SimpleTexture2D extends Texture {
     protected _magFilter: number;
     protected _wraps: Array<number>;
 
-    constructor(size: Vector2<number>, options = {}) {
+    constructor(size: Vector2<number>, options: TexOptions = {}) {
         super(gl.TEXTURE_2D);
         options = options || {};
 
-        // Support compression
-
-        this._flipY = options["flipY"] === true;
         this._handle = gl.createTexture();
 
-        let _internalformat = options["internalformat"] || gl.RGBA;
-        let _format = options["format"] || gl.RGBA;
-        let _type = options["type"] || gl.UNSIGNED_BYTE;
-        const _level = options["level"] || 0;
+        // TODO: Support compression
 
-        this._minFilter = options["minFilter"] || gl.NEAREST;
-        this._magFilter = options["magFilter"] || gl.NEAREST;
-        let wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
+        this._flipY = options.flipY === true;
 
-        if (!Array.isArray(wraps)) {
-            wraps = [wraps, wraps];
-        } else {
-            this._wraps = wraps;
-        }
+        let _internalformat = options.internalFormat || gl.RGBA;
+        let _format = options.format || gl.RGBA;
+        let _type = options.type || gl.UNSIGNED_BYTE;
+        const _level = options.level || 0;
+
+        this._minFilter = options.minFilter || gl.NEAREST;
+        this._magFilter = options.magFilter || gl.NEAREST;
+        let wraps = [
+            options.wrapS || gl.CLAMP_TO_EDGE,
+            options.wrapT || gl.CLAMP_TO_EDGE,
+        ];
 
         this.bind();
 
         gl.texImage2D(
-            this._target, 
+            this._target,
             _level, // Level of details
             _internalformat, // Internal format
-            size.x, 
-            size.y, 
-            0, 
+            size.x,
+            size.y,
+            0,
             _format, // Format
             _type, // Size of each channel
             null
@@ -55,7 +55,7 @@ class SimpleTexture2D extends Texture {
         gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, this._minFilter);
         gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, this._magFilter);
         this.wrap(wraps);
-        
+
         /*// Prevent NPOT textures
         // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
         gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);

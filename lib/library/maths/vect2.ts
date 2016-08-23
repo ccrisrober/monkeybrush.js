@@ -16,11 +16,13 @@ class Vect2 {
     constructor(x: number = 0.0, y: number = 0.0) {
         this._value = vec2.fromValues(x, y);
     }
-    
+
     public toString = () : string => {
         return vec2.str(this._value);
     }
-
+    public value(): Float32Array {
+        return this._value;
+    }
     public add(v: Vect2) {
         vec2.add(this._value, this._value, v._value);
     }
@@ -51,7 +53,7 @@ class Vect2 {
     // TODO:      this._value[1] = value;
     // TODO: }
     // TODO: public lerp(other: Vect2, t: number): Vect2 {
-    // TODO:     let ax = this._value[0], 
+    // TODO:     let ax = this._value[0],
     // TODO:         ay = this._value[1];
     // TODO:     return new Vect2(
     // TODO:         ax + t * (other.x - ax),

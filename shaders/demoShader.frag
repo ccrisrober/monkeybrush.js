@@ -53,9 +53,9 @@ void main() {
 	fragColor = vec4(outUV, 0.0, 1.0);
 	vec3 color = texture(texSampler, normalize(outNormal).xy).rgb;
 	fragColor = vec4(color, 1.0);*/
-
+    /*
 	vec3 ambColor = vec3(0.24725, 0.1995, 0.0745);
-	vec3 objectColor = /*texture(texSampler, outUV).rgb;//*/vec3(1.0, 0.0, 0.0);
+	vec3 objectColor = vec3(1.0, 0.0, 0.0); // texture(texSampler, outUV).rgb;
 	vec3 specColor = vec3(0.628281, 0.555802, 0.366065);
 	float shininess = 0.4;
 
@@ -63,15 +63,15 @@ void main() {
 
     vec3 ambient = ambColor * lightColor;
 
-    // Diffuse 
+    // Diffuse
     vec3 norm = normalize(outNormal);
 
 
     vec3 viewDir = normalize(viewPos - outPosition);
-    /*if (abs(dot(viewDir, norm)) < thickness) {
-        fragColor = vec4(vec3(0.0), 1.0);
-        return;
-    }*/
+    //if (abs(dot(viewDir, norm)) < thickness) {
+    //    fragColor = vec4(vec3(0.0), 1.0);
+    //    return;
+    //}
 
     vec3 lightDir = normalize(lp - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
@@ -79,9 +79,9 @@ void main() {
     vec3 diffuse = diff * lightColor;
 
     // Specular
-    /*vec3 reflectDir = reflect(-lightDir, norm);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);*/
-    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    //vec3 reflectDir = reflect(-lightDir, norm);
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(norm, halfwayDir), 0.0), 16.0);
     vec3 specular = specColor * spec * lightColor;
 
@@ -92,24 +92,25 @@ void main() {
     float linear = 0.14;
     float quadratic = 0.07;
 
-    float attenuation = 1.0 / (constant + linear * dist + quadratic * (dist * dist));    
+    float attenuation = 1.0 / (constant + linear * dist + quadratic * (dist * dist));
 
     //attenuation = 1.0;
 
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
-    fragColor = vec4(result, 1.0);
+    fragColor = vec4(result, 1.0);*/
 
     //float avg = (fragColor.r + fragColor.g + fragColor.b) / 3.0;
     //float avg2 = (0.2126 * fragColor.r + 0.7152 * fragColor.g + 0.0722 * fragColor.b);
     //fragColor.xyz = vec3(avg2);
-	
+
     // apply gamma correction
     //float gamma = 2.2;
     //fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
     //fragColor = texture(texSampler, matcap(outPosition, norm));
     // Apply fog
     //colorWithFog(fragColor.rgb);
+    //fragColor = vec4(normalize(outNormal), 1.0);
 
-    fragColor = vec4(normalize(outNormal), 1.0);
+    fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 }

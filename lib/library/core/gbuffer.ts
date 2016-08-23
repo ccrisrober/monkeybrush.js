@@ -35,46 +35,46 @@ class GBuffer {
         this.framebuffer = new Framebuffer([
             // Position color buffer
             new SimpleTexture2D(size, {
-                "internalformat": gl.RGB,
-                "format": gl.RGB,
-                "type": gl.FLOAT,
-                "minFilter": gl.NEAREST,
-                "maxFilter": gl.NEAREST
+                internalFormat: gl.RGB,
+                format: gl.RGB,
+                type: gl.FLOAT,
+                minFilter: gl.NEAREST,
+                magFilter: gl.NEAREST
             }),
             // Normal color buffer
             new SimpleTexture2D(size, {
-                "internalformat": gl.RGB,
-                "format": gl.RGB,
-                "type": gl.FLOAT,
-                "minFilter": gl.NEAREST,
-                "maxFilter": gl.NEAREST
+                internalFormat: gl.RGB,
+                format: gl.RGB,
+                type: gl.FLOAT,
+                minFilter: gl.NEAREST,
+                magFilter: gl.NEAREST
             }),
             // Color + Specular color buffer
             new SimpleTexture2D(size, {
-                "internalformat": gl.RGB,
-                "format": gl.RGB,
-                "type": gl.FLOAT,
-                "minFilter": gl.NEAREST,
-                "maxFilter": gl.NEAREST
+                internalFormat: gl.RGB,
+                format: gl.RGB,
+                type: gl.FLOAT,
+                minFilter: gl.NEAREST,
+                magFilter: gl.NEAREST
             })
         ], size, true, true, {});
 
         console.log("done");
     }
     /**
-     * 
+     *
      */
     public bindForReading() {
         this.framebuffer.onlyBindTextures();
     }
     /**
-     * 
+     *
      */
     public bindForWriting() {
         this.framebuffer.bind();
     }
     /**
-     * 
+     *
      */
     public destroy() {
         const gl = Core.getInstance().getGL();

@@ -6,6 +6,9 @@ import Vector3 from "../maths/vector3";
 
 "use strict";
 
+// TODO: Replace Vector3 to Vect3
+
+
 /**
  * Light abstract class
  * @class Light
@@ -64,7 +67,7 @@ abstract class Light {
      * @return {Vector3<number>}
      */
     // TODO: get attenuation(): Vector3<number> { return this._attenuation; }
-    
+
     /**
      * Get light intensity.
      * @return {number}
@@ -75,7 +78,7 @@ abstract class Light {
      * @param {number} intensity: Light intensity.
      */
     // TODO: set intensity(intensity: number) { this._intensity = intensity; }
-    
+
     /**
      * Get light color.
      * @return {Color}

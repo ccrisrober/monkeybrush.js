@@ -1,9 +1,14 @@
+/// <reference path="./log.ts" />
+
+import log from "./log";
+// TODO: in getContext, check antialias or anothers params
 class Context {
     static _gl: WebGLRenderingContext = null;
     static _canvas: HTMLCanvasElement = null;
     static getContext(canvasName?: string): WebGLRenderingContext {
         if (!Context._gl) {
             if (!canvasName) {
+                log.info("Not canvas. Create one ...");
                 this._canvas = document.createElement("canvas");
                 this._canvas.width = 800;
                 this._canvas.height = 800;
@@ -12,17 +17,19 @@ class Context {
             } else {
                 this._canvas = <HTMLCanvasElement>document.getElementById(canvasName);
             }
+            log.info("Get context");
             Context._gl = Context._getContext(this._canvas);
             if (!Context._gl) {
                 document.write("<br><b>WebGL is not supported!</b>");
                 throw new Error("WebGL is not supported!");
             }
+            log.info("WebGLRenderingContext OK :)");
             Context._getVendors();
         }
         return Context._gl;
     }
     protected static _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
-        let contexts: string[] = "webgl,webgl2,experimental-webgl2".split(",");
+        let contexts: string[] = "webgl2,webgl,experimental-webgl2".split(",");
         let gl: WebGLRenderingContext;
         let ctx;
         for (let i = 0; i < contexts.length; ++i) {

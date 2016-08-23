@@ -73,7 +73,7 @@ namespace _init__ {
         Timer.update();
         
 
-        //resize();
+        // resize();
         
 
         _drawSceneCB(dt);    // Draw user function

@@ -11,7 +11,7 @@ class Input {
         if (Input._instance) {
             throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
         }
-        
+
         for (let i = 0; i < this.keys["LastKeyCode"]; ++i) {
             this._isKeyPressed[i] = false;
             this._keyPreviusState[i] = false;
@@ -48,15 +48,11 @@ class Input {
             self._onMouseUp(ev);
         });
 
-
-        Context.getContext();
-        this._canvas = Context._canvas;
-
         Input._instance = this;
     }
 
     // Mouse states
-    public mouseButton = {
+    public static mouseButton = {
         Left: 0,
         Middle: 1,
         Right: 2
@@ -140,7 +136,6 @@ class Input {
     protected _onKeyUp(ev: KeyboardEvent) {
         this._isKeyPressed[ev.keyCode] = false;
     }
-    public _canvas: HTMLCanvasElement;
     public _buttonPreviousState: Array<boolean> = [];
     public _isButtonPressed: Array<boolean> = [];
     public _isButtonClicked: Array<boolean> = [];
@@ -148,15 +143,19 @@ class Input {
     public _mousePosY = -1;
     protected _onMouseMove(ev: MouseEvent): boolean {
         let inside = false;
-        let bbox = this._canvas.getBoundingClientRect();
+        const canvas = Context.getContext().canvas;
+        let bbox = canvas.getBoundingClientRect();
 
-        const x = Math.round((ev.clientX - bbox.left) * (this._canvas.width / bbox.width));
-        const y = Math.round((ev.clientY - bbox.top) * (this._canvas.width / bbox.width));
+        //const x = Math.round((ev.clientX - bbox.left) * (canvas.width / bbox.width));
+        //const y = Math.round((ev.clientY - bbox.top) * (canvas.width / bbox.width));
 
-        if ((x >= 0) && (x < this._canvas.width) && 
-            (y >= 0) && (y < this._canvas.height)) {
+        const x = ((ev.clientX - bbox.left) - canvas.height/2)/(canvas.height/2);
+        const y = (canvas.width/2 - (ev.clientY - bbox.top))/(canvas.width/2);
+
+        if ((x >= 0) && (x < canvas.width) &&
+            (y >= 0) && (y < canvas.height)) {
             this._mousePosX = x;
-            this._mousePosY = this._canvas.height - 1 - y;
+            this._mousePosY = canvas.height - 1 - y;
             inside = true;
         }
         return inside;

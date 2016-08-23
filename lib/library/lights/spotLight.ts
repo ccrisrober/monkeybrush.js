@@ -5,6 +5,9 @@ import Vector3 from "../maths/vector3";
 
 "use strict";
 
+// TODO: Replace Vector3 to Vect3
+
+
 /**
  * Spot light class
  * @class SpotLight
@@ -25,12 +28,12 @@ class SpotLight extends Light {
      * @type {number}
      */
     protected _cutOff: number;  // TODO: Unused
-    
+
     /**
      * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
      * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction
      */
-    constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0), 
+    constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0),
         direction: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
         super();
         this._direction = direction;

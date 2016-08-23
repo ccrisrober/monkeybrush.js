@@ -7,6 +7,8 @@ import UsageType from "../constants/UsageType";
 
 "use strict";
 
+// TODO: Move to core
+
 const gl = Core.getInstance().getGL();
 
 class VertexBuffer {
@@ -21,6 +23,7 @@ class VertexBuffer {
      */
     protected _type: BufferType = BufferType.Array;
     /**
+     * Vertex buffer constructor
      * @param {BufferType = BufferType.Array}
      */
     constructor(type: BufferType = BufferType.Array) {
@@ -29,7 +32,8 @@ class VertexBuffer {
         this.bind();
     }
     /**
-     * @param {BufferType}
+     * [bind description]
+     * @param {BufferType} type [description]
      */
     public bind(type?: BufferType) {
         if (type !== undefined) {
@@ -38,25 +42,27 @@ class VertexBuffer {
         gl.bindBuffer(this._type, this._buffer);
     }
     /**
-     * 
+     * [unbind description]
      */
     public unbind() {
         gl.bindBuffer(this._type, null);
     }
     /**
-     * @return {BufferType}
+     * [getBufferType description]
+     * @return {BufferType} [description]
      */
     public getBufferType(): BufferType {
         return this._type;
     }
     /**
-     * @return {WebGLBuffer}
+     * [getBuffer description]
+     * @return {WebGLBuffer} [description]
      */
     public getBuffer(): WebGLBuffer {
         return this._buffer;
     }
     /**
-     * 
+     * [destroy description]
      */
     public destroy() {
         gl.bindBuffer(this._type, 0);
@@ -66,39 +72,41 @@ class VertexBuffer {
         this._buffer = null;
     }
     /**
-     * @param {Float32Array | Uint16Array}
-     * @param {UsageType    = UsageType.StaticDraw}
+     * [bufferData description]
+     * @param {Float32Array | Uint16Array}          data  [description]
+     * @param {UsageType    = UsageType.StaticDraw} usage [description]
      */
     public bufferData(data: Float32Array | Uint16Array, usage: UsageType = UsageType.StaticDraw) {
         this.bind();
         gl.bufferData(this._type, data, usage);
     }
-
     /**
-     * @param {number}
-     * @param {number}
-     * @param {number}
-     * @param {number = 0}
+     * [attribDivisor description]
+     * @param {number}    position [description]
+     * @param {number}    length   [description]
+     * @param {number}    divisor  [description]
+     * @param {number =        0}           stride [description]
      */
     public attribDivisor(position: number, length: number, divisor: number, stride: number = 0) {
         this.bind();
         gl.enableVertexAttribArray(position);
-        gl.vertexAttribPointer(position, 
-            length, 
-            gl.FLOAT, 
-            false, 
-            length * Float32Array.BYTES_PER_ELEMENT, 
+        gl.vertexAttribPointer(position,
+            length,
+            gl.FLOAT,
+            false,
+            length * Float32Array.BYTES_PER_ELEMENT,
             0);
-        (<any>gl).vertexAttribDivisor(position, divisor); 
+        (<any>gl).vertexAttribDivisor(position, divisor);
     }
     /**
-     * @param {number}
-     * @param {number}
-     * @param {number}
-     * @param {boolean = false}
-     * @param {number  = 0}
+     * [vertexAttribPointer description]
+     * @param {number}     attribLocation [description]
+     * @param {number}     numElems       [description]
+     * @param {number}     type           [description]
+     * @param {boolean =              false}       normalized [description]
+     * @param {number  =              0}           offset     [description]
      */
-    public vertexAttribPointer(attribLocation: number, numElems: number, type: number, 
+    public vertexAttribPointer(attribLocation: number, numElems: number, type: number,
         normalized: boolean = false, offset: number = 0) {
         this.bind();
         gl.enableVertexAttribArray(attribLocation);

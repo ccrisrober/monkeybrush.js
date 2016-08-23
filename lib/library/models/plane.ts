@@ -19,7 +19,17 @@ import Drawable from "./drawable";
  * @class Quad
  */
 class Plane extends Drawable {
-    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number, smax = 1.0, tmax = 1.0) {
+    /**
+     * Plane constructor
+     * @param {number} xsize: Width plane size
+     * @param {number} zsize: Height plane size
+     * @param {number} xdivs: Width plane subdivisions
+     * @param {number} zdivs: Height plane subdivisions
+     * @param {number = 1.0} smax: Width texCoord subdivision
+     * @param {number = 1.0} tmax  Height texCoord subdivision
+     */
+    constructor(xsize: number, zsize: number, xdivs: number, zdivs: number,
+        smax: number = 1.0, tmax: number = 1.0) {
         super();
         let v = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
         let n = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
