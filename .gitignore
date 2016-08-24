@@ -39,6 +39,6 @@ jspm_packages
 bower_components
 docs
 
-build
+# build
 docs
 tslintwarnings.txt
