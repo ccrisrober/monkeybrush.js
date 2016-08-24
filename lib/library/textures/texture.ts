@@ -26,6 +26,8 @@ import Vector2 from "../maths/vector2";
 
 "use strict";
 
+declare var WebGL2RenderingContext: any;
+
 // TODO: Redimension
 abstract class Texture {
     protected _handle: WebGLTexture;
@@ -45,8 +47,12 @@ abstract class Texture {
 
     public setLOD(lod: number) {
         const gl = Core.getInstance().getGL();
-        gl.texParameterf(this._target, (<any>gl).TEXTURE_MIN_LOD, lod);
-        gl.texParameterf(this._target, (<any>gl).TEXTURE_MAX_LOD, lod);
+        if (gl instanceof WebGL2RenderingContext) {
+            gl.texParameterf(this._target, (<any>gl).TEXTURE_MIN_LOD, lod);
+            gl.texParameterf(this._target, (<any>gl).TEXTURE_MAX_LOD, lod);
+        } else {
+            console.log("TEXTURE LOD isn´t supported");
+        }
     }
 
     // TODO: Move to abstract methods
