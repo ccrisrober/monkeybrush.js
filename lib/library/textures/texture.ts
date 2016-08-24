@@ -21,6 +21,7 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../maths/vector2.ts" />
 
+import Core from "../core/core";
 import Vector2 from "../maths/vector2";
 
 "use strict";
@@ -40,6 +41,12 @@ abstract class Texture {
 
     public handle(): WebGLTexture {
         return this._handle;
+    }
+
+    public setLOD(lod: number) {
+        const gl = Core.getInstance().getGL();
+        gl.texParameterf(this._target, (<any>gl).TEXTURE_MIN_LOD, lod);
+        gl.texParameterf(this._target, (<any>gl).TEXTURE_MAX_LOD, lod);
     }
 
     // TODO: Move to abstract methods
