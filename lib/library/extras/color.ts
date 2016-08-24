@@ -40,27 +40,27 @@ class Color {
     /**
      * @return {number}
      */
-    // TODO: get r(): number { return this._color[0]; }
+    get r(): number { return this._color[0]; }
     /**
      * @return {number}
      */
-    // TODO: get g(): number { return this._color[1]; }
+    get g(): number { return this._color[1]; }
     /**
      * @return {number}
      */
-    // TODO: get b(): number { return this._color[2]; }
+    get b(): number { return this._color[2]; }
     /**
      * @param {number}
      */
-    // TODO: set r(r: number) { this._color[0] = r; }
+    set r(r: number) { this._color[0] = r; }
     /**
      * @param {number}
      */
-    // TODO: set g(g: number) { this._color[1] = g; }
+    set g(g: number) { this._color[1] = g; }
     /**
      * @param {number}
      */
-    // TODO: set b(b: number) { this._color[2] = b; }
+    set b(b: number) { this._color[2] = b; }
     /**
      * [setRGB description]
      * @param  {number} r [description]
@@ -69,12 +69,9 @@ class Color {
      * @return {Color}    [description]
      */
     public setRGB(r: number, g: number, b: number): Color {
-        // this.r = r;
-        // this.g = g;
-        // this.b = b;
-        this._color[0] = r;
-        this._color[1] = g;
-        this._color[2] = b;
+        this.r = r;
+        this.g = g;
+        this.b = b;
 
         return this;
     }
@@ -83,8 +80,8 @@ class Color {
      * @return {Color} [description]
      */
     public toHSL(): Color {
-        const max = Math.max(this._color[0], this._color[1], this._color[2]),
-            min = Math.min(this._color[0], this._color[1], this._color[2]);
+        const max = Math.max(this.r, this.g, this.b),
+            min = Math.min(this.r, this.g, this.b);
 
         let h, s, l = (max + min) / 2;
 
@@ -94,10 +91,10 @@ class Color {
             let d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
             switch (max) {
-                case this._color[0]: h = (this._color[1] - this._color[2]) / d +
-                    (this._color[1] < this._color[2] ? 6 : 0); break;
-                case this._color[1]: h = (this._color[2] - this._color[0]) / d + 2; break;
-                case this._color[2]: h = (this._color[0] - this._color[1]) / d + 4; break;
+                case this.r: h = (this.g - this.b) / d +
+                    (this.g < this.b ? 6 : 0); break;
+                case this.g: h = (this.b - this.r) / d + 2; break;
+                case this.b: h = (this.r - this.g) / d + 4; break;
             }
             h /= 6;
         }

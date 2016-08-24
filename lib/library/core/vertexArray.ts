@@ -26,8 +26,6 @@ import extensions from "../extras/extensions";
 
 "use strict";
 
-// TODO: Move to core
-
 const gl = Core.getInstance().getGL();
 
 declare var WebGL2RenderingContext: any;

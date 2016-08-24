@@ -63,23 +63,23 @@ class SpotLight extends Light {
      * Get light position
      * @return {Vector3<number>}
      */
-    // TODO: get position() { return this._position; }
+    get position() { return this._position; }
     /**
      * Set light position
      * @param {Vector3<number>} position
      */
-    // TODO: set position(position: Vector3<number>) { this._position = position; }
+    set position(position: Vector3<number>) { this._position = position; }
 
     /**
      * Get light direction
      * @return {Vector3<number>}
      */
-    // TODO: get direction() { return this._direction; }
+    get direction() { return this._direction; }
     /**
      * Set light direction
      * @param {Vector3<number>} direction
      */
-    // TODO: set direction(direction: Vector3<number>) { this._direction = direction; }
+    set direction(direction: Vector3<number>) { this._direction = direction; }
 };
 
 export default SpotLight;

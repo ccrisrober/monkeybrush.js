@@ -36,61 +36,56 @@ class Vect3 {
      */
     constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
         this._value = vec3.fromValues(x, y, z);
-    }
-
+    };
     public toString = () : string => {
         return vec3.str(this._value);
-    }
-
+    };
     public add(v: Vect3) {
         vec3.add(this._value, this._value, v._value);
-    }
+    };
     public sub(v: Vect3) {
         vec3.sub(this._value, this._value, v._value);
-    }
+    };
     public mult(other: Vect3) {
         vec3.multiply(this._value, this._value, other._value);
-    }
+    };
     public div(other: Vect3) {
         vec3.div(this._value, this._value, other._value);
-    }
+    };
     public negate() {
         vec3.negate(this._value, this._value);
-    }
+    };
     public scale(value: number) {
         vec3.scale(this._value, this._value, value);
-    }
+    };
     public distance(): number {
         return vec3.squaredLength(this._value);
-    }
-    // TODO: public get x(): number { return this._value[0]; }
-    // TODO: public get y(): number { return this._value[1]; }
-    // TODO: public get z(): number { return this._value[2]; }
-    // TODO: public set x(value: number) {
-    // TODO:      this._value[0] = value;
-    // TODO: }
-    // TODO: public set y(value: number) {
-    // TODO:      this._value[1] = value;
-    // TODO: }
-    // TODO: public set z(value: number) {
-    // TODO:      this._value[2] = value;
-    // TODO: }
-    // TODO: public lerp(other: Vect3, t: number): Vect3 {
-    // TODO:     let ax = this._value[0],
-    // TODO:         ay = this._value[1],
-    // TODO:         az = this._value[2];
-    // TODO:     return new Vect3(
-    // TODO:         ax + t * (other.x - ax),
-    // TODO:         ay + t * (other.y - ay),
-    // TODO:         az + t * (other.z - az)
-    // TODO:     );
-    // TODO: }
-    // TODO: public isEqual(other: Vect3): boolean {
-    // TODO:     return this.x === other.x && this.y === other.y && this.z === other.z;
-    // TODO: }
+    };
+    get x(): number { return this._value[0]; };
+    get y(): number { return this._value[1]; };
+    get z(): number { return this._value[2]; };
+    set x(value: number) {
+        this._value[0] = value;
+    };
+    set y(value: number) {
+        this._value[1] = value;
+    };
+    set z(value: number) {
+        this._value[2] = value;
+    };
+    public lerp(other: Vect3, t: number): Vect3 {
+        let ax = this._value[0],
+            ay = this._value[1],
+            az = this._value[2];
+        return new Vect3(
+            ax + t * (other.x - ax),
+            ay + t * (other.y - ay),
+            az + t * (other.z - az)
+        );
+    };
     public dot(other: Vect3): number {
         return vec3.dot(this._value, other._value);
-    }
+    };
 };
 
 export default Vect3;

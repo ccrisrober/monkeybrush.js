@@ -49,12 +49,12 @@ class DirectionalLight extends Light {
      * Get light direction
      * @return {Vector3<number>}
      */
-    // TODO: get direction(): Vector3<number> { return this._direction; }
+    get direction(): Vector3<number> { return this._direction; }
     /**
      * Set light direction
      * @param {Vector3<number>} direction
      */
-    // TODO: set direction(direction: Vector3<number>) { this._direction = direction; }
+    set direction(direction: Vector3<number>) { this._direction = direction; }
 };
 
 export default DirectionalLight;

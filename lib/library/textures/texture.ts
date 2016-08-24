@@ -31,12 +31,12 @@ declare var WebGL2RenderingContext: any;
 // TODO: Redimension
 abstract class Texture {
     protected _handle: WebGLTexture;
-    public _target: number; // TODO: protected
+    protected _target: number;
     protected _size: Vector2<number>;
     constructor(target: number) { // todo: size!
         this._target = target;
     }
-    // TODO: get target(): number { return this._target; }
+    get target(): number { return this._target; }
     abstract destroy(): void;
 
     abstract bind(slot?: number);

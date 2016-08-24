@@ -64,7 +64,7 @@ abstract class Camera {
         this._far = far;
 
         this.update();
-    }
+    };
     /**
      * Update view and projection matrix
      */
@@ -73,60 +73,66 @@ abstract class Camera {
      * Get current camera position
      * @return {Float32Array}
      */
-    // TODO: get position(): Float32Array { return this._position; }
+    get position(): Float32Array { return this._position; };
     /**
      * Set camera position
      * @param {Float32Array}
      */
-    // TODO: set position(pos: Float32Array) { this._position = pos; }
+    set position(pos: Float32Array) { this._position = pos; };
     /**
      * Get current view matrix from camera
      * @return {Float32Array}
      */
     public getViewMatrix(): Float32Array {
         return this._view;
-    }
+    };
     /**
      * Get current projection matrix from camera
      * @return {Float32Array}
      */
     public getProjectionMatrix(): Float32Array {
         return this._projection;
-    }
+    };
+    /**
+     * [near description]
+     * @return {number} [description]
+     */
+    get near(): number { return this._near; };
+    /**
+     * [far description]
+     * @return {number} [description]
+     */
+    get far(): number { return this._far; };
     /**
      * Get current field of view from camera
      * @return {number}
      */
-    public getFOV(): number {
-        return this._fov;
-    }
+    get fov(): number { return this._fov; };
     /**
      * Get current aspect radio from camera
      * @return {number}
      */
-    public getAspectRatio(): number {
-        return this._ar;
-    }
+    get aspRatio(): number { return this._ar; };
     /**
      * Set near
      * @param {number} near
      */
-    // TODO: public set near(near: number) { this._near = near; }
+    set near(near: number) { this._near = near; };
     /**
      * Set far
      * @param {number} far
      */
-    // TODO: public set far(far: number) { this._far = far; }
+    set far(far: number) { this._far = far; };
     /**
      * Set field of view
      * @param {number} fovy
      */
-    // TODO: public set fov(fovy: number) { this._fov = fovy; }
+    set fov(fovy: number) { this._fov = fovy; };
     /**
      * Set aspect ratio
      * @param {number} ar
      */
-    // TODO: public set aspRatio(ar: number) { this._ar = ar; }
+    set aspRatio(ar: number) { this._ar = ar; };
 };
 
 export default Camera;

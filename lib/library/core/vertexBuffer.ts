@@ -27,8 +27,6 @@ import UsageType from "../constants/UsageType";
 
 "use strict";
 
-// TODO: Move to core
-
 const gl = Core.getInstance().getGL();
 
 class VertexBuffer {

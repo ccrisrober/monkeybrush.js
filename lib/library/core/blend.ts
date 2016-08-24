@@ -24,7 +24,6 @@
 import Context from "./context";
 
 import BlendingEq from "../constants/BlendingEq";
-import BlendingEqu from "../constants/BlendingEqu";
 import BlendingType from "../constants/BlendingType";
 
 "use strict";
@@ -51,23 +50,23 @@ class Blend {
     }
     /**
      * Set the RGB blend equation and the alpha blend equation separately
-     * @param {BlendingEqu} modeRGB: Specifies the RGB blend equation,
+     * @param {BlendingEq} modeRGB: Specifies the RGB blend equation,
      *      how thered, green, and blue components of the source and
      *      destination colors are combined.
-     * @param {BlendingEqu} modeAlpha: Specifies the alpha blend equation,
+     * @param {BlendingEq} modeAlpha: Specifies the alpha blend equation,
      *      how the alpha component of the source and destination colors
      *      are combined.
      */
-    public static equationSeparate(modeRGB: BlendingEqu, modeAlpha: BlendingEqu) {
+    public static equationSeparate(modeRGB: BlendingEq, modeAlpha: BlendingEq) {
         const gl = Context.getContext(); // Core.getInstance().getGL();
         gl.blendEquationSeparate(modeRGB, modeAlpha);
     }
 
-    public getBlendEquRGB(): BlendingEqu {
+    public getBlendEquRGB(): BlendingEq {
         const gl = Context.getContext(); // Core.getInstance().getGL();
         return gl.getParameter(gl.BLEND_EQUATION_RGB);
     }
-    public getBlendEquAlpha(): BlendingEqu {
+    public getBlendEquAlpha(): BlendingEq {
         const gl = Context.getContext(); // Core.getInstance().getGL();
         return gl.getParameter(gl.BLEND_EQUATION_ALPHA);
     }

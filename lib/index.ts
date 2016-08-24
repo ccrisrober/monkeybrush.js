@@ -62,8 +62,6 @@ function loadAssets() {
     loaders.loadImage("assets/images/canyon/left.jpg");
     loaders.loadImage("assets/images/canyon/right.jpg");
     loaders.loadImage("assets/images/canyon/top.jpg");
-    // video
-    // loaders.loadVideo("assets/video/Firefox.ogv");
 }
 
 const mainShader: string = "prog";

@@ -37,7 +37,7 @@ class PointLight extends Light {
      * [Light position]
      * @type {Vector3<number>}
      */
-    public/*protected*/ _position: Vector3<number>;
+    protected _position: Vector3<number>;
     /**
      * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
      */
@@ -49,12 +49,12 @@ class PointLight extends Light {
      * Get light position
      * @return {Vector3<number>}
      */
-    // TODO: get position(): Vector3<number> { return this._position; }
+    get position(): Vector3<number> { return this._position; }
     /**
      * Set light position
      * @param {Vector3<number>} position
      */
-    // TODO: set position(position: Vector3<number>) { this._position = position; }
+    set position(position: Vector3<number>) { this._position = position; }
 
     /**
      * Increment position from current position

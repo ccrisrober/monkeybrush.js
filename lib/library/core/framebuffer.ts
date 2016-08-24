@@ -71,7 +71,7 @@ class Framebuffer {
 
             // Only supported simple textures
             // TODO: Cubemap or texture3D
-            let target = texture._target;
+            let target = texture.target;
 
             gl.framebufferTexture2D(gl.FRAMEBUFFER,
                 gl.COLOR_ATTACHMENT0 + i,

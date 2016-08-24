@@ -24,19 +24,18 @@
 import Context from "../core/context";
 import extensions from "../extras/extensions";
 
+const ext = extensions.get("WEBGL_draw_buffers");
+
 "use strict";
 
 const gl = Context.getContext();
 
-const ext = extensions.get("EXT_blend_minmax");
-
-// Blending ecuation
 enum BlendingEq {
-    FuncAdd = gl.FUNC_ADD,
-    FuncSub = gl.FUNC_SUBTRACT,
-    FuncRevSub = gl.FUNC_REVERSE_SUBTRACT,
+    Add = gl.FUNC_ADD,
+    Substract = gl.FUNC_SUBTRACT,
+    RevSubstract = gl.FUNC_REVERSE_SUBTRACT,
+    Min = (<any>gl).MIN || ext.EXT_blend_minmax,
+    Max = (<any>gl).MAX || ext.EXT_blend_minmax
+};
 
-    Min = (<any>gl).MIN || ext.MIN_EXT,
-    Max = (<any>gl).MAX || ext.MAX_EXT
-}
 export default BlendingEq;

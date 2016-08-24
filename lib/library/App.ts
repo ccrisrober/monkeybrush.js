@@ -18,12 +18,14 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+/// <reference path="./_decorators.ts" />
 /// <reference path="core/core.ts" />
 /// <reference path="core/input.ts" />
 /// <reference path="resources/resourceMap.ts" />
 /// <reference path="extras/timer.ts" />
 /// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 
+import Decorators from "./_decorators";
 import Core from "./core/core";
 import Input from "./core/input";
 import ResourceMap from "./resources/resourceMap";
@@ -41,6 +43,7 @@ interface IApp {
     textCB: (gui: dat.GUI) => void;
 }
 
+@Decorators.sealed
 class App {
 
     protected stats: Stats;

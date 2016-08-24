@@ -1,5 +1,4 @@
 /// <reference path="BlendingEq.ts" />
-/// <reference path="BlendingEqu.ts" />
 /// <reference path="BlendingType.ts" />
 /// <reference path="BufferType.ts" />
 /// <reference path="ComparisonFunc.ts" />

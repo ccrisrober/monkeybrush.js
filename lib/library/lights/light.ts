@@ -86,29 +86,29 @@ abstract class Light {
      * Get light attenuation value.
      * @return {Vector3<number>}
      */
-    // TODO: get attenuation(): Vector3<number> { return this._attenuation; }
+    get attenuation(): Vector3<number> { return this._attenuation; }
 
     /**
      * Get light intensity.
      * @return {number}
      */
-    // TODO: get intensity(): number { return this._intensity; }
+    get intensity(): number { return this._intensity; }
     /**
      * Set light intensity.
      * @param {number} intensity: Light intensity.
      */
-    // TODO: set intensity(intensity: number) { this._intensity = intensity; }
+    set intensity(intensity: number) { this._intensity = intensity; }
 
     /**
      * Get light color.
      * @return {Color}
      */
-    // TODO: get color(): Color { return this._color; }
+    get color(): Color { return this._color; }
     /**
      * Set light color
      * @param {Color} color: Color value
      */
-    // TODO: set color(color: Color) { this._color = color; }
+    set color(color: Color) { this._color = color; }
 };
 
 export default Light;
