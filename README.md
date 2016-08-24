@@ -51,7 +51,7 @@ grunt serve # Only open server (http://localhost:3030/index.html)
 - [x] Vect3
 - [x] Vect3
 - [x] Quaternion
-- [ ] Mat2
+- [x] Mat2
 - [ ] Mat3
 - [ ] Mat4
 - [x] Webpack integration

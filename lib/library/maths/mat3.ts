@@ -10,23 +10,23 @@ import mat4 from "./mat4";
 "use strict";
 
 /**
- * mat3 class
- * @class mat3
+ * Mat3 class
+ * @class Mat3
  */
-class mat3 {
+class Mat3 {
     protected _value: Float32Array = new Float32Array(9);
     constructor(values: number[] = null) {
-        if(values) {
+        if (values) {
             this.init(values);
         }
     };
-    init(values: number[]): mat3 {
+    init(values: number[]): Mat3 {
         for (let i = 0; i < 9; ++i) {
             this._value[i] = values[i];
         }
         return this;
     };
-    isEquals(mat: mat3, threshold: boolean = false): boolean {
+    isEquals(mat: Mat3, threshold: boolean = false): boolean {
         for (let i = 0; i < 9; ++i) {
             if (threshold) {
                 if (Math.abs(this._value[i] - mat._value[i]) > 0.00001) {
@@ -41,7 +41,7 @@ class mat3 {
 
         return true;
     };
-    transpose(): mat3 {
+    transpose(): Mat3 {
         const t01 = this._value[1],
             t02 = this._value[2],
             t12 = this._value[5];
@@ -67,7 +67,7 @@ class mat3 {
 
         return a00 * det01 + a01 * det11 + a02 * det21;
     };
-    invert(): mat3 {
+    invert(): Mat3 {
         const
             a00 = this._value[0], a01 = this._value[1], a02 = this._value[2],
             a10 = this._value[3], a11 = this._value[4], a12 = this._value[5],
@@ -97,19 +97,19 @@ class mat3 {
 
         return this;
     };
-    add(m: mat3): mat3 {
+    add(m: Mat3): Mat3 {
         for (let i = 0; i < 9; ++i) {
             this._value[i] += m._value[i];
         }
         return this;
     };
-    sub(m: mat3): mat3 {
+    sub(m: Mat3): Mat3 {
         for (let i = 0; i < 9; ++i) {
             this._value[i] -= m._value[i];
         }
         return this;
     };
-    mult(m: mat3): mat3 {
+    mult(m: Mat3): Mat3 {
         const
             a00 = this._value[0], a01 = this._value[1], a02 = this._value[2],
             a10 = this._value[3], a11 = this._value[4], a12 = this._value[5],
@@ -134,7 +134,7 @@ class mat3 {
 
         return this;
     };
-    identify(): mat3 {
+    identify(): Mat3 {
         this._value[0] = 1;
         this._value[1] = 0;
         this._value[2] = 0;
@@ -150,13 +150,13 @@ class mat3 {
         return this;
     };
     toString(): string {
-        return `mat3(
+        return `Mat3(
             ${this._value[0]}, ${this._value[1]},  ${this._value[2]},
             ${this._value[3]}, ${this._value[4]},  ${this._value[5]},
             ${this._value[6]}, ${this._value[7]},  ${this._value[8]}
         )`;
     };
-    translate(v: Vect2): mat3 {
+    translate(v: Vect2): Mat3 {
         const
             a00 = this._value[0], a01 = this._value[1], a02 = this._value[2],
             a10 = this._value[3], a11 = this._value[4], a12 = this._value[5],
@@ -169,10 +169,10 @@ class mat3 {
 
         return this;
     };
-    rotate(angle: number): mat3 {
+    rotate(angle: number): Mat3 {
         return null;
     };
-    scale(v: Vect2): mat3 {
+    scale(v: Vect2): Mat3 {
         const x = v[0], y = v[1];
 
         this._value[0] *= x;
@@ -186,4 +186,4 @@ class mat3 {
     };
 };
 
-export default mat3;
+export default Mat3;

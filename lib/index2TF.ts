@@ -92,7 +92,7 @@ function initialize() {
         prog._compile();
 
 
-        var feedbackVaryings = ["outValue"];
+        let feedbackVaryings = ["outValue"];
         (<any>gl_).transformFeedbackVaryings(
             prog.program(),
             feedbackVaryings,
@@ -106,24 +106,24 @@ function initialize() {
         return prog;
     });
 
-    var vao: VertexArray = new VertexArray();
+    let vao: VertexArray = new VertexArray();
     vao.bind();
 
-    var data = new Float32Array([1.0, 2.0, 3.0, 4.0, 5.0]);
+    let data = new Float32Array([1.0, 2.0, 3.0, 4.0, 5.0]);
 
-    var vbo = gl_.createBuffer();
+    let vbo = gl_.createBuffer();
     gl_.bindBuffer(gl_.ARRAY_BUFFER, vbo);
     gl_.bufferData(gl_.ARRAY_BUFFER, data, gl_.STATIC_DRAW);
 
-    var program = ProgramManager.get("prog");
+    let program = ProgramManager.get("prog");
     program.use();
 
-    var inputAttrib = gl_.getAttribLocation(program.program(), "inValue");
+    let inputAttrib = gl_.getAttribLocation(program.program(), "inValue");
     gl_.enableVertexAttribArray(inputAttrib);
     gl_.vertexAttribPointer(inputAttrib, 1, gl_.FLOAT, false, 0, 0);
 
     // Create transform feedback buffer
-    var tbo = (<any>gl_).createTransformFeedback();
+    let tbo = (<any>gl_).createTransformFeedback();
     // gl_.bindBuffer(gl_.ARRAY_BUFFER, tbo);
     // gl_.bindBufferBase(gl_.ARRAY_BUFFER,
     //    data.length * Float32Array.BYTES_PER_ELEMENT,
@@ -143,7 +143,7 @@ function initialize() {
     gl_.flush();
 
     // Fetch and print results
-    var feedback = new ArrayBuffer(
+    let feedback = new ArrayBuffer(
         data.length * Float32Array.BYTES_PER_ELEMENT);
     (<any>gl_).getBufferSubData(
         (<any>gl_).TRANSFORM_FEEDBACK_BUFFER,

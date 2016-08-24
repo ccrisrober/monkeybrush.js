@@ -10,23 +10,23 @@ import mat4 from "./mat4";
 "use strict";
 
 /**
- * mat2 class
- * @class mat2
+ * Mat2 class
+ * @class Mat2
  */
-class mat2 {
+class Mat2 {
     protected _value: Float32Array = new Float32Array(4);
     constructor(values: number[] = null) {
-        if(values) {
+        if (values) {
             this.init(values);
         }
     };
-    init(values: number[]): mat2 {
+    init(values: number[]): Mat2 {
         for (let i = 0; i < 4; ++i) {
             this._value[i] = values[i];
         }
         return this;
     };
-    isEquals(mat: mat2, threshold: boolean = false): boolean {
+    isEquals(mat: Mat2, threshold: boolean = false): boolean {
         for (let i = 0; i < 4; ++i) {
             if (threshold) {
                 if (Math.abs(this._value[i] - mat._value[i]) > 0.00001) {
@@ -41,7 +41,7 @@ class mat2 {
 
         return true;
     };
-    transpose(): mat2 {
+    transpose(): Mat2 {
         const t = this._value[1];
 
         this._value[1] = this._value[2];
@@ -52,7 +52,7 @@ class mat2 {
     determinant(): number {
         return this._value[0] * this._value[3] - this._value[2] * this._value[1];
     };
-    invert(): mat2 {
+    invert(): Mat2 {
         let det = this.determinant();
 
         if (!det)
@@ -65,19 +65,19 @@ class mat2 {
 
         return this;
     };
-    add(m: mat2): mat2 {
+    add(m: Mat2): Mat2 {
         for (let i = 0; i < 4; ++i) {
             this._value[i] += m._value[i];
         }
         return this;
     }
-    sub(m: mat2): mat2 {
+    sub(m: Mat2): Mat2 {
         for (let i = 0; i < 4; ++i) {
             this._value[i] -= m._value[i];
         }
         return this;
     }
-    mult(m: mat2): mat2 {
+    mult(m: Mat2): Mat2 {
         const a11 = this._value[0],
             a12 = this._value[1],
             a21 = this._value[2],
@@ -90,7 +90,7 @@ class mat2 {
 
         return this;
     };
-    identity(): mat2 {
+    identity(): Mat2 {
         this._value[0] = 1;
         this._value[1] = 0;
         this._value[2] = 0;
@@ -99,12 +99,12 @@ class mat2 {
         return this;
     };
     toString(): string {
-        return `mat2(
+        return `Mat2(
             ${this._value[0]}, ${this._value[1]},
             ${this._value[2]}, ${this._value[3]}
         )`;
     };
-    rotate(angle: number): mat2 {
+    rotate(angle: number): Mat2 {
         const a11 = this._value[0],
             a12 = this._value[1],
             a21 = this._value[2],
@@ -120,7 +120,7 @@ class mat2 {
 
         return this;
     };
-    scale(v: Vect2): mat2 {
+    scale(v: Vect2): Mat2 {
         const a11 = this._value[0],
             a12 = this._value[1],
             a21 = this._value[2],
@@ -138,4 +138,4 @@ class mat2 {
     };
 };
 
-export default mat2;
+export default Mat2;

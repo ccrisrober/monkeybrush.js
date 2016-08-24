@@ -7,7 +7,6 @@ import TexOptions from "./texOptions";
 
 "use strict";
 
-// TODO: Es necesario realmente el tamaño??
 class CubeMapTexture extends Texture {
     protected _flipY: boolean;
     protected _minFilter: number;
@@ -60,7 +59,6 @@ class CubeMapTexture extends Texture {
 
 
         if ((<any>gl).TEXTURE_WRAP_R) {
-            // TODO: Only in webgl2
             gl.texParameteri(gl.TEXTURE_CUBE_MAP, (<any>gl).TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
         }
 

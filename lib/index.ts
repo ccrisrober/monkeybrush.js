@@ -92,7 +92,7 @@ function loadAssets() {
     loaders.loadImage("assets/images/canyon/right.jpg");
     loaders.loadImage("assets/images/canyon/top.jpg");
     // video
-    //loaders.loadVideo("assets/video/Firefox.ogv");
+    // loaders.loadVideo("assets/video/Firefox.ogv");
 }
 
 const mainShader: string = "prog";
@@ -123,7 +123,7 @@ function initialize() {
         })
     ], canvasSize, true, true, {});*/
 
-    var webgl2 = true;
+    const webgl2 = true;
 
     ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();

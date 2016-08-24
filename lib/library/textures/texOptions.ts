@@ -8,7 +8,6 @@ interface TexOptions {
     minFilter?: number;
     magFilter?: number;
     flipY?: boolean;
-    //wrap?: Array<number>; // TODO: Remove ...
     wrapS?: number;
     wrapT?: number;
     wrapR?: number;

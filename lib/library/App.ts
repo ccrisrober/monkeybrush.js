@@ -41,7 +41,7 @@ class App {
 
         let self = this;
         this.gui.add(text, "resume", true).onChange(function(v) {
-            if(v === true) {
+            if (v === true) {
                self.resume();
             } else {
                 self.pause();
@@ -66,7 +66,7 @@ class App {
             document.getElementById("spinner").remove();
             try {
                 (function __render__(dt?: number) {
-                    //console.log(dt);
+                    // console.log(dt);
                     Input.getInstance().update();
 
                     self.stats.begin();
@@ -84,7 +84,7 @@ class App {
 
                     requestAnimationFrame(__render__);
                 })(0.0);
-            } catch(e) {
+            } catch (e) {
                 VanillaToasts.create({
                     title: "Error:",
                     text: `${e}`,

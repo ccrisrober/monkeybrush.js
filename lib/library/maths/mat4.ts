@@ -6,23 +6,23 @@ import Vect3 from "./vect3";
 "use strict";
 
 /**
- * mat4 class
- * @class mat4
+ * Mat4 class
+ * @class Mat4
  */
-class mat4 {
+class Mat4 {
     protected _value: Float32Array = new Float32Array(16);
     constructor(values: number[] = null) {
-        if(values) {
+        if (values) {
             this.init(values);
         }
     };
-    init(values: number[]): mat4 {
+    init(values: number[]): Mat4 {
         for (let i = 0; i < 16; ++i) {
             this._value[i] = values[i];
         }
         return this;
     };
-    isEquals(mat: mat4, threshold: boolean = false): boolean {
+    isEquals(mat: Mat4, threshold: boolean = false): boolean {
         for (let i = 0; i < 16; ++i) {
             if (threshold) {
                 if (Math.abs(this._value[i] - mat._value[i]) > 0.00001) {
@@ -37,31 +37,31 @@ class mat4 {
 
         return true;
     };
-    transpose(): mat4 {
+    transpose(): Mat4 {
         return null;
     };
     determinant(): number {
         return 0;
     };
-    invert(): mat4 {
+    invert(): Mat4 {
         return null;
     };
-    add(m: mat4): mat4 {
+    add(m: Mat4): Mat4 {
         for (let i = 0; i < 16; ++i) {
             this._value[i] += m._value[i];
         }
         return this;
     };
-    sub(m: mat4): mat4 {
+    sub(m: Mat4): Mat4 {
         for (let i = 0; i < 16; ++i) {
             this._value[i] -= m._value[i];
         }
         return this;
     };
-    mult(m: mat4): mat4 {
+    mult(m: Mat4): Mat4 {
         return null;
     };
-    identify(): mat4 {
+    identify(): Mat4 {
         this._value[0] = 1;
         this._value[1] = 0;
         this._value[2] = 0;
@@ -85,20 +85,20 @@ class mat4 {
         return this;
     };
     toString(): string {
-        return `mat4(
+        return `Mat4(
              ${this._value[0]},  ${this._value[1]},  ${this._value[2]},  ${this._value[3]},
              ${this._value[4]},  ${this._value[5]},  ${this._value[6]},  ${this._value[7]},
              ${this._value[8]},  ${this._value[9]}, ${this._value[10]}, ${this._value[11]},
             ${this._value[12]}, ${this._value[13]}, ${this._value[14]}, ${this._value[15]},
         )`;
     };
-    translate(v: Vect3): mat4 {
+    translate(v: Vect3): Mat4 {
         return null;
     };
-    rotate(angle: number, axis: Vect3): mat4 {
+    rotate(angle: number, axis: Vect3): Mat4 {
         return null;
     };
-    scale(v: Vect3): mat4 {
+    scale(v: Vect3): Mat4 {
         const x =
             v[0],
             y = v[1],
@@ -121,13 +121,13 @@ class mat4 {
 
         return this;
     };
-    static frustum(left: number, right: number, bottom: number, top: number, near: number, far: number): mat4 {
+    static frustum(left: number, right: number, bottom: number, top: number, near: number, far: number): Mat4 {
         const
             rl = (right - left),
             tb = (top - bottom),
             fn = (far - near);
 
-        return new mat4([
+        return new Mat4([
             (near * 2.0) / rl,
             0.0,
             0.0,
@@ -149,20 +149,20 @@ class mat4 {
             0.0
         ]);
     };
-    static perspective(fovy: number, aspect: number, near: number, far: number): mat4 {
+    static perspective(fovy: number, aspect: number, near: number, far: number): Mat4 {
         const
             top = near * Math.tan(fovy * Math.PI / 360.0),
             right = top * aspect;
 
-        return mat4.frustum(-right, right, -top, top, near, far);
+        return Mat4.frustum(-right, right, -top, top, near, far);
     };
-    static orthographic(left: number, right: number, bottom: number, top: number, near: number, far: number): mat4 {
+    static orthographic(left: number, right: number, bottom: number, top: number, near: number, far: number): Mat4 {
         const
             rl = (right - left),
             tb = (top - bottom),
             fn = (far - near);
 
-        return new mat4([
+        return new Mat4([
             2.0 / rl,
             0.0,
             0.0,
@@ -187,4 +187,4 @@ class mat4 {
     // static lookAt(...)
 };
 
-export default mat4;
+export default Mat4;
