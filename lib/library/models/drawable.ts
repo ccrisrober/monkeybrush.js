@@ -7,6 +7,7 @@ import Core from "../core/core.ts";
 import VertexArray from "../extras/vertexArray.ts";
 import VertexBuffer from "../extras/vertexBuffer.ts";
 import UsageType from "../constants/UsageType.ts";
+import BufferType from "../constants/BufferType.ts";
 
 "use strict";
 
@@ -27,26 +28,37 @@ abstract class Drawable {
      */
     constructor() {
         this._vao = new VertexArray();
-    }
+    };
+
     /**
-     * [createBuffer description]
-     * @param {Float32Array |      Uint16Array} data [description]
-     * @param {VertexBuffer}    handle [description]
+     * Add Element buffer object.
+     * @param {Uint16Array} data [description]
+     * @param {UsageType = UsageType.StaticDraw} type [description]
      */
-    protected createBuffer(data: Float32Array | Uint16Array, handle: VertexBuffer) {
-        // TODO: Este método debería inicializar realmente los buffers, y no crearlos fuera ;-)
-        handle.bufferData(data, UsageType.StaticDraw);
-        return handle;
-    }
+    protected addElementArray(data: Uint16Array, type: UsageType = UsageType.StaticDraw) {
+        let vb: VertexBuffer = new VertexBuffer(BufferType.ElementArray);
+        vb.bufferData(new Uint16Array(data), type);
+        this._handle.push(vb);
+        return vb;
+    };
+
     /**
-     * Add attribute to current VAO
-     * @param {number}       attribLocation [description]
-     * @param {VertexBuffer} buffer         [description]
-     * @param {number}       numElems       [description]
+     * Add Vertex buffer object.
+     * @param  {number} attribLocation [description]
+     * @param  {Float32Array} data [description]
+     * @param  {number} numElems [description]
+     * @param  {UsageType = UsageType.StaticDraw} type [description]
+     * @return {VertexBuffer} [description]
      */
-    protected addAttrib_(attribLocation: number, buffer: VertexBuffer, numElems: number) {
-        buffer.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
-    }
+    protected addBufferArray(attribLocation: number,
+        data: Float32Array, numElems: number, type: UsageType = UsageType.StaticDraw): VertexBuffer {
+        let vb: VertexBuffer = new VertexBuffer(BufferType.Array);
+        vb.bufferData(data, type);
+        vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
+        this._handle.push(vb);
+        return vb;
+    };
+
     /**
      * Normal render
      */
@@ -54,7 +66,8 @@ abstract class Drawable {
         this._vao.bind();
         gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
-    }
+    };
+
     /**
      * Render with element instance mode
      * @param {number} numInstances: Instances to render
@@ -82,7 +95,8 @@ abstract class Drawable {
             }
         }
         this._vao.unbind();
-    }
+    };
+
     /**
      * Render with array instance mode
      * @param {number} numInstances: Instances to render
@@ -108,8 +122,7 @@ abstract class Drawable {
             }
         }
         this._vao.unbind();
-    }
-
+    };
 
 }
 

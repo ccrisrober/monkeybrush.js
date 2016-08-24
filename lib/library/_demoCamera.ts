@@ -29,7 +29,7 @@ class Camera2 {
         return this.position;
     }
 
-    constructor(position: Float32Array = vec3.fromValues(0, 0, 0), 
+    constructor(position: Float32Array = vec3.fromValues(0, 0, 0),
         up: Float32Array = vec3.fromValues(0, 1, 0), yaw: number = -90.0, pitch: number = 0.0) {
         this.front = vec3.fromValues(0, 0, -1);
         this.position = position;
@@ -43,7 +43,6 @@ class Camera2 {
         this.updateCameraVectors();
     }
     public update(callback: Function) {
-        // TODO: Move input here
         this._updateCamera = false;
 
         let speed = 1.0;

@@ -110,7 +110,7 @@ void main() {
     //fragColor = texture(texSampler, matcap(outPosition, norm));
     // Apply fog
     //colorWithFog(fragColor.rgb);
-    //fragColor = vec4(normalize(outNormal), 1.0);
+    fragColor = vec4(normalize(outNormal), 1.0);
 
-    fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    //fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 }

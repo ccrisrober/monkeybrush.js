@@ -7,7 +7,6 @@ const gl = Context.getContext();
 
 // Comparison function
 enum ComparisonFunc {
-    // TODO (glDisable(gl.DEPTH_TEST) Disabled,       ///< Comparison is disabled
     Never = gl.NEVER,                       ///< Comparison always fails
     Always = gl.ALWAYS,                     ///< Comparison always succeeds
     Less = gl.LESS,                         ///< Passes if source is less than the destination

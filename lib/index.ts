@@ -1,4 +1,4 @@
-/// <reference path="library/_init_.ts" />
+/// <reference path="library/App.ts" />
 
 /// <reference path="library/core/core.ts" />
 /// <reference path="library/core/input.ts" />
@@ -21,8 +21,9 @@
 /// <reference path="library/_demoCamera.ts" />
 /// <reference path="library/core/postProcess.ts" />
 /// <reference path="library/constants/ProgramCte.ts" />
+/// <reference path="library/constants/TextureType.ts" />
 
-import _init__ from "./library/_init_";
+import App from "./library/App";
 
 import Core from "./library/core/core";
 import Input from "./library/core/input";
@@ -47,12 +48,12 @@ import Camera2 from "./library/_demoCamera";
 import Skybox from "./library/extras/skybox";
 
 import ProgramCte from "./library/constants/ProgramCte";
+import TextureType from "./library/constants/TextureType";
 
 "use strict";
 
 let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
-let gl_: WebGLRenderingContext;
 let skybox: Skybox;
 
 let esferita: Sphere;
@@ -60,7 +61,8 @@ let cubito: Cube;
 
 let SimpleConfig = function() {
     return {
-        max: 10
+        max: 10,
+        resume: true
     };
 };
 let torito: Torus;
@@ -98,7 +100,6 @@ const mainShader: string = "prog";
 let framebuffer: Framebuffer;
 
 function initialize() {
-    gl_ = Core.getInstance().getGL();
     esferita = new Sphere(1.0, 20, 20);
     torito = new Torus(3.7, 2.3, 25, 10);
     planito = new Plane(100.0, 100.0, 2.0, 2.0);
@@ -106,8 +107,8 @@ function initialize() {
     cubito = new Cube(1.0);
 
     let canvasSize = new Vector2<number>(
-        gl_.canvas.width,
-        gl_.canvas.height
+        Core.getInstance().canvas().width,
+        Core.getInstance().canvas().height
     );
 
     skybox = new Skybox("assets/images/canyon", false);
@@ -117,8 +118,8 @@ function initialize() {
             "internalformat": gl_.RGB,
             "format": gl_.RGB,
             "type": gl_.FLOAT,
-            "minFilter": gl_.NEAREST,
-            "maxFilter": gl_.NEAREST
+            "minFilter": TextureType.Nearest,
+            "maxFilter": TextureType.Nearest
         })
     ], canvasSize, true, true, {});*/
 
@@ -144,10 +145,10 @@ function initialize() {
     const gl = Core.getInstance().getGL();
     tex2d = new Texture2D(cubeImage, {
         flipY: true,
-        minFilter: gl.LINEAR,
-        magFilter: gl.LINEAR,
-        wrapS: gl.CLAMP_TO_EDGE,
-        wrapT: gl.CLAMP_TO_EDGE
+        minFilter: TextureType.Linear,
+        magFilter: TextureType.Linear,
+        wrapS: TextureType.Clamp2Edge,
+        wrapT: TextureType.Clamp2Edge
     });
 
     // const ext = gl_.getExtension("OES_draw_buffers_indexed");
@@ -195,7 +196,6 @@ function cameraUpdateCb() {
 
 // @param dt: Global time in seconds
 function drawScene(dt: number) {
-    const gl = Core.getInstance().getGL();
     camera.timeElapsed = Timer.deltaTime() / 10.0;
 
     camera.update(cameraUpdateCb);
@@ -307,11 +307,16 @@ function drawScene(dt: number) {
 // ============================================================================================ //
 // ============================================================================================ //
 
-/**
+/**/
 window.onload = () => {
-    _init__.init(loadAssets, function(gui) {
-        gui.add(text, "max", 5, 100);
-    });
-    _init__.start(initialize, drawScene);
+    let app = new App({
+        loadAssets: loadAssets,
+        initialize: initialize,
+        draw: drawScene,
+        cameraUpdate: cameraUpdateCb,
+        textCB: function(gui: dat.GUI) {
+            gui.add(text, "max", 5, 100);
+        }
+    }, text).start();
 };
 /**/

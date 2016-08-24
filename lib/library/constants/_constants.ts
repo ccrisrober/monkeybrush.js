@@ -3,6 +3,7 @@
 /// <reference path="BlendingType.ts" />
 /// <reference path="BufferType.ts" />
 /// <reference path="ComparisonFunc.ts" />
+/// <reference path="DataType.ts" />
 /// <reference path="DrawBuffer.ts" />
 /// <reference path="Face.ts" />
 /// <reference path="FaceDir.ts" />

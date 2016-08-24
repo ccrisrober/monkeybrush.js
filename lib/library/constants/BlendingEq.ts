@@ -5,18 +5,15 @@ import Context from "../core/context";
 
 const gl = Context.getContext();
 
+const ext = gl.getExtension("EXT_blend_minmax");
+
 // Blending ecuation
 enum BlendingEq {
     FuncAdd = gl.FUNC_ADD,
     FuncSub = gl.FUNC_SUBTRACT,
     FuncRevSub = gl.FUNC_REVERSE_SUBTRACT,
-    /**
-    When using the EXT_blend_minmax extension:
-    ext.MIN_EXT: Minimum of source and destination,
-    ext.MAX_EXT: Maximum of source and destination.
-    When using a WebGL 2 context, the following values are available additionally:
-    gl.MIN: Minimum of source and destination,
-    gl.MAX: Maximum of source and destination.
-    /**/
+
+    Min = (<any>gl).MIN || ext.MIN_EXT,
+    Max = (<any>gl).MAX || ext.MAX_EXT
 }
 export default BlendingEq;

@@ -38,28 +38,23 @@ class Mesh extends Drawable {
      */
     private createVAO(model, el: Array<number>) {
         this._handle = [];
-        this._handle.push(new VertexBuffer(BufferType.ElementArray));
         this._vao.bind();
-
-        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
-
         // console.log(model.meshes[0]);
 
         if (model.meshes[0].vertices) {
-            this._handle.push(new VertexBuffer(BufferType.Array));
-            let v = model.meshes[0].vertices;
-            this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
+            let verts = model.meshes[0].vertices;
+            this.addBufferArray(0, new Float32Array(verts), 3);
         }
         if (model.meshes[0].normals) {
-            this._handle.push(new VertexBuffer(BufferType.Array));
-            let v = model.meshes[0].normals;
-            this.addAttrib_(1, this.createBuffer(new Float32Array(v), this._handle[2]), 3);
+            let norms = model.meshes[0].normals;
+            this.addBufferArray(1, new Float32Array(norms), 3);
         }
         if (model.meshes[0].texturecoords) {
-            this._handle.push(new VertexBuffer(BufferType.Array));
-            let v = model.meshes[0].texturecoords[0];
-            this.addAttrib_(2, this.createBuffer(new Float32Array(v), this._handle[3]), 2);
+            let tc = model.meshes[0].texturecoords[0];
+            this.addBufferArray(2, new Float32Array(tc), 2);
         }
+
+        this.addElementArray(new Uint16Array(el));
 
         this._vao.unbind();
         this._indicesLen = el.length;

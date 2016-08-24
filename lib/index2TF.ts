@@ -124,10 +124,10 @@ function initialize() {
 
     // Create transform feedback buffer
     var tbo = (<any>gl_).createTransformFeedback();
-    /*gl_.bindBuffer(gl_.ARRAY_BUFFER, tbo);*/
-    /*gl_.bindBufferBase(gl_.ARRAY_BUFFER,
-        data.length * Float32Array.BYTES_PER_ELEMENT,
-        (<any>gl_).STATIC_READ);*/
+    // gl_.bindBuffer(gl_.ARRAY_BUFFER, tbo);
+    // gl_.bindBufferBase(gl_.ARRAY_BUFFER,
+    //    data.length * Float32Array.BYTES_PER_ELEMENT,
+    //    (<any>gl_).STATIC_READ);
 
     // Perform feedback tranform
     gl_.enable((<any>gl_).RASTERIZER_DISCARD);

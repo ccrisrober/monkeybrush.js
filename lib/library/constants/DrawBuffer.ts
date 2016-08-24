@@ -1,5 +1,5 @@
 /// <reference path="../core/context.ts" />
-/// 
+///
 import Context from "../core/context";
 
 "use strict";
@@ -15,8 +15,8 @@ if (gl instanceof WebGL2RenderingContext) {
 }
 
 enum DrawBuffer {
-    MaxDrawBuffers = (<any>gl).MAX_DRAW_BUFFERS, 
-    DrawBuffer0  = (<any>gl).DRAW_BUFFER0  ||  gl.DRAW_BUFFER0_WEBGL,    
+    MaxDrawBuffers = (<any>gl).MAX_DRAW_BUFFERS || gl.MAX_DRAW_BUFFERS_WEBGL,
+    DrawBuffer0  = (<any>gl).DRAW_BUFFER0  ||  gl.DRAW_BUFFER0_WEBGL,
     DrawBuffer1  = (<any>gl).DRAW_BUFFER1  ||  gl.DRAW_BUFFER1_WEBGL,
     DrawBuffer2  = (<any>gl).DRAW_BUFFER2  ||  gl.DRAW_BUFFER2_WEBGL,
     DrawBuffer3  = (<any>gl).DRAW_BUFFER3  ||  gl.DRAW_BUFFER3_WEBGL,
@@ -33,7 +33,7 @@ enum DrawBuffer {
     DrawBuffer14 = (<any>gl).DRAW_BUFFER14 ||  gl.DRAW_BUFFER9_WEBGL14,
     DrawBuffer15 = (<any>gl).DRAW_BUFFER15 ||  gl.DRAW_BUFFER9_WEBGL15,
 
-    MaxColorAttch = (<any>gl).MAX_COLOR_ATTACHMENTS,
+    MaxColorAttch = (<any>gl).MAX_COLOR_ATTACHMENTS || gl.MAX_COLOR_ATTACHMENTS_WEBGL,
     ColorAttach1  = (<any>gl).COLOR_ATTACHMENT1   ||  gl.DRAW_BUFFER1_WEBGL,
     ColorAttach2  = (<any>gl).COLOR_ATTACHMENT2   ||  gl.DRAW_BUFFER2_WEBGL,
     ColorAttach3  = (<any>gl).COLOR_ATTACHMENT3   ||  gl.DRAW_BUFFER3_WEBGL,

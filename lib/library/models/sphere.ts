@@ -96,20 +96,14 @@ class Sphere extends Drawable {
 
         const gl = Core.getInstance().getGL();
 
-        this._handle = new Array(4);
-        let i = 0;
-        this._handle[i] = new VertexBuffer(BufferType.ElementArray);
-        for (i = 1; i < 4; ++i) {
-            this._handle[i] = new VertexBuffer(BufferType.Array);
-        }
-
+        this._handle = [];
         this._vao.bind();
 
-        this._handle[0].bufferData(new Uint16Array(el), UsageType.StaticDraw);
+        this.addElementArray(new Uint16Array(el));
 
-        this.addAttrib_(0, this.createBuffer(new Float32Array(v), this._handle[1]), 3);
-        this.addAttrib_(1, this.createBuffer(new Float32Array(n), this._handle[2]), 3);
-        this.addAttrib_(2, this.createBuffer(new Float32Array(tex), this._handle[3]), 2);
+        this.addBufferArray(0, new Float32Array(v), 3);
+        this.addBufferArray(1, new Float32Array(n), 3);
+        this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;
     }
