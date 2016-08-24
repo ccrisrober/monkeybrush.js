@@ -1,9 +1,11 @@
 /// <reference path="texture.ts" />
 /// <reference path="texOptions.ts" />
+/// <reference path="../extras/extensions.ts" />
 
 import Core from "../core/core";
 import Texture from "./texture";
 import TexOptions from "./texOptions";
+import extensions from "../extras/extensions";
 
 "use strict";
 
@@ -19,8 +21,6 @@ class Texture2D extends Texture {
     constructor(data/*: ImageData*/, options: TexOptions = {}, onSuccess: () => void = null) {
         super(gl.TEXTURE_2D);
         // options = options || {};
-
-        console.log(this._target);
 
         // TODO: Support compression
 
@@ -50,7 +50,7 @@ class Texture2D extends Texture {
         gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, this._minFilter);
         gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, this._magFilter);
         this.wrap(wraps);
-        
+
         /*// Prevent NPOT textures
         // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
         gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -112,7 +112,7 @@ class Texture2D extends Texture {
      */
     public setAnisotropic(level: number = 0) {
         level = Math.floor(level);
-        const ext = gl.getExtension("EXT_texture_filter_anisotropic");
+        const ext = extensions.get("EXT_texture_filter_anisotropic");
         const max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         if (max_anisotropy < level) {
             gl.texParameterf(this._target, ext.TEXTURE_MAX_ANISOTROPY_EXT, level);

@@ -5,7 +5,8 @@
 /// <reference path="../core/depth.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 /// <reference path="../constants/ComparisonFunc.ts" />
-/// <reference path="./vertexArray.ts" />
+/// <reference path="../core/vertexBuffer.ts" />
+/// <reference path="../core/vertexArray.ts" />
 
 import Core from "../core/core.ts";
 import Program from "../core/program.ts";
@@ -15,7 +16,12 @@ import Depth from "../core/depth.ts";
 
 import ProgramCte from "../constants/ProgramCte";
 import ComparisonFunc from "../constants/ComparisonFunc";
-import VertexArray from "./vertexArray";
+
+import VertexBuffer from "../core/vertexBuffer.ts";
+import VertexArray from "../core/vertexArray";
+
+import UsageType from "../constants/UsageType.ts";
+import BufferType from "../constants/BufferType.ts";
 
 "use strict";
 
@@ -27,9 +33,9 @@ class Skybox {
     protected skyboxVAO: VertexArray;
     /**
      * [skyboxVBO description]
-     * @type {WebGLBuffer}
+     * @type {VertexBuffer}
      */
-    protected skyboxVBO: WebGLBuffer;
+    protected skyboxVBO: VertexBuffer;
     /**
      * [_prog description]
      * @type {Program}
@@ -44,8 +50,6 @@ class Skybox {
      * @param {string}
      */
     constructor(dir: string, isWebGL2: boolean = true) {
-        console.log("IsWebGL2 = " + isWebGL2);
-        console.log("Load skybox ...");
         let faces: Array<string> = [];
         faces.push(dir + "/right.jpg");
         faces.push(dir + "/left.jpg");
@@ -85,7 +89,7 @@ class Skybox {
             }`;
         }
 
-        
+
         this._prog.addShader(vs, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
 
         let fg: string;
@@ -96,14 +100,14 @@ class Skybox {
             in vec3 TexCoords;
             out vec4 color;
             uniform samplerCube skybox;
-            void main() { 
+            void main() {
                 color = texture(skybox, TexCoords);
             }`;
         } else {
             fg = `precision highp float;
             varying vec3 TexCoords;
             uniform samplerCube skybox;
-            void main() { 
+            void main() {
                 gl_FragColor = textureCube(skybox, TexCoords);
             }`;
         }
@@ -115,42 +119,42 @@ class Skybox {
         this._prog.addUniforms(["view", "projection"]);
 
         let skyboxVertices = new Float32Array([
-            // Positions          
+            // Positions
             -1.0,  1.0, -1.0,
             -1.0, -1.0, -1.0,
              1.0, -1.0, -1.0,
              1.0, -1.0, -1.0,
              1.0,  1.0, -1.0,
             -1.0,  1.0, -1.0,
-      
+
             -1.0, -1.0,  1.0,
             -1.0, -1.0, -1.0,
             -1.0,  1.0, -1.0,
             -1.0,  1.0, -1.0,
             -1.0,  1.0,  1.0,
             -1.0, -1.0,  1.0,
-      
+
              1.0, -1.0, -1.0,
              1.0, -1.0,  1.0,
              1.0,  1.0,  1.0,
              1.0,  1.0,  1.0,
              1.0,  1.0, -1.0,
              1.0, -1.0, -1.0,
-       
+
             -1.0, -1.0,  1.0,
             -1.0,  1.0,  1.0,
              1.0,  1.0,  1.0,
              1.0,  1.0,  1.0,
              1.0, -1.0,  1.0,
             -1.0, -1.0,  1.0,
-      
+
             -1.0,  1.0, -1.0,
              1.0,  1.0, -1.0,
              1.0,  1.0,  1.0,
              1.0,  1.0,  1.0,
             -1.0,  1.0,  1.0,
             -1.0,  1.0, -1.0,
-      
+
             -1.0, -1.0, -1.0,
             -1.0, -1.0,  1.0,
              1.0, -1.0, -1.0,
@@ -162,12 +166,10 @@ class Skybox {
         this.skyboxVAO = new VertexArray();
         this.skyboxVAO.bind();
 
-        // TODO: Use VertexBuffer
-        this.skyboxVBO = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.skyboxVBO);
-        gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(0);
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 3 * Float32Array.BYTES_PER_ELEMENT, 0);
+        this.skyboxVBO = new VertexBuffer(BufferType.Array);
+        this.skyboxVBO.bind();
+        this.skyboxVBO.bufferData(skyboxVertices, UsageType.StaticDraw);
+        this.skyboxVBO.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
         this._loadCubemap(faces);
 
         this.skyboxVAO.unbind();
@@ -195,7 +197,7 @@ class Skybox {
         this._prog.sendUniformMat4("projection", projection);
 
         this.cubeMapTexture.bind(0);
-        
+
         this.skyboxVAO.bind();
         gl.drawArrays(gl.TRIANGLES, 0, 36);
         this.skyboxVAO.unbind();
@@ -203,7 +205,7 @@ class Skybox {
         Depth.comparison(ComparisonFunc.Less);
     }
     /**
-     * 
+     *
      */
     public destroy() {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();

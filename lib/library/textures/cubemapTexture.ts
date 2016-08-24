@@ -20,9 +20,6 @@ class CubeMapTexture extends Texture {
         super(gl.TEXTURE_CUBE_MAP);
         options = options || {};
 
-        console.log(this._target);
-
-
         this.finished = false;
 
         // TODO: Faltan todo el tema de filtrados o wrap de las opciones

@@ -1,11 +1,14 @@
 /// <reference path="../core/context.ts" />
+/// <reference path="../extras/extensions.ts" />
+
 import Context from "../core/context";
+import extensions from "../extras/extensions";
 
 "use strict";
 
 const gl = Context.getContext();
 
-const ext = gl.getExtension("EXT_blend_minmax");
+const ext = extensions.get("EXT_blend_minmax");
 
 // Blending ecuation
 enum BlendingEq {

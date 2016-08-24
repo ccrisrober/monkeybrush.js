@@ -1,6 +1,8 @@
 /// <reference path="../core/core.ts" />
+/// <reference path="../extras/extensions.ts" />
 
 import Core from "../core/core";
+import extensions from "../extras/extensions";
 
 "use strict";
 
@@ -27,7 +29,7 @@ class VertexArray {
             if (gl instanceof WebGL2RenderingContext) {
                 this._handle = (<any>gl).createVertexArray();
             } else {
-                const ext = gl.getExtension("OES_vertex_array_object");
+                const ext = extensions.get("OES_vertex_array_object");
                 if (ext) {
                     this._handle = ext.createVertexArrayOES();
                 }
@@ -50,7 +52,7 @@ class VertexArray {
             (<any>gl).bindVertexArray(this._handle);
             return;
         }
-        const ext = gl.getExtension("OES_vertex_array_object");
+        const ext = extensions.get("OES_vertex_array_object");
         if (ext) {
             ext.bindVertexArrayOES(this._handle);
         }
@@ -63,7 +65,7 @@ class VertexArray {
             (<any>gl).bindVertexArray(null);
             return;
         }
-        const ext = gl.getExtension("OES_vertex_array_object");
+        const ext = extensions.get("OES_vertex_array_object");
         if (ext) {
             ext.bindVertexArrayOES(null);
         }
@@ -77,7 +79,7 @@ class VertexArray {
             (<any>gl).deleteVertexArray(this._handle);
             return;
         }
-        const ext = gl.getExtension("OES_vertex_array_object");
+        const ext = extensions.get("OES_vertex_array_object");
         if (ext) {
             ext.deleteVertexArrayOES(this._handle);
         }
@@ -88,14 +90,14 @@ class VertexArray {
      */
     public static isSupported(): boolean {
         return gl instanceof WebGL2RenderingContext ||
-            gl.getExtension("OES_vertex_array_object");
+            extensions.get("OES_vertex_array_object");
     }
     /**
     public is(): boolean {
         if (gl instanceof WebGL2RenderingContext) {
             return (<any>gl).isVertexArray(this._handle);
         }
-        const ext = gl.getExtension("OES_vertex_array_object");
+        const ext = extensions.get("OES_vertex_array_object");
         if (ext) {
             return ext.isVertexArrayOES(this._handle);
         }

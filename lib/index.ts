@@ -1,27 +1,4 @@
-/// <reference path="library/App.ts" />
-
-/// <reference path="library/core/core.ts" />
-/// <reference path="library/core/input.ts" />
-/// <reference path="library/core/program.ts" />
-/// <reference path="library/resources/programManager.ts" />
-/// <reference path="library/resources/resourceMap.ts" />
-/// <reference path="library/resources/loaders.ts" />
-/// <reference path="library/models/torus.ts" />
-/// <reference path="library/models/sphere.ts" />
-/// <reference path="library/models/plane.ts" />
-/// <reference path="library/models/cube.ts" />
-/// <reference path="library/models/mesh.ts" />
-/// <reference path="library/textures/texture2d.ts" />
-/// <reference path="library/extras/skybox.ts" />
-
-/// <reference path="library/core/postprocess.ts" />
-/// <reference path="library/extras/timer.ts" />
-
-/// <reference path="library/lights/pointLight.ts" />
-/// <reference path="library/_demoCamera.ts" />
-/// <reference path="library/core/postProcess.ts" />
-/// <reference path="library/constants/ProgramCte.ts" />
-/// <reference path="library/constants/TextureType.ts" />
+/// <reference path="library/references.d.ts" />
 
 import App from "./library/App";
 
@@ -48,6 +25,7 @@ import Camera2 from "./library/_demoCamera";
 import Skybox from "./library/extras/skybox";
 
 import ProgramCte from "./library/constants/ProgramCte";
+import TextureFormat from "./library/constants/TextureFormat";
 import TextureType from "./library/constants/TextureType";
 
 "use strict";
@@ -57,7 +35,6 @@ let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 let skybox: Skybox;
 
 let esferita: Sphere;
-let cubito: Cube;
 
 let SimpleConfig = function() {
     return {
@@ -65,8 +42,6 @@ let SimpleConfig = function() {
         resume: true
     };
 };
-let torito: Torus;
-let planito: Plane;
 let m: Mesh;
 
 let view;
@@ -99,12 +74,9 @@ const mainShader: string = "prog";
 
 let framebuffer: Framebuffer;
 
-function initialize() {
+function initialize(app: App) {
     esferita = new Sphere(1.0, 20, 20);
-    torito = new Torus(3.7, 2.3, 25, 10);
-    planito = new Plane(100.0, 100.0, 2.0, 2.0);
     m = new Mesh("assets/objects/teddy.json");
-    cubito = new Cube(1.0);
 
     let canvasSize = new Vector2<number>(
         Core.getInstance().canvas().width,
@@ -113,17 +85,18 @@ function initialize() {
 
     skybox = new Skybox("assets/images/canyon", false);
 
-    /*framebuffer = new Framebuffer([
+    framebuffer = new Framebuffer([
         new SimpleTexture2D(canvasSize, {
-            "internalformat": gl_.RGB,
-            "format": gl_.RGB,
-            "type": gl_.FLOAT,
+            "internalFormat": TextureFormat.RGB,
+            "format": TextureFormat.RGB,
+            "type": TextureFormat.Float,
             "minFilter": TextureType.Nearest,
-            "maxFilter": TextureType.Nearest
+            "magFilter": TextureType.Nearest
         })
-    ], canvasSize, true, true, {});*/
+    ], canvasSize, true, true, {});
+    //console.log(app);
 
-    const webgl2 = true;
+    const webgl2 = app.webglVersion() === 2;
 
     ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();
@@ -151,34 +124,6 @@ function initialize() {
         wrapT: TextureType.Clamp2Edge
     });
 
-    // const ext = gl_.getExtension("OES_draw_buffers_indexed");
-    // console.log(ext);
-
-    /*let arr = [
-        'OES_element_index_uint',
-        'EXT_sRGB',
-        'EXT_blend_minmax',
-        'EXT_frag_depth',
-        'WEBGL_depth_texture',
-        'WEBKIT_WEBGL_depth_texture',
-        'EXT_shader_texture_lod',
-        'OES_standard_derivatives',
-        'OES_texture_float',
-        'OES_texture_half_float',
-        'OES_texture_half_float_linear',
-        'OES_vertex_array_object',
-        'WEBGL_draw_buffers',
-        'OES_fbo_render_mipmap',
-        'ANGLE_instanced_arrays'
-    ];
-
-    arr.forEach((v: string) => {
-        console.log(v);
-        console.log(gl_.getExtension(v));
-    });*/
-
-    console.log(ResourceMap._resourceMap);
-
     cameraUpdateCb();
 }
 
@@ -195,29 +140,23 @@ function cameraUpdateCb() {
 }
 
 // @param dt: Global time in seconds
-function drawScene(dt: number) {
+function updateScene(app: App, dt: number) {
+    if (Input.getInstance().isButtonClicked(Input.mouseButton.Left)) {
+        console.log("Mouse left clicked");
+    }
+
     camera.timeElapsed = Timer.deltaTime() / 10.0;
 
     camera.update(cameraUpdateCb);
 
-    Core.getInstance().clearColorAndDepth();
+    angle += Timer.deltaTime() * 0.001;
+}
 
-    /**
-    gl.depthMask(false);
-    var prog2 = ShaderManager.get("pp");
-    prog2.use();
-    prog2.sendUniform1f("time", dt);
-    PostProcess.render();
-    gl.depthMask(true);
-    /**/
+function drawScene(app: App) {
+    Core.getInstance().clearColorAndDepth();
 
     let prog = ProgramManager.get(mainShader);
     prog.use();
-
-    // prog.sendUniformVec3("lightPosition", light.position);
-
-    angle += Timer.deltaTime() * 0.001;
-    // console.log(angle);
 
     tex2d.bind(0);
     prog.sendUniform1i("texSampler", 0);
@@ -242,62 +181,6 @@ function drawScene(dt: number) {
         }
     }
     skybox.render(view, projection);
-
-    if (Input.getInstance().isButtonClicked(Input.mouseButton.Left)) {
-        console.log("Mouse left clicked");
-    }
-
-    /**
-    const gl = Core.getInstance().getGL();
-    camera.timeElapsed = Timer.deltaTime() / 10.0;
-
-    camera.update(cameraUpdateCb);
-
-    Core.getInstance().clearColorAndDepth();
-
-    const prog = ProgramManager.get(mainShader);
-    prog.use();
-
-    tex2d.bind(0);
-    prog.sendUniform1i("tex", 0);
-
-    angle += Timer.deltaTime() * 0.001;
-
-    light.addTransform(
-        Math.sin(angle) * 0.06,
-        Math.cos(angle) * 0.06,
-        0.0 // 5.0 + Math.cos(dt) * 0.06
-    );
-
-    let varvar = text.max;
-    let i = 0, j = 0, k = 0;
-    let dd = -1;
-    //for (i = -varvar; i < varvar; i += 5.0) {
-    //    for (j = -varvar; j < varvar; j += 5.0) {
-    //        for (k = -varvar; k < varvar; k += 5.0) {
-    //            dd *= -1;
-    //            mat4.translate(model, identityMatrix, vec3.fromValues(j * 1.0, i * 1.0, k * 1.0));
-    //            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-    //            mat4.rotateY(model, model, angle * dd);
-    //            mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
-    //
-    //            prog.sendUniformMat4("model", model);
-    //
-    //            m.render();
-    //        }
-    //    }
-    //}
-    //mat4.translate(model, identityMatrix,
-    //    new Float32Array([
-    //        light._position.x,
-    //        light._position.y,
-    //        light._position.z
-    //    ]));
-    //prog.sendUniformMat4("model", model);
-    //esferita.render();
-
-    skybox.render(view, projection);
-    /**/
 }
 
 // ============================================================================================ //
@@ -309,9 +192,11 @@ function drawScene(dt: number) {
 
 /**/
 window.onload = () => {
-    let app = new App({
+    new App({
+        webglVersion: 2,
         loadAssets: loadAssets,
         initialize: initialize,
+        update: updateScene,
         draw: drawScene,
         cameraUpdate: cameraUpdateCb,
         textCB: function(gui: dat.GUI) {

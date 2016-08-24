@@ -20,7 +20,6 @@ class Texture3D extends Texture {
         super((<any>gl).TEXTURE_3D);
         options = options || {};
 
-        console.log(this._target);
         this._handle = gl.createTexture();
 
         let compressed = options["compressed"] === true;

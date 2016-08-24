@@ -1,13 +1,15 @@
 /// <reference path="../core/core.ts" />
-/// <reference path="../extras/vertexArray.ts" />
-/// <reference path="../extras/vertexBuffer.ts" />
+/// <reference path="../core/vertexArray.ts" />
+/// <reference path="../core/vertexBuffer.ts" />
 /// <reference path="../constants/_constants.ts" />
-///
+/// <reference path="../extras/extensions.ts" />
+
 import Core from "../core/core.ts";
-import VertexArray from "../extras/vertexArray.ts";
-import VertexBuffer from "../extras/vertexBuffer.ts";
+import VertexArray from "../core/vertexArray.ts";
+import VertexBuffer from "../core/vertexBuffer.ts";
 import UsageType from "../constants/UsageType.ts";
 import BufferType from "../constants/BufferType.ts";
+import extensions from "../extras/extensions";
 
 "use strict";
 
@@ -83,7 +85,7 @@ abstract class Drawable {
                 numInstances
             );
         } else {
-            const ext = gl.getExtension("ANGLE_instanced_arrays");
+            const ext = extensions.get("ANGLE_instanced_arrays");
             if (ext) {
                 ext.drawElementsInstancedANGLE(
                     gl.TRIANGLES,
@@ -111,7 +113,7 @@ abstract class Drawable {
                 numInstances
             );
         } else {
-            const ext = gl.getExtension("ANGLE_instanced_arrays");
+            const ext = extensions.get("ANGLE_instanced_arrays");
             if (ext) {
                 ext.drawArraysInstancedANGLE(
                     gl.TRIANGLES,

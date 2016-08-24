@@ -21,10 +21,8 @@ class Core {
             throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
         }
         this._gl = Context.getContext();
-        
-        Input.getInstance();
 
-        console.log("GL OBTAINED");
+        Input.getInstance();
 
         Core._instance = this;
     }

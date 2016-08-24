@@ -1,4 +1,4 @@
-/// <reference path="library/_init_.ts" />
+/// <reference path="library/App.ts" />
 
 /// <reference path="library/core/core.ts" />
 /// <reference path="library/core/input.ts" />
@@ -14,7 +14,7 @@
 /// <reference path="library/constants/_constants.ts" />
 /// <reference path="library/extras/vertexArray.ts" />
 
-import _init__ from "./library/_init_";
+import App from "./library/App";
 
 import Core from "./library/core/core";
 import Input from "./library/core/input";
@@ -34,7 +34,7 @@ import TransfFeedCte from "./library/constants/TransfFeedCte";
 import VertexArray from "./library/extras/vertexArray";
 
 "use strict";
-
+/*
 let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
 let gl_: WebGLRenderingContext;
@@ -190,3 +190,4 @@ window.onload = () => {
     });
     _init__.start(initialize, drawScene);
 };
+*/

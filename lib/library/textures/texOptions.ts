@@ -1,18 +1,23 @@
+/// <reference path="../constants/TextureFormat.ts" />
+/// <reference path="../constants/TextureType.ts" />
+
+import TextureFormat from "../constants/TextureFormat";
+import TextureType from "../constants/TextureType";
 
 "use strict";
 
 interface TexOptions {
-    internalFormat?: number;
-    type?: number;
+    internalFormat?: TextureFormat;
+    type?: TextureFormat;
     level?: number;
-    minFilter?: number;
-    magFilter?: number;
+    minFilter?: TextureType;
+    magFilter?: TextureType;
     flipY?: boolean;
-    wrapS?: number;
-    wrapT?: number;
-    wrapR?: number;
+    wrapS?: TextureType;
+    wrapT?: TextureType;
+    wrapR?: TextureType;
     autoMipMap?: boolean;
-    format?: number;
+    format?: TextureFormat;
     border?: number;
 };
 

@@ -27,7 +27,6 @@ class Mesh extends Drawable {
      */
     constructor(fileRoute: string) {
         super();
-        console.log("Loading file");
         this.loadJSON(fileRoute);
     }
 
@@ -74,9 +73,7 @@ class Mesh extends Drawable {
                 return {};
             } else {
                 let modelObj = JSON.parse(request.responseText);
-                console.log("Creating VAO");
                 self.createVAO(modelObj, [].concat.apply([], modelObj.meshes[0].faces));
-                console.log("Finish creating VAO");
             }
         };
         request.send();

@@ -4,13 +4,15 @@
 
 class Color {
     /**
-     * @param {[type]}
+     * [Array description]
+     * @param {[type]} 3 [description]
      */
     protected _color = new Array(3);
     /**
-     * @param {number}
-     * @param {number}
-     * @param {number}
+     * [constructor description]
+     * @param {number} r [description]
+     * @param {number} g [description]
+     * @param {number} b [description]
      */
     constructor(r: number, g: number, b: number) {
         this.setRGB(r, g, b);
@@ -40,42 +42,46 @@ class Color {
      */
     // TODO: set b(b: number) { this._color[2] = b; }
     /**
-     * @param {number}
-     * @param {number}
-     * @param {number}
+     * [setRGB description]
+     * @param  {number} r [description]
+     * @param  {number} g [description]
+     * @param  {number} b [description]
+     * @return {Color}    [description]
      */
-    public setRGB(r: number, g: number, b: number) {
+    public setRGB(r: number, g: number, b: number): Color {
         // this.r = r;
         // this.g = g;
         // this.b = b;
         this._color[0] = r;
         this._color[1] = g;
         this._color[2] = b;
+
+        return this;
     }
     /**
-     * @return {Color}
+     * [toHSL description]
+     * @return {Color} [description]
      */
-    // TODO: public toHSL(): Color {
-    //    const max = Math.max(this.r, this.g, this.b), 
-    //        min = Math.min(this.r, this.g, this.b);
+    public toHSL(): Color {
+        const max = Math.max(this._color[0], this._color[1], this._color[2]),
+            min = Math.min(this._color[0], this._color[1], this._color[2]);
 
-    //    let h, s, l = (max + min) / 2;
+        let h, s, l = (max + min) / 2;
 
-    //    if (max === min) {
-    //        h = s = 0;  // achromatic
-    //    } else {
-    //        let d = max - min;
-    //        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    //        switch (max) {
-    //            case this.r: h = (this.g - this.b) / d + (this.g < this.b ? 6 : 0); break;
-    //            case this.g: h = (this.b - this.r) / d + 2; break;
-    //            case this.b: h = (this.r - this.g) / d + 4; break;
-    //        }
-    //        h /= 6;
-    //    }
-
-    //    return new Color(h, s, l);
-    // }
+        if (max === min) {
+            h = s = 0;  // achromatic
+        } else {
+            let d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case this._color[0]: h = (this._color[1] - this._color[2]) / d + (this._color[1] < this._color[2] ? 6 : 0); break;
+                case this._color[1]: h = (this._color[2] - this._color[0]) / d + 2; break;
+                case this._color[2]: h = (this._color[0] - this._color[1]) / d + 4; break;
+            }
+            h /= 6;
+        }
+        return new Color(h, s, l);
+    }
 };
 
 export default Color;

@@ -12,9 +12,11 @@ import Timer from "./extras/timer";
 "use strict";
 
 interface IApp {
+    webglVersion?: number;    // TODO: Unused
     loadAssets: () => void;
-    initialize: () => void;
-    draw: (dt) => void;
+    initialize: (app_: App) => void;
+    update: (app_: App, dt: number) => void;
+    draw: (app_: App, dt?: number) => void;
     cameraUpdate: () => void;
     textCB: (gui: dat.GUI) => void;
 }
@@ -26,10 +28,17 @@ class App {
 
     protected cameraUpdateCb;
     constructor(init: IApp, text: any) {
+        if (!init.webglVersion) {
+            init.webglVersion = 2;
+        }
         this._appFunctions = init;
         console.log(this._appFunctions);
         this.__init__(text);
     };
+
+    public webglVersion(): number {
+        return this._appFunctions.webglVersion;
+    }
 
     private __init__(text) {
         Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
@@ -60,7 +69,7 @@ class App {
         ResourceMap.setLoadCompleteCallback(function() {
             console.log("ALL RESOURCES LOADED!!!!");
 
-            self._appFunctions.initialize();
+            self._appFunctions.initialize(self);
 
             // Remove loader css3 window
             document.getElementById("spinner").remove();
@@ -77,7 +86,8 @@ class App {
                     // self.__resize__();
 
                     if (self._resume) {
-                        self._appFunctions.draw(dt);    // Draw user function
+                        self._appFunctions.update(self, dt);
+                        self._appFunctions.draw(self, dt);    // Draw user function
                     }
 
                     self.stats.end();
@@ -93,6 +103,7 @@ class App {
                 throw e;
             }
         });
+        return this;
     };
 
     public pause() {

@@ -1,6 +1,8 @@
 /// <reference path="../core/context.ts" />
-///
+/// <reference path="../extras/extensions.ts" />
+
 import Context from "../core/context";
+import extensions from "../extras/extensions";
 
 "use strict";
 
@@ -11,7 +13,7 @@ declare var WebGL2RenderingContext: any;
 if (gl instanceof WebGL2RenderingContext) {
     gl = Context.getContext();
 } else {
-    gl = gl.getExtension("WEBGL_draw_buffers");
+    gl = extensions.get("WEBGL_draw_buffers");
 }
 
 enum DrawBuffer {
