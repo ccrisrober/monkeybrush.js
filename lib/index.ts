@@ -187,6 +187,7 @@ function drawScene(app: App) {
 /**/
 window.onload = () => {
     new App({
+        title: "Demo appp",
         webglVersion: 2,
         loadAssets: loadAssets,
         initialize: initialize,

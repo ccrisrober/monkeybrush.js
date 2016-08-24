@@ -34,6 +34,7 @@ import Timer from "./extras/timer";
 "use strict";
 
 interface IApp {
+    title?: string;
     webglVersion?: number;    // TODO: Unused
     loadAssets: () => void;
     initialize: (app_: App) => void;
@@ -56,6 +57,9 @@ class App {
         }
         this._appFunctions = init;
         console.log(this._appFunctions);
+
+        document.title = init.title || `WebGL${init.webglVersion} app`;
+
         this.__init__(text);
     };
 

@@ -4,8 +4,7 @@
 ## init
 ```bash
 npm install && bower install
-grunt # Open server and open webpage
-grunt serve # Only open server (http://localhost:3030/index.html)
+npm start # Open server in 3000 port
 ```
 ![alt tag](descarga.png)
 
@@ -57,6 +56,7 @@ grunt serve # Only open server (http://localhost:3030/index.html)
 - [x] Webpack integration
 - [x] Key input
 - [x] Mouse input
+- [x] Easing functions
 
 ```bash
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt
