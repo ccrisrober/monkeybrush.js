@@ -3,8 +3,6 @@ var path = require('path');
 var CircularDependencyPlugin = require('circular-dependency-plugin');
 var WebpackNotifierPlugin = require('webpack-notifier');
 
-// http://blog.tomduncalf.com/posts/setting-up-typescript-and-react/
-
 module.exports = {
     devtool: 'eval',
 	entry: "./lib/index.ts",
