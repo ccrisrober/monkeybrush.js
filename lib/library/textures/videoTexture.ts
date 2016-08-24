@@ -34,8 +34,8 @@ class VideoTexture extends Texture2D {
         const gl = Core.getInstance().getGL();
         options.minFilter = gl.LINEAR;
         options.magFilter = gl.LINEAR;
-        options.wrapS = gl.CLAMP_TO_EDGE;
-        options.wrapT = gl.CLAMP_TO_EDGE;
+        options.wrapS = options.wrapS || options.wrap || gl.CLAMP_TO_EDGE;
+        options.wrapT = options.wrapT || options.wrap || gl.CLAMP_TO_EDGE;
         super(null, options);
         this._videoElem = videoElem;
         let self = this;

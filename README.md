@@ -14,6 +14,10 @@ npm start # Open server in 3000 port
 - [x] Add cube model
 - [x] Add sphere model
 - [x] Add torus model
+- [x] Add cone model
+- [x] Add prism model
+- [x] Add cylinder model
+- [x] Add disc model
 - [x] Add object parser (faces: x1/y1/z1 x2/y2/z2 x3/y3/z3)
 - [x] Finish Perspective Camera
 - [x] Finish Orthographic Camera

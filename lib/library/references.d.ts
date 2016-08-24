@@ -33,6 +33,10 @@
 /// <reference path="./models/sphere.ts" />
 /// <reference path="./models/plane.ts" />
 /// <reference path="./models/cube.ts" />
+/// <reference path="./models/disc.ts" />
+/// <reference path="./models/cone.ts" />
+/// <reference path="./models/prism.ts" />
+/// <reference path="./models/cylinder.ts" />
 /// <reference path="./models/mesh.ts" />
 
 /// <reference path="./textures/texture2d.ts" />

@@ -44,17 +44,20 @@ class Texture2D extends Texture {
 
         // TODO: Support compression
 
-        this._flipY = options["flipY"] === true;
+        this._flipY = options.flipY === true;
         this._handle = gl.createTexture();
 
-        let _internalformat = options["internalformat"] || gl.RGBA;
-        let _format = options["format"] || gl.RGBA;
-        let _type = options["type"] || gl.UNSIGNED_BYTE;
-        const _level = options["level"] || 0;
+        let _internalformat = options.internalFormat || gl.RGBA;
+        let _format = options.format || gl.RGBA;
+        let _type = options.type || gl.UNSIGNED_BYTE;
+        const _level = options.level || 0;
 
-        this._minFilter = options["minFilter"] || gl.NEAREST;
-        this._magFilter = options["magFilter"] || gl.NEAREST;
-        let wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
+        this._minFilter = options.minFilter || gl.NEAREST;
+        this._magFilter = options.magFilter || gl.NEAREST;
+        let wraps = [
+            options.wrapS || options.wrap || gl.CLAMP_TO_EDGE,
+            options.wrapT || options.wrap || gl.CLAMP_TO_EDGE,
+        ];
 
         this.bind();
 

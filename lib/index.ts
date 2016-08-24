@@ -5,6 +5,10 @@ import App from "./library/App";
 import Core from "./library/core/core";
 import Input from "./library/core/input";
 import Sphere from "./library/models/sphere";
+import Disc from "./library/models/disc";
+import Cone from "./library/models/cone";
+import Cylinder from "./library/models/cylinder";
+import Prism from "./library/models/prism";
 import Mesh from "./library/models/mesh";
 import Texture2D from "./library/textures/texture2d";
 import SimpleTexture2D from "./library/textures/simpleTexture2d";
@@ -31,6 +35,15 @@ let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 let skybox: Skybox;
 
 let esferita: Sphere;
+let disquito: Disc;
+let disquito2: Disc;
+let conito: Cone;
+let tubito: Cylinder;
+let tubito2: Cylinder;
+let tubito3: Cylinder;
+let tubito4: Cylinder;
+let prismito: Prism;
+let prismito2: Prism;
 
 let SimpleConfig = function() {
     return {
@@ -70,6 +83,32 @@ let framebuffer: Framebuffer;
 
 function initialize(app: App) {
     esferita = new Sphere(1.0, 20, 20);
+    conito = new Cone(15.0, 0.0, 15.0, 3.0, 2.0);
+    tubito = new Cylinder(5.0, 15.0, 15.0, 2.0);
+    tubito2 = tubito;    // new Tube(5.0, 15.0, 15.0, 2.0);
+    tubito3 = tubito;    // new Tube(5.0, 15.0, 15.0, 2.0);
+    tubito4 = tubito;    // new Tube(5.0, 15.0, 15.0, 2.0);
+
+    prismito = new Prism(15.0, 30.0, 6.0, 1.0);
+    prismito2 = new Prism(15.0, 30.0, 4.0, 4.0);
+
+    disquito = new Disc(15.0, 5.1, 1.0, 0.0, 1.0);
+    disquito2 = new Disc(15.0, 3.5, 5.0, 0.0, 1.0);
+
+
+
+
+
+
+
+
+
+    // prismito = new Prism(5.0, 15.0, 5.0, 10.0, true, false);
+    // prismito2 = new Prism(5.0, 15.0, 5.0, 10.0, false, false);
+
+
+
+
     m = new Mesh("assets/objects/teddy.json");
 
     let canvasSize = new Vector2<number>(
@@ -158,6 +197,9 @@ function drawScene(app: App) {
     let varvar = text.max;
     let i = 0, j = 0, k = 0;
     let dd = -1;
+
+    let m = 0;
+
     for (i = -varvar; i < varvar; i += 5.0) {
         for (j = -varvar; j < varvar; j += 5.0) {
             for (k = -varvar; k < varvar; k += 5.0) {
@@ -170,7 +212,26 @@ function drawScene(app: App) {
 
                 prog.sendUniformMat4("model", model);
 
-                m.render();
+                if (dd === -1)
+                    disquito.render2();
+                else
+                    disquito2.render2();
+
+                // switch (m % 4) {
+                //     case 0:
+                //         tubito.render2();
+                //         break;
+                //     case 1:
+                //         tubito2.render2();
+                //         break;
+                //     case 2:
+                //         tubito3.render2();
+                //         break;
+                //     case 3:
+                //         tubito4.render2();
+                //         break;
+                // }
+                m++;
             }
         }
     }

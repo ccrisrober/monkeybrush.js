@@ -44,10 +44,12 @@ class Texture3D extends Texture {
 
         let compressed = options["compressed"] === true;
 
-        let _internalformat = options["internalformat"] || gl.RGBA;
-        let _format = options["format"] || gl.RGBA;
-        let _type = options["type"] || gl.UNSIGNED_BYTE;
-        const _level = options["level"] || 0;
+        let _internalformat = options.internalFormat || gl.RGBA;
+        let _format = options.format || gl.RGBA;
+        let _type = options.type || gl.UNSIGNED_BYTE;
+        const _level = options.level || 0;
+
+        // TODO: WRAP
 
         this.bind();
 

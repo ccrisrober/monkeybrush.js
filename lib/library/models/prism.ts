@@ -18,28 +18,30 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../constants/TextureFormat.ts" />
-/// <reference path="../constants/TextureType.ts" />
+/// <reference path="cone.ts" />
 
-import TextureFormat from "../constants/TextureFormat";
-import TextureType from "../constants/TextureType";
+import Cone from "./cone";
 
 "use strict";
 
-interface TexOptions {
-    internalFormat?: TextureFormat;
-    type?: TextureFormat;
-    level?: number;
-    minFilter?: TextureType;
-    magFilter?: TextureType;
-    flipY?: boolean;
-    wrap?: TextureType;
-    wrapS?: TextureType;
-    wrapT?: TextureType;
-    wrapR?: TextureType;
-    autoMipMap?: boolean;
-    format?: TextureFormat;
-    border?: number;
+/**
+ * Prism class
+ * @class Prism
+ */
+class Prism extends Cone {
+    /**
+     * Prism constructor
+     * @param {number} radius: Prism radius
+     * @param {number} height: Prism height
+     * @param {number = 1.0} sides: Number of sides of the prism
+     * @param {number = 1.0} heightSubDiv Height subdivisions
+     * @param {boolean = true} createTopBase: Create top base
+     * @param {boolean = true} createBottomBase: Create bottom base
+     */
+    constructor(radius: number, height: number, sides: number,
+        heightSubDiv: number = 1.0, topCap: boolean = true, bottomCap: boolean = true) {
+        super(radius, radius, height, sides, heightSubDiv, topCap, bottomCap);
+    }
 };
 
-export default TexOptions;
+export default Prism;

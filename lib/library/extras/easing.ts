@@ -1,5 +1,5 @@
 namespace easing {
-    var PI_2 = Math.PI / 2.0;
+    const PI_2 = Math.PI / 2.0;
     // Sine functions
     export namespace sine {
         export function easeIn(t: number): number {
@@ -51,7 +51,7 @@ namespace easing {
             return 1.0 - t * t;
         };
         export function easeInOut(t: number): number {
-            if( t < 0.5 ) {
+            if (t < 0.5) {
                 t *= t;
                 return 8.0 * t * t;
             } else {
@@ -73,7 +73,7 @@ namespace easing {
         };
         export function easeInOut(t: number): number {
             let t2: number;
-            if( t < 0.5 ) {
+            if (t < 0.5) {
                 t2 = t * t;
                 return 16.0 * t * t2 * t2;
             } else {
@@ -92,7 +92,7 @@ namespace easing {
             return 1 - Math.pow( 2.0, -8.0 * t );
         };
         export function easeInOut(t: number): number {
-            if( t < 0.5 ) {
+            if (t < 0.5) {
                 return (Math.pow( 2.0, 16.0 * t ) - 1.0) / 510.0;
             } else {
                 return 1.0 - 0.5 * Math.pow( 2.0, -16.0 * (t - 0.5) );
@@ -109,7 +109,7 @@ namespace easing {
             return Math.sqrt( t );
         };
         export function easeInOut(t: number): number {
-            if( t < 0.5 ) {
+            if (t < 0.5) {
                 return (1.0 - Math.sqrt( 1.0 - 2.0 * t )) * 0.5;
             } else {
                 return (1.0 + Math.sqrt( 2.0 * t - 1.0 )) * 0.5;
@@ -126,7 +126,7 @@ namespace easing {
             return 1.0 + (--t) * t * (2.70158 * t + 1.70158);
         };
         export function easeInOut(t: number): number {
-            if( t < 0.5 ) {
+            if (t < 0.5) {
                 return t * t * (7.0 * t - 2.5) * 2.0;
             } else {
                 return 1.0 + (--t) * t * 2.0 * (7.0 * t + 2.5);
@@ -146,10 +146,10 @@ namespace easing {
         };
         export function easeInOut(t: number): number {
             let t2: number;
-            if( t < 0.45 ) {
+            if (t < 0.45) {
                 t2 = t * t;
                 return 8.0 * t2 * t2 * Math.sin( t * Math.PI * 9.0 );
-            } else if( t < 0.55 ) {
+            } else if (t < 0.55) {
                 return 0.5 + 0.75 * Math.sin( t * Math.PI * 4.0 );
             } else {
                 t2 = (t - 1.0) * (t - 1.0);
@@ -167,7 +167,7 @@ namespace easing {
             return 1.0 - Math.pow( 2.0, -6.0 * t ) * Math.abs( Math.cos( t * Math.PI * 3.5 ) );
         };
         export function easeInOut(t: number): number {
-            if( t < 0.5 ) {
+            if (t < 0.5) {
                 return 8.0 * Math.pow( 2.0, 8.0 * (t - 1.0) ) * Math.abs( Math.sin( t * Math.PI * 7.0 ) );
             } else {
                 return 1.0 - 8.0 * Math.pow( 2.0, -8.0 * t ) * Math.abs( Math.sin( t * Math.PI * 7.0 ) );

@@ -54,8 +54,8 @@ class SimpleTexture2D extends Texture {
         this._minFilter = options.minFilter || gl.NEAREST;
         this._magFilter = options.magFilter || gl.NEAREST;
         let wraps = [
-            options.wrapS || gl.CLAMP_TO_EDGE,
-            options.wrapT || gl.CLAMP_TO_EDGE,
+            options.wrapS || options.wrap || gl.CLAMP_TO_EDGE,
+            options.wrapT || options.wrap || gl.CLAMP_TO_EDGE,
         ];
 
         this.bind();

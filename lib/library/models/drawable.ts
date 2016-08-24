@@ -90,6 +90,12 @@ abstract class Drawable {
         this._vao.unbind();
     };
 
+    public render2() {
+        this._vao.bind();
+        gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        this._vao.unbind();
+    };
+
     /**
      * Render with element instance mode
      * @param {number} numInstances: Instances to render

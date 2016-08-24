@@ -18,28 +18,33 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../constants/TextureFormat.ts" />
-/// <reference path="../constants/TextureType.ts" />
+/// <reference path="cone.ts" />
 
-import TextureFormat from "../constants/TextureFormat";
-import TextureType from "../constants/TextureType";
+import Cone from "./cone";
 
 "use strict";
 
-interface TexOptions {
-    internalFormat?: TextureFormat;
-    type?: TextureFormat;
-    level?: number;
-    minFilter?: TextureType;
-    magFilter?: TextureType;
-    flipY?: boolean;
-    wrap?: TextureType;
-    wrapS?: TextureType;
-    wrapT?: TextureType;
-    wrapR?: TextureType;
-    autoMipMap?: boolean;
-    format?: TextureFormat;
-    border?: number;
+/**
+ * Cylinder class
+ * @class Cylinder
+ */
+class Cylinder extends Cone {
+    /**
+     * Cylinder constructor
+     * @param {number} radius: Cylinder radius
+     * @param {number} height: Cylinder height
+     * @param {number = 15.0} radialSubDiv: Radial subdivisions around cylinder
+     * @param {number = 1.0} heightSubDiv Height subdivisions
+     * @param {boolean = true} createTopBase: Create top base
+     * @param {boolean = true} createBottomBase: Create bottom base
+     */
+    constructor(radius: number, height: number, radialSubDiv: number = 15.0,
+        heightSubDiv: number = 1.0, createTopBase: boolean = true, createBottomBase: boolean = true) {
+        if (radialSubDiv < 15) {
+            throw Error("radialSubDiv must be 15 or greater");
+        }
+        super(radius, radius, height, radialSubDiv, heightSubDiv, createTopBase, createBottomBase);
+    }
 };
 
-export default TexOptions;
+export default Cylinder;
