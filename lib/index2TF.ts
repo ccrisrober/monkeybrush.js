@@ -12,8 +12,8 @@
 
 /// <reference path="library/_demoCamera.ts" />
 /// <reference path="library/constants/_constants.ts" />
-/// <reference path="library/extras/vertexArray.ts" />
-
+/// <reference path="library/core/vertexArray.ts" />
+/*
 import App from "./library/App";
 
 import Core from "./library/core/core";
@@ -34,7 +34,7 @@ import TransfFeedCte from "./library/constants/TransfFeedCte";
 import VertexArray from "./library/extras/vertexArray";
 
 "use strict";
-/*
+
 let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
 let gl_: WebGLRenderingContext;

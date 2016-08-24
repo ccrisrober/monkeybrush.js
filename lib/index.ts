@@ -4,16 +4,12 @@ import App from "./library/App";
 
 import Core from "./library/core/core";
 import Input from "./library/core/input";
-import Torus from "./library/models/torus";
 import Sphere from "./library/models/sphere";
-import Plane from "./library/models/plane";
-import Cube from "./library/models/cube";
 import Mesh from "./library/models/mesh";
 import Texture2D from "./library/textures/texture2d";
 import SimpleTexture2D from "./library/textures/simpleTexture2d";
 import Program from "./library/core/program";
 import Framebuffer from "./library/core/framebuffer";
-import PostProcess from "./library/core/postProcess";
 import ProgramManager from "./library/resources/programManager";
 import ResourceMap from "./library/resources/resourceMap";
 import loaders from "./library/resources/loaders";
@@ -49,7 +45,7 @@ let projection;
 
 let tex2d: Texture2D;
 
-let light = new PointLight(new Vector3<number>( -5.0, 0.0, 0.0 ));
+let _light = new PointLight(new Vector3<number>( -5.0, 0.0, 0.0 ));
 
 let identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
@@ -94,7 +90,8 @@ function initialize(app: App) {
             "magFilter": TextureType.Nearest
         })
     ], canvasSize, true, true, {});
-    //console.log(app);
+
+    // console.log(app);
 
     const webgl2 = app.webglVersion() === 2;
 
@@ -115,7 +112,6 @@ function initialize(app: App) {
     });
 
     let cubeImage = ResourceMap.retrieveAsset("exampleImg");
-    const gl = Core.getInstance().getGL();
     tex2d = new Texture2D(cubeImage, {
         flipY: true,
         minFilter: TextureType.Linear,

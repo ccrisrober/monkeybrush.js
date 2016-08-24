@@ -1,3 +1,23 @@
+/// Copyright (C) 2016 [MonkeyBrush.js]
+///
+/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+/// software and associated documentation files (the "Software"), to deal in the Software
+/// without restriction, including without limitation the rights to use, copy, modify,
+/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+/// permit persons to whom the Software is furnished to do so, subject to the following
+/// conditions:
+///
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+///
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 /// <reference path="../../typings/gl-matrix.d.ts" />
 
 "use strict";
@@ -18,7 +38,7 @@ class Vect4 {
     constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
         this._value = vec4.fromValues(x, y, z, w);
     }
-    
+
     public toString = () : string => {
         return vec4.str(this._value);
     }
@@ -61,9 +81,9 @@ class Vect4 {
     // TODO:      this._value[3] = value;
     // TODO: }
     // TODO: public lerp(other: Vect4, t: number): Vect4 {
-    // TODO:     let ax = this._value[0], 
-    // TODO:         ay = this._value[1], 
-    // TODO:         az = this._value[2], 
+    // TODO:     let ax = this._value[0],
+    // TODO:         ay = this._value[1],
+    // TODO:         az = this._value[2],
     // TODO:         aw = this._value[3];
     // TODO:     return new Vect4(
     // TODO:         ax + t * (other.x - ax),

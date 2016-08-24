@@ -1,3 +1,23 @@
+/// Copyright (C) 2016 [MonkeyBrush.js]
+///
+/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+/// software and associated documentation files (the "Software"), to deal in the Software
+/// without restriction, including without limitation the rights to use, copy, modify,
+/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+/// permit persons to whom the Software is furnished to do so, subject to the following
+/// conditions:
+///
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+///
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 /// <reference path="core.ts" />
 /// <reference path="../maths/vector2.ts" />
 /// <reference path="../textures/simpleTexture2D.ts" />
@@ -7,12 +27,9 @@
 import Core from "./core.ts";
 import Vector2 from "../maths/vector2.ts";
 import SimpleTexture2D from "../textures/simpleTexture2D.ts";
-import Texture2D from "../textures/texture2D.ts";
 import RenderBufferTexture from "../textures/renderBufferTexture.ts";
 
 "use strict";
-
-// https://bitbucket.org/masterurjc/practica1/src/2a06c91942814954c1a1ae489d78705a5b5317e1/RenderingAvanzado1/GBufferSSAO.h?at=FINISH&fileviewer=file-view-default
 
 enum gbufferssao_type {
     position,
@@ -40,8 +57,8 @@ class GBufferSSAO {
         this._fbo = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._fbo);
 
-        const width = size.x;
-        const height = size.y;
+        const _width = size.x;
+        const _height = size.y;
 
         // Position color buffer
         (this._textures[gbufferssao_type.position] = new SimpleTexture2D(size, {
@@ -115,7 +132,7 @@ class GBufferSSAO {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
 
-        function lerp(a: number, b: number, f: number): number {
+        function _lerp(a: number, b: number, f: number): number {
             return a + f * (b - a);
         }
 
@@ -188,10 +205,10 @@ class GBufferSSAO {
     }
 
     public bindForSSAO() {
-
+        // TODO
     }
     public sendSamplesSSAOTexture(progName: string) {
-
+        // TODO
     }
 
     public destroy() {
