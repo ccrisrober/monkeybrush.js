@@ -19,8 +19,10 @@
 
 
 /// <reference path="../core/core.ts" />
+/// <reference path="../constants/SyncParam.ts" />
 
 import Core from "../core/core";
+import SyncParam from "../constants/SyncParam";
 
 "use strict";
 
@@ -36,10 +38,15 @@ class Sync {
     public wait(flags, timeout: number) {
         gl.waitSync(this._handle, flags, timeout);
     };
+    /**
+     * [clientWait description]
+     * @param {number} flags: Bitwise combination of flags controlling the flushing behavior. May be gl.SYNC_FLUSH_COMMANDS_BIT.
+     * @param {number} timeout: Timeout (in nanoseconds) for which to wait for the sync obj to become signaled.
+     */
     public clientWait(flags: number, timeout: number) {
         return gl.clientWaitSync(this._handle, flags, timeout);
     };
-    public getParameter(name: string) {
+    public getParameter(name: SyncParam) {
         return gl.getSyncParameter(this._handle, name);
     };
     public destroy() {
