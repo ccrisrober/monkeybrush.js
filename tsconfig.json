@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
+    "declaration": false,
     "module": "es6",
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "ts-build",
-    "experimentalDecorators": true
+    "experimentalDecorators": true/*,
+    "removeComments": true*/
   },
   "exclude": [
     "node_modules"

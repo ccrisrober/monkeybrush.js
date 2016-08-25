@@ -34,8 +34,8 @@ enum BlendingEq {
     Add = gl.FUNC_ADD,
     Substract = gl.FUNC_SUBTRACT,
     RevSubstract = gl.FUNC_REVERSE_SUBTRACT,
-    Min = (<any>gl).MIN || ext.EXT_blend_minmax,
-    Max = (<any>gl).MAX || ext.EXT_blend_minmax
+    Min = gl.MIN || ext.EXT_blend_minmax,
+    Max = gl.MAX || ext.EXT_blend_minmax
 };
 
 export default BlendingEq;

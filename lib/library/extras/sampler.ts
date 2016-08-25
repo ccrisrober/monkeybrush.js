@@ -26,12 +26,10 @@ import Core from "../core/core";
 
 const gl = Core.getInstance().getGL();
 
-declare var WebGLSampler: any;
-
 class Sampler {
     protected _handle: WebGLSampler;
     constructor() {
-        this._handle = (<any>gl).createSampler();
+        this._handle = gl.createSampler();
     };
     /**
      * [bind description]
@@ -39,25 +37,25 @@ class Sampler {
      *                       to which to bind the sampler
      */
     public bind(unit: number) {
-        (<any>gl).bindSampler(unit, this._handle);
+        gl.bindSampler(unit, this._handle);
     };
-    public unbind() {
-        (<any>gl).bindSampler(null);
+    public unbind(unit: number) {
+        gl.bindSampler(unit, null);
     };
-    public parameteri(name: string, param: number) {
-        (<any>gl).samplerParameteri(this._handle, param);
+    public parameteri(name: number, param: number) {
+        gl.samplerParameteri(this._handle, name, param);
     };
-    public parameterf(name: string, param: number) {
-        (<any>gl).samplerParameterf(this._handle, name, param);
+    public parameterf(name: number, param: number) {
+        gl.samplerParameterf(this._handle, name, param);
     };
-    public getParameter(name: string) {
-        return (<any>gl).getSamplerParameter(this._handle, name);
+    public getParameter(name: number) {
+        return gl.getSamplerParameter(this._handle, name);
     };
     public destroy() {
-        (<any>gl).deleteSampler(this._handle);
+        gl.deleteSampler(this._handle);
     };
     public isValid(): boolean {
-        return (<any>gl).isSampler(this._handle);
+        return gl.isSampler(this._handle);
     };
 };
 

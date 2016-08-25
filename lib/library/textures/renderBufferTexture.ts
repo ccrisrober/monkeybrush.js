@@ -40,10 +40,16 @@ class RenderBufferTexture {
         gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
         gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    };
+    public bind() {
+        gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+    };
+    public unbind() {
+        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     }
     public destroy() {
         gl.deleteTexture(this._handle);
-    }
+    };
     public resize(size: Vector2<number>) {
         if (!size.isEqual(this._size)) {
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);

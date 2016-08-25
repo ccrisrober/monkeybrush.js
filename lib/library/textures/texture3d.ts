@@ -37,7 +37,7 @@ class Texture3D extends Texture {
         if (!(gl instanceof WebGL2RenderingContext)) {
             throw new Error("Must provide a WebGL2 context ...");
         }
-        super((<any>gl).TEXTURE_3D);
+        super(gl.TEXTURE_3D);
         options = options || {};
 
         this._handle = gl.createTexture();
@@ -64,7 +64,7 @@ class Texture3D extends Texture {
                 0,
                 data);*/
         } else {
-            /*(<any>gl).texSubImage3D(
+            /*gl.texSubImage3D(
                 this._target,
                 0,  // level
                 _internalformat,    // Internal format A GLenum specifying the format of the texel data
@@ -76,7 +76,7 @@ class Texture3D extends Texture {
                 _type,  // A GLenum specifying the data type of the texel data
                 data
             );*/
-            (<any>gl).texImage3D(
+            gl.texImage3D(
                 this._target,
                 _level,
                 _internalformat,

@@ -10,6 +10,7 @@ module.exports = {
         publicPath: "/build",
         filename: "bundle.js",
         path: path.resolve("build")
+        //,library: "LolLib"
 	},
 	resolve: {
 		extensions: ["", ".webpack.js", ".web.js", ".ts", ".js"],

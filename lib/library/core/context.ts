@@ -18,14 +18,15 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+/// <reference path="../../typings/webgl2.d.ts" />
 /// <reference path="./log.ts" />
 
 import log from "./log";
 // TODO: in getContext, check antialias or anothers params
 class Context {
-    static _gl: WebGLRenderingContext = null;
+    static _gl: WebGL2RenderingContext = null;
     static _canvas: HTMLCanvasElement = null;
-    static getContext(canvasName?: string): WebGLRenderingContext {
+    static getContext(canvasName?: string): WebGL2RenderingContext {
         if (!Context._gl) {
             if (!canvasName) {
                 log.info("Not canvas. Create one ...");
@@ -43,18 +44,18 @@ class Context {
                 document.write("<br><b>WebGL is not supported!</b>");
                 throw new Error("WebGL is not supported!");
             }
-            log.info("WebGLRenderingContext OK :)");
+            log.info("WebGL2RenderingContext OK :)");
             Context._getVendors();
         }
         return Context._gl;
     }
-    protected static _getContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
+    protected static _getContext(canvas: HTMLCanvasElement): WebGL2RenderingContext {
         let contexts: string[] = "webgl2,webgl,experimental-webgl2".split(",");
-        let gl: WebGLRenderingContext;
+        let gl: WebGL2RenderingContext;
         let ctx;
         for (let i = 0; i < contexts.length; ++i) {
             ctx = contexts[i];
-            gl = <WebGLRenderingContext>canvas.getContext(contexts[i]);
+            gl = <WebGL2RenderingContext>canvas.getContext(contexts[i]);
             if (gl) {
                 return gl;
             }

@@ -49,7 +49,7 @@ class Framebuffer {
         if (numColors < 0) {
             throw new Error("must specify >= 0 color attachments");
         } else if (numColors > 1) {
-            if (numColors > gl.getParameter((<any>gl).MAX_COLOR_ATTACHMENTS)) {
+            if (numColors > gl.getParameter(gl.MAX_COLOR_ATTACHMENTS)) {
                 throw new Error(`GL context doesn´t support ${numColors} color attachments`);
             }
         }
@@ -91,7 +91,7 @@ class Framebuffer {
         // TODO
         if (depth && stencil) {
             this._depth = new SimpleTexture2D(size, {
-                type: (<any>gl).UNSIGNED_INT_24_8,
+                type: gl.UNSIGNED_INT_24_8,
                 format: gl.DEPTH_STENCIL
             });
             let target = this._depth.target;
@@ -102,7 +102,7 @@ class Framebuffer {
                 this._depth.handle(), 0);
         } else if (depth && !stencil) {
             this._depth = new SimpleTexture2D(size, {
-                type: (<any>gl).UNSIGNED_SHORT,
+                type: gl.UNSIGNED_SHORT,
                 format: gl.DEPTH_COMPONENT
             });
             let target = this._depth.target;
@@ -125,7 +125,7 @@ class Framebuffer {
             for (let i = 0; i < numColors; ++i) {
                 drawBuffs.push(gl.COLOR_ATTACHMENT0 + i);
             }
-            (<any>gl).drawBuffers(drawBuffs);
+            gl.drawBuffers(drawBuffs);
         }
 
         // Check status

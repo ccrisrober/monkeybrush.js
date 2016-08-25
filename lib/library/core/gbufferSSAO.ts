@@ -82,7 +82,7 @@ class GBufferSSAO {
             magFilter: gl.NEAREST
         })).unbind();
         this._textures[gbufferssao_type.normal].unbind();
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, (<any>gl).COLOR_ATTACHMENT1,
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1,
             gl.TEXTURE_2D, this._textures[gbufferssao_type.normal].handle(), 0);
 
         // Color + Specular color buffer
@@ -93,7 +93,7 @@ class GBufferSSAO {
             minFilter: gl.NEAREST,
             magFilter: gl.NEAREST
         })).unbind();
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, (<any>gl).COLOR_ATTACHMENT2,
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT2,
             gl.TEXTURE_2D, this._textures[gbufferssao_type.diffuse].handle(), 0);
 
         // create a renderbuffer object to store depth info
@@ -104,10 +104,10 @@ class GBufferSSAO {
             gl.DEPTH_ATTACHMENT
         );
 
-        (<any>gl).drawBuffers([
-            (<any>gl).COLOR_ATTACHMENT0,
-            (<any>gl).COLOR_ATTACHMENT1,
-            (<any>gl).COLOR_ATTACHMENT2
+        gl.drawBuffers([
+            gl.COLOR_ATTACHMENT0,
+            gl.COLOR_ATTACHMENT1,
+            gl.COLOR_ATTACHMENT2
         ]);
         let status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
 

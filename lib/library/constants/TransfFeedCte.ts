@@ -27,23 +27,23 @@ import Context from "../core/context";
 const gl = Context.getContext();
 
 enum TransfFeedCte {
-    BufferMode = (<any>gl).TRANSFORM_FEEDBACK_BUFFER_MODE,
-    SeparateComponents = (<any>gl).MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS,
-    Varyings = (<any>gl).TRANSFORM_FEEDBACK_VARYINGS,
-    BufferStart = (<any>gl).TRANSFORM_FEEDBACK_BUFFER_START,
-    BufferSize = (<any>gl).TRANSFORM_FEEDBACK_BUFFER_SIZE,
-    PrimitivesWritten = (<any>gl).TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN,
-    MaxInterleavedComponents = (<any>gl).MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS,
-    MaxSeparateAttribs = (<any>gl).MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS,
+    BufferMode = gl.TRANSFORM_FEEDBACK_BUFFER_MODE,
+    SeparateComponents = gl.MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS,
+    Varyings = gl.TRANSFORM_FEEDBACK_VARYINGS,
+    BufferStart = gl.TRANSFORM_FEEDBACK_BUFFER_START,
+    BufferSize = gl.TRANSFORM_FEEDBACK_BUFFER_SIZE,
+    PrimitivesWritten = gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN,
+    MaxInterleavedComponents = gl.MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS,
+    MaxSeparateAttribs = gl.MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS,
 
-    InterleavedAttribs = (<any>gl).INTERLEAVED_ATTRIBS,
-    SeparateAttribs = (<any>gl).SEPARATE_ATTRIBS,
-    Buffer = (<any>gl).TRANSFORM_FEEDBACK_BUFFER,
-    BufferBinding = (<any>gl).TRANSFORM_FEEDBACK_BUFFER_BINDING,
-    Normal = (<any>gl).TRANSFORM_FEEDBACK,
-    Paused = (<any>gl).TRANSFORM_FEEDBACK_PAUSED,
-    Active = (<any>gl).TRANSFORM_FEEDBACK_ACTIVE,
-    Binding = (<any>gl).TRANSFORM_FEEDBACK_BINDING
+    InterleavedAttribs = gl.INTERLEAVED_ATTRIBS,
+    SeparateAttribs = gl.SEPARATE_ATTRIBS,
+    Buffer = gl.TRANSFORM_FEEDBACK_BUFFER,
+    BufferBinding = gl.TRANSFORM_FEEDBACK_BUFFER_BINDING,
+    Normal = gl.TRANSFORM_FEEDBACK,
+    Paused = gl.TRANSFORM_FEEDBACK_PAUSED,
+    Active = gl.TRANSFORM_FEEDBACK_ACTIVE,
+    Binding = gl.TRANSFORM_FEEDBACK_BINDING
 };
 
 export default TransfFeedCte;

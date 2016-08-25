@@ -109,7 +109,7 @@ abstract class Drawable {
     public renderElementInstance(numInstances: number) {
         this._vao.bind();
         if (gl instanceof WebGL2RenderingContext) {
-            (<any>gl).drawElementsInstanced(
+            gl.drawElementsInstanced(
                 gl.TRIANGLES,
                 this._indicesLen,
                 gl.UNSIGNED_SHORT,
@@ -138,7 +138,7 @@ abstract class Drawable {
     public renderArrayInstance(numInstances: number) {
         this._vao.bind();
         if (gl instanceof WebGL2RenderingContext) {
-            (<any>gl).drawArraysInstanced(
+            gl.drawArraysInstanced(
                 gl.TRIANGLES,
                 0,
                 this._indicesLen,

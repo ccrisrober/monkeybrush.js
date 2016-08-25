@@ -75,8 +75,8 @@ class CubeMapTexture extends Texture {
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
 
-        if ((<any>gl).TEXTURE_WRAP_R) {
-            gl.texParameteri(gl.TEXTURE_CUBE_MAP, (<any>gl).TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+        if (gl.TEXTURE_WRAP_R) {
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
         }
 
 

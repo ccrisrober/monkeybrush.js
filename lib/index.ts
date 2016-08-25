@@ -139,6 +139,58 @@ function initialize(app: App) {
 
     const webgl2 = app.webglVersion() === 2;
 
+    ProgramManager.addWithFun("unifProg", (): Program => {
+        let prog: Program = new Program();
+
+        prog.addShader(`#version 300 es
+            precision highp float;
+
+            layout(std140) uniform ViewUBO {
+                mat4 model;
+                mat4 viewProj;
+            };
+
+            void main() {
+                gl_Position = viewProj * model * vec4(1.0, 1.0, 1.0, 1.0);
+            }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
+
+        prog.addShader(`#version 300 es
+            precision highp float;
+
+            out vec4 fragColor;
+            void main() {
+                fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
+
+        prog.compile();
+
+
+        /*function bindUniformBlock(gl, programInfo, uniformBlockInfo) {
+            let uniformBlockSpec = programInfo.uniformBlockSpec || programInfo;
+            let blockSpec = uniformBlockSpec.blockSpecs[uniformBlockInfo.name];
+            if (blockSpec) {
+                let bufferBindIndex = blockSpec.index;
+                gl.bindBufferRange(gl.UNIFORM_BUFFER, bufferBindIndex, uniformBlockInfo.buffer,
+                    uniformBlockInfo.offset || 0, uniformBlockInfo.array.byteLength);
+                return true;
+            }
+            return false;
+        }*/
+
+        /*function setUniformBlock(gl, programInfo, uniformBlockInfo) {
+            if (bindUniformBlock(gl, programInfo, uniformBlockInfo)) {
+                gl.bufferData(gl.UNIFORM_BUFFER, uniformBlockInfo.array, gl.DYNAMIC_DRAW);
+            }
+        }*/
+
+        const gl = Core.getInstance().getGL();
+
+        let unifTransfLoc = gl.getUniformBlockIndex(prog.program(), "ViewUBO");
+        gl.uniformBlockBinding(prog.program(), unifTransfLoc, 0);
+
+        return prog;
+    });
+
     ProgramManager.addWithFun("prog", (): Program => {
         let prog: Program = new Program();
         if (webgl2) {

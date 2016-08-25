@@ -26,29 +26,27 @@ import Core from "../core/core";
 
 const gl = Core.getInstance().getGL();
 
-declare var WebGLSync: any;
-
 class Sync {
     protected _handle: WebGLSync;
     constructor(condition: number, flags: number) {
-        condition = condition || (<any>gl).SYNC_GPU_COMMANDS_COMPLETE;
+        condition = condition || gl.SYNC_GPU_COMMANDS_COMPLETE;
 
-        this._handle = (<any>gl).fenceSync(condition, flags);
+        this._handle = gl.fenceSync(condition, flags);
     };
     public wait(flags, timeout: number) {
-        (<any>gl).waitSync(this._handle, flags, timeout);
+        gl.waitSync(this._handle, flags, timeout);
     };
     public clientWait(flags: number, timeout: number) {
-        return (<any>gl).clientWaitSync(this._handle, flags, timeout);
+        return gl.clientWaitSync(this._handle, flags, timeout);
     };
     public getParameter(name: string) {
-        return (<any>gl).getSyncParameter(this._handle, name);
+        return gl.getSyncParameter(this._handle, name);
     };
     public destroy() {
-        (<any>gl).deleteSync(this._handle);
+        gl.deleteSync(this._handle);
     };
     public isValid(): boolean {
-        return (<any>gl).isSync(this._handle);
+        return gl.isSync(this._handle);
     };
 };
 

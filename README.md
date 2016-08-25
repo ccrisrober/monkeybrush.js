@@ -74,8 +74,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 ### Development
 - [x] Grunt integration
 - [x] Webpack integration
+- [x] Typescript definition file for WebGL2RenderingContext
 - [ ] Shader extraction (https://github.com/mattdesl/gl-shader-extract)
-- [ ] Typescript definition file for WebGL2RenderingContext
 
 ### Demos
 - [x] Rim Lighting

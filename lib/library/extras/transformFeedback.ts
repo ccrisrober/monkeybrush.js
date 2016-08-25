@@ -19,49 +19,51 @@
 
 
 /// <reference path="../core/core.ts" />
+/// <reference path="../core/program.ts" />
+/// <reference path="../constants/TransfFeedCte.ts" />
 
 import Core from "../core/core";
+import Program from "../core/program";
+import TransfFeedCte from "../constants/TransfFeedCte";
 
 "use strict";
 
 const gl = Core.getInstance().getGL();
 
-declare var WebGLTransformFeedback: any;
-
 class TransformFeedback {
     protected _handle: WebGLTransformFeedback;
     constructor() {
-        this._handle = (<any>gl).createTransformFeedback();
+        this._handle = gl.createTransformFeedback();
     };
     public destroy() {
-        (<any>gl).deleteTransformFeedback(this._handle);
+        gl.deleteTransformFeedback(this._handle);
     };
-    public bind(target: number) {
-        (<any>gl).bindTranformFeedback(target, this._handle);
+    public bind() {
+        gl.bindTransformFeedback(TransfFeedCte.Normal, this._handle);
     };
-    public unbind(target: number) {
-        (<any>gl).bindTransformFeedback(target, null);
+    public unbind() {
+        gl.bindTransformFeedback(TransfFeedCte.Normal, null);
     };
     public begin(primitiveMode: number) {
-        (<any>gl).beginTranformFeedback(primitiveMode);
+        gl.beginTransformFeedback(primitiveMode);
     };
     public pause() {
-        (<any>gl).pauseTranformFeedback();
+        gl.pauseTransformFeedback();
     };
     public resume() {
-        (<any>gl).resumeTransformFeedback();
+        gl.resumeTransformFeedback();
     };
     public end() {
-        (<any>gl).endTranformFeedback();
+        gl.endTransformFeedback();
     };
-    public varyings(program: number, varyings: Array<string>, bufferMode: number) {
-        return (<any>gl).transformFeedbackVaryings(program, varyings, bufferMode);
+    public varyings(program: Program, varyings: Array<string>, bufferMode: number) {
+        return gl.transformFeedbackVaryings(program.program(), varyings, bufferMode);
     };
-    public getVarying(program: number, idx: number) {
-        return (<any>gl).getTransformFeedbackVarying(program, idx);
+    public getVarying(program: Program, idx: number) {
+        return gl.getTransformFeedbackVarying(program.program(), idx);
     };
     public isValid(): boolean {
-        return (<any>gl).isTransformFeedback(this._handle);
+        return gl.isTransformFeedback(this._handle);
     };
 }
 

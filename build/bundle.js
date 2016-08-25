@@ -1,4 +1,538 @@
+var LolLib =
 /******/ (function(modules) { // webpackBootstrap
+/******/ 	var parentHotUpdateCallback = this["webpackHotUpdateLolLib"];
+/******/ 	this["webpackHotUpdateLolLib"] = 
+/******/ 	function webpackHotUpdateCallback(chunkId, moreModules) { // eslint-disable-line no-unused-vars
+/******/ 		hotAddUpdateChunk(chunkId, moreModules);
+/******/ 		if(parentHotUpdateCallback) parentHotUpdateCallback(chunkId, moreModules);
+/******/ 	}
+/******/ 	
+/******/ 	function hotDownloadUpdateChunk(chunkId) { // eslint-disable-line no-unused-vars
+/******/ 		var head = document.getElementsByTagName("head")[0];
+/******/ 		var script = document.createElement("script");
+/******/ 		script.type = "text/javascript";
+/******/ 		script.charset = "utf-8";
+/******/ 		script.src = __webpack_require__.p + "" + chunkId + "." + hotCurrentHash + ".hot-update.js";
+/******/ 		head.appendChild(script);
+/******/ 	}
+/******/ 	
+/******/ 	function hotDownloadManifest(callback) { // eslint-disable-line no-unused-vars
+/******/ 		if(typeof XMLHttpRequest === "undefined")
+/******/ 			return callback(new Error("No browser support"));
+/******/ 		try {
+/******/ 			var request = new XMLHttpRequest();
+/******/ 			var requestPath = __webpack_require__.p + "" + hotCurrentHash + ".hot-update.json";
+/******/ 			request.open("GET", requestPath, true);
+/******/ 			request.timeout = 10000;
+/******/ 			request.send(null);
+/******/ 		} catch(err) {
+/******/ 			return callback(err);
+/******/ 		}
+/******/ 		request.onreadystatechange = function() {
+/******/ 			if(request.readyState !== 4) return;
+/******/ 			if(request.status === 0) {
+/******/ 				// timeout
+/******/ 				callback(new Error("Manifest request to " + requestPath + " timed out."));
+/******/ 			} else if(request.status === 404) {
+/******/ 				// no update available
+/******/ 				callback();
+/******/ 			} else if(request.status !== 200 && request.status !== 304) {
+/******/ 				// other failure
+/******/ 				callback(new Error("Manifest request to " + requestPath + " failed."));
+/******/ 			} else {
+/******/ 				// success
+/******/ 				try {
+/******/ 					var update = JSON.parse(request.responseText);
+/******/ 				} catch(e) {
+/******/ 					callback(e);
+/******/ 					return;
+/******/ 				}
+/******/ 				callback(null, update);
+/******/ 			}
+/******/ 		};
+/******/ 	}
+/******/
+/******/ 	
+/******/ 	
+/******/ 	// Copied from https://github.com/facebook/react/blob/bef45b0/src/shared/utils/canDefineProperty.js
+/******/ 	var canDefineProperty = false;
+/******/ 	try {
+/******/ 		Object.defineProperty({}, "x", {
+/******/ 			get: function() {}
+/******/ 		});
+/******/ 		canDefineProperty = true;
+/******/ 	} catch(x) {
+/******/ 		// IE will fail on defineProperty
+/******/ 	}
+/******/ 	
+/******/ 	var hotApplyOnUpdate = true;
+/******/ 	var hotCurrentHash = "0c2eddb0aeacccc26e7c"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentModuleData = {};
+/******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
+/******/ 	
+/******/ 	function hotCreateRequire(moduleId) { // eslint-disable-line no-unused-vars
+/******/ 		var me = installedModules[moduleId];
+/******/ 		if(!me) return __webpack_require__;
+/******/ 		var fn = function(request) {
+/******/ 			if(me.hot.active) {
+/******/ 				if(installedModules[request]) {
+/******/ 					if(installedModules[request].parents.indexOf(moduleId) < 0)
+/******/ 						installedModules[request].parents.push(moduleId);
+/******/ 					if(me.children.indexOf(request) < 0)
+/******/ 						me.children.push(request);
+/******/ 				} else hotCurrentParents = [moduleId];
+/******/ 			} else {
+/******/ 				console.warn("[HMR] unexpected require(" + request + ") from disposed module " + moduleId);
+/******/ 				hotCurrentParents = [];
+/******/ 			}
+/******/ 			return __webpack_require__(request);
+/******/ 		};
+/******/ 		for(var name in __webpack_require__) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(__webpack_require__, name)) {
+/******/ 				if(canDefineProperty) {
+/******/ 					Object.defineProperty(fn, name, (function(name) {
+/******/ 						return {
+/******/ 							configurable: true,
+/******/ 							enumerable: true,
+/******/ 							get: function() {
+/******/ 								return __webpack_require__[name];
+/******/ 							},
+/******/ 							set: function(value) {
+/******/ 								__webpack_require__[name] = value;
+/******/ 							}
+/******/ 						};
+/******/ 					}(name)));
+/******/ 				} else {
+/******/ 					fn[name] = __webpack_require__[name];
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		function ensure(chunkId, callback) {
+/******/ 			if(hotStatus === "ready")
+/******/ 				hotSetStatus("prepare");
+/******/ 			hotChunksLoading++;
+/******/ 			__webpack_require__.e(chunkId, function() {
+/******/ 				try {
+/******/ 					callback.call(null, fn);
+/******/ 				} finally {
+/******/ 					finishChunkLoading();
+/******/ 				}
+/******/ 	
+/******/ 				function finishChunkLoading() {
+/******/ 					hotChunksLoading--;
+/******/ 					if(hotStatus === "prepare") {
+/******/ 						if(!hotWaitingFilesMap[chunkId]) {
+/******/ 							hotEnsureUpdateChunk(chunkId);
+/******/ 						}
+/******/ 						if(hotChunksLoading === 0 && hotWaitingFiles === 0) {
+/******/ 							hotUpdateDownloaded();
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 			});
+/******/ 		}
+/******/ 		if(canDefineProperty) {
+/******/ 			Object.defineProperty(fn, "e", {
+/******/ 				enumerable: true,
+/******/ 				value: ensure
+/******/ 			});
+/******/ 		} else {
+/******/ 			fn.e = ensure;
+/******/ 		}
+/******/ 		return fn;
+/******/ 	}
+/******/ 	
+/******/ 	function hotCreateModule(moduleId) { // eslint-disable-line no-unused-vars
+/******/ 		var hot = {
+/******/ 			// private stuff
+/******/ 			_acceptedDependencies: {},
+/******/ 			_declinedDependencies: {},
+/******/ 			_selfAccepted: false,
+/******/ 			_selfDeclined: false,
+/******/ 			_disposeHandlers: [],
+/******/ 	
+/******/ 			// Module API
+/******/ 			active: true,
+/******/ 			accept: function(dep, callback) {
+/******/ 				if(typeof dep === "undefined")
+/******/ 					hot._selfAccepted = true;
+/******/ 				else if(typeof dep === "function")
+/******/ 					hot._selfAccepted = dep;
+/******/ 				else if(typeof dep === "object")
+/******/ 					for(var i = 0; i < dep.length; i++)
+/******/ 						hot._acceptedDependencies[dep[i]] = callback;
+/******/ 				else
+/******/ 					hot._acceptedDependencies[dep] = callback;
+/******/ 			},
+/******/ 			decline: function(dep) {
+/******/ 				if(typeof dep === "undefined")
+/******/ 					hot._selfDeclined = true;
+/******/ 				else if(typeof dep === "number")
+/******/ 					hot._declinedDependencies[dep] = true;
+/******/ 				else
+/******/ 					for(var i = 0; i < dep.length; i++)
+/******/ 						hot._declinedDependencies[dep[i]] = true;
+/******/ 			},
+/******/ 			dispose: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			addDisposeHandler: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			removeDisposeHandler: function(callback) {
+/******/ 				var idx = hot._disposeHandlers.indexOf(callback);
+/******/ 				if(idx >= 0) hot._disposeHandlers.splice(idx, 1);
+/******/ 			},
+/******/ 	
+/******/ 			// Management API
+/******/ 			check: hotCheck,
+/******/ 			apply: hotApply,
+/******/ 			status: function(l) {
+/******/ 				if(!l) return hotStatus;
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			addStatusHandler: function(l) {
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			removeStatusHandler: function(l) {
+/******/ 				var idx = hotStatusHandlers.indexOf(l);
+/******/ 				if(idx >= 0) hotStatusHandlers.splice(idx, 1);
+/******/ 			},
+/******/ 	
+/******/ 			//inherit from previous dispose call
+/******/ 			data: hotCurrentModuleData[moduleId]
+/******/ 		};
+/******/ 		return hot;
+/******/ 	}
+/******/ 	
+/******/ 	var hotStatusHandlers = [];
+/******/ 	var hotStatus = "idle";
+/******/ 	
+/******/ 	function hotSetStatus(newStatus) {
+/******/ 		hotStatus = newStatus;
+/******/ 		for(var i = 0; i < hotStatusHandlers.length; i++)
+/******/ 			hotStatusHandlers[i].call(null, newStatus);
+/******/ 	}
+/******/ 	
+/******/ 	// while downloading
+/******/ 	var hotWaitingFiles = 0;
+/******/ 	var hotChunksLoading = 0;
+/******/ 	var hotWaitingFilesMap = {};
+/******/ 	var hotRequestedFilesMap = {};
+/******/ 	var hotAvailibleFilesMap = {};
+/******/ 	var hotCallback;
+/******/ 	
+/******/ 	// The update info
+/******/ 	var hotUpdate, hotUpdateNewHash;
+/******/ 	
+/******/ 	function toModuleId(id) {
+/******/ 		var isNumber = (+id) + "" === id;
+/******/ 		return isNumber ? +id : id;
+/******/ 	}
+/******/ 	
+/******/ 	function hotCheck(apply, callback) {
+/******/ 		if(hotStatus !== "idle") throw new Error("check() is only allowed in idle status");
+/******/ 		if(typeof apply === "function") {
+/******/ 			hotApplyOnUpdate = false;
+/******/ 			callback = apply;
+/******/ 		} else {
+/******/ 			hotApplyOnUpdate = apply;
+/******/ 			callback = callback || function(err) {
+/******/ 				if(err) throw err;
+/******/ 			};
+/******/ 		}
+/******/ 		hotSetStatus("check");
+/******/ 		hotDownloadManifest(function(err, update) {
+/******/ 			if(err) return callback(err);
+/******/ 			if(!update) {
+/******/ 				hotSetStatus("idle");
+/******/ 				callback(null, null);
+/******/ 				return;
+/******/ 			}
+/******/ 	
+/******/ 			hotRequestedFilesMap = {};
+/******/ 			hotAvailibleFilesMap = {};
+/******/ 			hotWaitingFilesMap = {};
+/******/ 			for(var i = 0; i < update.c.length; i++)
+/******/ 				hotAvailibleFilesMap[update.c[i]] = true;
+/******/ 			hotUpdateNewHash = update.h;
+/******/ 	
+/******/ 			hotSetStatus("prepare");
+/******/ 			hotCallback = callback;
+/******/ 			hotUpdate = {};
+/******/ 			var chunkId = 0;
+/******/ 			{ // eslint-disable-line no-lone-blocks
+/******/ 				/*globals chunkId */
+/******/ 				hotEnsureUpdateChunk(chunkId);
+/******/ 			}
+/******/ 			if(hotStatus === "prepare" && hotChunksLoading === 0 && hotWaitingFiles === 0) {
+/******/ 				hotUpdateDownloaded();
+/******/ 			}
+/******/ 		});
+/******/ 	}
+/******/ 	
+/******/ 	function hotAddUpdateChunk(chunkId, moreModules) { // eslint-disable-line no-unused-vars
+/******/ 		if(!hotAvailibleFilesMap[chunkId] || !hotRequestedFilesMap[chunkId])
+/******/ 			return;
+/******/ 		hotRequestedFilesMap[chunkId] = false;
+/******/ 		for(var moduleId in moreModules) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				hotUpdate[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(--hotWaitingFiles === 0 && hotChunksLoading === 0) {
+/******/ 			hotUpdateDownloaded();
+/******/ 		}
+/******/ 	}
+/******/ 	
+/******/ 	function hotEnsureUpdateChunk(chunkId) {
+/******/ 		if(!hotAvailibleFilesMap[chunkId]) {
+/******/ 			hotWaitingFilesMap[chunkId] = true;
+/******/ 		} else {
+/******/ 			hotRequestedFilesMap[chunkId] = true;
+/******/ 			hotWaitingFiles++;
+/******/ 			hotDownloadUpdateChunk(chunkId);
+/******/ 		}
+/******/ 	}
+/******/ 	
+/******/ 	function hotUpdateDownloaded() {
+/******/ 		hotSetStatus("ready");
+/******/ 		var callback = hotCallback;
+/******/ 		hotCallback = null;
+/******/ 		if(!callback) return;
+/******/ 		if(hotApplyOnUpdate) {
+/******/ 			hotApply(hotApplyOnUpdate, callback);
+/******/ 		} else {
+/******/ 			var outdatedModules = [];
+/******/ 			for(var id in hotUpdate) {
+/******/ 				if(Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 					outdatedModules.push(toModuleId(id));
+/******/ 				}
+/******/ 			}
+/******/ 			callback(null, outdatedModules);
+/******/ 		}
+/******/ 	}
+/******/ 	
+/******/ 	function hotApply(options, callback) {
+/******/ 		if(hotStatus !== "ready") throw new Error("apply() is only allowed in ready status");
+/******/ 		if(typeof options === "function") {
+/******/ 			callback = options;
+/******/ 			options = {};
+/******/ 		} else if(options && typeof options === "object") {
+/******/ 			callback = callback || function(err) {
+/******/ 				if(err) throw err;
+/******/ 			};
+/******/ 		} else {
+/******/ 			options = {};
+/******/ 			callback = callback || function(err) {
+/******/ 				if(err) throw err;
+/******/ 			};
+/******/ 		}
+/******/ 	
+/******/ 		function getAffectedStuff(module) {
+/******/ 			var outdatedModules = [module];
+/******/ 			var outdatedDependencies = {};
+/******/ 	
+/******/ 			var queue = outdatedModules.slice();
+/******/ 			while(queue.length > 0) {
+/******/ 				var moduleId = queue.pop();
+/******/ 				var module = installedModules[moduleId];
+/******/ 				if(!module || module.hot._selfAccepted)
+/******/ 					continue;
+/******/ 				if(module.hot._selfDeclined) {
+/******/ 					return new Error("Aborted because of self decline: " + moduleId);
+/******/ 				}
+/******/ 				if(moduleId === 0) {
+/******/ 					return;
+/******/ 				}
+/******/ 				for(var i = 0; i < module.parents.length; i++) {
+/******/ 					var parentId = module.parents[i];
+/******/ 					var parent = installedModules[parentId];
+/******/ 					if(parent.hot._declinedDependencies[moduleId]) {
+/******/ 						return new Error("Aborted because of declined dependency: " + moduleId + " in " + parentId);
+/******/ 					}
+/******/ 					if(outdatedModules.indexOf(parentId) >= 0) continue;
+/******/ 					if(parent.hot._acceptedDependencies[moduleId]) {
+/******/ 						if(!outdatedDependencies[parentId])
+/******/ 							outdatedDependencies[parentId] = [];
+/******/ 						addAllToSet(outdatedDependencies[parentId], [moduleId]);
+/******/ 						continue;
+/******/ 					}
+/******/ 					delete outdatedDependencies[parentId];
+/******/ 					outdatedModules.push(parentId);
+/******/ 					queue.push(parentId);
+/******/ 				}
+/******/ 			}
+/******/ 	
+/******/ 			return [outdatedModules, outdatedDependencies];
+/******/ 		}
+/******/ 	
+/******/ 		function addAllToSet(a, b) {
+/******/ 			for(var i = 0; i < b.length; i++) {
+/******/ 				var item = b[i];
+/******/ 				if(a.indexOf(item) < 0)
+/******/ 					a.push(item);
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// at begin all updates modules are outdated
+/******/ 		// the "outdated" status can propagate to parents if they don't accept the children
+/******/ 		var outdatedDependencies = {};
+/******/ 		var outdatedModules = [];
+/******/ 		var appliedUpdate = {};
+/******/ 		for(var id in hotUpdate) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 				var moduleId = toModuleId(id);
+/******/ 				var result = getAffectedStuff(moduleId);
+/******/ 				if(!result) {
+/******/ 					if(options.ignoreUnaccepted)
+/******/ 						continue;
+/******/ 					hotSetStatus("abort");
+/******/ 					return callback(new Error("Aborted because " + moduleId + " is not accepted"));
+/******/ 				}
+/******/ 				if(result instanceof Error) {
+/******/ 					hotSetStatus("abort");
+/******/ 					return callback(result);
+/******/ 				}
+/******/ 				appliedUpdate[moduleId] = hotUpdate[moduleId];
+/******/ 				addAllToSet(outdatedModules, result[0]);
+/******/ 				for(var moduleId in result[1]) {
+/******/ 					if(Object.prototype.hasOwnProperty.call(result[1], moduleId)) {
+/******/ 						if(!outdatedDependencies[moduleId])
+/******/ 							outdatedDependencies[moduleId] = [];
+/******/ 						addAllToSet(outdatedDependencies[moduleId], result[1][moduleId]);
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// Store self accepted outdated modules to require them later by the module system
+/******/ 		var outdatedSelfAcceptedModules = [];
+/******/ 		for(var i = 0; i < outdatedModules.length; i++) {
+/******/ 			var moduleId = outdatedModules[i];
+/******/ 			if(installedModules[moduleId] && installedModules[moduleId].hot._selfAccepted)
+/******/ 				outdatedSelfAcceptedModules.push({
+/******/ 					module: moduleId,
+/******/ 					errorHandler: installedModules[moduleId].hot._selfAccepted
+/******/ 				});
+/******/ 		}
+/******/ 	
+/******/ 		// Now in "dispose" phase
+/******/ 		hotSetStatus("dispose");
+/******/ 		var queue = outdatedModules.slice();
+/******/ 		while(queue.length > 0) {
+/******/ 			var moduleId = queue.pop();
+/******/ 			var module = installedModules[moduleId];
+/******/ 			if(!module) continue;
+/******/ 	
+/******/ 			var data = {};
+/******/ 	
+/******/ 			// Call dispose handlers
+/******/ 			var disposeHandlers = module.hot._disposeHandlers;
+/******/ 			for(var j = 0; j < disposeHandlers.length; j++) {
+/******/ 				var cb = disposeHandlers[j];
+/******/ 				cb(data);
+/******/ 			}
+/******/ 			hotCurrentModuleData[moduleId] = data;
+/******/ 	
+/******/ 			// disable module (this disables requires from this module)
+/******/ 			module.hot.active = false;
+/******/ 	
+/******/ 			// remove module from cache
+/******/ 			delete installedModules[moduleId];
+/******/ 	
+/******/ 			// remove "parents" references from all children
+/******/ 			for(var j = 0; j < module.children.length; j++) {
+/******/ 				var child = installedModules[module.children[j]];
+/******/ 				if(!child) continue;
+/******/ 				var idx = child.parents.indexOf(moduleId);
+/******/ 				if(idx >= 0) {
+/******/ 					child.parents.splice(idx, 1);
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// remove outdated dependency from module children
+/******/ 		for(var moduleId in outdatedDependencies) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)) {
+/******/ 				var module = installedModules[moduleId];
+/******/ 				var moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 				for(var j = 0; j < moduleOutdatedDependencies.length; j++) {
+/******/ 					var dependency = moduleOutdatedDependencies[j];
+/******/ 					var idx = module.children.indexOf(dependency);
+/******/ 					if(idx >= 0) module.children.splice(idx, 1);
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// Not in "apply" phase
+/******/ 		hotSetStatus("apply");
+/******/ 	
+/******/ 		hotCurrentHash = hotUpdateNewHash;
+/******/ 	
+/******/ 		// insert new code
+/******/ 		for(var moduleId in appliedUpdate) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(appliedUpdate, moduleId)) {
+/******/ 				modules[moduleId] = appliedUpdate[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// call accept handlers
+/******/ 		var error = null;
+/******/ 		for(var moduleId in outdatedDependencies) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)) {
+/******/ 				var module = installedModules[moduleId];
+/******/ 				var moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 				var callbacks = [];
+/******/ 				for(var i = 0; i < moduleOutdatedDependencies.length; i++) {
+/******/ 					var dependency = moduleOutdatedDependencies[i];
+/******/ 					var cb = module.hot._acceptedDependencies[dependency];
+/******/ 					if(callbacks.indexOf(cb) >= 0) continue;
+/******/ 					callbacks.push(cb);
+/******/ 				}
+/******/ 				for(var i = 0; i < callbacks.length; i++) {
+/******/ 					var cb = callbacks[i];
+/******/ 					try {
+/******/ 						cb(outdatedDependencies);
+/******/ 					} catch(err) {
+/******/ 						if(!error)
+/******/ 							error = err;
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// Load self accepted modules
+/******/ 		for(var i = 0; i < outdatedSelfAcceptedModules.length; i++) {
+/******/ 			var item = outdatedSelfAcceptedModules[i];
+/******/ 			var moduleId = item.module;
+/******/ 			hotCurrentParents = [moduleId];
+/******/ 			try {
+/******/ 				__webpack_require__(moduleId);
+/******/ 			} catch(err) {
+/******/ 				if(typeof item.errorHandler === "function") {
+/******/ 					try {
+/******/ 						item.errorHandler(err);
+/******/ 					} catch(err) {
+/******/ 						if(!error)
+/******/ 							error = err;
+/******/ 					}
+/******/ 				} else if(!error)
+/******/ 					error = err;
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// handle errors in accept handlers and self accepted module load
+/******/ 		if(error) {
+/******/ 			hotSetStatus("fail");
+/******/ 			return callback(error);
+/******/ 		}
+/******/ 	
+/******/ 		hotSetStatus("idle");
+/******/ 		callback(null, outdatedModules);
+/******/ 	}
+/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -13,11 +547,14 @@
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
-/******/ 			loaded: false
+/******/ 			loaded: false,
+/******/ 			hot: hotCreateModule(moduleId),
+/******/ 			parents: hotCurrentParents,
+/******/ 			children: []
 /******/ 		};
 /******/
 /******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, hotCreateRequire(moduleId));
 /******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
@@ -36,489 +573,24 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/build";
 /******/
+/******/ 	// __webpack_hash__
+/******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
+/******/ 	return hotCreateRequire(0)(0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="library/references.d.ts" />
 	"use strict";
-	
-	var App_1 = __webpack_require__(1);
-	var core_1 = __webpack_require__(2);
-	var input_1 = __webpack_require__(5);
-	var sphere_1 = __webpack_require__(13);
-	var mesh_1 = __webpack_require__(20);
-	var texture2d_1 = __webpack_require__(21);
-	var simpleTexture2d_1 = __webpack_require__(23);
-	var program_1 = __webpack_require__(24);
-	var framebuffer_1 = __webpack_require__(26);
-	var programManager_1 = __webpack_require__(28);
-	var resourceMap_1 = __webpack_require__(11);
-	var loaders_1 = __webpack_require__(29);
-	var timer_1 = __webpack_require__(12);
-	var pointLight_1 = __webpack_require__(30);
-	var vector2_1 = __webpack_require__(34);
-	var vector3_1 = __webpack_require__(33);
-	var _demoCamera_1 = __webpack_require__(35);
-	var skybox_1 = __webpack_require__(36);
-	var ProgramCte_1 = __webpack_require__(25);
-	var TextureFormat_1 = __webpack_require__(38);
-	var TextureType_1 = __webpack_require__(39);
-	"use strict";
-	var camera = new _demoCamera_1.default(new Float32Array([-2.7, -1.4, 11.8]));
-	var skybox = void 0;
-	var esferita = void 0;
-	var SimpleConfig = function SimpleConfig() {
-	    return {
-	        max: 10,
-	        resume: true
-	    };
-	};
-	var m = void 0;
-	var view = void 0;
-	var projection = void 0;
-	var tex2d = void 0;
-	var _light = new pointLight_1.default(new vector3_1.default(-5.0, 0.0, 0.0));
-	var identityMatrix = mat4.create();
-	mat4.identity(identityMatrix);
-	var model = mat4.create();
-	var angle = 0;
-	var text = SimpleConfig();
-	function loadAssets() {
-	    loaders_1.default.loadImage("assets/images/example.png", "exampleImg");
-	    // skybox
-	    loaders_1.default.loadImage("assets/images/canyon/back.jpg");
-	    loaders_1.default.loadImage("assets/images/canyon/bottom.jpg");
-	    loaders_1.default.loadImage("assets/images/canyon/front.jpg");
-	    loaders_1.default.loadImage("assets/images/canyon/left.jpg");
-	    loaders_1.default.loadImage("assets/images/canyon/right.jpg");
-	    loaders_1.default.loadImage("assets/images/canyon/top.jpg");
-	}
-	var mainShader = "prog";
-	var framebuffer = void 0;
-	function initialize(app) {
-	    esferita = new sphere_1.default(1.0, 20, 20);
-	    m = new mesh_1.default("assets/objects/teddy.json");
-	    var canvasSize = new vector2_1.default(core_1.default.getInstance().canvas().width, core_1.default.getInstance().canvas().height);
-	    skybox = new skybox_1.default("assets/images/canyon", false);
-	    framebuffer = new framebuffer_1.default([new simpleTexture2d_1.default(canvasSize, {
-	        "internalFormat": TextureFormat_1.default.RGB,
-	        "format": TextureFormat_1.default.RGB,
-	        "type": TextureFormat_1.default.Float,
-	        "minFilter": TextureType_1.default.Nearest,
-	        "magFilter": TextureType_1.default.Nearest
-	    })], canvasSize, true, true, {});
-	    // console.log(app);
-	    var webgl2 = app.webglVersion() === 2;
-	    programManager_1.default.addWithFun("prog", function () {
-	        var prog = new program_1.default();
-	        if (webgl2) {
-	            prog.addShader("./shaders/demoShader.vert", ProgramCte_1.default.shader_type.vertex, ProgramCte_1.default.mode.read_file);
-	            prog.addShader("./shaders/demoShader.frag", ProgramCte_1.default.shader_type.fragment, ProgramCte_1.default.mode.read_file);
-	        } else {
-	            prog.addShader("./shaders/demowebgl1.vert", ProgramCte_1.default.shader_type.vertex, ProgramCte_1.default.mode.read_file);
-	            prog.addShader("./shaders/demowebgl1.frag", ProgramCte_1.default.shader_type.fragment, ProgramCte_1.default.mode.read_file);
-	        }
-	        prog.compile();
-	        prog.addUniforms(["projection", "view", "model", "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
-	        return prog;
-	    });
-	    var cubeImage = resourceMap_1.default.retrieveAsset("exampleImg");
-	    tex2d = new texture2d_1.default(cubeImage, {
-	        flipY: true,
-	        minFilter: TextureType_1.default.Linear,
-	        magFilter: TextureType_1.default.Linear,
-	        wrapS: TextureType_1.default.Clamp2Edge,
-	        wrapT: TextureType_1.default.Clamp2Edge
-	    });
-	    cameraUpdateCb();
-	}
-	function cameraUpdateCb() {
-	    var canvas = core_1.default.getInstance().canvas();
-	    view = camera.GetViewMatrix();
-	    projection = camera.GetProjectionMatrix(canvas.width, canvas.height);
-	    var prog = programManager_1.default.get(mainShader);
-	    prog.use();
-	    prog.sendUniformMat4("view", view);
-	    prog.sendUniformMat4("projection", projection);
-	    prog.sendUniformVec3("viewPos", camera.position);
-	}
-	// @param dt: Global time in seconds
-	function updateScene(app, dt) {
-	    if (input_1.default.getInstance().isButtonClicked(input_1.default.mouseButton.Left)) {
-	        console.log("Mouse left clicked");
-	    }
-	    camera.timeElapsed = timer_1.default.deltaTime() / 10.0;
-	    camera.update(cameraUpdateCb);
-	    angle += timer_1.default.deltaTime() * 0.001;
-	}
-	function drawScene(app) {
-	    core_1.default.getInstance().clearColorAndDepth();
-	    var prog = programManager_1.default.get(mainShader);
-	    prog.use();
-	    tex2d.bind(0);
-	    prog.sendUniform1i("texSampler", 0);
-	    var varvar = text.max;
-	    var i = 0,
-	        j = 0,
-	        k = 0;
-	    var dd = -1;
-	    for (i = -varvar; i < varvar; i += 5.0) {
-	        for (j = -varvar; j < varvar; j += 5.0) {
-	            for (k = -varvar; k < varvar; k += 5.0) {
-	                dd *= -1;
-	                mat4.translate(model, identityMatrix, vec3.fromValues(i * 1.0, j * 1.0, k * 1.0));
-	                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-	                mat4.rotateY(model, model, angle * dd);
-	                mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
-	                prog.sendUniformMat4("model", model);
-	                m.render();
-	            }
-	        }
-	    }
-	    skybox.render(view, projection);
-	}
-	// ============================================================================================ //
-	// ============================================================================================ //
-	// ============================================================================================ //
-	// ============================================================================================ //
-	// ============================================================================================ //
-	// ============================================================================================ //
-	/**/
-	window.onload = function () {
-	    new App_1.default({
-	        webglVersion: 2,
-	        loadAssets: loadAssets,
-	        initialize: initialize,
-	        update: updateScene,
-	        draw: drawScene,
-	        cameraUpdate: cameraUpdateCb,
-	        textCB: function textCB(gui) {
-	            gui.add(text, "max", 5, 100);
-	        }
-	    }, text).start();
-	};
-	/**/
-
-/***/ },
-/* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
-	    var c = arguments.length,
-	        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
-	        d;
-	    if ((typeof Reflect === "undefined" ? "undefined" : _typeof(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
-	        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	/// <reference path="./_decorators.ts" />
-	/// <reference path="core/core.ts" />
-	/// <reference path="core/input.ts" />
-	/// <reference path="resources/resourceMap.ts" />
-	/// <reference path="extras/timer.ts" />
-	/// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
-	var _decorators_1 = __webpack_require__(40);
-	var core_1 = __webpack_require__(2);
-	var input_1 = __webpack_require__(5);
-	var resourceMap_1 = __webpack_require__(11);
-	var timer_1 = __webpack_require__(12);
-	"use strict";
-	var App = function () {
-	    function App(init, text) {
-	        _classCallCheck(this, App);
-	
-	        this._resume = true;
-	        if (!init.webglVersion) {
-	            init.webglVersion = 2;
-	        }
-	        this._appFunctions = init;
-	        console.log(this._appFunctions);
-	        this.__init__(text);
-	    }
-	
-	    _createClass(App, [{
-	        key: "webglVersion",
-	        value: function webglVersion() {
-	            return this._appFunctions.webglVersion;
-	        }
-	    }, {
-	        key: "__init__",
-	        value: function __init__(text) {
-	            core_1.default.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
-	            this.gui = new dat.GUI();
-	            this._appFunctions.textCB(this.gui);
-	            var self = this;
-	            this.gui.add(text, "resume", true).onChange(function (v) {
-	                if (v === true) {
-	                    self.resume();
-	                } else {
-	                    self.pause();
-	                }
-	            });
-	            this.stats = new Stats();
-	            this.stats.setMode(0);
-	            document.body.appendChild(this.stats.domElement);
-	            this._appFunctions.loadAssets();
-	        }
-	    }, {
-	        key: "start",
-	        value: function start() {
-	            var self = this;
-	            resourceMap_1.default.setLoadCompleteCallback(function () {
-	                console.log("ALL RESOURCES LOADED!!!!");
-	                self._appFunctions.initialize(self);
-	                // Remove loader css3 window
-	                document.getElementById("spinner").remove();
-	                try {
-	                    (function __render__(dt) {
-	                        // console.log(dt);
-	                        input_1.default.getInstance().update();
-	                        self.stats.begin();
-	                        dt *= 0.001; // convert to seconds
-	                        timer_1.default.update();
-	                        // self.__resize__();
-	                        if (self._resume) {
-	                            self._appFunctions.update(self, dt);
-	                            self._appFunctions.draw(self, dt); // Draw user function
-	                        }
-	                        self.stats.end();
-	                        requestAnimationFrame(__render__);
-	                    })(0.0);
-	                } catch (e) {
-	                    VanillaToasts.create({
-	                        title: "Error:",
-	                        text: "" + e,
-	                        type: "error"
-	                    });
-	                    throw e;
-	                }
-	            });
-	            return this;
-	        }
-	    }, {
-	        key: "pause",
-	        value: function pause() {
-	            console.log("PAUSE");
-	            this._resume = false;
-	        }
-	    }, {
-	        key: "resume",
-	        value: function resume() {
-	            console.log("RESUME");
-	            this._resume = true;
-	        }
-	    }, {
-	        key: "__resize__",
-	        value: function __resize__() {
-	            var canvas = core_1.default.getInstance().canvas();
-	            var realToCSSPixels = window.devicePixelRatio || 1;
-	            // Lookup the size the browser is displaying the canvas in CSS pixels
-	            // and compute a size needed to make our drawingbuffer match it in
-	            // device pixels.
-	            var displayWidth = Math.floor(canvas.clientWidth * realToCSSPixels);
-	            var displayHeight = Math.floor(canvas.clientHeight * realToCSSPixels);
-	            // Check if the canvas is not the same size.
-	            if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-	                // Make the canvas the same size
-	                canvas.width = displayWidth;
-	                canvas.height = displayHeight;
-	                // Set the viewport to match
-	                core_1.default.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
-	            }
-	        }
-	    }]);
-	
-	    return App;
-	}();
-	App = __decorate([_decorators_1.default.sealed], App);
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = App;
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="input.ts" />
-	/// <reference path="context.ts" />
-	/// <reference path="../constants/_constants.ts" />
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var context_1 = __webpack_require__(3);
-	var input_1 = __webpack_require__(5);
-	"use strict";
-	/**
-	* This class get WebGL2 context and animationFrame for your navigator.
-	*
-	* @class core.Core
-	*/
-	
-	var Core = function () {
-	    function Core() {
-	        _classCallCheck(this, Core);
-	
-	        if (Core._instance) {
-	            throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
-	        }
-	        this._gl = context_1.default.getContext();
-	        input_1.default.getInstance();
-	        Core._instance = this;
-	    }
-	
-	    _createClass(Core, [{
-	        key: "initialize",
-	        value: function initialize(color) {
-	            var gl = this._gl;
-	            this.init();
-	            // ToneMap.init(gl);
-	            gl.clearColor(color[0], color[1], color[2], color[3]);
-	        }
-	    }, {
-	        key: "clearColorAndDepth",
-	        value: function clearColorAndDepth() {
-	            this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
-	        }
-	    }, {
-	        key: "changeViewport",
-	        value: function changeViewport(x, y, w, h) {
-	            this._gl.viewport(x, y, w, h);
-	        }
-	    }, {
-	        key: "canvas",
-	        value: function canvas() {
-	            return this._gl.canvas;
-	        }
-	    }, {
-	        key: "init",
-	        value: function init() {
-	            depth_1.default.enable();
-	            depth_1.default.comparison(ComparisonFunc_1.default.Less);
-	            // Set images to flip y axis to match the texture coordinate space.
-	            // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-	            cull_1.default.enable();
-	            blend_1.default.disable();
-	        }
-	    }, {
-	        key: "getGL",
-	
-	        /**
-	        * Return global WebGL context
-	        *
-	        * @method getGL
-	        * @return {WebGLRenderingContext} Returns WebGL rendering context
-	        */
-	        value: function getGL() {
-	            return this._gl;
-	        }
-	    }], [{
-	        key: "getInstance",
-	        value: function getInstance() {
-	            if (!Core._instance) {
-	                console.log("Creando core");
-	                Core._instance = new Core();
-	            }
-	            return Core._instance;
-	        }
-	    }]);
-	
-	    return Core;
-	}();
-	
-	Core._instance = new Core();
-	;
-	context_1.default.getContext();
-	Core.getInstance();
-	var depth_1 = __webpack_require__(6);
-	var cull_1 = __webpack_require__(7);
-	var blend_1 = __webpack_require__(8);
-	var ComparisonFunc_1 = __webpack_require__(10);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Core;
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="./log.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var log_1 = __webpack_require__(4);
-	// TODO: in getContext, check antialias or anothers params
+	var log_1 = __webpack_require__(1);
 	
 	var Context = function () {
 	    function Context() {
@@ -579,7 +651,6 @@
 	                    }
 	                }
 	            }
-	            // Manual fallback
 	            if (!window.requestAnimationFrame) {
 	                (function () {
 	                    var lastTime = 0;
@@ -613,31 +684,10 @@
 	exports.default = Context;
 
 /***/ },
-/* 4 */
+/* 1 */
 /***/ function(module, exports) {
 
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	"use strict";
-	/// <reference path="../../typings/log4javascript.d.ts" />
-	// var log = log4javascript.getDefaultLogger();
-	// log.setLevel(log4javascript.Level.INFO);
 	
 	var consoleAppender = void 0,
 	    logger = void 0;
@@ -646,4418 +696,6 @@
 	logger.addAppender(consoleAppender);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = logger;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="context.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	// TODO: Remove Input singleton mode :S
-	
-	var Input = function () {
-	    function Input() {
-	        _classCallCheck(this, Input);
-	
-	        // Key code constants
-	        this.keys = {
-	            Left_Shift: 16,
-	            // arrows
-	            Left: 37,
-	            Up: 38,
-	            Right: 39,
-	            Down: 40,
-	            // space bar
-	            Space: 32,
-	            // numbers
-	            Zero: 48,
-	            One: 49,
-	            Two: 50,
-	            Three: 51,
-	            Four: 52,
-	            Five: 53,
-	            Six: 54,
-	            Seven: 55,
-	            Eight: 56,
-	            Nine: 57,
-	            // Alphabets
-	            A: 65,
-	            D: 68,
-	            E: 69,
-	            F: 70,
-	            G: 71,
-	            I: 73,
-	            J: 74,
-	            K: 75,
-	            L: 76,
-	            M: 77,
-	            N: 78,
-	            O: 79,
-	            P: 80,
-	            Q: 81,
-	            R: 82,
-	            S: 83,
-	            W: 87,
-	            LastKeyCode: 222
-	        };
-	        // Previous key state
-	        this._keyPreviusState = [];
-	        // Pressed keys
-	        this._isKeyPressed = [];
-	        // Click events: once an event is set, it will remain there until polled
-	        this._isKeyClicked = [];
-	        this._buttonPreviousState = [];
-	        this._isButtonPressed = [];
-	        this._isButtonClicked = [];
-	        this._mousePosX = -1;
-	        this._mousePosY = -1;
-	        if (Input._instance) {
-	            throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
-	        }
-	        for (var i = 0; i < this.keys["LastKeyCode"]; ++i) {
-	            this._isKeyPressed[i] = false;
-	            this._keyPreviusState[i] = false;
-	            this._isKeyClicked[i] = false;
-	        }
-	        for (var _i = 0; _i < 3; ++_i) {
-	            this._buttonPreviousState[_i] = false;
-	            this._isButtonClicked[_i] = false;
-	            this._isButtonPressed[_i] = false;
-	        }
-	        var self = this;
-	        // Register handles
-	        window.addEventListener("keyup", function (ev) {
-	            if (ev.keyCode === 40 || ev.keyCode === 38) {
-	                ev.preventDefault();
-	            }
-	            self._onKeyUp(ev);
-	        });
-	        window.addEventListener("keydown", function (ev) {
-	            if (ev.keyCode === 40 || ev.keyCode === 38) {
-	                ev.preventDefault();
-	            }
-	            self._onKeyDown(ev);
-	        });
-	        window.addEventListener("mousedown", function (ev) {
-	            self._onMouseDown(ev);
-	        });
-	        window.addEventListener("mousemove", function (ev) {
-	            self._onMouseMove(ev);
-	        });
-	        window.addEventListener("mouseup", function (ev) {
-	            self._onMouseUp(ev);
-	        });
-	        Input._instance = this;
-	    }
-	
-	    _createClass(Input, [{
-	        key: "update",
-	        value: function update() {
-	            for (var i = 0; i < this.keys["LastKeyCode"]; ++i) {
-	                this._isKeyClicked[i] = !this._keyPreviusState[i] && this._isKeyPressed[i];
-	                this._keyPreviusState[i] = this._isKeyPressed[i];
-	            }
-	            for (var _i2 = 0; _i2 < 3; ++_i2) {
-	                this._isButtonClicked[_i2] = !this._buttonPreviousState[_i2] && this._isButtonPressed[_i2];
-	                this._buttonPreviousState[_i2] = this._isButtonPressed[_i2];
-	            }
-	        }
-	    }, {
-	        key: "isKeyPressed",
-	        value: function isKeyPressed(keycode) {
-	            return this._isKeyPressed[keycode];
-	        }
-	    }, {
-	        key: "isKeyClicked",
-	        value: function isKeyClicked(keycode) {
-	            return this._isKeyClicked[keycode];
-	        }
-	    }, {
-	        key: "_onKeyDown",
-	        value: function _onKeyDown(ev) {
-	            this._isKeyPressed[ev.keyCode] = true;
-	        }
-	    }, {
-	        key: "_onKeyUp",
-	        value: function _onKeyUp(ev) {
-	            this._isKeyPressed[ev.keyCode] = false;
-	        }
-	    }, {
-	        key: "_onMouseMove",
-	        value: function _onMouseMove(ev) {
-	            var inside = false;
-	            var canvas = context_1.default.getContext().canvas;
-	            var bbox = canvas.getBoundingClientRect();
-	            // const x = Math.round((ev.clientX - bbox.left) * (canvas.width / bbox.width));
-	            // const y = Math.round((ev.clientY - bbox.top) * (canvas.width / bbox.width));
-	            var x = (ev.clientX - bbox.left - canvas.height / 2) / (canvas.height / 2);
-	            var y = (canvas.width / 2 - (ev.clientY - bbox.top)) / (canvas.width / 2);
-	            if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
-	                this._mousePosX = x;
-	                this._mousePosY = canvas.height - 1 - y;
-	                inside = true;
-	            }
-	            return inside;
-	        }
-	    }, {
-	        key: "_onMouseDown",
-	        value: function _onMouseDown(ev) {
-	            if (this._onMouseMove(ev)) {
-	                this._isButtonPressed[ev.button] = true;
-	            }
-	        }
-	    }, {
-	        key: "_onMouseUp",
-	        value: function _onMouseUp(ev) {
-	            this._onMouseMove(ev);
-	            this._isButtonPressed[ev.button] = false;
-	        }
-	    }, {
-	        key: "isButtonPressed",
-	        value: function isButtonPressed(button) {
-	            return this._isButtonPressed[button];
-	        }
-	    }, {
-	        key: "isButtonClicked",
-	        value: function isButtonClicked(button) {
-	            return this._isButtonClicked[button];
-	        }
-	    }, {
-	        key: "getMousePosX",
-	        value: function getMousePosX() {
-	            return this._mousePosX;
-	        }
-	    }, {
-	        key: "getMousePosY",
-	        value: function getMousePosY() {
-	            return this._mousePosY;
-	        }
-	    }], [{
-	        key: "getInstance",
-	        value: function getInstance() {
-	            return Input._instance;
-	        }
-	    }]);
-	
-	    return Input;
-	}();
-	
-	Input._instance = new Input();
-	// Mouse states
-	Input.mouseButton = {
-	    Left: 0,
-	    Middle: 1,
-	    Right: 2
-	};
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Input;
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../constants/_constants.ts" />
-	/// <reference path="context.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	
-	var Depth = function () {
-	    function Depth() {
-	        _classCallCheck(this, Depth);
-	    }
-	
-	    _createClass(Depth, null, [{
-	        key: "enable",
-	
-	        /**
-	         * Enable depth testing.
-	         */
-	        value: function enable() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.enable(gl.DEPTH_TEST);
-	        }
-	        /**
-	         * Enable writing into the depth buffer.
-	         */
-	
-	    }, {
-	        key: "use",
-	        value: function use() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.depthMask(true);
-	        }
-	        /**
-	         * Specify the mode used for depth buffer comparisons.
-	         * @param {ComparisonFunc} compFunc: Comparisor mode.
-	         */
-	
-	    }, {
-	        key: "comparison",
-	        value: function comparison(compFunc) {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.depthFunc(compFunc);
-	        }
-	        /**
-	         * Specify mapping of depth values from normalized device coordinates to window coordinates.
-	         * @param {number = 0.0} znear: Specifies the mapping of the near clipping plane to window coordinates.
-	         * @param {number = 1.0} zfar: Specifies the mapping of the far clipping plane to window coordinates.
-	         */
-	
-	    }, {
-	        key: "depthRange",
-	        value: function depthRange() {
-	            var znear = arguments.length <= 0 || arguments[0] === undefined ? 0.0 : arguments[0];
-	            var zfar = arguments.length <= 1 || arguments[1] === undefined ? 1.0 : arguments[1];
-	
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            if (znear > zfar || znear < 0.0 || zfar > 1.0) {
-	                console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
-	                return;
-	            }
-	            gl.depthRange(znear, zfar);
-	        }
-	        /**
-	         * Clear depth buffer.
-	         */
-	
-	    }, {
-	        key: "clear",
-	        value: function clear() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.clear(gl.DEPTH_BUFFER_BIT);
-	        }
-	        /**
-	         * Disable writing into the depth buffer.
-	         */
-	
-	    }, {
-	        key: "unuse",
-	        value: function unuse() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.depthMask(false);
-	        }
-	        /**
-	         * Disable depth testing.
-	         */
-	
-	    }, {
-	        key: "disable",
-	        value: function disable() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.disable(gl.DEPTH_TEST);
-	        }
-	        /**
-	         * Checks if depth test is activated
-	         * @return {boolean}: True if activated
-	         */
-	
-	    }, {
-	        key: "isEnabled",
-	        value: function isEnabled() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            return gl.isEnabled(gl.DEPTH_TEST);
-	        }
-	    }]);
-	
-	    return Depth;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Depth;
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../constants/_constants.ts" />
-	/// <reference path="context.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	
-	var Cull = function () {
-	    function Cull() {
-	        _classCallCheck(this, Cull);
-	    }
-	
-	    _createClass(Cull, null, [{
-	        key: "enable",
-	
-	        /**
-	         * Enable cullFace test.
-	         */
-	        value: function enable() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.enable(gl.CULL_FACE);
-	        }
-	        /**
-	         * Get current cullFace mode
-	         * @return {Face}: Current cullFace mode
-	         */
-	
-	    }, {
-	        key: "getMode",
-	        value: function getMode() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            return gl.getParameter(gl.CULL_FACE_MODE);
-	        }
-	        /**
-	         * Specify whether front/back-facing facets can be culled.
-	         * @param {Face} mode: Cull face mode
-	         */
-	
-	    }, {
-	        key: "setMode",
-	        value: function setMode(mode) {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.cullFace(mode);
-	        }
-	        /**
-	         * Disable cullFace test.
-	         */
-	
-	    }, {
-	        key: "disable",
-	        value: function disable() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.disable(gl.CULL_FACE);
-	        }
-	        /**
-	         * Checks if cullFace is activated
-	         * @return {boolean}: True if activated
-	         */
-	
-	    }, {
-	        key: "isEnabled",
-	        value: function isEnabled() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            return gl.isEnabled(gl.CULL_FACE);
-	        }
-	    }]);
-	
-	    return Cull;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Cull;
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../constants/_constants.ts" />
-	/// <reference path="context.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var context_1 = __webpack_require__(3);
-	var BlendingType_1 = __webpack_require__(9);
-	"use strict";
-	/**
-	 * Blend wrapper
-	 * @class Blend
-	 */
-	
-	var Blend = function () {
-	    function Blend() {
-	        _classCallCheck(this, Blend);
-	    }
-	
-	    _createClass(Blend, [{
-	        key: "getBlendEquRGB",
-	        value: function getBlendEquRGB() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            return gl.getParameter(gl.BLEND_EQUATION_RGB);
-	        }
-	    }, {
-	        key: "getBlendEquAlpha",
-	        value: function getBlendEquAlpha() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            return gl.getParameter(gl.BLEND_EQUATION_ALPHA);
-	        }
-	        /**
-	         * Set the blend color
-	         * @param {number = 0.0} red
-	         * @param {number = 0.0} green
-	         * @param {number = 0.0} blue
-	         * @param {number = 0.0} alpha
-	         */
-	
-	    }], [{
-	        key: "enable",
-	
-	        /**
-	         * Enable blending
-	         */
-	        value: function enable() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.enable(gl.BLEND);
-	        }
-	        /**
-	         * Specify the equation used for both the RGB blend equation and the Alpha blend equation
-	         * @param {BlendingEq} mode: Specifies how source and destination colors are combined
-	         */
-	
-	    }, {
-	        key: "equation",
-	        value: function equation(mode) {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.blendEquation(mode);
-	        }
-	        /**
-	         * Set the RGB blend equation and the alpha blend equation separately
-	         * @param {BlendingEq} modeRGB: Specifies the RGB blend equation,
-	         *      how thered, green, and blue components of the source and
-	         *      destination colors are combined.
-	         * @param {BlendingEq} modeAlpha: Specifies the alpha blend equation,
-	         *      how the alpha component of the source and destination colors
-	         *      are combined.
-	         */
-	
-	    }, {
-	        key: "equationSeparate",
-	        value: function equationSeparate(modeRGB, modeAlpha) {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.blendEquationSeparate(modeRGB, modeAlpha);
-	        }
-	    }, {
-	        key: "color",
-	        value: function color() {
-	            var red = arguments.length <= 0 || arguments[0] === undefined ? 0.0 : arguments[0];
-	            var green = arguments.length <= 1 || arguments[1] === undefined ? 0.0 : arguments[1];
-	            var blue = arguments.length <= 2 || arguments[2] === undefined ? 0.0 : arguments[2];
-	            var alpha = arguments.length <= 3 || arguments[3] === undefined ? 0.0 : arguments[3];
-	
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.blendColor(red, green, blue, alpha);
-	        }
-	        /**
-	         * Specify pixel arithmetic.
-	         * @param {BlendingType = BlendingType.One} sfactor: Specifies how the red,
-	         *     green, blue, and alpha source blending factors are computed.
-	         * @param {BlendingType = BlendingType.Zero} dfactor: Specifies how the red,
-	         *     green, blue, and alpha destination blending factors are computed.
-	         */
-	
-	    }, {
-	        key: "func",
-	        value: function func() {
-	            var sfactor = arguments.length <= 0 || arguments[0] === undefined ? BlendingType_1.default.One : arguments[0];
-	            var dfactor = arguments.length <= 1 || arguments[1] === undefined ? BlendingType_1.default.Zero : arguments[1];
-	
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.blendFunc(sfactor, dfactor);
-	        }
-	        /**
-	         * Specify pixel arithmetic for RGB and alpha components separately.
-	         * @param {BlendingType = BlendingType.One} rcRGB: Specifies how the red, green,
-	         *      and blue blending factors are computed.
-	         * @param {BlendingType = BlendingType.Zero} dstRGB: Specifies how the red, green,
-	         *      and blue destination blending factors are computed.
-	         * @param {BlendingType = BlendingType.One} srcAlpha: Specified how the alpha source
-	         *      blending factor is computed.
-	         * @param {BlendingType = BlendingType.Zero} dstAlpha: Specified how the alpha destination
-	         *      blending factor is computed.
-	         */
-	
-	    }, {
-	        key: "funcSeparate",
-	        value: function funcSeparate() {
-	            var srcRGB = arguments.length <= 0 || arguments[0] === undefined ? BlendingType_1.default.One : arguments[0];
-	            var dstRGB = arguments.length <= 1 || arguments[1] === undefined ? BlendingType_1.default.Zero : arguments[1];
-	            var srcAlpha = arguments.length <= 2 || arguments[2] === undefined ? BlendingType_1.default.One : arguments[2];
-	            var dstAlpha = arguments.length <= 3 || arguments[3] === undefined ? BlendingType_1.default.Zero : arguments[3];
-	
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
-	        }
-	        /**
-	         * Disable blending
-	         */
-	
-	    }, {
-	        key: "disable",
-	        value: function disable() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            gl.disable(gl.BLEND);
-	        }
-	        /**
-	         * Checks if blending is activated
-	         * @return {boolean}: True if activated
-	         */
-	
-	    }, {
-	        key: "isEnabled",
-	        value: function isEnabled() {
-	            var gl = context_1.default.getContext(); // Core.getInstance().getGL();
-	            return gl.isEnabled(gl.BLEND);
-	        }
-	    }]);
-	
-	    return Blend;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Blend;
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/context.ts" />
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	var gl = context_1.default.getContext();
-	// Blending type
-	var BlendingType;
-	(function (BlendingType) {
-	    BlendingType[BlendingType["Zero"] = gl.ZERO] = "Zero";
-	    BlendingType[BlendingType["One"] = gl.ONE] = "One";
-	    BlendingType[BlendingType["SrcColor"] = gl.SRC_COLOR] = "SrcColor";
-	    BlendingType[BlendingType["OneMinusSrcColor"] = gl.ONE_MINUS_SRC_COLOR] = "OneMinusSrcColor";
-	    BlendingType[BlendingType["SrcAlpha"] = gl.SRC_ALPHA] = "SrcAlpha";
-	    BlendingType[BlendingType["OneMinusSrcAlpha"] = gl.ONE_MINUS_SRC_ALPHA] = "OneMinusSrcAlpha";
-	    BlendingType[BlendingType["DstAlpha"] = gl.DST_ALPHA] = "DstAlpha";
-	    BlendingType[BlendingType["OneMinusDstAlpha"] = gl.ONE_MINUS_DST_ALPHA] = "OneMinusDstAlpha";
-	    BlendingType[BlendingType["DstColor"] = gl.DST_COLOR] = "DstColor";
-	    BlendingType[BlendingType["OneMinusDstColor"] = gl.ONE_MINUS_DST_COLOR] = "OneMinusDstColor";
-	    BlendingType[BlendingType["SrcAlphaSaturate"] = gl.SRC_ALPHA_SATURATE] = "SrcAlphaSaturate";
-	    BlendingType[BlendingType["CteColor"] = gl.CONSTANT_COLOR] = "CteColor";
-	    BlendingType[BlendingType["OneMinusCteColor"] = gl.ONE_MINUS_CONSTANT_COLOR] = "OneMinusCteColor";
-	    BlendingType[BlendingType["CteAlpha"] = gl.CONSTANT_ALPHA] = "CteAlpha";
-	    BlendingType[BlendingType["OneMinusCteAlpha"] = gl.ONE_MINUS_CONSTANT_ALPHA] = "OneMinusCteAlpha";
-	})(BlendingType || (BlendingType = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = BlendingType;
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/context.ts" />
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	var gl = context_1.default.getContext();
-	// Comparison function
-	var ComparisonFunc;
-	(function (ComparisonFunc) {
-	    ComparisonFunc[ComparisonFunc["Never"] = gl.NEVER] = "Never";
-	    ComparisonFunc[ComparisonFunc["Always"] = gl.ALWAYS] = "Always";
-	    ComparisonFunc[ComparisonFunc["Less"] = gl.LESS] = "Less";
-	    ComparisonFunc[ComparisonFunc["Equal"] = gl.EQUAL] = "Equal";
-	    ComparisonFunc[ComparisonFunc["NotEqual"] = gl.NOTEQUAL] = "NotEqual";
-	    ComparisonFunc[ComparisonFunc["LessEqual"] = gl.LEQUAL] = "LessEqual";
-	    ComparisonFunc[ComparisonFunc["Greater"] = gl.GREATER] = "Greater";
-	    ComparisonFunc[ComparisonFunc["GreaterEqual"] = gl.GEQUAL] = "GreaterEqual"; ///< Passes if source is greater than or equal to the destination
-	})(ComparisonFunc || (ComparisonFunc = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ComparisonFunc;
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	/// <reference path="../../typings/vanilla-toasts/vanilla-toasts.d.ts" />
-	"use strict";
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var ResourceMap;
-	(function (ResourceMap) {
-	    var MapEntry = function () {
-	        function MapEntry(resName) {
-	            _classCallCheck(this, MapEntry);
-	
-	            this._asset = resName;
-	            this._refCount = 1;
-	        }
-	
-	        _createClass(MapEntry, [{
-	            key: "getAsset",
-	            value: function getAsset() {
-	                return this._asset;
-	            }
-	        }, {
-	            key: "setAsset",
-	            value: function setAsset(name) {
-	                this._asset = name;
-	            }
-	        }, {
-	            key: "count",
-	            value: function count() {
-	                return this._refCount;
-	            }
-	        }, {
-	            key: "incCount",
-	            value: function incCount() {
-	                this._refCount++;
-	            }
-	        }, {
-	            key: "decCount",
-	            value: function decCount() {
-	                this._refCount--;
-	            }
-	        }]);
-	
-	        return MapEntry;
-	    }();
-	
-	    ResourceMap.MapEntry = MapEntry;
-	    /**
-	     * [_numOutstandingLoads description]
-	     * @type {number}
-	     */
-	    var _numOutstandingLoads = 0;
-	    /**
-	     * [_loadCompleteCallback description]
-	     * @type {Function}
-	     */
-	    var _loadCompleteCallback = null;
-	    /**
-	     * [MapEntry description]
-	     * @type {[type]}
-	     */
-	    ResourceMap._resourceMap = {};
-	    /**
-	     * @param {string}
-	     */
-	    function asyncLoadRequested(resName) {
-	        ResourceMap._resourceMap[resName] = new MapEntry(resName);
-	        ++_numOutstandingLoads;
-	    }
-	    ResourceMap.asyncLoadRequested = asyncLoadRequested;
-	    ;
-	    /**
-	     * @param {string}
-	     */
-	    function asyncLoadFailed(resName) {
-	        VanillaToasts.create({
-	            title: resName + " completed",
-	            text: "",
-	            type: "error",
-	            timeout: 2500
-	        });
-	        --_numOutstandingLoads;
-	        _checkForAllLoadCompleted();
-	    }
-	    ResourceMap.asyncLoadFailed = asyncLoadFailed;
-	    /**
-	     * @param {string}
-	     * @param {[type]}
-	     */
-	    function asyncLoadCompleted(resName, loadedAsset) {
-	        if (!isAssetLoaded(resName)) {
-	            VanillaToasts.create({
-	                title: "asyncLoadCompleted: [" + resName + "] not in map!",
-	                text: "",
-	                type: "error",
-	                timeout: 2500
-	            });
-	        }
-	        VanillaToasts.create({
-	            title: resName + " completed",
-	            text: "",
-	            type: "success",
-	            timeout: 1500
-	        });
-	        ResourceMap._resourceMap[resName].setAsset(loadedAsset);
-	        --_numOutstandingLoads;
-	        _checkForAllLoadCompleted();
-	    }
-	    ResourceMap.asyncLoadCompleted = asyncLoadCompleted;
-	    ;
-	    /**
-	     *
-	     */
-	    function _checkForAllLoadCompleted() {
-	        if (_numOutstandingLoads === 0 && _loadCompleteCallback !== null) {
-	            var funToCall = _loadCompleteCallback;
-	            _loadCompleteCallback = null;
-	            funToCall();
-	        }
-	    }
-	    ;
-	    /**
-	     * Set callback function that called when all assets have finished loading.
-	     * @param {Function}
-	     */
-	    function setLoadCompleteCallback(fn) {
-	        _loadCompleteCallback = fn;
-	        _checkForAllLoadCompleted();
-	    }
-	    ResourceMap.setLoadCompleteCallback = setLoadCompleteCallback;
-	    ;
-	    /**
-	     * Get asset from alias/name
-	     * @param  {string} resName [description]
-	     * @return {any}
-	     */
-	    function retrieveAsset(resName) {
-	        var r = null;
-	        if (resName in ResourceMap._resourceMap) {
-	            r = ResourceMap._resourceMap[resName].getAsset();
-	        } else {
-	            alert("retrieveAsset: [" + resName + "] not in map!");
-	        }
-	        return r;
-	    }
-	    ResourceMap.retrieveAsset = retrieveAsset;
-	    ;
-	    /**
-	     * Check whether the resource has already been loaded.
-	     * @param  {string} resName: Resource name
-	     * @return {boolean}: True if resource exist
-	     */
-	    function isAssetLoaded(resName) {
-	        return resName in ResourceMap._resourceMap;
-	    }
-	    ResourceMap.isAssetLoaded = isAssetLoaded;
-	    ;
-	    /**
-	     * @param {string}
-	     */
-	    function incAssetRefCount(resName) {
-	        ResourceMap._resourceMap[resName].incCount();
-	    }
-	    ResourceMap.incAssetRefCount = incAssetRefCount;
-	    ;
-	    /**
-	     * Unload a existing resource.
-	     * @param {string}
-	     */
-	    function unloadAsset(resName) {
-	        var c = 0;
-	        if (resName in ResourceMap._resourceMap) {
-	            ResourceMap._resourceMap[resName].decCount();
-	            c = ResourceMap._resourceMap[resName].count();
-	            if (c === 0) {
-	                delete ResourceMap._resourceMap[resName];
-	            }
-	        }
-	        return c;
-	    }
-	    ResourceMap.unloadAsset = unloadAsset;
-	    ;
-	})(ResourceMap || (ResourceMap = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ResourceMap;
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	
-	var Timer;
-	(function (Timer) {
-	    var _lastTime = Date.now();
-	    var _deltaTime = 0.0;
-	    var _currentTime = void 0,
-	        _timeElapsed = void 0;
-	    /**
-	     *
-	     */
-	    function update() {
-	        _currentTime = Date.now();
-	        _timeElapsed = _currentTime - _lastTime;
-	        _deltaTime = _timeElapsed;
-	        _lastTime = _currentTime;
-	    }
-	    Timer.update = update;
-	    /**
-	     * @return {number}
-	     */
-	    function deltaTime() {
-	        return _deltaTime;
-	    }
-	    Timer.deltaTime = deltaTime;
-	})(Timer || (Timer = {}));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Timer;
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="drawable.ts" />
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var drawable_1 = __webpack_require__(14);
-	"use strict";
-	/**
-	 * Sphere class
-	 * @class Sphere
-	 */
-	
-	var Sphere = function (_drawable_1$default) {
-	    _inherits(Sphere, _drawable_1$default);
-	
-	    /**
-	     * Sphere constructor
-	     * @param {number} radius [description]
-	     * @param {number} slices [description]
-	     * @param {number} stacks [description]
-	     */
-	    function Sphere(radius, slices, stacks) {
-	        _classCallCheck(this, Sphere);
-	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Sphere).call(this));
-	
-	        var nv = (slices + 1) * (stacks + 1);
-	        var elements = slices * 2 * (stacks - 1) * 3;
-	        // v
-	        var v = new Array(3 * nv);
-	        // Normals
-	        var n = new Array(3 * nv);
-	        // Tex coords
-	        var tex = new Array(2 * nv);
-	        // Elements
-	        var el = new Array(elements);
-	        // Generate the vertex data
-	        // Generate positions and normals
-	        var theta = void 0,
-	            phi = void 0;
-	        var thetaFac = Math.PI * 2.0 / slices;
-	        var phiFac = Math.PI / stacks;
-	        var nx = void 0,
-	            ny = void 0,
-	            nz = void 0,
-	            s = void 0,
-	            t = void 0;
-	        var idx = 0,
-	            tIdx = 0;
-	        for (var i = 0; i <= slices; ++i) {
-	            theta = i * thetaFac;
-	            s = i / slices;
-	            for (var j = 0; j <= stacks; ++j) {
-	                phi = j * phiFac;
-	                t = j / stacks;
-	                nx = Math.sin(phi) * Math.cos(theta);
-	                ny = Math.sin(phi) * Math.sin(theta);
-	                nz = Math.cos(phi);
-	                v[idx] = radius * nx;
-	                v[idx + 1] = radius * ny;
-	                v[idx + 2] = radius * nz;
-	                n[idx] = nx;
-	                n[idx + 1] = ny;
-	                n[idx + 2] = nz;
-	                idx += 3;
-	                tex[tIdx] = s;
-	                tex[tIdx + 1] = t;
-	                tIdx += 2;
-	            }
-	        }
-	        // Generate the element list
-	        idx = 0;
-	        for (var _i = 0; _i < slices; ++_i) {
-	            var stackStart = _i * (stacks + 1);
-	            var nextStackStart = (_i + 1) * (stacks + 1);
-	            for (var _j = 0; _j < stacks; ++_j) {
-	                if (_j === 0) {
-	                    el[idx] = stackStart;
-	                    el[idx + 1] = stackStart + 1;
-	                    el[idx + 2] = nextStackStart + 1;
-	                    idx += 3;
-	                } else if (_j === stacks - 1) {
-	                    el[idx] = stackStart + _j;
-	                    el[idx + 1] = stackStart + _j + 1;
-	                    el[idx + 2] = nextStackStart + _j;
-	                    idx += 3;
-	                } else {
-	                    el[idx] = stackStart + _j;
-	                    el[idx + 1] = stackStart + _j + 1;
-	                    el[idx + 2] = nextStackStart + _j + 1;
-	                    el[idx + 3] = nextStackStart + _j;
-	                    el[idx + 4] = stackStart + _j;
-	                    el[idx + 5] = nextStackStart + _j + 1;
-	                    idx += 6;
-	                }
-	            }
-	        }
-	        _this._handle = [];
-	        _this._vao.bind();
-	        _this.addElementArray(new Uint16Array(el));
-	        _this.addBufferArray(0, new Float32Array(v), 3);
-	        _this.addBufferArray(1, new Float32Array(n), 3);
-	        _this.addBufferArray(2, new Float32Array(tex), 2);
-	        _this._indicesLen = el.length;
-	        return _this;
-	    }
-	
-	    return Sphere;
-	}(drawable_1.default);
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Sphere;
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/core.ts" />
-	/// <reference path="../core/vertexArray.ts" />
-	/// <reference path="../core/vertexBuffer.ts" />
-	/// <reference path="../constants/_constants.ts" />
-	/// <reference path="../extras/extensions.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_ts_1 = __webpack_require__(2);
-	var vertexArray_ts_1 = __webpack_require__(15);
-	var vertexBuffer_ts_1 = __webpack_require__(17);
-	var UsageType_ts_1 = __webpack_require__(19);
-	var BufferType_ts_1 = __webpack_require__(18);
-	var extensions_1 = __webpack_require__(16);
-	"use strict";
-	var gl = core_ts_1.default.getInstance().getGL();
-	/**
-	 * Drawable abstract class
-	 * @class Drawable
-	 */
-	
-	var Drawable = function () {
-	    /**
-	     * Drawable constructor
-	     */
-	    function Drawable() {
-	        _classCallCheck(this, Drawable);
-	
-	        this._vao = new vertexArray_ts_1.default();
-	    }
-	
-	    _createClass(Drawable, [{
-	        key: "addElementArray",
-	
-	        /**
-	         * Add Element buffer object.
-	         * @param {Uint16Array} data [description]
-	         * @param {UsageType = UsageType.StaticDraw} type [description]
-	         */
-	        value: function addElementArray(data) {
-	            var type = arguments.length <= 1 || arguments[1] === undefined ? UsageType_ts_1.default.StaticDraw : arguments[1];
-	
-	            var vb = new vertexBuffer_ts_1.default(BufferType_ts_1.default.ElementArray);
-	            vb.bufferData(new Uint16Array(data), type);
-	            this._handle.push(vb);
-	            return vb;
-	        }
-	    }, {
-	        key: "addBufferArray",
-	
-	        /**
-	         * Add Vertex buffer object.
-	         * @param  {number} attribLocation [description]
-	         * @param  {Float32Array} data [description]
-	         * @param  {number} numElems [description]
-	         * @param  {UsageType = UsageType.StaticDraw} type [description]
-	         * @return {VertexBuffer} [description]
-	         */
-	        value: function addBufferArray(attribLocation, data, numElems) {
-	            var type = arguments.length <= 3 || arguments[3] === undefined ? UsageType_ts_1.default.StaticDraw : arguments[3];
-	
-	            var vb = new vertexBuffer_ts_1.default(BufferType_ts_1.default.Array);
-	            vb.bufferData(data, type);
-	            vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
-	            this._handle.push(vb);
-	            return vb;
-	        }
-	    }, {
-	        key: "render",
-	
-	        /**
-	         * Normal render
-	         */
-	        value: function render() {
-	            this._vao.bind();
-	            gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-	            this._vao.unbind();
-	        }
-	    }, {
-	        key: "renderElementInstance",
-	
-	        /**
-	         * Render with element instance mode
-	         * @param {number} numInstances: Instances to render
-	         */
-	        value: function renderElementInstance(numInstances) {
-	            this._vao.bind();
-	            if (gl instanceof WebGL2RenderingContext) {
-	                gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
-	            } else {
-	                var ext = extensions_1.default.get("ANGLE_instanced_arrays");
-	                if (ext) {
-	                    ext.drawElementsInstancedANGLE(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
-	                }
-	            }
-	            this._vao.unbind();
-	        }
-	    }, {
-	        key: "renderArrayInstance",
-	
-	        /**
-	         * Render with array instance mode
-	         * @param {number} numInstances: Instances to render
-	         */
-	        value: function renderArrayInstance(numInstances) {
-	            this._vao.bind();
-	            if (gl instanceof WebGL2RenderingContext) {
-	                gl.drawArraysInstanced(gl.TRIANGLES, 0, this._indicesLen, numInstances);
-	            } else {
-	                var ext = extensions_1.default.get("ANGLE_instanced_arrays");
-	                if (ext) {
-	                    ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this._indicesLen, numInstances);
-	                }
-	            }
-	            this._vao.unbind();
-	        }
-	    }]);
-	
-	    return Drawable;
-	}();
-	
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Drawable;
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/core.ts" />
-	/// <reference path="../extras/extensions.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_1 = __webpack_require__(2);
-	var extensions_1 = __webpack_require__(16);
-	"use strict";
-	var gl = core_1.default.getInstance().getGL();
-	
-	var VertexArray = function () {
-	    /**
-	     * Vertex array constructor
-	     * @param {WebGLVertexArrayObject} vao [description]
-	     */
-	    function VertexArray(vao /**/) {
-	        _classCallCheck(this, VertexArray);
-	
-	        if (vao !== undefined) {
-	            this._handle = vao;
-	        } else {
-	            if (gl instanceof WebGL2RenderingContext) {
-	                this._handle = gl.createVertexArray();
-	            } else {
-	                var ext = extensions_1.default.get("OES_vertex_array_object");
-	                if (ext) {
-	                    this._handle = ext.createVertexArrayOES();
-	                }
-	            }
-	        }
-	        this.bind();
-	    }
-	    /**
-	     * [wrap description]
-	     * @param {WebGLVertexArrayObject} vao [description]
-	     */
-	
-	
-	    _createClass(VertexArray, [{
-	        key: "bind",
-	
-	        /**
-	         * [bind description]
-	         */
-	        value: function bind() {
-	            if (gl instanceof WebGL2RenderingContext) {
-	                gl.bindVertexArray(this._handle);
-	                return;
-	            }
-	            var ext = extensions_1.default.get("OES_vertex_array_object");
-	            if (ext) {
-	                ext.bindVertexArrayOES(this._handle);
-	            }
-	        }
-	        /**
-	         * [unbind description]
-	         */
-	
-	    }, {
-	        key: "unbind",
-	        value: function unbind() {
-	            if (gl instanceof WebGL2RenderingContext) {
-	                gl.bindVertexArray(null);
-	                return;
-	            }
-	            var ext = extensions_1.default.get("OES_vertex_array_object");
-	            if (ext) {
-	                ext.bindVertexArrayOES(null);
-	            }
-	        }
-	        /**
-	         * Destroy vertex array
-	         */
-	
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            this.bind();
-	            if (gl instanceof WebGL2RenderingContext) {
-	                gl.deleteVertexArray(this._handle);
-	                return;
-	            }
-	            var ext = extensions_1.default.get("OES_vertex_array_object");
-	            if (ext) {
-	                ext.deleteVertexArrayOES(this._handle);
-	            }
-	        }
-	        /**
-	         * Check if current context supports VertexArray
-	         * @return {boolean} True if current context supports VertexArray
-	         */
-	
-	    }], [{
-	        key: "wrap",
-	        value: function wrap(vao /*WebGLVertexArrayObject*/) {
-	            return new VertexArray(vao);
-	        }
-	    }, {
-	        key: "isSupported",
-	        value: function isSupported() {
-	            return gl instanceof WebGL2RenderingContext || extensions_1.default.get("OES_vertex_array_object");
-	        }
-	    }]);
-	
-	    return VertexArray;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = VertexArray;
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/core.ts" />
-	
-	var core_1 = __webpack_require__(2);
-	"use strict";
-	var gl = core_1.default.getInstance().getGL();
-	// TODO: UNUSED
-	var extensions;
-	(function (extensions) {
-	    /**
-	     * [_extensions description]
-	     * @type {Object}
-	     */
-	    var _extensions = {};
-	    /**
-	     * [get description]
-	     * @param {string} name [description]
-	     */
-	    function get(name) {
-	        if (name in _extensions) {
-	            return _extensions[name];
-	        }
-	        var ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
-	        if (ext === null) {
-	            console.warn(name + " extension not supported.");
-	            return;
-	        }
-	        _extensions[name] = ext;
-	        return ext;
-	    }
-	    extensions.get = get;
-	})(extensions || (extensions = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = extensions;
-	// const ext = gl_.getExtension("OES_draw_buffers_indexed");
-	// console.log(ext);
-	/*let arr = [
-	    'OES_element_index_uint',
-	    'EXT_sRGB',
-	    'EXT_blend_minmax',
-	    'EXT_frag_depth',
-	    'WEBGL_depth_texture',
-	    'WEBKIT_WEBGL_depth_texture',
-	    'EXT_shader_texture_lod',
-	    'OES_standard_derivatives',
-	    'OES_texture_float',
-	    'OES_texture_half_float',
-	    'OES_texture_half_float_linear',
-	    'OES_vertex_array_object',
-	    'WEBGL_draw_buffers',
-	    'OES_fbo_render_mipmap',
-	    'ANGLE_instanced_arrays'
-	];
-
-	arr.forEach((v: string) => {
-	    console.log(v);
-	    console.log(gl_.getExtension(v));
-	});*/
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/core.ts" />
-	/// <reference path="../constants/_constants.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_1 = __webpack_require__(2);
-	var BufferType_1 = __webpack_require__(18);
-	var UsageType_1 = __webpack_require__(19);
-	"use strict";
-	var gl = core_1.default.getInstance().getGL();
-	
-	var VertexBuffer = function () {
-	    /**
-	     * Vertex buffer constructor
-	     * @param {BufferType = BufferType.Array}
-	     */
-	    function VertexBuffer() {
-	        var type = arguments.length <= 0 || arguments[0] === undefined ? BufferType_1.default.Array : arguments[0];
-	
-	        _classCallCheck(this, VertexBuffer);
-	
-	        /**
-	         * [_type description]
-	         * @type {BufferType}
-	         */
-	        this._type = BufferType_1.default.Array;
-	        this._buffer = gl.createBuffer();
-	        this._type = type;
-	        this.bind();
-	    }
-	    /**
-	     * [bind description]
-	     * @param {BufferType} type [description]
-	     */
-	
-	
-	    _createClass(VertexBuffer, [{
-	        key: "bind",
-	        value: function bind(type) {
-	            if (type !== undefined) {
-	                this._type = type;
-	            }
-	            gl.bindBuffer(this._type, this._buffer);
-	        }
-	        /**
-	         * [unbind description]
-	         */
-	
-	    }, {
-	        key: "unbind",
-	        value: function unbind() {
-	            gl.bindBuffer(this._type, null);
-	        }
-	        /**
-	         * [getBufferType description]
-	         * @return {BufferType} [description]
-	         */
-	
-	    }, {
-	        key: "getBufferType",
-	        value: function getBufferType() {
-	            return this._type;
-	        }
-	        /**
-	         * [getBuffer description]
-	         * @return {WebGLBuffer} [description]
-	         */
-	
-	    }, {
-	        key: "getBuffer",
-	        value: function getBuffer() {
-	            return this._buffer;
-	        }
-	        /**
-	         * [destroy description]
-	         */
-	
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            gl.bindBuffer(this._type, 0);
-	            if (!this._buffer) {
-	                gl.deleteBuffer(this._buffer);
-	            }
-	            this._buffer = null;
-	        }
-	        /**
-	         * [bufferData description]
-	         * @param {Float32Array | Uint16Array}          data  [description]
-	         * @param {UsageType    = UsageType.StaticDraw} usage [description]
-	         */
-	
-	    }, {
-	        key: "bufferData",
-	        value: function bufferData(data) {
-	            var usage = arguments.length <= 1 || arguments[1] === undefined ? UsageType_1.default.StaticDraw : arguments[1];
-	
-	            this.bind();
-	            gl.bufferData(this._type, data, usage);
-	        }
-	        /**
-	         * [attribDivisor description]
-	         * @param {number}    position [description]
-	         * @param {number}    length   [description]
-	         * @param {number}    divisor  [description]
-	         * @param {number =        0}           stride [description]
-	         */
-	
-	    }, {
-	        key: "attribDivisor",
-	        value: function attribDivisor(position, length, divisor) {
-	            var stride = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
-	
-	            this.bind();
-	            gl.enableVertexAttribArray(position);
-	            gl.vertexAttribPointer(position, length, gl.FLOAT, false, length * Float32Array.BYTES_PER_ELEMENT, 0);
-	            gl.vertexAttribDivisor(position, divisor);
-	        }
-	        /**
-	         * [vertexAttribPointer description]
-	         * @param {number}     attribLocation [description]
-	         * @param {number}     numElems       [description]
-	         * @param {number}     type           [description]
-	         * @param {boolean =              false}       normalized [description]
-	         * @param {number  =              0}           offset     [description]
-	         */
-	
-	    }, {
-	        key: "vertexAttribPointer",
-	        value: function vertexAttribPointer(attribLocation, numElems, type) {
-	            var normalized = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
-	            var offset = arguments.length <= 4 || arguments[4] === undefined ? 0 : arguments[4];
-	
-	            this.bind();
-	            gl.enableVertexAttribArray(attribLocation);
-	            gl.vertexAttribPointer(attribLocation, // Attribute location
-	            numElems, // Number of elements per attribute
-	            type, // Type of elements
-	            normalized, numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-	            offset // Offset from the beginning of a single vertex to this attribute
-	            );
-	        }
-	    }]);
-	
-	    return VertexBuffer;
-	}();
-	
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = VertexBuffer;
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/context.ts" />
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	var gl = context_1.default.getContext();
-	// Array buffer type
-	var BufferType;
-	(function (BufferType) {
-	    BufferType[BufferType["Array"] = gl.ARRAY_BUFFER] = "Array";
-	    BufferType[BufferType["ElementArray"] = gl.ELEMENT_ARRAY_BUFFER] = "ElementArray";
-	    BufferType[BufferType["TransformFeedback"] = gl.TRANSFORM_FEEDBACK_BUFFER] = "TransformFeedback";
-	    BufferType[BufferType["Uniform"] = gl.UNIFORM_BUFFER] = "Uniform";
-	    BufferType[BufferType["PixelPack"] = gl.PIXEL_PACK_BUFFER] = "PixelPack";
-	    BufferType[BufferType["PixelUnpack"] = gl.PIXEL_UNPACK_BUFFER] = "PixelUnpack";
-	    BufferType[BufferType["CopyRead"] = gl.COPY_READ_BUFFER] = "CopyRead";
-	    BufferType[BufferType["CopyWrite"] = gl.COPY_WRITE_BUFFER] = "CopyWrite";
-	})(BufferType || (BufferType = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = BufferType;
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/context.ts" />
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	var gl = context_1.default.getContext();
-	// Usage type
-	var UsageType;
-	(function (UsageType) {
-	    UsageType[UsageType["StaticDraw"] = gl.STATIC_DRAW] = "StaticDraw";
-	    UsageType[UsageType["DynamicDraw"] = gl.DYNAMIC_DRAW] = "DynamicDraw";
-	    UsageType[UsageType["StreamDraw"] = gl.STREAM_DRAW] = "StreamDraw";
-	    UsageType[UsageType["StaticRead"] = gl.STATIC_READ] = "StaticRead";
-	    UsageType[UsageType["DynamicRead"] = gl.DYNAMIC_READ] = "DynamicRead";
-	    UsageType[UsageType["StreamRead"] = gl.STREAM_READ] = "StreamRead";
-	    UsageType[UsageType["StaticCopy"] = gl.STATIC_COPY] = "StaticCopy";
-	    UsageType[UsageType["DynamicCopy"] = gl.DYNAMIC_COPY] = "DynamicCopy";
-	    UsageType[UsageType["StreamCopy"] = gl.STREAM_COPY] = "StreamCopy";
-	})(UsageType || (UsageType = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = UsageType;
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="drawable.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var drawable_1 = __webpack_require__(14);
-	"use strict";
-	/**
-	 * Mesh class
-	 * @class Mesh
-	 */
-	
-	var Mesh = function (_drawable_1$default) {
-	    _inherits(Mesh, _drawable_1$default);
-	
-	    /**
-	     * Mesh definition
-	     * @param {string} fileRoute: Json file route
-	     */
-	    function Mesh(fileRoute) {
-	        _classCallCheck(this, Mesh);
-	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Mesh).call(this));
-	
-	        _this.loadJSON(fileRoute);
-	        return _this;
-	    }
-	    /**
-	     * Vao construction
-	     * @param {[type]} model: Model object in JSON format
-	     * @param {[type]} el: Indices array
-	     */
-	
-	
-	    _createClass(Mesh, [{
-	        key: "createVAO",
-	        value: function createVAO(model, el) {
-	            this._handle = [];
-	            this._vao.bind();
-	            // console.log(model.meshes[0]);
-	            if (model.meshes[0].vertices) {
-	                var verts = model.meshes[0].vertices;
-	                this.addBufferArray(0, new Float32Array(verts), 3);
-	            }
-	            if (model.meshes[0].normals) {
-	                var norms = model.meshes[0].normals;
-	                this.addBufferArray(1, new Float32Array(norms), 3);
-	            }
-	            if (model.meshes[0].texturecoords) {
-	                var tc = model.meshes[0].texturecoords[0];
-	                this.addBufferArray(2, new Float32Array(tc), 2);
-	            }
-	            this.addElementArray(new Uint16Array(el));
-	            this._vao.unbind();
-	            this._indicesLen = el.length;
-	        }
-	        /**
-	         * Read JSON file
-	         * @param {string} url: Json file route
-	         */
-	
-	    }, {
-	        key: "loadJSON",
-	        value: function loadJSON(url) {
-	            var request = new XMLHttpRequest();
-	            request.open("GET", url, false);
-	            var self = this;
-	            request.onload = function () {
-	                if (request.status < 200 || request.status > 299) {
-	                    console.log("Error: HTTP Status " + request.status + " on resource " + url);
-	                    return {};
-	                } else {
-	                    var modelObj = JSON.parse(request.responseText);
-	                    self.createVAO(modelObj, [].concat.apply([], modelObj.meshes[0].faces));
-	                }
-	            };
-	            request.send();
-	        }
-	    }]);
-	
-	    return Mesh;
-	}(drawable_1.default);
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Mesh;
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="texture.ts" />
-	/// <reference path="texOptions.ts" />
-	/// <reference path="../extras/extensions.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var core_1 = __webpack_require__(2);
-	var texture_1 = __webpack_require__(22);
-	var extensions_1 = __webpack_require__(16);
-	"use strict";
-	var gl = core_1.default.getInstance().getGL();
-	// TODO: Es necesario realmente el tamaño??
-	
-	var Texture2D = function (_texture_1$default) {
-	    _inherits(Texture2D, _texture_1$default);
-	
-	    function Texture2D(data /*: ImageData*/) {
-	        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-	        var onSuccess = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-	
-	        _classCallCheck(this, Texture2D);
-	
-	        // options = options || {};
-	        // TODO: Support compression
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Texture2D).call(this, gl.TEXTURE_2D));
-	
-	        _this._flipY = options["flipY"] === true;
-	        _this._handle = gl.createTexture();
-	        var _internalformat = options["internalformat"] || gl.RGBA;
-	        var _format = options["format"] || gl.RGBA;
-	        var _type = options["type"] || gl.UNSIGNED_BYTE;
-	        var _level = options["level"] || 0;
-	        _this._minFilter = options["minFilter"] || gl.NEAREST;
-	        _this._magFilter = options["magFilter"] || gl.NEAREST;
-	        var wraps = options["wrap"] || [gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE];
-	        _this.bind();
-	        gl.texImage2D(_this._target, _level, // Level of details
-	        _internalformat, // Internal format
-	        _format, // Format
-	        _type, // Size of each channel
-	        data);
-	        gl.texParameteri(_this._target, gl.TEXTURE_MIN_FILTER, _this._minFilter);
-	        gl.texParameteri(_this._target, gl.TEXTURE_MAG_FILTER, _this._magFilter);
-	        _this.wrap(wraps);
-	        /*// Prevent NPOT textures
-	        // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-	        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-	        // Prevents s-coordinate wrapping (repeating).
-	        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-	        // Prevents t-coordinate wrapping (repeating).
-	        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
-	        if (onSuccess) {
-	            onSuccess();
-	        }
-	        return _this;
-	    }
-	
-	    _createClass(Texture2D, [{
-	        key: "genMipMap",
-	        value: function genMipMap() {
-	            this.bind();
-	            // TODO: Check NPOT??
-	            gl.generateMipmap(this._target);
-	        }
-	    }, {
-	        key: "wrap",
-	        value: function wrap(modes) {
-	            if (modes.length !== 2) {
-	                throw new Error("Must specify wrapS, wrapT modes");
-	            }
-	            this.bind();
-	            gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, modes[0]);
-	            gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, modes[1]);
-	            this._wraps = modes;
-	        }
-	    }, {
-	        key: "minFilter",
-	        value: function minFilter(filter) {
-	            this.bind();
-	            gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, filter);
-	            this._minFilter = filter;
-	        }
-	    }, {
-	        key: "magFilter",
-	        value: function magFilter(filter) {
-	            this.bind();
-	            gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, filter);
-	            this._magFilter = filter;
-	        }
-	    }, {
-	        key: "bind",
-	        value: function bind(slot) {
-	            if (typeof slot === "number") {
-	                gl.activeTexture(gl.TEXTURE0 + slot);
-	            }
-	            gl.bindTexture(this._target, this._handle);
-	        }
-	    }, {
-	        key: "unbind",
-	        value: function unbind() {
-	            gl.bindTexture(this._target, null);
-	        }
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            gl.deleteTexture(this._handle);
-	            this._handle = null;
-	        }
-	        /*public setPixelStorage() {
-	            //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
-	            //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
-	            //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
-	        }*/
-	        /**
-	         * Set texture anisotropic level
-	         * @param {number = 0} level: Anisotropic level
-	         */
-	
-	    }, {
-	        key: "setAnisotropic",
-	        value: function setAnisotropic() {
-	            var level = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-	
-	            level = Math.floor(level);
-	            var ext = extensions_1.default.get("EXT_texture_filter_anisotropic");
-	            var max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-	            if (max_anisotropy < level) {
-	                gl.texParameterf(this._target, ext.TEXTURE_MAX_ANISOTROPY_EXT, level);
-	            }
-	        }
-	    }]);
-	
-	    return Texture2D;
-	}(texture_1.default);
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Texture2D;
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/core.ts" />
-	/// <reference path="../maths/vector2.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_1 = __webpack_require__(2);
-	"use strict";
-	// TODO: Redimension
-	
-	var Texture = function () {
-	    function Texture(target) {
-	        _classCallCheck(this, Texture);
-	
-	        this._target = target;
-	    }
-	
-	    _createClass(Texture, [{
-	        key: "handle",
-	        value: function handle() {
-	            return this._handle;
-	        }
-	    }, {
-	        key: "setLOD",
-	        value: function setLOD(lod) {
-	            var gl = core_1.default.getInstance().getGL();
-	            if (gl instanceof WebGL2RenderingContext) {
-	                gl.texParameterf(this._target, gl.TEXTURE_MIN_LOD, lod);
-	                gl.texParameterf(this._target, gl.TEXTURE_MAX_LOD, lod);
-	            } else {
-	                console.log("TEXTURE LOD isn´t supported");
-	            }
-	        }
-	        // TODO: Move to abstract methods
-	
-	    }, {
-	        key: "getHeight",
-	        value: function getHeight() {
-	            return -1;
-	        }
-	    }, {
-	        key: "getWidth",
-	        value: function getWidth() {
-	            return -1;
-	        }
-	    }, {
-	        key: "target",
-	        get: function get() {
-	            return this._target;
-	        }
-	    }]);
-	
-	    return Texture;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Texture;
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="texture.ts" />
-	/// <reference path="texOptions.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var core_1 = __webpack_require__(2);
-	var texture_1 = __webpack_require__(22);
-	"use strict";
-	var gl = core_1.default.getInstance().getGL();
-	
-	var SimpleTexture2D = function (_texture_1$default) {
-	    _inherits(SimpleTexture2D, _texture_1$default);
-	
-	    function SimpleTexture2D(size) {
-	        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-	
-	        _classCallCheck(this, SimpleTexture2D);
-	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SimpleTexture2D).call(this, gl.TEXTURE_2D));
-	
-	        options = options || {};
-	        _this._handle = gl.createTexture();
-	        // TODO: Support compression
-	        _this._flipY = options.flipY === true;
-	        var _internalformat = options.internalFormat || gl.RGBA;
-	        var _format = options.format || gl.RGBA;
-	        var _type = options.type || gl.UNSIGNED_BYTE;
-	        var _level = options.level || 0;
-	        _this._minFilter = options.minFilter || gl.NEAREST;
-	        _this._magFilter = options.magFilter || gl.NEAREST;
-	        var wraps = [options.wrapS || gl.CLAMP_TO_EDGE, options.wrapT || gl.CLAMP_TO_EDGE];
-	        _this.bind();
-	        gl.texImage2D(_this._target, _level, // Level of details
-	        _internalformat, // Internal format
-	        size.x, size.y, 0, _format, // Format
-	        _type, // Size of each channel
-	        null);
-	        gl.texParameteri(_this._target, gl.TEXTURE_MIN_FILTER, _this._minFilter);
-	        gl.texParameteri(_this._target, gl.TEXTURE_MAG_FILTER, _this._magFilter);
-	        _this.wrap(wraps);
-	        /*// Prevent NPOT textures
-	        // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-	        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-	        // Prevents s-coordinate wrapping (repeating).
-	        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-	        // Prevents t-coordinate wrapping (repeating).
-	        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
-	        return _this;
-	    }
-	
-	    _createClass(SimpleTexture2D, [{
-	        key: "genMipMap",
-	        value: function genMipMap() {
-	            var gl = core_1.default.getInstance().getGL();
-	            this.bind();
-	            // TODO: Check NPOT??
-	            gl.generateMipmap(this._target);
-	        }
-	    }, {
-	        key: "wrap",
-	        value: function wrap(modes) {
-	            if (modes.length !== 2) {
-	                throw new Error("Must specify wrapS, wrapT modes");
-	            }
-	            this.bind();
-	            gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, modes[0]);
-	            gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, modes[1]);
-	            this._wraps = modes;
-	        }
-	    }, {
-	        key: "minFilter",
-	        value: function minFilter(filter) {
-	            this.bind();
-	            gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, filter);
-	            this._minFilter = filter;
-	        }
-	    }, {
-	        key: "magFilter",
-	        value: function magFilter(filter) {
-	            this.bind();
-	            gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, filter);
-	            this._magFilter = filter;
-	        }
-	    }, {
-	        key: "bind",
-	        value: function bind(slot) {
-	            if (typeof slot === "number") {
-	                gl.activeTexture(gl.TEXTURE0 + slot);
-	            }
-	            gl.bindTexture(this._target, this._handle);
-	        }
-	    }, {
-	        key: "unbind",
-	        value: function unbind() {
-	            gl.bindTexture(this._target, null);
-	        }
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            gl.deleteTexture(this._handle);
-	            this._handle = null;
-	        }
-	    }]);
-	
-	    return SimpleTexture2D;
-	}(texture_1.default);
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = SimpleTexture2D;
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="core.ts" />
-	/// <reference path="../constants/ProgramCte.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_1 = __webpack_require__(2);
-	var ProgramCte_1 = __webpack_require__(25);
-	"use strict";
-	/**
-	 * Program class
-	 * @class Program
-	 */
-	
-	var Program = function () {
-	    function Program() {
-	        _classCallCheck(this, Program);
-	
-	        this.uniformLocations = {};
-	        this.attribLocations = {};
-	        this._shaders = [];
-	    }
-	    /**
-	     * @param {string[]}
-	     */
-	
-	
-	    _createClass(Program, [{
-	        key: "addAttributesArgs",
-	        value: function addAttributesArgs() {
-	            for (var _len = arguments.length, attrs = Array(_len), _key = 0; _key < _len; _key++) {
-	                attrs[_key] = arguments[_key];
-	            }
-	
-	            this.addAttributes(attrs);
-	        }
-	        /**
-	         * @param {Array<string>}
-	         */
-	
-	    }, {
-	        key: "addAttributes",
-	        value: function addAttributes(attrs) {
-	            var gl = core_1.default.getInstance().getGL();
-	            for (var attr in attrs) {
-	                attr = attrs[attr];
-	                var attrID = gl.getAttribLocation(this._compiledShader, attr);
-	                if (attrID < 0) {
-	                    console.error(attr + " undefined");
-	                    continue;
-	                }
-	                this.attribLocations[attr] = attrID;
-	            }
-	        }
-	        /**
-	         * @param {string[]}
-	         */
-	
-	    }, {
-	        key: "addUniformsArgs",
-	        value: function addUniformsArgs() {
-	            for (var _len2 = arguments.length, unifs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	                unifs[_key2] = arguments[_key2];
-	            }
-	
-	            this.addUniforms(unifs);
-	        }
-	        /**
-	         * @param {Array<string>}
-	         */
-	
-	    }, {
-	        key: "addUniforms",
-	        value: function addUniforms(unifs) {
-	            var gl = core_1.default.getInstance().getGL();
-	            for (var unif in unifs) {
-	                unif = unifs[unif];
-	                var unifID = gl.getUniformLocation(this._compiledShader, unif);
-	                if (unifID < 0) {
-	                    console.error(unif + " undefined");
-	                    continue;
-	                }
-	                this.uniformLocations[unif] = unifID;
-	            }
-	        }
-	        /**
-	         * @return {WebGLProgram}
-	         */
-	
-	    }, {
-	        key: "program",
-	        value: function program() {
-	            return this._compiledShader;
-	        }
-	        /**
-	         * @param {string}
-	         * @param {shader_type}
-	         * @param {mode}
-	         */
-	
-	    }, {
-	        key: "addShader",
-	        value: function addShader(shader_, /*type: number*/st, _mode) {
-	            var gl = core_1.default.getInstance().getGL();
-	            var shader = void 0;
-	            var type = -1;
-	            if (st === ProgramCte_1.default.shader_type.vertex) {
-	                type = gl.VERTEX_SHADER;
-	            } else if (st === ProgramCte_1.default.shader_type.fragment) {
-	                type = gl.FRAGMENT_SHADER;
-	            }
-	            if (type < 0) {
-	                throw new Error("SHADER TYPE UNDEFINED");
-	            }
-	            if (_mode === ProgramCte_1.default.mode.read_file) {
-	                shader = this.loadAndCompileWithFile(shader_, type);
-	            } else if (_mode === ProgramCte_1.default.mode.read_script) {
-	                shader = this.loadAndCompile(shader_, type);
-	            } else if (_mode === ProgramCte_1.default.mode.read_text) {
-	                shader = this.loadAndCompileFromText(shader_, type);
-	            }
-	            this._shaders.push(shader);
-	        }
-	    }, {
-	        key: "_compile",
-	        value: function _compile() {
-	            var gl = core_1.default.getInstance().getGL();
-	            // Create and compile shader
-	            this._compiledShader = gl.createProgram();
-	            for (var i = 0; i < this._shaders.length; ++i) {
-	                gl.attachShader(this._compiledShader, this._shaders[i]);
-	            }
-	        }
-	    }, {
-	        key: "_link",
-	        value: function _link() {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.linkProgram(this._compiledShader);
-	            // Checkin errors
-	            if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
-	                alert("ERROR");
-	                console.warn("Error in program linking:" + gl.getProgramInfoLog(this._compiledShader));
-	                console.log({
-	                    vertex: this._vertexSource,
-	                    fragment: this._fragmentSource
-	                });
-	                throw "SHADER ERROR";
-	            }
-	            return true;
-	        }
-	        /**
-	         * Compile and link program
-	         * @return {boolean}: True if not errors
-	         */
-	
-	    }, {
-	        key: "compile",
-	        value: function compile() {
-	            var gl = core_1.default.getInstance().getGL();
-	            // Create and compile shader
-	            this._compiledShader = gl.createProgram();
-	            for (var i = 0; i < this._shaders.length; ++i) {
-	                gl.attachShader(this._compiledShader, this._shaders[i]);
-	            }
-	            gl.linkProgram(this._compiledShader);
-	            // Checkin errors
-	            if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
-	                alert("ERROR");
-	                console.warn("Error in program linking:" + gl.getProgramInfoLog(this._compiledShader));
-	                console.log({
-	                    vertex: this._vertexSource,
-	                    fragment: this._fragmentSource
-	                });
-	                throw "SHADER ERROR";
-	            }
-	            return true;
-	        }
-	        /**
-	         * @param {string}
-	         * @param {number}
-	         */
-	
-	    }, {
-	        key: "loadAndCompileWithFile",
-	        value: function loadAndCompileWithFile(filePath, shaderType) {
-	            var request = new XMLHttpRequest();
-	            request.open("GET", filePath, false);
-	            try {
-	                request.send();
-	            } catch (err) {
-	                alert("ERROR: " + filePath);
-	                console.log("ERROR: " + filePath);
-	                return null;
-	            }
-	            var shaderSource = request.responseText;
-	            if (shaderSource === null) {
-	                alert("WARNING: " + filePath + " failed");
-	                console.log(this._fragmentSource);
-	                throw "SHADER ERROR";
-	            }
-	            return this.compileShader(shaderSource, shaderType);
-	        }
-	        /**
-	         * @param {string}
-	         * @param {number}
-	         */
-	
-	    }, {
-	        key: "loadAndCompileFromText",
-	        value: function loadAndCompileFromText(shaderSource, shaderType) {
-	            if (shaderSource === null) {
-	                alert("WARNING: " + shaderSource + " failed");
-	                console.log(this._fragmentSource);
-	                throw "SHADER ERROR";
-	            }
-	            return this.compileShader(shaderSource, shaderType);
-	        }
-	        /**
-	         * @param {string}
-	         * @param {number}
-	         */
-	
-	    }, {
-	        key: "loadAndCompile",
-	        value: function loadAndCompile(id, shaderType) {
-	            var shaderText = void 0,
-	                shaderSource = void 0;
-	            // Get shader from index.html
-	            shaderText = document.getElementById(id);
-	            shaderSource = shaderText.firstChild.textContent;
-	            if (shaderSource === null) {
-	                alert("WARNING: " + id + " failed");
-	                console.log(this._fragmentSource);
-	                throw "SHADER ERROR";
-	            }
-	            return this.compileShader(shaderSource, shaderType);
-	        }
-	        /**
-	         * @param {string}
-	         * @param {number}
-	         */
-	
-	    }, {
-	        key: "compileShader",
-	        value: function compileShader(shaderSource, shaderType) {
-	            var gl = core_1.default.getInstance().getGL();
-	            var compiledShader = void 0;
-	            if (shaderType === gl.VERTEX_SHADER) {
-	                this._vertexSource = shaderSource;
-	            } else if (shaderType === gl.FRAGMENT_SHADER) {
-	                this._fragmentSource = shaderSource;
-	            }
-	            // Create shader
-	            compiledShader = gl.createShader(shaderType);
-	            // Compilate shader
-	            gl.shaderSource(compiledShader, shaderSource);
-	            gl.compileShader(compiledShader);
-	            // Check errors
-	            if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
-	                alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
-	                console.log("ERROR: " + gl.getShaderInfoLog(compiledShader));
-	                console.log({
-	                    vertex: this._vertexSource,
-	                    fragment: this._fragmentSource
-	                });
-	                throw "SHADER ERROR";
-	            }
-	            return compiledShader;
-	        }
-	        /**
-	         *
-	         */
-	
-	    }, {
-	        key: "use",
-	        value: function use() {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.useProgram(this._compiledShader);
-	        }
-	        /**
-	         *
-	         */
-	
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            var _this = this;
-	
-	            var gl = core_1.default.getInstance().getGL();
-	            this._shaders.forEach(function (shader) {
-	                gl.detachShader(_this.compileShader, shader);
-	            });
-	            gl.deleteShader(this._compiledShader);
-	        }
-	        /*
-	        protected getPropSetter(path, location, type) {
-	            // Check primitive types
-	            switch (type) {
-	                case "bool":
-	                case "int":
-	                    return "gl.uniform1i(location, value)";
-	                case "float":
-	                    return "gl.uniform1f(location, value)";
-	                case "uint":
-	                    return "gl.uniform1ui(location, value)";
-	            }
-	              // Check sampler type
-	            if (/^(u|i)?sampler(2D|3D|Cube|2DArray)$/.test(type)) {
-	                return 'gl.uniform1i(location, value)'
-	            }
-	              // Check complex matrix type
-	            if (/^mat[0-9]x[0-9]$/.test(type)) {
-	                let dims = type.substring(type.length - 3)
-	                return 'gl.uniformMatrix' + dims + 'fv(location, Boolean(transposed), value)'
-	            }
-	              // Checksimple type
-	            let vecIdx = type.indexOf('vec');
-	            let count = parseInt(type.charAt(type.length - 1), 10) || -1;
-	              if ((vecIdx === 0 || vecIdx === 1) && (count >= 1 && count <= 4)) {
-	                let vtype = type.charAt('0')
-	                switch (vtype) {
-	                    case 'b':
-	                    case 'i':
-	                        return 'gl.uniform' + count + 'iv(location, value)';
-	                    case 'u':
-	                        return 'gl.uniform' + count + 'uiv(locaiton, value)';
-	                    case 'v': // regular vecN
-	                        return 'gl.uniform' + count + 'fv(location, value)';
-	                    default:
-	                        throw new Error('unrecognized uniform type ' + type + ' for ' + path);
-	                }
-	            }
-	              let matIdx = type.indexOf('mat');
-	            count = parseInt(type.charAt(type.length - 1), 10) || -1;
-	            console.log(count);
-	              if ((matIdx === 0 || matIdx === 1) && (count >= 2 && count <= 4)) {
-	                return 'gl.uniformMatrix' + count + 'fv(location, Boolean(transposed), value)';
-	            }
-	            throw new Error('unrecognized uniform type ' + type + ' for ' + path);
-	        }
-	          public sendUniform(uniform, type) {
-	            let path = uniform;
-	            let location = this.uniformLocations[path];
-	            let setter = this.getPropSetter(path, location, type);
-	              let srcfn = `
-	            return function uniformGetSet (value, transposed) {
-	                transposed = typeof transposed !== 'undefined' ? transposed: false;
-	                location = prog.uniformLocations[name];
-	                    if (!location) {
-	                        prog.addUniforms([name]);
-	                        location = prog.uniformLocations[name];
-	                    }
-	                    if (location) {
-	                        ${setter}
-	                        //console.log("SENDED");
-	                    } else {
-	                        //console.error("ERROR");
-	                    }
-	            }`;
-	              let generated = new Function('prog', 'gl', 'name', 'location', srcfn);
-	            const gl = Core.getInstance().getGL();
-	            return generated(this, gl, uniform, location);
-	        }*/
-	        /**
-	         * @param {string}
-	         * @param {number}
-	         */
-	
-	    }, {
-	        key: "sendUniform1f",
-	        value: function sendUniform1f(name, value) {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.uniform1f(this.uniformLocations[name], value);
-	        }
-	        /**
-	         * @param {string}
-	         * @param {number}
-	         */
-	
-	    }, {
-	        key: "sendUniform1i",
-	        value: function sendUniform1i(name, value) {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.uniform1i(this.uniformLocations[name], value);
-	        }
-	        /**
-	         * @param {string}
-	         * @param {boolean}
-	         */
-	
-	    }, {
-	        key: "sendUniform1b",
-	        value: function sendUniform1b(name, value) {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.uniform1i(this.uniformLocations[name], value === true ? 1 : 0);
-	        }
-	        /**
-	         * @param {string}
-	         * @param {Float32Array}
-	         */
-	
-	    }, {
-	        key: "sendUniformVec3",
-	        value: function sendUniformVec3(name, value) {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.uniform3fv(this.uniformLocations[name], value);
-	        }
-	        /**
-	         * @param {string}
-	         * @param {Float32Array}
-	         * @param {boolean   = false}
-	         */
-	
-	    }, {
-	        key: "sendUniformMat4",
-	        value: function sendUniformMat4(name, value) {
-	            var transpose = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-	
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.uniformMatrix4fv(this.uniformLocations[name], transpose, value);
-	        }
-	    }]);
-	
-	    return Program;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Program;
-
-/***/ },
-/* 25 */
-/***/ function(module, exports) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	
-	var ProgramCte;
-	(function (ProgramCte) {
-	    (function (mode) {
-	        mode[mode["read_file"] = 0] = "read_file";
-	        mode[mode["read_script"] = 1] = "read_script";
-	        mode[mode["read_text"] = 2] = "read_text";
-	    })(ProgramCte.mode || (ProgramCte.mode = {}));
-	    var mode = ProgramCte.mode;
-	    ;
-	    (function (shader_type) {
-	        shader_type[shader_type["vertex"] = 0] = "vertex";
-	        shader_type[shader_type["fragment"] = 1] = "fragment";
-	    })(ProgramCte.shader_type || (ProgramCte.shader_type = {}));
-	    var shader_type = ProgramCte.shader_type;
-	})(ProgramCte || (ProgramCte = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProgramCte;
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="core.ts" />
-	/// <reference path="../textures/texture.ts" />
-	/// <reference path="../textures/simpleTexture2D.ts" />
-	/// <reference path="../textures/renderBufferTexture.ts" />
-	/// <reference path="..//maths/vector2.ts" />
-	///
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_1 = __webpack_require__(2);
-	var renderBufferTexture_1 = __webpack_require__(27);
-	"use strict";
-	var gl = core_1.default.getInstance().getGL();
-	// TODO: Redimension
-	// TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
-	
-	var Framebuffer = function () {
-	    // TODO: Stencil unused
-	    function Framebuffer(textures, size) {
-	        var depth = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-	        var stencil = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
-	        var options = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
-	
-	        _classCallCheck(this, Framebuffer);
-	
-	        var numColors = textures.length;
-	        if (numColors < 0) {
-	            throw new Error("must specify >= 0 color attachments");
-	        } else if (numColors > 1) {
-	            if (numColors > gl.getParameter(gl.MAX_COLOR_ATTACHMENTS)) {
-	                throw new Error("GL context doesn´t support " + numColors + " color attachments");
-	            }
-	        }
-	        options = options || {};
-	        this._colors = textures;
-	        this._size = size;
-	        this._handle = gl.createFramebuffer();
-	        gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
-	        // Each textures to fbo
-	        textures.forEach(function (texture, i) {
-	            texture.bind();
-	            // Only supported simple textures
-	            // TODO: Cubemap or texture3D
-	            var target = texture.target;
-	            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, target, texture.handle(), 0);
-	            texture.unbind(); // TODO: Unbind debería ser un abstract de texture
-	        });
-	        // TODO: Check no texture attachments (default render buffer storage)
-	        if (depth) {
-	            this._renderBuffer = new renderBufferTexture_1.default(size, gl.DEPTH_COMPONENT16, gl.DEPTH_ATTACHMENT);
-	        }
-	        /**
-	        // TODO
-	        if (depth && stencil) {
-	            this._depth = new SimpleTexture2D(size, {
-	                type: (<any>gl).UNSIGNED_INT_24_8,
-	                format: gl.DEPTH_STENCIL
-	            });
-	            let target = this._depth.target;
-	              gl.framebufferTexture2D(gl.FRAMEBUFFER,
-	                gl.DEPTH_STENCIL_ATTACHMENT,
-	                target,
-	                this._depth.handle(), 0);
-	        } else if (depth && !stencil) {
-	            this._depth = new SimpleTexture2D(size, {
-	                type: (<any>gl).UNSIGNED_SHORT,
-	                format: gl.DEPTH_COMPONENT
-	            });
-	            let target = this._depth.target;
-	              gl.framebufferTexture2D(gl.FRAMEBUFFER,
-	                gl.DEPTH_ATTACHMENT,
-	                target,
-	                this._depth.handle(), 0);
-	        } else {
-	            this._renderBuffer = new RenderBufferTexture(
-	                size,
-	                gl.STENCIL_INDEX,
-	                gl.STENCIL_ATTACHMENT
-	            );
-	        }
-	        /**/
-	        if (numColors > 1) {
-	            var drawBuffs = [];
-	            for (var i = 0; i < numColors; ++i) {
-	                drawBuffs.push(gl.COLOR_ATTACHMENT0 + i);
-	            }
-	            gl.drawBuffers(drawBuffs);
-	        }
-	        // Check status
-	        var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-	        if (status !== gl.FRAMEBUFFER_COMPLETE) {
-	            this.destroy();
-	            this.checkStatus(status);
-	        }
-	        this.unbind();
-	    }
-	
-	    _createClass(Framebuffer, [{
-	        key: "checkStatus",
-	        value: function checkStatus(status) {
-	            switch (status) {
-	                case gl.FRAMEBUFFER_UNSUPPORTED:
-	                    throw new Error("framebuffer: Framebuffer unsupported");
-	                case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-	                    throw new Error("framebuffer: Framebuffer incomplete attachment");
-	                case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-	                    throw new Error("framebuffer: Framebuffer incomplete dimensions");
-	                case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-	                    throw new Error("framebuffer: Framebuffer incomplete missing attachment");
-	                default:
-	                    throw new Error("framebuffer: Framebuffer failed for unspecified reason");
-	            }
-	        }
-	    }, {
-	        key: "bind",
-	        value: function bind() {
-	            gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
-	        }
-	    }, {
-	        key: "onlyBindTextures",
-	        value: function onlyBindTextures() {
-	            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	            this._colors.forEach(function (tex, idx) {
-	                tex.bind(idx);
-	            });
-	        }
-	    }, {
-	        key: "unbind",
-	        value: function unbind() {
-	            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	        }
-	    }, {
-	        key: "rebuild",
-	        value: function rebuild(size) {
-	            if (!size.isEqual(this._size)) {}
-	        }
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            var oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-	            if (oldBinding === this._handle) {
-	                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	            }
-	            this._colors.forEach(function (texture) {
-	                texture.destroy();
-	            });
-	            gl.deleteFramebuffer(this._handle);
-	            // Destroy depth/stencil
-	            if (this._renderBuffer) {
-	                this._renderBuffer.destroy();
-	                this._renderBuffer = null;
-	            }
-	            // Destroy depth
-	            if (this._depth) {
-	                this._depth.destroy();
-	                this._depth = null;
-	            }
-	        }
-	    }]);
-	
-	    return Framebuffer;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Framebuffer;
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../maths/vector2.ts" />
-	/// <reference path="../core/Core.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_1 = __webpack_require__(2);
-	"use strict";
-	var gl = core_1.default.getInstance().getGL();
-	
-	var RenderBufferTexture = function () {
-	    function RenderBufferTexture(size, format, attachment) {
-	        _classCallCheck(this, RenderBufferTexture);
-	
-	        this._handle = gl.createRenderbuffer();
-	        gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-	        gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
-	        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
-	        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-	    }
-	
-	    _createClass(RenderBufferTexture, [{
-	        key: "destroy",
-	        value: function destroy() {
-	            gl.deleteTexture(this._handle);
-	        }
-	    }]);
-	
-	    return RenderBufferTexture;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = RenderBufferTexture;
-
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	"use strict";
-	
-	;
-	;
-	var ProgramManager;
-	(function (ProgramManager) {
-	    /**
-	     * [Program cache]
-	     */
-	    var _progDictionary = {};
-	    /**
-	     * Get program from name
-	     * @param  {string} name: Program name
-	     * @return {Program}
-	     */
-	    function get(name) {
-	        var prog = _progDictionary[name];
-	        if (!prog) {
-	            throw new Error("Program " + name + " undefined");
-	        }
-	        return prog;
-	    }
-	    ProgramManager.get = get;
-	    /**
-	     * Execute a callback function using the specified program (name).
-	     * @param  {string} name: Program name
-	     * @param {ProgramUseCallback}: Function to execute
-	     */
-	    function getCB(name, cb) {
-	        var prog = get(name);
-	        if (!prog) {
-	            throw new Error("Program " + name + " undefined");
-	        }
-	        cb(prog);
-	    }
-	    ProgramManager.getCB = getCB;
-	    /**
-	     * Add a new program with his name and a function that creates the program.
-	     * @param {string} name: Program name
-	     * @param {ProgramCallback}: Function that creates the program (return program)
-	     */
-	    function addWithFun(name, fn) {
-	        add(name, fn());
-	    }
-	    ProgramManager.addWithFun = addWithFun;
-	    /**
-	     * Add a existing program with his name and the program.
-	     * @param {string} name: Program name.
-	     * @param {Program} prog: Existing program.
-	     */
-	    function add(name, prog) {
-	        if (!prog) {
-	            throw new Error("Program " + name + " undefined");
-	        }
-	        _progDictionary[name] = prog;
-	    }
-	    ProgramManager.add = add;
-	    /**
-	     * Destroy all programs and clear cache.
-	     */
-	    function destroy() {
-	        for (var key in _progDictionary) {
-	            _progDictionary[key].destroy();
-	        }
-	        _progDictionary = {};
-	    }
-	    ProgramManager.destroy = destroy;
-	})(ProgramManager || (ProgramManager = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProgramManager;
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="resourceMap.ts" />
-	
-	var resourceMap_1 = __webpack_require__(11);
-	"use strict";
-	var loaders;
-	(function (loaders) {
-	    function _getAlias(imageSrc, alias) {
-	        return alias.length < 1 ? imageSrc : alias;
-	    }
-	    function loadVideo(videoSrc) {
-	        /*alias = _getAlias(videoSrc, alias);
-	        if (!ResourceMap.isAssetLoaded(alias)) {
-	            // Update resources in load counter
-	            ResourceMap.asyncLoadRequested(alias);
-	              // Async request the data from server
-	            let request = new XMLHttpRequest();
-	            request.open("GET", videoSrc, true);
-	              request.responseType = "arraybuffer";
-	              request.onload = function () {
-	                // Asynchronously decode, then call the function in parameter.
-	                var video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
-	                video.src = videoSrc;
-	                ResourceMap.asyncLoadCompleted(alias, video);
-	            }.bind(this);
-	              request.send();
-	        }*/
-	        /*// Create HTML Video Element to play the video
-	        var video = document.createElement('video');
-	        video.addEventListener('canplay', function (e) {
-	            videoTexture.setSource(video);
-	        });
-	        video.src = this.videoUrl;
-	        video.crossOrigin = 'anonymous';
-	        video.loop = true;
-	        video.play();*/
-	
-	        var alias = arguments.length <= 1 || arguments[1] === undefined ? "" : arguments[1];
-	    }
-	    loaders.loadVideo = loadVideo;
-	    /**
-	     * @param {string}
-	     * @param {string = ""}
-	     */
-	    function loadImage(imageSrc) {
-	        var alias = arguments.length <= 1 || arguments[1] === undefined ? "" : arguments[1];
-	
-	        alias = _getAlias(imageSrc, alias);
-	        if (!resourceMap_1.default.isAssetLoaded(alias)) {
-	            (function () {
-	                var img = new Image();
-	                resourceMap_1.default.asyncLoadRequested(alias);
-	                img.onload = function () {
-	                    // setTimeout(function() {
-	                    resourceMap_1.default.asyncLoadCompleted(alias, img);
-	                    // }, 2500);
-	                };
-	                img.onerror = function (err) {
-	                    resourceMap_1.default.asyncLoadFailed(alias);
-	                };
-	                img.src = imageSrc;
-	            })();
-	        } else {
-	            resourceMap_1.default.incAssetRefCount(alias);
-	        }
-	    }
-	    loaders.loadImage = loadImage;
-	    /**
-	     * @param {string}
-	     */
-	    function unloadImage(imageSrc) {
-	        resourceMap_1.default.unloadAsset(imageSrc);
-	    }
-	    loaders.unloadImage = unloadImage;
-	    /**
-	     * @param {string}
-	     */
-	    function loadAudio(clipName) {
-	        var _this = this;
-	
-	        var alias = arguments.length <= 1 || arguments[1] === undefined ? "" : arguments[1];
-	
-	        alias = _getAlias(clipName, alias);
-	        if (!resourceMap_1.default.isAssetLoaded(alias)) {
-	            (function () {
-	                // Update resources in load counter
-	                resourceMap_1.default.asyncLoadRequested(alias);
-	                // Async request the data from server
-	                var request = new XMLHttpRequest();
-	                request.open("GET", clipName, true);
-	                // Specify that the request retrieves binary data.
-	                request.responseType = "arraybuffer";
-	                request.onload = function () {
-	                    // Asynchronously decode, then call the function in parameter.
-	                    this._audioContext.decodeAudioData(request.response, function (buffer) {
-	                        resourceMap_1.default.asyncLoadCompleted(alias, buffer);
-	                    });
-	                }.bind(_this);
-	                request.send();
-	            })();
-	        }
-	    }
-	    loaders.loadAudio = loadAudio;
-	    /**
-	     * @param {string}
-	     */
-	    function unloadAudio(clipName) {
-	        resourceMap_1.default.unloadAsset(clipName);
-	    }
-	    loaders.unloadAudio = unloadAudio;
-	    /**
-	     * @param {string}
-	     * @param {number}
-	     * @param {number}
-	     * @param {string = ""}
-	     */
-	    function loadHDRImage(imageSrc, width, height) {
-	        var _this2 = this;
-	
-	        var alias = arguments.length <= 3 || arguments[3] === undefined ? "" : arguments[3];
-	
-	        alias = _getAlias(imageSrc, alias);
-	        if (!resourceMap_1.default.isAssetLoaded(alias)) {
-	            (function () {
-	                resourceMap_1.default.asyncLoadRequested(alias);
-	                // Async request the data from server
-	                var request = new XMLHttpRequest();
-	                request.open("GET", imageSrc, true);
-	                // Specify that the request retrieves binary data.
-	                request.responseType = "arraybuffer";
-	                request.onload = function () {
-	                    // Asynchronously decode, then call the function in parameter.
-	                    var arrayBuffer = request.response;
-	                    if (arrayBuffer) {
-	                        var bytes = new Uint8Array(arrayBuffer);
-	                        var data = new Float32Array(width * height * 3);
-	                        var byteIdx = 0;
-	                        // skip the main header (we already assume the format, width and height)
-	                        for (; byteIdx < bytes.length; byteIdx++) {
-	                            if (bytes[byteIdx] === 0x0A && bytes[byteIdx + 1] === 0x0A) {
-	                                byteIdx = byteIdx + 2;
-	                                break;
-	                            }
-	                        }
-	                        // skip the resolution bit
-	                        for (; byteIdx < bytes.length; byteIdx++) {
-	                            if (bytes[byteIdx] === 0x0A) {
-	                                byteIdx = byteIdx + 1;
-	                                break;
-	                            }
-	                        }
-	                        var idx = 0;
-	                        for (var row = 0; row < height; row++) {
-	                            for (var col = 0; col < width; col++) {
-	                                var r = bytes[byteIdx++];
-	                                var g = bytes[byteIdx++];
-	                                var b = bytes[byteIdx++];
-	                                var e = bytes[byteIdx++];
-	                                var expFactor = Math.pow(2, e - 128);
-	                                data[idx++] = r / 256 * expFactor;
-	                                data[idx++] = g / 256 * expFactor;
-	                                data[idx++] = b / 256 * expFactor;
-	                            }
-	                        }
-	                        resourceMap_1.default.asyncLoadCompleted(alias, data);
-	                    }
-	                }.bind(_this2);
-	                request.send();
-	            })();
-	        } else {
-	            resourceMap_1.default.incAssetRefCount(alias);
-	        }
-	    }
-	    loaders.loadHDRImage = loadHDRImage;
-	    /**
-	     * @param {string}
-	     */
-	    function unloadHDRImage(imageSrc) {
-	        resourceMap_1.default.unloadAsset(imageSrc);
-	    }
-	    loaders.unloadHDRImage = unloadHDRImage;
-	})(loaders || (loaders = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = loaders;
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="light.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var light_1 = __webpack_require__(31);
-	var vector3_1 = __webpack_require__(33);
-	"use strict";
-	// TODO: Replace Vector3 to Vect3
-	/**
-	 * Point light class
-	 * @class PointLight
-	 */
-	
-	var PointLight = function (_light_1$default) {
-	  _inherits(PointLight, _light_1$default);
-	
-	  /**
-	   * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
-	   */
-	  function PointLight() {
-	    var position = arguments.length <= 0 || arguments[0] === undefined ? new vector3_1.default(0.0, 0.0, 0.0) : arguments[0];
-	
-	    _classCallCheck(this, PointLight);
-	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PointLight).call(this));
-	
-	    _this._position = position;
-	    return _this;
-	  }
-	  /**
-	   * Get light position
-	   * @return {Vector3<number>}
-	   */
-	
-	
-	  _createClass(PointLight, [{
-	    key: "addTransform",
-	
-	    /**
-	     * Increment position from current position
-	     * @param {number = 0.0} x
-	     * @param {number = 0.0} y
-	     * @param {number = 0.0} z
-	     */
-	    value: function addTransform() {
-	      var x = arguments.length <= 0 || arguments[0] === undefined ? 0.0 : arguments[0];
-	      var y = arguments.length <= 1 || arguments[1] === undefined ? 0.0 : arguments[1];
-	      var z = arguments.length <= 2 || arguments[2] === undefined ? 0.0 : arguments[2];
-	
-	      this._position.x += x;
-	      this._position.y += y;
-	      this._position.z += z;
-	    }
-	  }, {
-	    key: "position",
-	    get: function get() {
-	      return this._position;
-	    }
-	    /**
-	     * Set light position
-	     * @param {Vector3<number>} position
-	     */
-	    ,
-	    set: function set(position) {
-	      this._position = position;
-	    }
-	  }]);
-	
-	  return PointLight;
-	}(light_1.default);
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = PointLight;
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../extras/color.ts" />
-	/// <reference path="../maths/vector3.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var color_1 = __webpack_require__(32);
-	var vector3_1 = __webpack_require__(33);
-	"use strict";
-	// TODO: Replace Vector3 to Vect3
-	/**
-	 * Light abstract class
-	 * @class Light
-	 */
-	
-	var Light = function () {
-	  function Light() {
-	    _classCallCheck(this, Light);
-	
-	    this._intensity = 1.0;
-	    this._color = new color_1.default(1.0, 1.0, 1.0);
-	    this._enable = true;
-	    this._attenuation = new vector3_1.default(1.0, // Constant
-	    0.014, // Linear
-	    0.0007 // Quadratic
-	    );
-	  }
-	  /**
-	   * Set constant attenuation value.
-	   * @param {number} v: Constant attenuation value.
-	   */
-	
-	
-	  _createClass(Light, [{
-	    key: "setConstantAtt",
-	    value: function setConstantAtt(value) {
-	      this._attenuation.x = value;
-	    }
-	    /**
-	     * Set linear attenuation value.
-	     * @param {number} v: Linear attenuation value.
-	     */
-	
-	  }, {
-	    key: "setLinearAtt",
-	    value: function setLinearAtt(value) {
-	      this._attenuation.y = value;
-	    }
-	    /**
-	     * Set quadratic attenuation value.
-	     * @param {number} v: Quadratic attenuation value.
-	     */
-	
-	  }, {
-	    key: "setQuadraticAtt",
-	    value: function setQuadraticAtt(value) {
-	      this._attenuation.z = value;
-	    }
-	    /**
-	     * Get light attenuation value.
-	     * @return {Vector3<number>}
-	     */
-	
-	  }, {
-	    key: "attenuation",
-	    get: function get() {
-	      return this._attenuation;
-	    }
-	    /**
-	     * Get light intensity.
-	     * @return {number}
-	     */
-	
-	  }, {
-	    key: "intensity",
-	    get: function get() {
-	      return this._intensity;
-	    }
-	    /**
-	     * Set light intensity.
-	     * @param {number} intensity: Light intensity.
-	     */
-	    ,
-	    set: function set(intensity) {
-	      this._intensity = intensity;
-	    }
-	    /**
-	     * Get light color.
-	     * @return {Color}
-	     */
-	
-	  }, {
-	    key: "color",
-	    get: function get() {
-	      return this._color;
-	    }
-	    /**
-	     * Set light color
-	     * @param {Color} color: Color value
-	     */
-	    ,
-	    set: function set(color) {
-	      this._color = color;
-	    }
-	  }]);
-	
-	  return Light;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Light;
-
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	// TODO: Change _color to Vector3
-	"use strict";
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Color = function () {
-	  /**
-	   * [constructor description]
-	   * @param {number} r [description]
-	   * @param {number} g [description]
-	   * @param {number} b [description]
-	   */
-	  function Color(r, g, b) {
-	    _classCallCheck(this, Color);
-	
-	    /**
-	     * [Array description]
-	     * @param {[type]} 3 [description]
-	     */
-	    this._color = new Array(3);
-	    this.setRGB(r, g, b);
-	  }
-	  /**
-	   * @return {number}
-	   */
-	
-	
-	  _createClass(Color, [{
-	    key: "setRGB",
-	
-	    /**
-	     * [setRGB description]
-	     * @param  {number} r [description]
-	     * @param  {number} g [description]
-	     * @param  {number} b [description]
-	     * @return {Color}    [description]
-	     */
-	    value: function setRGB(r, g, b) {
-	      this.r = r;
-	      this.g = g;
-	      this.b = b;
-	      return this;
-	    }
-	    /**
-	     * [toHSL description]
-	     * @return {Color} [description]
-	     */
-	
-	  }, {
-	    key: "toHSL",
-	    value: function toHSL() {
-	      var max = Math.max(this.r, this.g, this.b),
-	          min = Math.min(this.r, this.g, this.b);
-	      var h = void 0,
-	          s = void 0,
-	          l = (max + min) / 2;
-	      if (max === min) {
-	        h = s = 0; // achromatic
-	      } else {
-	        var d = max - min;
-	        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-	        switch (max) {
-	          case this.r:
-	            h = (this.g - this.b) / d + (this.g < this.b ? 6 : 0);
-	            break;
-	          case this.g:
-	            h = (this.b - this.r) / d + 2;
-	            break;
-	          case this.b:
-	            h = (this.r - this.g) / d + 4;
-	            break;
-	        }
-	        h /= 6;
-	      }
-	      return new Color(h, s, l);
-	    }
-	  }, {
-	    key: "r",
-	    get: function get() {
-	      return this._color[0];
-	    }
-	    /**
-	     * @return {number}
-	     */
-	    ,
-	
-	    /**
-	     * @param {number}
-	     */
-	    set: function set(r) {
-	      this._color[0] = r;
-	    }
-	    /**
-	     * @param {number}
-	     */
-	
-	  }, {
-	    key: "g",
-	    get: function get() {
-	      return this._color[1];
-	    }
-	    /**
-	     * @return {number}
-	     */
-	    ,
-	    set: function set(g) {
-	      this._color[1] = g;
-	    }
-	    /**
-	     * @param {number}
-	     */
-	
-	  }, {
-	    key: "b",
-	    get: function get() {
-	      return this._color[2];
-	    },
-	    set: function set(b) {
-	      this._color[2] = b;
-	    }
-	  }]);
-	
-	  return Color;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Color;
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/**
-	 * Vector3<T> class
-	 * @class Vector3<T>
-	 */
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Vector3 = function () {
-	  /**
-	   * Vector3<T> constructor
-	   * @param {T} x: First value
-	   * @param {T} y: Second value
-	   * @param {T} z: Third value
-	   */
-	  function Vector3(x, y, z) {
-	    _classCallCheck(this, Vector3);
-	
-	    this.x = x;
-	    this.y = y;
-	    this.z = z;
-	  }
-	  /**
-	   * Check if two vector3<T> are equals
-	   * @param  {Vector3<T>} other: Second vector
-	   * @return {boolean}: True if both equals
-	   */
-	
-	
-	  _createClass(Vector3, [{
-	    key: "isEqual",
-	    value: function isEqual(other) {
-	      return this.x === other.x && this.y === other.y && this.z === other.z;
-	    }
-	  }]);
-	
-	  return Vector3;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Vector3;
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/**
-	 * Vector2<T> class
-	 * @class Vector2<T>
-	 */
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Vector2 = function () {
-	  /**
-	   * Vector2<T> constructor
-	   * @param {T} x: First value
-	   * @param {T} y: Second value
-	   */
-	  function Vector2(x, y) {
-	    _classCallCheck(this, Vector2);
-	
-	    this.x = x;
-	    this.y = y;
-	  }
-	  /**
-	   * Check if two vector2<T> are equals
-	   * @param  {Vector2<T>} other: Second vector
-	   * @return {boolean}: True if both equals
-	   */
-	
-	
-	  _createClass(Vector2, [{
-	    key: "isEqual",
-	    value: function isEqual(other) {
-	      return this.x === other.x && this.y === other.y;
-	    }
-	  }]);
-	
-	  return Vector2;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Vector2;
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="core/input.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var input_1 = __webpack_require__(5);
-	"use strict";
-	
-	var Camera2 = function () {
-	    function Camera2() {
-	        var position = arguments.length <= 0 || arguments[0] === undefined ? vec3.fromValues(0, 0, 0) : arguments[0];
-	        var up = arguments.length <= 1 || arguments[1] === undefined ? vec3.fromValues(0, 1, 0) : arguments[1];
-	        var yaw = arguments.length <= 2 || arguments[2] === undefined ? -90.0 : arguments[2];
-	        var pitch = arguments.length <= 3 || arguments[3] === undefined ? 0.0 : arguments[3];
-	
-	        _classCallCheck(this, Camera2);
-	
-	        // Camera options
-	        this.movSpeed = 0.05;
-	        this.mouseSensivity = 0.25;
-	        this._updateCamera = false;
-	        this.view = mat4.create();
-	        this.proj = mat4.create();
-	        this.front = vec3.fromValues(0, 0, -1);
-	        this.position = position;
-	        this.worldUp = up;
-	        this.yaw = yaw;
-	        this.pitch = pitch;
-	        this.right = vec3.create();
-	        this.up = vec3.create();
-	        this.updateCameraVectors();
-	    }
-	
-	    _createClass(Camera2, [{
-	        key: "GetPos",
-	        value: function GetPos() {
-	            return this.position;
-	        }
-	    }, {
-	        key: "update",
-	        value: function update(callback) {
-	            this._updateCamera = false;
-	            var speed = 1.0;
-	            if (input_1.default.getInstance().isKeyPressed(input_1.default.getInstance().keys.Left_Shift)) {
-	                speed = 2.5;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(input_1.default.getInstance().keys.W)) {
-	                this.processKeyboard(4, speed);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(input_1.default.getInstance().keys.S)) {
-	                this.processKeyboard(5, speed);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(input_1.default.getInstance().keys.A)) {
-	                this.processKeyboard(2, speed);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(input_1.default.getInstance().keys.D)) {
-	                this.processKeyboard(3, speed);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(input_1.default.getInstance().keys.E)) {
-	                this.processKeyboard(0, speed);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(input_1.default.getInstance().keys.Q)) {
-	                this.processKeyboard(1, speed);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(38)) {
-	                this.processMouseMovement(0.0, 2.5);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(40)) {
-	                this.processMouseMovement(0.0, -2.5);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(37)) {
-	                // this.processMouseMovement(2.5, 0.0);
-	                this.processMouseMovement(-2.5, 0.0);
-	                this._updateCamera = true;
-	            }
-	            if (input_1.default.getInstance().isKeyPressed(39)) {
-	                // this.processMouseMovement(-2.5, 0.0);
-	                this.processMouseMovement(2.5, 0.0);
-	                this._updateCamera = true;
-	            }
-	            if (this._updateCamera && callback) {
-	                callback();
-	            }
-	        }
-	    }, {
-	        key: "processKeyboard",
-	        value: function processKeyboard(direction) {
-	            var speed = arguments.length <= 1 || arguments[1] === undefined ? 1.0 : arguments[1];
-	
-	            if (this.timeElapsed > 25) {
-	                return;
-	            }
-	            var velocity = this.movSpeed * this.timeElapsed * speed;
-	            // console.log(direction);
-	            if (direction === 0) {
-	                this.position = vec3.scaleAndAdd(this.position, this.position, this.front, velocity);
-	            } else if (direction === 1) {
-	                this.position = vec3.scaleAndAdd(this.position, this.position, this.front, -velocity);
-	            } else if (direction === 2) {
-	                this.position = vec3.scaleAndAdd(this.position, this.position, this.right, -velocity);
-	            } else if (direction === 3) {
-	                this.position = vec3.scaleAndAdd(this.position, this.position, this.right, velocity);
-	            } else if (direction === 4) {
-	                this.position = vec3.scaleAndAdd(this.position, this.position, this.up, velocity);
-	            } else if (direction === 5) {
-	                this.position = vec3.scaleAndAdd(this.position, this.position, this.up, -velocity);
-	            }
-	        }
-	    }, {
-	        key: "processMouseMovement",
-	        value: function processMouseMovement(xOffset, yOffset) {
-	            xOffset *= this.movSpeed * 2.0 * this.timeElapsed;
-	            yOffset *= this.movSpeed * 2.0 * this.timeElapsed;
-	            this.yaw += xOffset;
-	            this.pitch += yOffset;
-	            if (this.pitch > 89.0) {
-	                this.pitch = 89.0;
-	            }
-	            if (this.pitch < -89.0) {
-	                this.pitch = -89.0;
-	            }
-	            this.updateCameraVectors();
-	        }
-	    }, {
-	        key: "updateCameraVectors",
-	        value: function updateCameraVectors() {
-	            var front = vec3.fromValues(Math.cos(glMatrix.toRadian(this.yaw)) * Math.cos(glMatrix.toRadian(this.pitch)), Math.sin(glMatrix.toRadian(this.pitch)), Math.sin(glMatrix.toRadian(this.yaw)) * Math.cos(glMatrix.toRadian(this.pitch)));
-	            this.front = vec3.normalize(this.front, front);
-	            // Recalculate right and up vector
-	            this.right = vec3.cross(this.right, this.front, this.worldUp);
-	            this.right = vec3.normalize(this.right, this.right);
-	            this.up = vec3.cross(this.up, this.right, this.front);
-	            this.up = vec3.normalize(this.up, this.up);
-	        }
-	    }, {
-	        key: "GetViewMatrix",
-	        value: function GetViewMatrix() {
-	            var aux = vec3.create();
-	            this.view = mat4.lookAt(this.view, this.position, vec3.add(aux, this.position, this.front), this.up);
-	            return this.view;
-	        }
-	    }, {
-	        key: "GetOrthoProjectionMatrix",
-	        value: function GetOrthoProjectionMatrix(w, h) {
-	            var ymax = 0.001 * Math.tan(45.0 * Math.PI / 360);
-	            var ymin = -ymax;
-	            var xmin = ymin * (w * 1.0) / (h * 1.0);
-	            var xmax = ymax * (w * 1.0) / (h * 1.0);
-	            this.proj = mat4.ortho(this.proj, xmin, xmax, ymin, ymax, 0.001, 1000.0);
-	            return this.proj;
-	        }
-	    }, {
-	        key: "GetProjectionMatrix",
-	        value: function GetProjectionMatrix(w, h) {
-	            this.proj = mat4.perspective(this.proj, 45.0, w * 1.0 / (h * 1.0), 0.001, 1000.0);
-	            // this.proj = mat4.ortho(this.proj, -10.0, 10.0, -10.0, 10.0, 0.001, 1000.0);
-	            return this.proj;
-	        }
-	    }]);
-	
-	    return Camera2;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Camera2;
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/core.ts" />
-	/// <reference path="../core/program.ts" />
-	/// <reference path="../resources/resourceMap.ts" />
-	/// <reference path="../textures/cubemapTexture.ts" />
-	/// <reference path="../core/depth.ts" />
-	/// <reference path="../constants/ProgramCte.ts" />
-	/// <reference path="../constants/ComparisonFunc.ts" />
-	/// <reference path="../core/vertexBuffer.ts" />
-	/// <reference path="../core/vertexArray.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var core_ts_1 = __webpack_require__(2);
-	var program_ts_1 = __webpack_require__(24);
-	var resourceMap_ts_1 = __webpack_require__(11);
-	var cubemapTexture_ts_1 = __webpack_require__(37);
-	var depth_ts_1 = __webpack_require__(6);
-	var ProgramCte_1 = __webpack_require__(25);
-	var ComparisonFunc_1 = __webpack_require__(10);
-	var vertexBuffer_ts_1 = __webpack_require__(17);
-	var vertexArray_1 = __webpack_require__(15);
-	var UsageType_ts_1 = __webpack_require__(19);
-	var BufferType_ts_1 = __webpack_require__(18);
-	"use strict";
-	
-	var Skybox = function () {
-	    /**
-	     * @param {string}
-	     */
-	    function Skybox(dir) {
-	        var isWebGL2 = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-	
-	        _classCallCheck(this, Skybox);
-	
-	        var faces = [];
-	        faces.push(dir + "/right.jpg");
-	        faces.push(dir + "/left.jpg");
-	        faces.push(dir + "/top.jpg");
-	        faces.push(dir + "/bottom.jpg");
-	        faces.push(dir + "/back.jpg");
-	        faces.push(dir + "/front.jpg");
-	        var gl = core_ts_1.default.getInstance().getGL();
-	        this._prog = new program_ts_1.default();
-	        var vs = void 0;
-	        if (isWebGL2) {
-	            vs = "#version 300 es\n            precision highp float;\n            layout (location = 0) in vec3 position;\n            out vec3 TexCoords;\n            uniform mat4 projection;\n            uniform mat4 view;\n            void main() {\n                vec4 pos = projection * view * vec4(position, 1.0);\n                gl_Position = pos.xyww;\n                TexCoords = position;\n            }";
-	        } else {
-	            vs = "precision highp float;\n            attribute vec3 position;\n            varying vec3 TexCoords;\n            uniform mat4 projection;\n            uniform mat4 view;\n            void main() {\n                vec4 pos = projection * view * vec4(position, 1.0);\n                gl_Position = pos.xyww;\n                TexCoords = position;\n            }";
-	        }
-	        this._prog.addShader(vs, ProgramCte_1.default.shader_type.vertex, ProgramCte_1.default.mode.read_text);
-	        var fg = void 0;
-	        if (isWebGL2) {
-	            fg = "#version 300 es\n            precision highp float;\n            in vec3 TexCoords;\n            out vec4 color;\n            uniform samplerCube skybox;\n            void main() {\n                color = texture(skybox, TexCoords);\n            }";
-	        } else {
-	            fg = "precision highp float;\n            varying vec3 TexCoords;\n            uniform samplerCube skybox;\n            void main() {\n                gl_FragColor = textureCube(skybox, TexCoords);\n            }";
-	        }
-	        this._prog.addShader(fg, ProgramCte_1.default.shader_type.fragment, ProgramCte_1.default.mode.read_text);
-	        this._prog.compile();
-	        this._prog.addUniforms(["view", "projection"]);
-	        var skyboxVertices = new Float32Array([
-	        // Positions
-	        -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0]);
-	        this.skyboxVAO = new vertexArray_1.default();
-	        this.skyboxVAO.bind();
-	        this.skyboxVBO = new vertexBuffer_ts_1.default(BufferType_ts_1.default.Array);
-	        this.skyboxVBO.bind();
-	        this.skyboxVBO.bufferData(skyboxVertices, UsageType_ts_1.default.StaticDraw);
-	        this.skyboxVBO.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
-	        this._loadCubemap(faces);
-	        this.skyboxVAO.unbind();
-	    }
-	    /**
-	     * @param {Float32Array}
-	     * @param {Float32Array}
-	     */
-	
-	
-	    _createClass(Skybox, [{
-	        key: "render",
-	        value: function render(view, projection) {
-	            var gl = core_ts_1.default.getInstance().getGL();
-	            depth_ts_1.default.comparison(ComparisonFunc_1.default.LessEqual);
-	            this._prog.use();
-	            var auxView = mat3.create();
-	            auxView = mat3.fromMat4(auxView, view);
-	            // Remove any translation
-	            auxView = new Float32Array([auxView[0], auxView[1], auxView[2], 0.0, auxView[3], auxView[4], auxView[5], 0.0, auxView[6], auxView[7], auxView[8], 0.0, 0.0, 0.0, 0.0, 0.0]);
-	            this._prog.sendUniformMat4("view", auxView);
-	            this._prog.sendUniformMat4("projection", projection);
-	            this.cubeMapTexture.bind(0);
-	            this.skyboxVAO.bind();
-	            gl.drawArrays(gl.TRIANGLES, 0, 36);
-	            this.skyboxVAO.unbind();
-	            depth_ts_1.default.comparison(ComparisonFunc_1.default.Less);
-	        }
-	        /**
-	         *
-	         */
-	
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            this.cubeMapTexture.destroy();
-	        }
-	        /**
-	         * @param {Array<string>}
-	         */
-	
-	    }, {
-	        key: "_loadCubemap",
-	        value: function _loadCubemap(faces) {
-	            this.cubeMapTexture = new cubemapTexture_ts_1.default();
-	            this.cubeMapTexture.bind();
-	            faces.forEach(function (face, i) {
-	                var img = resourceMap_ts_1.default.retrieveAsset(face);
-	                this.cubeMapTexture.addImage(i, img);
-	            }.bind(this));
-	            this.cubeMapTexture.finishTex();
-	            this.cubeMapTexture.unbind();
-	        }
-	    }]);
-	
-	    return Skybox;
-	}();
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Skybox;
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="texture.ts" />
-	/// <reference path="texOptions.ts" />
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var texture_1 = __webpack_require__(22);
-	var core_1 = __webpack_require__(2);
-	"use strict";
-	
-	var CubeMapTexture = function (_texture_1$default) {
-	    _inherits(CubeMapTexture, _texture_1$default);
-	
-	    function CubeMapTexture() {
-	        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
-	        _classCallCheck(this, CubeMapTexture);
-	
-	        var gl = core_1.default.getInstance().getGL();
-	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CubeMapTexture).call(this, gl.TEXTURE_CUBE_MAP));
-	
-	        options = options || {};
-	        _this.finished = false;
-	        // TODO: Faltan todo el tema de filtrados o wrap de las opciones
-	        // que me he saltado por falta de tiempo :(
-	        _this._handle = gl.createTexture();
-	        return _this;
-	    }
-	
-	    _createClass(CubeMapTexture, [{
-	        key: "addImage",
-	        value: function addImage(i, data) {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
-	        }
-	    }, {
-	        key: "bind",
-	        value: function bind(slot) {
-	            var gl = core_1.default.getInstance().getGL();
-	            if (typeof slot === "number") {
-	                gl.activeTexture(gl.TEXTURE0 + slot);
-	            }
-	            gl.bindTexture(this._target, this._handle);
-	        }
-	    }, {
-	        key: "unbind",
-	        value: function unbind() {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.bindTexture(this._target, null);
-	        }
-	    }, {
-	        key: "destroy",
-	        value: function destroy() {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.deleteTexture(this._handle);
-	            this._handle = null;
-	        }
-	    }, {
-	        key: "finishTex",
-	        value: function finishTex() {
-	            var gl = core_1.default.getInstance().getGL();
-	            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-	            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-	            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-	            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-	            if (gl.TEXTURE_WRAP_R) {
-	                gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
-	            }
-	            this.finished = true;
-	        }
-	    }]);
-	
-	    return CubeMapTexture;
-	}(texture_1.default);
-	
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = CubeMapTexture;
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/context.ts" />
-	///
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	var gl = context_1.default.getContext();
-	var TextureFormat;
-	(function (TextureFormat) {
-	    TextureFormat[TextureFormat["RGB"] = gl.RGB] = "RGB";
-	    TextureFormat[TextureFormat["Float"] = gl.FLOAT] = "Float";
-	})(TextureFormat || (TextureFormat = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = TextureFormat;
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// Copyright (C) 2016 [MonkeyBrush.js]
-	///
-	/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-	/// software and associated documentation files (the "Software"), to deal in the Software
-	/// without restriction, including without limitation the rights to use, copy, modify,
-	/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-	/// permit persons to whom the Software is furnished to do so, subject to the following
-	/// conditions:
-	///
-	/// The above copyright notice and this permission notice shall be included in
-	/// all copies or substantial portions of the Software.
-	///
-	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-	/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-	/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	"use strict";
-	/// <reference path="../core/context.ts" />
-	///
-	
-	var context_1 = __webpack_require__(3);
-	"use strict";
-	var gl = context_1.default.getContext();
-	var TextureType;
-	(function (TextureType) {
-	    TextureType[TextureType["Nearest"] = gl.NEAREST] = "Nearest";
-	    TextureType[TextureType["Linear"] = gl.LINEAR] = "Linear";
-	    TextureType[TextureType["Clamp2Edge"] = gl.CLAMP_TO_EDGE] = "Clamp2Edge";
-	})(TextureType || (TextureType = {}));
-	;
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = TextureType;
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = {
-	    sealed: function sealed(constructor) {
-	        Object.seal(constructor);
-	        Object.seal(constructor.prototype);
-	    }
-	};
 
 /***/ }
 /******/ ]);

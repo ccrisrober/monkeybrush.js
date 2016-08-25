@@ -51,8 +51,8 @@ abstract class Texture {
     public setLOD(lod: number) {
         const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
-            gl.texParameterf(this._target, (<any>gl).TEXTURE_MIN_LOD, lod);
-            gl.texParameterf(this._target, (<any>gl).TEXTURE_MAX_LOD, lod);
+            gl.texParameterf(this._target, gl.TEXTURE_MIN_LOD, lod);
+            gl.texParameterf(this._target, gl.TEXTURE_MAX_LOD, lod);
         } else {
             console.log("TEXTURE LOD isn´t supported");
         }

@@ -28,7 +28,7 @@ import Core from "../core/core";
 class Texture2DArray extends Texture {
     constructor() {
         const gl = Core.getInstance().getGL();
-        super((<any>gl).TEXTURE_2D_ARRAY);
+        super(gl.TEXTURE_2D_ARRAY);
         this._handle = gl.createTexture();
         this.bind();
     }

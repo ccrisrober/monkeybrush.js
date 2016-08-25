@@ -27,33 +27,32 @@ import Core from "../core/core";
 const gl = Core.getInstance().getGL();
 
 class Query {
-    protected handle;
+    protected _handle: WebGLQuery;
     constructor() {
-        this.handle = (<any>gl).createQuery();
+        this._handle = gl.createQuery();
     }
     public destroy() {
-        (<any>gl).deleteQuery(this.handle);
+        gl.deleteQuery(this._handle);
     }
     public begin(target) {
-        (<any>gl).beginQuery(target, this.handle);
+        gl.beginQuery(target, this._handle);
     }
     public end(target) {
-        (<any>gl).endQuery(target);
+        gl.endQuery(target);
     }
     public oneUse(target, cb) {
         this.begin(target);
         cb();
         this.end(target);
     }
-    public getParameters(param: string) {
-        const res = (<any>gl).getQueryParameters(this.handle, param);
-        return res;
+    public getParameters(param: number) {
+        return gl.getQueryParameter(this._handle, param);
     }
     public isResultAvailable() {
-        return this.getParameters((<any>gl).QUERY_RESULT_AVAILABLE);
+        return this.getParameters(gl.QUERY_RESULT_AVAILABLE);
     }
     public getResult() {
-        return this.getParameters((<any>gl).QUERY_RESULT);
+        return this.getParameters(gl.QUERY_RESULT);
     }
 };
 

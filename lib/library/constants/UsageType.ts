@@ -31,13 +31,13 @@ enum UsageType {
     DynamicDraw = gl.DYNAMIC_DRAW,
     StreamDraw = gl.STREAM_DRAW,
 
-    StaticRead = (<any>gl).STATIC_READ,
-    DynamicRead = (<any>gl).DYNAMIC_READ,
-    StreamRead = (<any>gl).STREAM_READ,
+    StaticRead = gl.STATIC_READ,
+    DynamicRead = gl.DYNAMIC_READ,
+    StreamRead = gl.STREAM_READ,
 
-    StaticCopy = (<any>gl).STATIC_COPY,
-    DynamicCopy = (<any>gl).DYNAMIC_COPY,
-    StreamCopy = (<any>gl).STREAM_COPY,
+    StaticCopy = gl.STATIC_COPY,
+    DynamicCopy = gl.DYNAMIC_COPY,
+    StreamCopy = gl.STREAM_COPY,
 };
 
 export default UsageType;

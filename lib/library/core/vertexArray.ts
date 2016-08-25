@@ -29,7 +29,6 @@ import extensions from "../extras/extensions";
 const gl = Core.getInstance().getGL();
 
 declare var WebGL2RenderingContext: any;
-declare var WebGLVertexArrayObject: any;
 
 class VertexArray {
     /**
@@ -46,7 +45,7 @@ class VertexArray {
             this._handle = vao;
         } else {
             if (gl instanceof WebGL2RenderingContext) {
-                this._handle = (<any>gl).createVertexArray();
+                this._handle = gl.createVertexArray();
             } else {
                 const ext = extensions.get("OES_vertex_array_object");
                 if (ext) {
@@ -68,7 +67,7 @@ class VertexArray {
      */
     public bind() {
         if (gl instanceof WebGL2RenderingContext) {
-            (<any>gl).bindVertexArray(this._handle);
+            gl.bindVertexArray(this._handle);
             return;
         }
         const ext = extensions.get("OES_vertex_array_object");
@@ -81,7 +80,7 @@ class VertexArray {
      */
     public unbind() {
         if (gl instanceof WebGL2RenderingContext) {
-            (<any>gl).bindVertexArray(null);
+            gl.bindVertexArray(null);
             return;
         }
         const ext = extensions.get("OES_vertex_array_object");
@@ -95,7 +94,7 @@ class VertexArray {
     public destroy() {
         this.bind();
         if (gl instanceof WebGL2RenderingContext) {
-            (<any>gl).deleteVertexArray(this._handle);
+            gl.deleteVertexArray(this._handle);
             return;
         }
         const ext = extensions.get("OES_vertex_array_object");
@@ -114,7 +113,7 @@ class VertexArray {
     /**
     public is(): boolean {
         if (gl instanceof WebGL2RenderingContext) {
-            return (<any>gl).isVertexArray(this._handle);
+            return gl.isVertexArray(this._handle);
         }
         const ext = extensions.get("OES_vertex_array_object");
         if (ext) {

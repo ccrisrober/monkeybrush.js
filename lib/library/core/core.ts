@@ -34,7 +34,7 @@ import Input from "./input";
 class Core {
     private static _instance: Core = new Core();
 
-    private _gl: WebGLRenderingContext;
+    private _gl: WebGL2RenderingContext;
 
     constructor() {
         if (Core._instance) {
@@ -88,7 +88,7 @@ class Core {
     * @method getGL
     * @return {WebGLRenderingContext} Returns WebGL rendering context
     */
-    public getGL(): WebGLRenderingContext {
+    public getGL(): WebGL2RenderingContext {
         return this._gl;
     }
 };

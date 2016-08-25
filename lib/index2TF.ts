@@ -93,10 +93,10 @@ function initialize() {
 
 
         let feedbackVaryings = ["outValue"];
-        (<any>gl_).transformFeedbackVaryings(
+        gl_.transformFeedbackVaryings(
             prog.program(),
             feedbackVaryings,
-            (<any>gl_).INTERLEAVED_ATTRIBS);
+            gl_.INTERLEAVED_ATTRIBS);
 
         prog._link();
 
@@ -123,30 +123,30 @@ function initialize() {
     gl_.vertexAttribPointer(inputAttrib, 1, gl_.FLOAT, false, 0, 0);
 
     // Create transform feedback buffer
-    let tbo = (<any>gl_).createTransformFeedback();
+    let tbo = gl_.createTransformFeedback();
     // gl_.bindBuffer(gl_.ARRAY_BUFFER, tbo);
     // gl_.bindBufferBase(gl_.ARRAY_BUFFER,
     //    data.length * Float32Array.BYTES_PER_ELEMENT,
-    //    (<any>gl_).STATIC_READ);
+    //    gl_.STATIC_READ);
 
     // Perform feedback tranform
-    gl_.enable((<any>gl_).RASTERIZER_DISCARD);
+    gl_.enable(gl_.RASTERIZER_DISCARD);
 
-    (<any>gl_).bindTransformFeedback((<any>gl_).TRANSFORM_FEEDBACK_BUFFER, tbo);
+    gl_.bindTransformFeedback(gl_.TRANSFORM_FEEDBACK_BUFFER, tbo);
 
-    (<any>gl_).beginTransformFeedback(gl_.POINTS);
+    gl_.beginTransformFeedback(gl_.POINTS);
         gl_.drawArrays(gl_.POINTS, 0, 5);
-    (<any>gl_).endTransformFeedback();
+    gl_.endTransformFeedback();
 
-    (<any>gl_).disable((<any>gl_).RASTERIZER_DISCARD);
+    gl_.disable(gl_.RASTERIZER_DISCARD);
 
     gl_.flush();
 
     // Fetch and print results
     let feedback = new ArrayBuffer(
         data.length * Float32Array.BYTES_PER_ELEMENT);
-    (<any>gl_).getBufferSubData(
-        (<any>gl_).TRANSFORM_FEEDBACK_BUFFER,
+    gl_.getBufferSubData(
+        gl_.TRANSFORM_FEEDBACK_BUFFER,
         0,
         feedback
     );

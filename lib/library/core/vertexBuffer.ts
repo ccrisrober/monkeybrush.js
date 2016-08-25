@@ -97,7 +97,7 @@ class VertexBuffer {
     public bufferData(data: Float32Array | Uint16Array, usage: UsageType = UsageType.StaticDraw) {
         this.bind();
         gl.bufferData(this._type, data, usage);
-    }
+    };
     /**
      * [attribDivisor description]
      * @param {number}    position [description]
@@ -114,7 +114,7 @@ class VertexBuffer {
             false,
             length * Float32Array.BYTES_PER_ELEMENT,
             0);
-        (<any>gl).vertexAttribDivisor(position, divisor);
+        gl.vertexAttribDivisor(position, divisor);
     }
     /**
      * [vertexAttribPointer description]

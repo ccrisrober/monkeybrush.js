@@ -51,7 +51,7 @@ class PostProcess {
                  1.0,  1.0
             ];
             PostProcess._planeVAO = new VertexArray();
-            // Unnecesary (<any>gl).bindVertexArray(PostProcess._planeVAO);
+            // Unnecesary gl.bindVertexArray(PostProcess._planeVAO);
             this._planeVertexVBO = new VertexBuffer(BufferType.Array);
             // Unnecesary gl.bindBuffer(gl.ARRAY_BUFFER, this._planeVertexVBO);
             this._planeVertexVBO.bufferData(new Float32Array(positions), UsageType.StaticDraw);
