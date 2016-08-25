@@ -40,7 +40,8 @@ class Sync {
     };
     /**
      * [clientWait description]
-     * @param {number} flags: Bitwise combination of flags controlling the flushing behavior. May be gl.SYNC_FLUSH_COMMANDS_BIT.
+     * @param {number} flags: Bitwise combination of flags controlling the flushing behavior.
+     *                        May be gl.SYNC_FLUSH_COMMANDS_BIT.
      * @param {number} timeout: Timeout (in nanoseconds) for which to wait for the sync obj to become signaled.
      */
     public clientWait(flags: number, timeout: number) {

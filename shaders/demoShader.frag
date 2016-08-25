@@ -11,6 +11,7 @@ out vec4 fragColor;
 uniform sampler2D texSampler;
 
 uniform vec3 viewPos;
+uniform float lol[5];
 
 
 // TODO: Se puede hacer el cálculo en vértices para ahorrar ;)
@@ -110,7 +111,7 @@ void main() {
     //fragColor = texture(texSampler, matcap(outPosition, norm));
     // Apply fog
     //colorWithFog(fragColor.rgb);
-    fragColor = vec4(normalize(outNormal), 1.0);
+    fragColor = vec4(normalize(outNormal), lol[0] + 1.0);
     //fragColor = vec4(outUV, 0.0, 1.0);
 
     //fragColor = vec4(0.0, 0.0, 0.0, 1.0);

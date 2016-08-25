@@ -70,12 +70,14 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Instancing
 - [ ] Sprites (HUD)
 - [ ] Picking
+- [ ] Multi context
+- [ ] Workers
 
 ### Development
 - [x] Grunt integration
 - [x] Webpack integration
 - [x] Typescript definition file for WebGL2RenderingContext
-- [ ] Shader extraction (https://github.com/mattdesl/gl-shader-extract)
+- [x] Shader uniforms and attributes extraction
 
 ### Demos
 - [x] Rim Lighting
@@ -84,8 +86,6 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [ ] Tiled Deferred Shading
 - [ ] SSAO
 - [ ] HDR
-- [ ] Multi context
-- [ ] Workers
 - [ ] Basic Transparency
 - [ ] Woit Transparency
 - [ ] Simple Shadow

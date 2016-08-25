@@ -202,6 +202,9 @@ function initialize(app: App) {
         }
         prog.compile();
 
+        const _gl = Core.getInstance().getGL();
+        prog.unifAndAttribs();
+
         prog.addUniforms(["projection", "view", "model",
             "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
         return prog;

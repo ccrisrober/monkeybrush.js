@@ -59,7 +59,7 @@ class Program {
         const gl = Core.getInstance().getGL();
         for (let attr in attrs) {
             attr = attrs[attr];
-            let attrID = gl.getAttribLocation(this._compiledShader, attr);
+            const attrID = gl.getAttribLocation(this._compiledShader, attr);
             if (attrID < 0) {
                 console.error(attr + " undefined");
                 continue;
@@ -80,7 +80,7 @@ class Program {
         const gl = Core.getInstance().getGL();
         for (let unif in unifs) {
             unif = unifs[unif];
-            let unifID: WebGLUniformLocation = gl.getUniformLocation(this._compiledShader, unif);
+            const unifID: WebGLUniformLocation = gl.getUniformLocation(this._compiledShader, unif);
             if (unifID < 0) {
                 console.error(unif + " undefined");
                 continue;
@@ -392,6 +392,104 @@ class Program {
         const gl = Core.getInstance().getGL();
         gl.uniformMatrix4fv(this.uniformLocations[name], transpose, value);
     }
+
+
+    protected static GL_TO_GLSL_TYPES = {
+        "FLOAT": "float",
+        "FLOAT_VEC2": "vec2",
+        "FLOAT_VEC3": "vec3",
+        "FLOAT_VEC4": "vec4",
+        "INT": "int",
+        "INT_VEC2": "ivec2",
+        "INT_VEC3": "ivec3",
+        "INT_VEC4": "ivec4",
+        "BOOL": "bool",
+        "BOOL_VEC2": "bvec2",
+        "BOOL_VEC3": "bvec3",
+        "BOOL_VEC4": "bvec4",
+        "FLOAT_MAT2": "mat2",
+        "FLOAT_MAT3": "mat3",
+        "FLOAT_MAT4": "mat4",
+        "SAMPLER_2D": "sampler2D",
+        "SAMPLER_CUBE": "samplerCube",
+
+        // WebGL2 constants
+        "FLOAT_MAT2x3": "mat2x3",
+        "FLOAT_MAT2x4": "mat2x4",
+        "FLOAT_MAT3x2": "mat3x2",
+        "FLOAT_MAT3x4": "mat3x4",
+        "FLOAT_MAT4x2": "mat4x2",
+        "FLOAT_MAT4x3": "mat4x3",
+        "UNSIGNED_INT": "uint",
+        "UNSIGNED_INT_VEC2": "uvec2",
+        "UNSIGNED_INT_VEC3": "uvec3",
+        "UNSIGNED_INT_VEC4": "uvec4",
+        "UNSIGNED_INT_SAMPLER_2D": "usampler2D",
+        "UNSIGNED_INT_SAMPLER_3D": "usampler3D",
+        "UNSIGNED_INT_SAMPLER_2D_ARRAY": "usampler2DArray",
+        "UNSIGNED_INT_SAMPLER_CUBE": "usamplerCube",
+        "INT_SAMPLER_2D": "isampler2D",
+        "INT_SAMPLER_3D": "isampler3D",
+        "INT_SAMPLER_2D_ARRAY": "isampler2DArray",
+        "INT_SAMPLER_CUBE": "isamplerCube",
+    };
+    protected static GL_TABLE = null;
+    protected static getType(gl, type) {
+        if (!Program.GL_TABLE) {
+            let typeNames = Object.keys(Program.GL_TO_GLSL_TYPES);
+            Program.GL_TABLE = {};
+            for (let tn of typeNames) {
+                let cte = gl[tn];
+                if (typeof cte !== "undefined") {
+                    Program.GL_TABLE[cte] = Program.GL_TO_GLSL_TYPES[tn];
+                }
+            }
+            console.log(Program.GL_TABLE);
+        }
+        return Program.GL_TABLE[type];
+    }
+
+    public unifAndAttribs() {
+        const gl = Core.getInstance().getGL();
+        console.log("UNIFORMS");
+        const numUniforms = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_UNIFORMS);
+        let result = [];
+        for (let i = 0; i < numUniforms; ++i) {
+            const info = gl.getActiveUniform(this._compiledShader, i);
+            console.log(info);
+            const type = Program.getType(gl, info.type);
+            if (info.size > 1) {
+                for (let j = 0; j < info.size; ++j) {
+                    result.push({
+                        name: info.name.replace("[0]", `[${j}]`),
+                        type: type,
+                        id: i
+                    });
+                }
+            } else {
+                result.push({
+                    name: info.name,
+                    type: type,
+                    id: i
+                });
+            }
+        }
+        console.log(result);
+        console.log("ATTRIBUTES");
+        const numAttributes = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_ATTRIBUTES);
+        result = [];
+        for (let i = 0; i < numAttributes; ++i) {
+            const info = gl.getActiveAttrib(this._compiledShader, i);
+            if (info) {
+                result.push({
+                    name: info.name,
+                    type: Program.getType(gl, info.type),
+                    id: i
+                });
+            }
+        }
+        console.log(result);
+    };
 };
 
 export default Program;
