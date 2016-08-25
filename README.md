@@ -1,6 +1,8 @@
 # monkeybrush.js
 ![Logo](logo.png)
 
+Monkey Brush is a library that adds OOP for WebGL 1/2 using Typescript
+
 ## init
 ```bash
 npm install && bower install
@@ -8,7 +10,12 @@ npm start # Open server in 3000 port
 npm script build # Compile project
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint rules
 ```
-![alt tag](descarga.png)
+<div style="width: 100%">
+    <img src="descarga.png" width="33%" />
+    <img src="descarga (2).png" width="33%" />
+    <img src="descarga (3).png" width="33%" />
+    <img src="descarga (4).png" width="33%" />
+</div>
 
 ## TODO
 
@@ -91,8 +98,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [ ] Simple Shadow
 - [ ] Create "shadertoy" for desktop
 
-```bash
-tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt
-```
-https://www.npmjs.com/package/webpack-glsl-loader
-http://www.jbrantly.com/es6-modules-with-typescript-and-webpack/
+### Help
+> - tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt
+> - https://www.npmjs.com/package/webpack-glsl-loader
+> - http://www.jbrantly.com/es6-modules-with-typescript-and-webpack/

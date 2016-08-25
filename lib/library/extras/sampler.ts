@@ -26,10 +26,54 @@ import Core from "../core/core";
 
 const gl = Core.getInstance().getGL();
 
-class Sampler {
-    protected _handle: WebGLSampler;
+export interface SamplerParams {
+    minFilter?: number;
+    magFilter?: number;
+    wrapS?: number;
+    wrapT?: number;
+    wrapR?: number;
+    minLOD?: number;
+    maxLOD?: number;
+    compareFunc?: number;
+    compareMode?: number;
+};
+// TODO: Added this to textures
+export class Sampler {
+    public _handle: WebGLSampler;
     constructor() {
         this._handle = gl.createSampler();
+    };
+    public setParams(params: SamplerParams) {
+        if (params.minFilter) {
+            this.parameteri(gl.TEXTURE_MIN_FILTER, params.minFilter);
+        }
+        if (params.magFilter) {
+            this.parameteri(gl.TEXTURE_MAG_FILTER, params.magFilter);
+        }
+
+        if (params.wrapS) {
+            this.parameteri(gl.TEXTURE_WRAP_S, params.wrapS);
+        }
+        if (params.wrapT) {
+            this.parameteri(gl.TEXTURE_WRAP_T, params.wrapT);
+        }
+        if (params.wrapR) {
+            this.parameteri(gl.TEXTURE_WRAP_R, params.wrapR);
+        }
+
+        if (params.minLOD) {
+            this.parameterf(gl.TEXTURE_MIN_LOD, params.minLOD);
+        }
+        if (params.maxLOD) {
+            this.parameterf(gl.TEXTURE_MAX_LOD, params.maxLOD);
+        }
+
+        if (params.compareFunc) {
+            this.parameteri(gl.TEXTURE_COMPARE_FUNC, params.compareFunc);
+        }
+        if (params.compareMode) {
+            this.parameteri(gl.TEXTURE_COMPARE_MODE, params.compareMode);
+        }
     };
     /**
      * [bind description]
@@ -59,4 +103,4 @@ class Sampler {
     };
 };
 
-export default Sampler;
+//export default Sampler;

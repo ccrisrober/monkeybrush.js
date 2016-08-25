@@ -25,12 +25,35 @@ import Core from "../core/core";
 
 "use strict";
 
+// TODO: https://ferransole.wordpress.com/2014/06/09/array-textures/
+// TODO: https://www.opengl.org/wiki/Example/Texture_Array_Creation
+// TODO: http://stackoverflow.com/questions/12372058/how-to-use-gl-texture-2d-array-in-opengl-3-2
 class Texture2DArray extends Texture {
-    constructor() {
+    constructor(images: Array<HTMLImageElement>) {
         const gl = Core.getInstance().getGL();
         super(gl.TEXTURE_2D_ARRAY);
         this._handle = gl.createTexture();
-        this.bind();
+
+        gl.bindTexture(this._target, this._handle);
+
+        var width = 512;
+        var height = width;
+        var count = images.length;
+
+        gl.pixelStorei(gl.UNPACK_ROW_LENGTH, width);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+
+        gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.REPEAT);
+        gl.texImage3D(gl.TEXTURE_2D_ARRAY, 0, gl.RGBA, width, height, count, 0, gl.RGBA, gl.UNSIGNED_INT, null);
+
+        images.forEach((image: HTMLImageElement, i: number) => {
+            gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        });
+
+        this.unbind();
     }
     public bind(slot?: number) {
         const gl = Core.getInstance().getGL();
@@ -40,7 +63,8 @@ class Texture2DArray extends Texture {
         gl.bindTexture(this._target, this._handle);
     };
     public unbind() {
-        // TODO
+        const gl = Core.getInstance().getGL();
+        gl.bindTexture(this._target, null);
     };
     public destroy() {
         const gl = Core.getInstance().getGL();

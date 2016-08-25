@@ -2,19 +2,11 @@
 
 import App from "./library/App";
 
-import Query from "./library/extras/query"
-
 import Core from "./library/core/core";
 import Input from "./library/core/input";
-import Sphere from "./library/models/sphere";
-import Cube from "./library/models/cube";
-import Torus from "./library/models/torus";
-import Disc from "./library/models/disc";
-import Cone from "./library/models/cone";
-import Cylinder from "./library/models/cylinder";
-import Prism from "./library/models/prism";
-import Mesh from "./library/models/mesh";
+import PostProcess from "./library/core/postProcess";
 import Texture2D from "./library/textures/texture2d";
+import Texture2DArray from "./library/textures/texture2dArray";
 import SimpleTexture2D from "./library/textures/simpleTexture2d";
 import Program from "./library/core/program";
 import Framebuffer from "./library/core/framebuffer";
@@ -27,6 +19,7 @@ import Vector2 from "./library/maths/vector2";
 import Vector3 from "./library/maths/vector3";
 import Camera2 from "./library/_demoCamera";
 import Skybox from "./library/extras/skybox";
+import {SamplerParams, Sampler} from "./library/extras/sampler";
 
 import ProgramCte from "./library/constants/ProgramCte";
 import TextureFormat from "./library/constants/TextureFormat";
@@ -36,21 +29,6 @@ import TextureType from "./library/constants/TextureType";
 
 let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
-let skybox: Skybox;
-
-let esferita: Sphere;
-let disquito: Disc;
-let disquito2: Disc;
-let conito: Cone;
-let tubito: Cylinder;
-let tubito2: Cylinder;
-let tubito3: Cylinder;
-let tubito4: Cylinder;
-let prismito: Prism;
-let prismito2: Prism;
-let cubito: Cube;
-let torito: Torus;
-
 let SimpleConfig = function() {
     return {
         max: 10,
@@ -58,7 +36,6 @@ let SimpleConfig = function() {
         render: "0"
     };
 };
-let m: Mesh;
 
 let view;
 let projection;
@@ -84,132 +61,43 @@ function loadAssets() {
     loaders.loadImage("assets/images/canyon/top.jpg");
 }
 
-const mainShader: string = "prog";
-
-let framebuffer: Framebuffer;
+const mainShader: string = "pp";
 
 function initialize(app: App) {
-    esferita = new Sphere(15.0, 5.0, 5.0);
-    conito = new Cone(15.0, 0.0, 15.0, 3.0, 2.0);
-    tubito = new Cylinder(5.0, 15.0, 15.0, 2.0);
-    tubito2 = new Cylinder(5.0, 15.0, 15.0, 2.0);
-    tubito3 = new Cylinder(5.0, 15.0, 15.0, 2.0);
-    tubito4 = new Cylinder(5.0, 15.0, 15.0, 2.0);
-
-    prismito = new Prism(15.0, 30.0, 6.0, 1.0);
-    prismito2 = new Prism(15.0, 30.0, 4.0, 4.0);
-
-    disquito = new Disc(15.0, 5.1, 1.0, 0.0, 1.0);
-    disquito2 = new Disc(15.0, 3.5, 5.0, 0.0, 1.0);
-
-    cubito = new Cube(15.0);
-    torito = new Torus(15.0, 10.0, 5, 5);
-
-
-
-
-
-
-
-
-    // prismito = new Prism(5.0, 15.0, 5.0, 10.0, true, false);
-    // prismito2 = new Prism(5.0, 15.0, 5.0, 10.0, false, false);
-
-
-
-
-    m = new Mesh("assets/objects/teddy.json");
-
-    let canvasSize = new Vector2<number>(
-        Core.getInstance().canvas().width,
-        Core.getInstance().canvas().height
-    );
-
-    skybox = new Skybox("assets/images/canyon", false);
-
-    /*framebuffer = new Framebuffer([
-        new SimpleTexture2D(canvasSize, {
-            "internalFormat": TextureFormat.RGB,
-            "format": TextureFormat.RGB,
-            "type": TextureFormat.Float,
-            "minFilter": TextureType.Nearest,
-            "magFilter": TextureType.Nearest
-        })
-    ], canvasSize, true, true, {});*/
-
-    // console.log(app);
 
     const webgl2 = app.webglVersion() === 2;
 
-    ProgramManager.addWithFun("unifProg", (): Program => {
-        let prog: Program = new Program();
-
-        prog.addShader(`#version 300 es
+    ProgramManager.addWithFun("pp", (): Program => {
+        var prog2: Program = new Program();
+        prog2.addShader(`#version 300 es
             precision highp float;
-
-            layout(std140) uniform ViewUBO {
-                mat4 model;
-                mat4 viewProj;
-            };
-
-            void main() {
-                gl_Position = viewProj * model * vec4(1.0, 1.0, 1.0, 1.0);
+            layout(location = 0) in vec3 vertPosition;
+            uniform float tcdiv;
+            out vec2 texCoord;
+            void main(void) {
+                texCoord = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+                texCoord.x *= tcdiv / 10.0;
+                texCoord.y *= tcdiv / 10.0;
+                gl_Position = vec4(vertPosition, 1.0);
             }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
-
-        prog.addShader(`#version 300 es
+        prog2.addShader(`#version 300 es
             precision highp float;
+            uniform sampler2D dataTexture;
 
             out vec4 fragColor;
+            in vec2 texCoord;
+
+
             void main() {
-                fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                fragColor = vec4(texCoord, 0.0, 1.0);
+                fragColor = vec4(texture(dataTexture, texCoord).rgb, 1.0);
             }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
+        prog2.compile();
 
-        prog.compile();
+        prog2.addUniforms(["tcdiv"]);
 
-
-        /*function bindUniformBlock(gl, programInfo, uniformBlockInfo) {
-            let uniformBlockSpec = programInfo.uniformBlockSpec || programInfo;
-            let blockSpec = uniformBlockSpec.blockSpecs[uniformBlockInfo.name];
-            if (blockSpec) {
-                let bufferBindIndex = blockSpec.index;
-                gl.bindBufferRange(gl.UNIFORM_BUFFER, bufferBindIndex, uniformBlockInfo.buffer,
-                    uniformBlockInfo.offset || 0, uniformBlockInfo.array.byteLength);
-                return true;
-            }
-            return false;
-        }*/
-
-        /*function setUniformBlock(gl, programInfo, uniformBlockInfo) {
-            if (bindUniformBlock(gl, programInfo, uniformBlockInfo)) {
-                gl.bufferData(gl.UNIFORM_BUFFER, uniformBlockInfo.array, gl.DYNAMIC_DRAW);
-            }
-        }*/
-
-        const gl = Core.getInstance().getGL();
-
-        let unifTransfLoc = gl.getUniformBlockIndex(prog.program(), "ViewUBO");
-        gl.uniformBlockBinding(prog.program(), unifTransfLoc, 0);
-
-        return prog;
-    });
-
-    ProgramManager.addWithFun("prog", (): Program => {
-        let prog: Program = new Program();
-        if (webgl2) {
-            prog.addShader("./shaders/demoShader.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-            prog.addShader("./shaders/demoShader.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
-        } else {
-            prog.addShader("./shaders/demowebgl1.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-            prog.addShader("./shaders/demowebgl1.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
-        }
-        prog.compile();
-
-        const _gl = Core.getInstance().getGL();
-        prog.unifAndAttribs();
-
-        prog.addUniforms(["projection", "view", "model",
-            "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
-        return prog;
+        console.log(prog2);
+        return prog2;
     });
 
     let cubeImage = ResourceMap.retrieveAsset("exampleImg");
@@ -220,13 +108,92 @@ function initialize(app: App) {
         wrapS: TextureType.Clamp2Edge,
         wrapT: TextureType.Clamp2Edge
     });
+    const gl = Core.getInstance().getGL();
+
+    samplerA = new Sampler();
+    samplerA.setParams({
+        minFilter: gl.NEAREST,
+        magFilter: gl.NEAREST,
+        wrapS: gl.CLAMP_TO_EDGE,
+        wrapT: gl.CLAMP_TO_EDGE,
+        wrapR: gl.CLAMP_TO_EDGE,
+        compareFunc: gl.NONE,
+        compareMode: gl.LEQUAL
+    });
+    samplerB = new Sampler();
+    samplerB.setParams({
+        minFilter: gl.LINEAR,
+        magFilter: gl.LINEAR,
+        wrapS: gl.REPEAT,
+        wrapT: gl.REPEAT,
+        minLOD: -1000.0,
+        maxLOD: 1000.0
+    });
+
+    samplerC = new Sampler();
+    samplerC.setParams({
+        minFilter: gl.NEAREST,
+        magFilter: gl.LINEAR_MIPMAP_LINEAR,
+        wrapS: gl.MIRRORED_REPEAT,
+        wrapT: gl.CLAMP_TO_EDGE,
+    });
 
     cameraUpdateCb();
-
-    query = new Query();
 };
 
-var query: Query;
+var samplerA: Sampler;
+var samplerB: Sampler;
+var samplerC: Sampler;
+
+var layer = 0;
+
+function drawScene(app: App) {
+    Core.getInstance().clearColorAndDepth();
+
+    let prog = ProgramManager.get(mainShader);
+    prog.use();
+
+    tex2d.bind(0);
+    const gl = Core.getInstance().getGL();
+
+
+    const renderMode = text.render;
+    let mode: Sampler;
+    switch (renderMode) {
+        case "0":
+            mode = samplerA;
+            break;
+        case "1":
+            mode = samplerB;
+            break;
+        case "2":
+            mode = samplerC;
+            break;
+    }
+
+    mode.bind(0);
+    prog.sendUniform1i("texSampler", 0);
+    prog.sendUniform1f("tcdiv", text.max);
+
+    let varvar = text.max;
+    let i = 0, j = 0, k = 0;
+    let dd = -1;
+
+    let m = 0;
+
+    PostProcess.bind();
+    PostProcess.render();
+}
+
+// ============================================================================================ //
+// ============================================================================================ //
+// ============================================================================================ //
+// ============================================================================================ //
+// ============================================================================================ //
+// ============================================================================================ //
+
+
+
 
 function cameraUpdateCb() {
     let canvas = Core.getInstance().canvas();
@@ -252,95 +219,6 @@ function updateScene(app: App, dt: number) {
 
     angle += Timer.deltaTime() * 0.001;
 };
-
-var renderOK = false;
-
-function drawScene(app: App) {
-    Core.getInstance().clearColorAndDepth();
-
-    let prog = ProgramManager.get(mainShader);
-    prog.use();
-
-    tex2d.bind(0);
-    prog.sendUniform1i("texSampler", 0);
-
-    let varvar = text.max;
-    let i = 0, j = 0, k = 0;
-    let dd = -1;
-
-    let m = 0;
-
-    const renderMode = text.render;
-    let mode: string;
-    switch (renderMode) {
-        case "0":
-            mode = "render";
-            break;
-        case "1":
-            mode = "render2";
-            break;
-        case "2":
-            mode = "render3";
-            break;
-    }
-    if (renderOK === false) {
-
-        const gl = Core.getInstance().getGL();
-
-        query.useAnySamplesConservative(function() {
-            gl.colorMask(false, false, false, false);
-            gl.depthMask(false);
-            for (i = -varvar; i < varvar; i += 5.0) {
-                for (j = -varvar; j < varvar; j += 5.0) {
-                    for (k = -varvar; k < varvar; k += 5.0) {
-                        mat4.translate(model, identityMatrix,
-                            vec3.fromValues(i, j, k));
-                        mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                        mat4.rotateY(model, model, angle * dd);
-                        mat4.scale(model, model, vec3.fromValues(0.15, 0.15, 0.15));
-                        prog.sendUniformMat4("model", model);
-                        cubito[mode]();
-                    }
-                }
-            }
-
-            gl.colorMask(true, true, true, true);
-            gl.depthMask(true);
-        });
-
-        renderOK = true;
-    } else {
-        if (!query.isResultAvailable()) {
-            return;
-        } else {
-            var samplesPassed = query.getResult();
-            console.log('Any samples passed: ' + Number(samplesPassed));
-            if (query) {
-                for (i = -varvar; i < varvar; i += 5.0) {
-                    for (j = -varvar; j < varvar; j += 5.0) {
-                        for (k = -varvar; k < varvar; k += 5.0) {
-                            mat4.translate(model, identityMatrix,
-                                vec3.fromValues(i, j, k));
-                            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                            mat4.rotateY(model, model, angle * dd);
-                            mat4.scale(model, model, vec3.fromValues(0.15, 0.15, 0.15));
-                            prog.sendUniformMat4("model", model);
-                            cubito[mode]();
-                        }
-                    }
-                }
-                renderOK = false;
-            }
-        }
-    }
-}
-
-// ============================================================================================ //
-// ============================================================================================ //
-// ============================================================================================ //
-// ============================================================================================ //
-// ============================================================================================ //
-// ============================================================================================ //
 
 /**/
 window.onload = () => {

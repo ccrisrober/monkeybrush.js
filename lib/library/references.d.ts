@@ -41,8 +41,10 @@
 /// <reference path="./models/mesh.ts" />
 
 /// <reference path="./textures/texture2d.ts" />
+/// <reference path="./textures/texture2dArray.ts" />
 
 /// <reference path="./extras/query.ts" />
+/// <reference path="./extras/sampler.ts" />
 /// <reference path="./extras/timer.ts" />
 /// <reference path="./extras/skybox.ts" />
 

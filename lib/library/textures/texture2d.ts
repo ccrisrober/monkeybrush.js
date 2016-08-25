@@ -36,8 +36,8 @@ class Texture2D extends Texture {
     protected _minFilter: number;
     protected _magFilter: number;
     protected _wraps: Array<number>;
-
-    constructor(data/*: ImageData*/, options: TexOptions = {}, onSuccess: () => void = null) {
+    // TODO: Add onSuccess a todas las texturas ...
+    constructor(data: HTMLImageElement, options: TexOptions = {}, onSuccess: () => void = null) {
         super(gl.TEXTURE_2D);
         // options = options || {};
 
