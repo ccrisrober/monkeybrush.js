@@ -72,7 +72,6 @@ class App {
 
         this.gui = new dat.GUI();
 
-
         this._appFunctions.textCB(this.gui);
 
         let self = this;
@@ -100,6 +99,18 @@ class App {
 
             // Remove loader css3 window
             document.getElementById("spinner").remove();
+
+            /*Core.getInstance().canvas().addEventListener("dblclick", function(){
+                var el: any = Core.getInstance().canvas();
+
+                if (el.webkitRequestFullScreen) {
+                    el.webkitRequestFullScreen();
+                }
+                else {
+                    el.mozRequestFullScreen();
+                }
+            });*/
+
             try {
                 (function __render__(dt?: number) {
                     // console.log(dt);

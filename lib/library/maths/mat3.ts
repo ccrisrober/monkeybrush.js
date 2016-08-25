@@ -20,12 +20,10 @@
 
 /// <reference path="../../typings/gl-matrix.d.ts" />
 /// <reference path="vect2.ts" />
-/// <reference path="mat2.ts" />
-/// <reference path="mat4.ts" />
+/// <reference path="vect3.ts" />
 
 import Vect2 from "./vect2";
-// import mat2 from "./mat2";
-// import mat4 from "./mat4";
+import Vect3 from "./vect3";
 
 "use strict";
 
@@ -189,8 +187,52 @@ class Mat3 {
 
         return this;
     };
-    rotate(angle: number): Mat3 {
-        return null;
+    rotate(angle: number, axis: Vect3): Mat3 {
+        let
+            x = axis.x,
+            y = axis.y,
+            z = axis.z;
+
+        let length = Math.sqrt(x * x + y * y + z * z);
+
+        if (!length)
+            return null;
+
+        if (length !== 1) {
+            length = 1 / length;
+            x *= length;
+            y *= length;
+            z *= length;
+        }
+
+        const s = Math.sin(angle);
+        const c = Math.cos(angle);
+
+        const t = 1.0 - c;
+
+        const
+            a00 = this._value[0], a01 = this._value[1], a02 = this._value[2],
+            a10 = this._value[4], a11 = this._value[5], a12 = this._value[6],
+            a20 = this._value[8], a21 = this._value[9], a22 = this._value[10];
+
+        const
+            b00 = x * x * t + c,     b01 = y * x * t + z * s, b02 = z * x * t - y * s,
+            b10 = x * y * t - z * s, b11 = y * y * t + c,     b12 = z * y * t + x * s,
+            b20 = x * z * t + y * s, b21 = y * z * t - x * s, b22 = z * z * t + c;
+
+        this._value[0] = a00 * b00 + a10 * b01 + a20 * b02;
+        this._value[1] = a01 * b00 + a11 * b01 + a21 * b02;
+        this._value[2] = a02 * b00 + a12 * b01 + a22 * b02;
+
+        this._value[3] = a00 * b10 + a10 * b11 + a20 * b12;
+        this._value[4] = a01 * b10 + a11 * b11 + a21 * b12;
+        this._value[5] = a02 * b10 + a12 * b11 + a22 * b12;
+
+        this._value[6] = a00 * b20 + a10 * b21 + a20 * b22;
+        this._value[7] = a01 * b20 + a11 * b21 + a21 * b22;
+        this._value[8] = a02 * b20 + a12 * b21 + a22 * b22;
+
+        return this;
     };
     scale(v: Vect2): Mat3 {
         const x = v[0], y = v[1];

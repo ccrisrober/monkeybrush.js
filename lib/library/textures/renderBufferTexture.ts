@@ -30,15 +30,25 @@ const gl = Core.getInstance().getGL();
 
 class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
+    protected _size: Vector2<number>;
+    protected _format: number;
     constructor(size: Vector2<number>, format: number, attachment: number) {
         this._handle = gl.createRenderbuffer();
+        this._size = size;
+        this._format = format;
         gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-        gl.renderbufferStorage(gl.RENDERBUFFER, format, size.x, size.y);
+        gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
         gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     }
     public destroy() {
         gl.deleteTexture(this._handle);
+    }
+    public resize(size: Vector2<number>) {
+        if (!size.isEqual(this._size)) {
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+            gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
+        }
     }
 };
 

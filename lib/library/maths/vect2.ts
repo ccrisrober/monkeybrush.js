@@ -86,6 +86,21 @@ class Vect2 {
     public dot(other: Vect2): number {
         return vec2.dot(this._value, other._value);
     }
+    public isEquals(vec: Vect2, threshold: boolean = false): boolean {
+        for (let i = 0; i < 2; ++i) {
+            if (threshold) {
+                if (Math.abs(this._value[i] - vec._value[i]) > 0.00001) {
+                    return false;
+                }
+            } else {
+                if (Math.abs(this._value[i] - vec._value[i]) !== 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    };
 };
 
 export default Vect2;

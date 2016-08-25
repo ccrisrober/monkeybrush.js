@@ -45,6 +45,10 @@ abstract class Texture {
         return this._handle;
     }
 
+    public resize(size: Vector2<number>) {
+        // Nothing to do here
+    }
+
     public setLOD(lod: number) {
         const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {

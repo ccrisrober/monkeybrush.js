@@ -201,6 +201,8 @@ class Skybox {
     public render(view: Float32Array, projection: Float32Array) {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
+        let currDepthComp = Depth.currentComparation();
+
         Depth.comparison(ComparisonFunc.LessEqual);
         this._prog.use();
 
@@ -222,7 +224,7 @@ class Skybox {
         gl.drawArrays(gl.TRIANGLES, 0, 36);
         this.skyboxVAO.unbind();
 
-        Depth.comparison(ComparisonFunc.Less);
+        Depth.comparison(currDepthComp);
     }
     /**
      *

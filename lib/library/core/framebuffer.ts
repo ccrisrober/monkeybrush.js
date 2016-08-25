@@ -39,11 +39,9 @@ const gl = Core.getInstance().getGL();
 class Framebuffer {
     protected _size: Vector2<number>;
     protected _handle: WebGLFramebuffer;
-    protected _attachments: Array<number>;
+    protected _attachments: Array<Texture>;
     public _renderBuffer: RenderBufferTexture;
     public _depth: SimpleTexture2D;
-
-    public _colors: Array<Texture>;
 
     // TODO: Stencil unused
     constructor(textures: Array<Texture>, size: Vector2<number>, depth: boolean = false,
@@ -59,14 +57,14 @@ class Framebuffer {
 
         options = options || {};
 
-        this._colors = textures;
+        this._attachments = textures;
         this._size = size;
 
         this._handle = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
 
         // Each textures to fbo
-        textures.forEach((texture: Texture, i: number) => {
+        this._attachments.forEach((texture: Texture, i: number) => {
             texture.bind();
 
             // Only supported simple textures
@@ -162,7 +160,7 @@ class Framebuffer {
 
     public onlyBindTextures() {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        this._colors.forEach((tex: Texture, idx: number) => {
+        this._attachments.forEach((tex: Texture, idx: number) => {
             tex.bind(idx);
         });
     }
@@ -174,6 +172,15 @@ class Framebuffer {
     public rebuild(size: Vector2<number>) {
         if (!size.isEqual(this._size)) {
             // TODO
+            this._attachments.forEach((tex: Texture) => {
+                tex.resize(size);
+            });
+            if (this._depth) {
+                // TODO
+            }
+            if (this._renderBuffer) {
+                this._renderBuffer.resize(size);
+            }
         }
     }
 
@@ -184,7 +191,7 @@ class Framebuffer {
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         }
 
-        this._colors.forEach((texture: Texture) => {
+        this._attachments.forEach((texture: Texture) => {
             texture.destroy();
         });
 

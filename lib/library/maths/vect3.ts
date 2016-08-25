@@ -86,6 +86,110 @@ class Vect3 {
     public dot(other: Vect3): number {
         return vec3.dot(this._value, other._value);
     };
+    public isEquals(vec: Vect3, threshold: boolean = false): boolean {
+        for (let i = 0; i < 3; ++i) {
+            if (threshold) {
+                if (Math.abs(this._value[i] - vec._value[i]) > 0.00001) {
+                    return false;
+                }
+            } else {
+                if (Math.abs(this._value[i] - vec._value[i]) !== 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    };
+    public length(): number {
+        return Math.sqrt(this.distance());
+    };
+    public normalize(dest: Vect3 = null): Vect3 {
+        if (!dest) dest = this;
+
+        let length = this.length();
+
+        if (length === 1) {
+            return this;
+        }
+
+        if (length === 0) {
+            dest.x = 0;
+            dest.y = 0;
+            dest.z = 0;
+
+            return dest;
+        }
+
+        length = 1.0 / length;
+
+        dest.x *= length;
+        dest.y *= length;
+        dest.z *= length;
+
+        return dest;
+    };
+    static cross(vector: Vect3, vector2: Vect3, dest: Vect3 = null): Vect3 {
+        if (!dest) dest = new Vect3();
+
+        const
+            x = vector.x,
+            y = vector.y,
+            z = vector.z;
+
+        const
+            x2 = vector2.x,
+            y2 = vector2.y,
+            z2 = vector2.z;
+
+        dest.x = y * z2 - z * y2;
+        dest.y = z * x2 - x * z2;
+        dest.z = x * y2 - y * x2;
+
+        return dest;
+    };
+    static dot(vector: Vect3, vector2: Vect3): number {
+        const
+            x = vector.x,
+            y = vector.y,
+            z = vector.z;
+
+        const
+            x2 = vector2.x,
+            y2 = vector2.y,
+            z2 = vector2.z;
+
+        return (x * x2 + y * y2 + z * z2);
+    };
+    static sum(vector: Vect3, vector2: Vect3, dest: Vect3 = null): Vect3 {
+        if (!dest) dest = new Vect3();
+
+        dest.x = vector.x + vector2.x;
+        dest.y = vector.y + vector2.y;
+        dest.z = vector.z + vector2.z;
+
+        return dest;
+    }
+
+    static diff(vector: Vect3, vector2: Vect3, dest: Vect3 = null): Vect3 {
+        if (!dest) dest = new Vect3();
+
+        dest.x = vector.x - vector2.x;
+        dest.y = vector.y - vector2.y;
+        dest.z = vector.z - vector2.z;
+
+        return dest;
+    }
+
+    static mult(vector: Vect3, vector2: Vect3, dest: Vect3 = null): Vect3 {
+        if (!dest) dest = new Vect3();
+
+        dest.x = vector.x * vector2.x;
+        dest.y = vector.y * vector2.y;
+        dest.z = vector.z * vector2.z;
+
+        return dest;
+    }
 };
 
 export default Vect3;

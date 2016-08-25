@@ -98,6 +98,21 @@ class Vect4 {
     public dot(other: Vect4): number {
         return vec4.dot(this._value, other._value);
     }
+    public isEquals(vec: Vect4, threshold: boolean = false): boolean {
+        for (let i = 0; i < 4; ++i) {
+            if (threshold) {
+                if (Math.abs(this._value[i] - vec._value[i]) > 0.00001) {
+                    return false;
+                }
+            } else {
+                if (Math.abs(this._value[i] - vec._value[i]) !== 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    };
 };
 
 export default Vect4;

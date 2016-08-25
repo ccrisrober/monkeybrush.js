@@ -30,7 +30,7 @@ class Cull {
      * Enable cullFace test.
      */
     public static enable() {
-        const gl = Context.getContext(); // Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.enable(gl.CULL_FACE);
     }
 
@@ -39,7 +39,7 @@ class Cull {
      * @return {Face}: Current cullFace mode
      */
     public static getMode(): Face {
-        const gl = Context.getContext(); // Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.getParameter(gl.CULL_FACE_MODE);
     }
 
@@ -48,7 +48,7 @@ class Cull {
      * @param {Face} mode: Cull face mode
      */
     public static setMode(mode: Face) {
-        const gl = Context.getContext(); // Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.cullFace(mode);
     }
 
@@ -56,7 +56,7 @@ class Cull {
      * Disable cullFace test.
      */
     public static disable() {
-        const gl = Context.getContext(); // Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.disable(gl.CULL_FACE);
     }
 
@@ -65,7 +65,7 @@ class Cull {
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
-        const gl = Context.getContext(); // Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.isEnabled(gl.CULL_FACE);
     }
 };

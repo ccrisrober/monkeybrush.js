@@ -21,10 +21,16 @@
 /// <reference path="texture.ts" />
 /// <reference path="texOptions.ts" />
 
+/// <reference path="../constants/TextureFormat.ts" />
+/// <reference path="../constants/TextureType.ts" />
+
 import Core from "../core/core";
 import Texture from "./texture";
 import Vector2 from "../maths/vector2";
 import TexOptions from "./texOptions";
+
+import TextureFormat from "../constants/TextureFormat";
+import TextureType from "../constants/TextureType";
 
 "use strict";
 
@@ -34,8 +40,12 @@ class SimpleTexture2D extends Texture {
     protected _flipY: boolean;
     protected _minFilter: number;
     protected _magFilter: number;
-    protected _wraps: Array<number>;
+    protected _wraps: Array<TextureType>;
 
+    protected _internalformat: TextureFormat;
+    protected _format: TextureFormat;
+    protected _type: TextureFormat;
+    protected _level: number;
     constructor(size: Vector2<number>, options: TexOptions = {}) {
         super(gl.TEXTURE_2D);
         options = options || {};
@@ -46,14 +56,14 @@ class SimpleTexture2D extends Texture {
 
         this._flipY = options.flipY === true;
 
-        let _internalformat = options.internalFormat || gl.RGBA;
-        let _format = options.format || gl.RGBA;
-        let _type = options.type || gl.UNSIGNED_BYTE;
-        const _level = options.level || 0;
+        this._internalformat = options.internalFormat || gl.RGBA;
+        this._format = options.format || gl.RGBA;
+        this._type = options.type || gl.UNSIGNED_BYTE;
+        this._level = options.level || 0;
 
         this._minFilter = options.minFilter || gl.NEAREST;
         this._magFilter = options.magFilter || gl.NEAREST;
-        let wraps = [
+        const wraps = [
             options.wrapS || options.wrap || gl.CLAMP_TO_EDGE,
             options.wrapT || options.wrap || gl.CLAMP_TO_EDGE,
         ];
@@ -62,13 +72,13 @@ class SimpleTexture2D extends Texture {
 
         gl.texImage2D(
             this._target,
-            _level, // Level of details
-            _internalformat, // Internal format
+            this._level, // Level of details
+            this._internalformat, // Internal format
             size.x,
             size.y,
             0,
-            _format, // Format
-            _type, // Size of each channel
+            this._format, // Format
+            this._type, // Size of each channel
             null
         );
 
@@ -127,6 +137,23 @@ class SimpleTexture2D extends Texture {
         //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
     }*/
+
+    public resize(size: Vector2<number>) {
+        if (!size.isEqual(this._size)) {
+            gl.bindTexture(this.target, this._handle);
+            gl.texImage2D(
+                this._target,
+                this._level, // Level of details
+                this._internalformat, // Internal format
+                size.x,
+                size.y,
+                0,
+                this._format, // Format
+                this._type, // Size of each channel
+                null
+            );
+        }
+    }
 };
 
 export default SimpleTexture2D;
