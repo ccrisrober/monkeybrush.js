@@ -43,7 +43,7 @@ class Texture2D extends Texture {
 
         // TODO: Support compression
 
-        this._flipY = options.flipY === true;
+        this._flipY = Boolean(options.flipY);
         this._handle = gl.createTexture();
 
         let _internalformat = options.internalFormat || gl.RGBA;
@@ -72,6 +72,8 @@ class Texture2D extends Texture {
         gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, this._minFilter);
         gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, this._magFilter);
         this.wrap(wraps);
+
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
         /*// Prevent NPOT textures
         // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.

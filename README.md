@@ -29,6 +29,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Add cylinder model
 - [x] Add disc model
 - [x] Add object parser (faces: x1/y1/z1 x2/y2/z2 x3/y3/z3)
+- [x] Add custom model (indices, vertices, normals and texcoords list)
 - [ ] Add glTF (https://github.com/KhronosGroup/glTF)
 
 ### Cameras

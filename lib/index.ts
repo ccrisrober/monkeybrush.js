@@ -51,7 +51,7 @@ let angle = 0;
 
 let text = SimpleConfig();
 function loadAssets() {
-    loaders.loadImage("assets/images/example.png", "exampleImg");
+    loaders.loadImage("descarga (4).png", "exampleImg");
     // skybox
     loaders.loadImage("assets/images/canyon/back.jpg");
     loaders.loadImage("assets/images/canyon/bottom.jpg");
