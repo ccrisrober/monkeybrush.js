@@ -89,20 +89,22 @@ class Texture3D extends Texture {
                 data
             );
         }
-    }
+    };
     public bind(slot?: number) {
         const gl = Core.getInstance().getGL();
         if (typeof slot === "number") {
             gl.activeTexture(gl.TEXTURE0 + slot);
         }
         gl.bindTexture(this._target, this._handle);
-    }
-
+    };
+    public unbind() {
+        // TODO
+    };
     public destroy() {
         const gl = Core.getInstance().getGL();
         gl.deleteTexture(this._handle);
         this._handle = null;
-    }
+    };
 };
 
 export default Texture3D;

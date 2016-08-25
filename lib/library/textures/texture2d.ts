@@ -31,7 +31,6 @@ import extensions from "../extras/extensions";
 
 const gl = Core.getInstance().getGL();
 
-// TODO: Es necesario realmente el tamaño??
 class Texture2D extends Texture {
     protected _flipY: boolean;
     protected _minFilter: number;

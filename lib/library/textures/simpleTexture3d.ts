@@ -31,6 +31,9 @@ class SimpleTexture3D extends Texture3D {
     constructor(size: Vector3<number>, options: TexOptions = {}, onSuccess: () => void) {
         super(null, size, options);
     }
+    public unbind() {
+        // TODO
+    };
 };
 
 export default SimpleTexture3D;

@@ -29,13 +29,14 @@ import extensions from "../extras/extensions";
 const gl = Core.getInstance().getGL();
 
 declare var WebGL2RenderingContext: any;
+declare var WebGLVertexArrayObject: any;
 
 class VertexArray {
     /**
      * [_handle description]
      * @type {WebGLVertexArrayObject}
      */
-    protected _handle: any; // TODO: WebGLVertexArrayObject;
+    protected _handle: WebGLVertexArrayObject;
     /**
      * Vertex array constructor
      * @param {WebGLVertexArrayObject} vao [description]

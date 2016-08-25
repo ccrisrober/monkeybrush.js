@@ -26,47 +26,43 @@ import Core from "../core/core";
 
 const gl = Core.getInstance().getGL();
 
+declare var WebGLTransformFeedback: any;
+
 class TransformFeedback {
-    protected _handle;
+    protected _handle: WebGLTransformFeedback;
     constructor() {
         this._handle = (<any>gl).createTransformFeedback();
-    }
-
+    };
     public destroy() {
         (<any>gl).deleteTransformFeedback(this._handle);
-    }
-
+    };
     public bind(target: number) {
         (<any>gl).bindTranformFeedback(target, this._handle);
-    }
-
-    public unbind(target) {
+    };
+    public unbind(target: number) {
         (<any>gl).bindTransformFeedback(target, null);
-    }
-
-    public begin(primitiveMode) {
+    };
+    public begin(primitiveMode: number) {
         (<any>gl).beginTranformFeedback(primitiveMode);
-    }
-
+    };
     public pause() {
         (<any>gl).pauseTranformFeedback();
-    }
-
+    };
     public resume() {
         (<any>gl).resumeTransformFeedback();
-    }
-
+    };
     public end() {
         (<any>gl).endTranformFeedback();
-    }
-
-    public varyings(program: number, varyings, bufferMode) {
+    };
+    public varyings(program: number, varyings: Array<string>, bufferMode: number) {
         return (<any>gl).transformFeedbackVaryings(program, varyings, bufferMode);
-    }
-
-    public getVarying(program: number, idx) {
+    };
+    public getVarying(program: number, idx: number) {
         return (<any>gl).getTransformFeedbackVarying(program, idx);
-    }
+    };
+    public isValid(): boolean {
+        return (<any>gl).isTransformFeedback(this._handle);
+    };
 }
 
 export default TransformFeedback;

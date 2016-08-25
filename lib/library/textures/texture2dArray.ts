@@ -38,13 +38,15 @@ class Texture2DArray extends Texture {
             gl.activeTexture(gl.TEXTURE0 + slot);
         }
         gl.bindTexture(this._target, this._handle);
-    }
-
+    };
+    public unbind() {
+        // TODO
+    };
     public destroy() {
         const gl = Core.getInstance().getGL();
         gl.deleteTexture(this._handle);
         this._handle = null;
-    }
+    };
 };
 
 export default Texture2DArray;

@@ -21,10 +21,9 @@ module.exports = function (grunt) {
         typedoc: {
             build: {
                 options: {
-                    module: 'commonjs',
                     out: './docs',
-                    name: 'my-project',
-                    target: 'es5'
+                    name: 'monkeybrush.js',
+                    target: 'ES6'
                 },
                 src: ['./lib/**/*']
             }

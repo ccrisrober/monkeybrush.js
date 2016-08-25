@@ -46,9 +46,12 @@ class SimpleTexture2D extends Texture {
     protected _format: TextureFormat;
     protected _type: TextureFormat;
     protected _level: number;
+    protected _size: Vector2<number>;
     constructor(size: Vector2<number>, options: TexOptions = {}) {
         super(gl.TEXTURE_2D);
         options = options || {};
+
+        this._size = size;
 
         this._handle = gl.createTexture();
 

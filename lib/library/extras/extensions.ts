@@ -26,7 +26,6 @@ import Core from "../core/core";
 
 const gl = Core.getInstance().getGL();
 
-// TODO: UNUSED
 namespace extensions {
     /**
      * [_extensions description]

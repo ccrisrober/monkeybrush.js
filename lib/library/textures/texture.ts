@@ -28,18 +28,17 @@ import Vector2 from "../maths/vector2";
 
 declare var WebGL2RenderingContext: any;
 
-// TODO: Redimension
 abstract class Texture {
     protected _handle: WebGLTexture;
     protected _target: number;
-    protected _size: Vector2<number>;
-    constructor(target: number) { // todo: size!
+    constructor(target: number) {
         this._target = target;
     }
     get target(): number { return this._target; }
     abstract destroy(): void;
 
     abstract bind(slot?: number);
+    abstract unbind();
 
     public handle(): WebGLTexture {
         return this._handle;

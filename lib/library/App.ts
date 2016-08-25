@@ -113,6 +113,7 @@ class App {
 
             try {
                 (function __render__(dt?: number) {
+                    requestAnimationFrame(__render__);
                     // console.log(dt);
                     Input.getInstance().update();
 
@@ -129,8 +130,6 @@ class App {
                     }
 
                     self.stats.end();
-
-                    requestAnimationFrame(__render__);
                 })(0.0);
             } catch (e) {
                 VanillaToasts.create({
@@ -176,7 +175,7 @@ class App {
             // Set the viewport to match
             Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
 
-            // TODO: cameraUpdateCb();
+            this.cameraUpdateCb();
         }
     }
 

@@ -34,7 +34,6 @@ import Vector2 from "../maths/vector2";
 
 const gl = Core.getInstance().getGL();
 
-// TODO: Redimension
 // TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
 class Framebuffer {
     protected _size: Vector2<number>;
@@ -68,7 +67,6 @@ class Framebuffer {
             texture.bind();
 
             // Only supported simple textures
-            // TODO: Cubemap or texture3D
             let target = texture.target;
 
             gl.framebufferTexture2D(gl.FRAMEBUFFER,

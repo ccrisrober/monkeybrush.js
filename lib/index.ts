@@ -5,6 +5,8 @@ import App from "./library/App";
 import Core from "./library/core/core";
 import Input from "./library/core/input";
 import Sphere from "./library/models/sphere";
+import Cube from "./library/models/cube";
+import Torus from "./library/models/torus";
 import Disc from "./library/models/disc";
 import Cone from "./library/models/cone";
 import Cylinder from "./library/models/cylinder";
@@ -44,11 +46,14 @@ let tubito3: Cylinder;
 let tubito4: Cylinder;
 let prismito: Prism;
 let prismito2: Prism;
+let cubito: Cube;
+let torito: Torus;
 
 let SimpleConfig = function() {
     return {
         max: 10,
-        resume: true
+        resume: true,
+        render: "0"
     };
 };
 let m: Mesh;
@@ -82,12 +87,12 @@ const mainShader: string = "prog";
 let framebuffer: Framebuffer;
 
 function initialize(app: App) {
-    esferita = new Sphere(1.0, 20, 20);
+    esferita = new Sphere(15.0, 5.0, 5.0);
     conito = new Cone(15.0, 0.0, 15.0, 3.0, 2.0);
     tubito = new Cylinder(5.0, 15.0, 15.0, 2.0);
-    tubito2 = tubito;    // new Tube(5.0, 15.0, 15.0, 2.0);
-    tubito3 = tubito;    // new Tube(5.0, 15.0, 15.0, 2.0);
-    tubito4 = tubito;    // new Tube(5.0, 15.0, 15.0, 2.0);
+    tubito2 = new Cylinder(5.0, 15.0, 15.0, 2.0);
+    tubito3 = new Cylinder(5.0, 15.0, 15.0, 2.0);
+    tubito4 = new Cylinder(5.0, 15.0, 15.0, 2.0);
 
     prismito = new Prism(15.0, 30.0, 6.0, 1.0);
     prismito2 = new Prism(15.0, 30.0, 4.0, 4.0);
@@ -95,6 +100,8 @@ function initialize(app: App) {
     disquito = new Disc(15.0, 5.1, 1.0, 0.0, 1.0);
     disquito2 = new Disc(15.0, 3.5, 5.0, 0.0, 1.0);
 
+    cubito = new Cube(15.0);
+    torito = new Torus(15.0, 10.0, 5, 5);
 
 
 
@@ -200,6 +207,20 @@ function drawScene(app: App) {
 
     let m = 0;
 
+    const renderMode = text.render;
+    let mode: string;
+    switch (renderMode) {
+        case "0":
+            mode = "render";
+            break;
+        case "1":
+            mode = "render2";
+            break;
+        case "2":
+            mode = "render3";
+            break;
+    }
+
     for (i = -varvar; i < varvar; i += 5.0) {
         for (j = -varvar; j < varvar; j += 5.0) {
             for (k = -varvar; k < varvar; k += 5.0) {
@@ -212,25 +233,44 @@ function drawScene(app: App) {
 
                 prog.sendUniformMat4("model", model);
 
-                if (dd === -1)
-                    disquito.render2();
-                else
-                    disquito2.render2();
-
-                // switch (m % 4) {
-                //     case 0:
-                //         tubito.render2();
-                //         break;
-                //     case 1:
-                //         tubito2.render2();
-                //         break;
-                //     case 2:
-                //         tubito3.render2();
-                //         break;
-                //     case 3:
-                //         tubito4.render2();
-                //         break;
-                // }
+                switch (m % 12) {
+                    case 0:
+                        disquito2[mode]();
+                        break;
+                    case 1:
+                        tubito2[mode]();
+                        break;
+                    case 2:
+                        conito[mode]();
+                        break;
+                    case 3:
+                        tubito4[mode]();
+                        break;
+                    case 4:
+                        disquito[mode]();
+                        break;
+                    case 5:
+                        esferita[mode]();
+                        break;
+                    case 6:
+                        prismito[mode]();
+                        break;
+                    case 7:
+                        tubito[mode]();
+                        break;
+                    case 8:
+                        prismito2[mode]();
+                        break;
+                    case 9:
+                        tubito3[mode]();
+                        break;
+                    case 10:
+                        cubito[mode]();
+                        break;
+                    case 11:
+                        torito[mode]();
+                        break;
+                }
                 m++;
             }
         }
@@ -248,7 +288,7 @@ function drawScene(app: App) {
 /**/
 window.onload = () => {
     new App({
-        title: "Demo appp",
+        // title: "Demo appp",
         webglVersion: 2,
         loadAssets: loadAssets,
         initialize: initialize,
@@ -257,6 +297,11 @@ window.onload = () => {
         cameraUpdate: cameraUpdateCb,
         textCB: function(gui: dat.GUI) {
             gui.add(text, "max", 5, 100);
+            gui.add(text, "render", {
+                simple: 0,
+                lines: 1,
+                points: 2
+            });
         }
     }, text).start();
 };

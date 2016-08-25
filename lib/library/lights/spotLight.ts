@@ -47,23 +47,36 @@ class SpotLight extends Light {
      * [CutOff flashlight]
      * @type {number}
      */
-    protected _cutOff: number;  // TODO: Unused
+    protected _cutOff: number;
 
     /**
-     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position
-     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction
+     * Spotlight constructor
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position  [description]
+     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction [description]
+     * @param {number = 1.0} cuttoff [description]
      */
     constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0),
-        direction: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
+        direction: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0), cuttoff: number = 1.0) {
         super();
         this._direction = direction;
         this._position = position;
+        this._cutOff = cuttoff;
     }
+    /**
+     * [cutoff description]
+     * @return {number} [description]
+     */
+    get cutoff(): number { return this._cutOff; }
+    /**
+     * [cutoff description]
+     * @param {number} v [description]
+     */
+    set cutoff(v: number) { this._cutOff = v; }
     /**
      * Get light position
      * @return {Vector3<number>}
      */
-    get position() { return this._position; }
+    get position(): Vector3<number> { return this._position; }
     /**
      * Set light position
      * @param {Vector3<number>} position
@@ -74,7 +87,7 @@ class SpotLight extends Light {
      * Get light direction
      * @return {Vector3<number>}
      */
-    get direction() { return this._direction; }
+    get direction(): Vector3<number> { return this._direction; }
     /**
      * Set light direction
      * @param {Vector3<number>} direction

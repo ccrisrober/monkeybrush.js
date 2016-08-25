@@ -18,23 +18,38 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import Context from "../core/context";
+/// <reference path="../core/core.ts" />
+
+import Core from "../core/core";
 
 "use strict";
 
-const gl = Context.getContext();
+const gl = Core.getInstance().getGL();
 
-namespace ProgramCte {
-    export enum mode {
-        read_file,
-        read_script,
-        read_text
+declare var WebGLSync: any;
+
+class Sync {
+    protected _handle: WebGLSync;
+    constructor(condition: number, flags: number) {
+        condition = condition || (<any>gl).SYNC_GPU_COMMANDS_COMPLETE;
+
+        this._handle = (<any>gl).fenceSync(condition, flags);
     };
-    export enum shader_type {
-        vertex = gl.VERTEX_SHADER,
-        fragment = gl.FRAGMENT_SHADER
-    }
+    public wait(flags, timeout: number) {
+        (<any>gl).waitSync(this._handle, flags, timeout);
+    };
+    public clientWait(flags: number, timeout: number) {
+        return (<any>gl).clientWaitSync(this._handle, flags, timeout);
+    };
+    public getParameter(name: string) {
+        return (<any>gl).getSyncParameter(this._handle, name);
+    };
+    public destroy() {
+        (<any>gl).deleteSync(this._handle);
+    };
+    public isValid(): boolean {
+        return (<any>gl).isSync(this._handle);
+    };
 };
 
-export default ProgramCte;
+export default Sync;

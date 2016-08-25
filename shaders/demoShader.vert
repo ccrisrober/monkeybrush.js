@@ -32,5 +32,6 @@ void main() {
 	outNormal = normalize(normalMatrix * normal);
 	gl_Position = projection * pp;
 
+    gl_PointSize = 5.0;
 	lp = (view * model * vec4(lightPosition, 1.0)).rgb;
 }

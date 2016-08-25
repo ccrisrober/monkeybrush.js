@@ -31,6 +31,9 @@ import ProgramCte from "../constants/ProgramCte";
  * @class Program
  */
 class Program {
+    /**
+     * Program constructor
+     */
     constructor() {
         this._shaders = [];
     }
@@ -96,17 +99,9 @@ class Program {
      * @param {shader_type}
      * @param {mode}
      */
-    public addShader(shader_: string, /*type: number*/ st: ProgramCte.shader_type, _mode: ProgramCte.mode) {
-        const gl = Core.getInstance().getGL();
-
+    public addShader(shader_: string, type: ProgramCte.shader_type, _mode: ProgramCte.mode) {
         let shader: WebGLShader;
 
-        let type: number = -1;
-        if (st === ProgramCte.shader_type.vertex) {
-            type = gl.VERTEX_SHADER;
-        } else if (st === ProgramCte.shader_type.fragment) {
-            type = gl.FRAGMENT_SHADER;
-        }
         if (type < 0) {
             throw new Error("SHADER TYPE UNDEFINED");
         }

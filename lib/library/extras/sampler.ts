@@ -18,23 +18,47 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import Context from "../core/context";
+/// <reference path="../core/core.ts" />
+
+import Core from "../core/core";
 
 "use strict";
 
-const gl = Context.getContext();
+const gl = Core.getInstance().getGL();
 
-namespace ProgramCte {
-    export enum mode {
-        read_file,
-        read_script,
-        read_text
+declare var WebGLSampler: any;
+
+class Sampler {
+    protected _handle: WebGLSampler;
+    constructor() {
+        this._handle = (<any>gl).createSampler();
     };
-    export enum shader_type {
-        vertex = gl.VERTEX_SHADER,
-        fragment = gl.FRAGMENT_SHADER
-    }
+    /**
+     * [bind description]
+     * @param {number} unit: Specifying the index of the texture
+     *                       to which to bind the sampler
+     */
+    public bind(unit: number) {
+        (<any>gl).bindSampler(unit, this._handle);
+    };
+    public unbind() {
+        (<any>gl).bindSampler(null);
+    };
+    public parameteri(name: string, param: number) {
+        (<any>gl).samplerParameteri(this._handle, param);
+    };
+    public parameterf(name: string, param: number) {
+        (<any>gl).samplerParameterf(this._handle, name, param);
+    };
+    public getParameter(name: string) {
+        return (<any>gl).getSamplerParameter(this._handle, name);
+    };
+    public destroy() {
+        (<any>gl).deleteSampler(this._handle);
+    };
+    public isValid(): boolean {
+        return (<any>gl).isSampler(this._handle);
+    };
 };
 
-export default ProgramCte;
+export default Sampler;

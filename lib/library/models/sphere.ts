@@ -32,11 +32,14 @@ class Sphere extends Drawable {
     /**
      * Sphere constructor
      * @param {number} radius [description]
-     * @param {number} slices [description]
-     * @param {number} stacks [description]
+     * @param {number} slices: Number of steps around sphere.
+     * @param {number} stacks: Number of vertically on the sphere.
      */
     constructor(radius: number, slices: number, stacks: number) {
         super();
+
+        slices = Math.trunc(slices);
+        stacks = Math.trunc(stacks);
 
         let nv = (slices + 1) * (stacks + 1);
         let elements = (slices * 2 * (stacks - 1)) * 3;

@@ -35,10 +35,10 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 
 ### WebGL2
 - [x] Transform feedback
-- [ ] Occlusion Query
-- [ ] Query object
-- [ ] Sampler object
-- [ ] Sync object
+- [x] Occlusion Query
+- [x] Query object
+- [x] Sampler object
+- [x] Sync object
 - [ ] UBO (projection, view, model, normalMatrix)
 
 ### Maths
