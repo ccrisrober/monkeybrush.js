@@ -2,6 +2,8 @@
 
 import App from "./library/App";
 
+import Query from "./library/extras/query"
+
 import Core from "./library/core/core";
 import Input from "./library/core/input";
 import Sphere from "./library/models/sphere";
@@ -125,7 +127,7 @@ function initialize(app: App) {
 
     skybox = new Skybox("assets/images/canyon", false);
 
-    framebuffer = new Framebuffer([
+    /*framebuffer = new Framebuffer([
         new SimpleTexture2D(canvasSize, {
             "internalFormat": TextureFormat.RGB,
             "format": TextureFormat.RGB,
@@ -133,7 +135,7 @@ function initialize(app: App) {
             "minFilter": TextureType.Nearest,
             "magFilter": TextureType.Nearest
         })
-    ], canvasSize, true, true, {});
+    ], canvasSize, true, true, {});*/
 
     // console.log(app);
 
@@ -220,7 +222,11 @@ function initialize(app: App) {
     });
 
     cameraUpdateCb();
-}
+
+    query = new Query();
+};
+
+var query: Query;
 
 function cameraUpdateCb() {
     let canvas = Core.getInstance().canvas();
@@ -245,7 +251,9 @@ function updateScene(app: App, dt: number) {
     camera.update(cameraUpdateCb);
 
     angle += Timer.deltaTime() * 0.001;
-}
+};
+
+var renderOK = false;
 
 function drawScene(app: App) {
     Core.getInstance().clearColorAndDepth();
@@ -275,62 +283,56 @@ function drawScene(app: App) {
             mode = "render3";
             break;
     }
+    if (renderOK === false) {
 
-    for (i = -varvar; i < varvar; i += 5.0) {
-        for (j = -varvar; j < varvar; j += 5.0) {
-            for (k = -varvar; k < varvar; k += 5.0) {
-                dd *= -1;
-                mat4.translate(model, identityMatrix,
-                    vec3.fromValues(i * 1.0, j * 1.0, k * 1.0));
-                mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                mat4.rotateY(model, model, angle * dd);
-                mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
+        const gl = Core.getInstance().getGL();
 
-                prog.sendUniformMat4("model", model);
-
-                switch (m % 12) {
-                    case 0:
-                        disquito2[mode]();
-                        break;
-                    case 1:
-                        tubito2[mode]();
-                        break;
-                    case 2:
-                        conito[mode]();
-                        break;
-                    case 3:
-                        tubito4[mode]();
-                        break;
-                    case 4:
-                        disquito[mode]();
-                        break;
-                    case 5:
-                        esferita[mode]();
-                        break;
-                    case 6:
-                        prismito[mode]();
-                        break;
-                    case 7:
-                        tubito[mode]();
-                        break;
-                    case 8:
-                        prismito2[mode]();
-                        break;
-                    case 9:
-                        tubito3[mode]();
-                        break;
-                    case 10:
+        query.useAnySamplesConservative(function() {
+            gl.colorMask(false, false, false, false);
+            gl.depthMask(false);
+            for (i = -varvar; i < varvar; i += 5.0) {
+                for (j = -varvar; j < varvar; j += 5.0) {
+                    for (k = -varvar; k < varvar; k += 5.0) {
+                        mat4.translate(model, identityMatrix,
+                            vec3.fromValues(i, j, k));
+                        mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+                        mat4.rotateY(model, model, angle * dd);
+                        mat4.scale(model, model, vec3.fromValues(0.15, 0.15, 0.15));
+                        prog.sendUniformMat4("model", model);
                         cubito[mode]();
-                        break;
-                    case 11:
-                        torito[mode]();
-                        break;
+                    }
                 }
-                m++;
+            }
+
+            gl.colorMask(true, true, true, true);
+            gl.depthMask(true);
+        });
+
+        renderOK = true;
+    } else {
+        if (!query.isResultAvailable()) {
+            return;
+        } else {
+            var samplesPassed = query.getResult();
+            console.log('Any samples passed: ' + Number(samplesPassed));
+            if (query) {
+                for (i = -varvar; i < varvar; i += 5.0) {
+                    for (j = -varvar; j < varvar; j += 5.0) {
+                        for (k = -varvar; k < varvar; k += 5.0) {
+                            mat4.translate(model, identityMatrix,
+                                vec3.fromValues(i, j, k));
+                            mat4.rotateY(model, model, 90.0 * Math.PI / 180);
+                            mat4.rotateY(model, model, angle * dd);
+                            mat4.scale(model, model, vec3.fromValues(0.15, 0.15, 0.15));
+                            prog.sendUniformMat4("model", model);
+                            cubito[mode]();
+                        }
+                    }
+                }
+                renderOK = false;
             }
         }
     }
-    skybox.render(view, projection);
 }
 
 // ============================================================================================ //

@@ -42,6 +42,7 @@
 
 /// <reference path="./textures/texture2d.ts" />
 
+/// <reference path="./extras/query.ts" />
 /// <reference path="./extras/timer.ts" />
 /// <reference path="./extras/skybox.ts" />
 

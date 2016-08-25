@@ -39,20 +39,29 @@ class Query {
     }
     public end(target) {
         gl.endQuery(target);
-    }
-    public oneUse(target, cb) {
+    };
+    public useAnySamples(cb: Function) {
+        this.oneUse(gl.ANY_SAMPLES_PASSED, cb);
+    };
+    public useAnySamplesConservative(cb: Function) {
+        this.oneUse(gl.ANY_SAMPLES_PASSED_CONSERVATIVE, cb);
+    };
+    public useTransfFeedbackPrimWritten(cb: Function) {
+        this.oneUse(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, cb);
+    };
+    public oneUse(target, cb: Function) {
         this.begin(target);
         cb();
         this.end(target);
     }
-    public getParameters(param: number) {
+    public getParameter(param: number) {
         return gl.getQueryParameter(this._handle, param);
     }
     public isResultAvailable() {
-        return this.getParameters(gl.QUERY_RESULT_AVAILABLE);
+        return this.getParameter(gl.QUERY_RESULT_AVAILABLE);
     }
     public getResult() {
-        return this.getParameters(gl.QUERY_RESULT);
+        return this.getParameter(gl.QUERY_RESULT);
     }
 };
 

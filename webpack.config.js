@@ -27,7 +27,11 @@ module.exports = {
         // Add the Webpack HMR plugin so it will notify the browser when the app code changes
         new webpack.HotModuleReplacementPlugin(),
         // Set up the notifier plugin - you can remove this (or set alwaysNotify false) if desired
-        new WebpackNotifierPlugin({ alwaysNotify: true })
+        new WebpackNotifierPlugin({
+            alwaysNotify: true,
+            title: "monkeybrush.js",
+            contentImage: path.join(__dirname, 'logo.png')
+        })
         /*,
         new webpack.ResolverPlugin(
             new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(".bower.json", ["main"])
