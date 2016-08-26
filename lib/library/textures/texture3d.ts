@@ -98,7 +98,8 @@ class Texture3D extends Texture {
         gl.bindTexture(this._target, this._handle);
     };
     public unbind() {
-        // TODO
+        const gl = Core.getInstance().getGL();
+        gl.bindTexture(this._target, null);
     };
     public destroy() {
         const gl = Core.getInstance().getGL();

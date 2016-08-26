@@ -68,7 +68,7 @@ class App {
     }
 
     private __init__(text) {
-        Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
+        Core.getInstance().initialize([1.0, 0.0, 1.0, 1.0]);
 
         this.gui = new dat.GUI();
 

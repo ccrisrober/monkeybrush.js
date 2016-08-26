@@ -23,6 +23,20 @@
 
 import log from "./log";
 // TODO: in getContext, check antialias or anothers params
+/**
+ * alpha: Boolean that indicates if the canvas contains an alpha buffer.
+ * depth: Boolean that indicates that the drawing buffer has a depth buffer of at least 16 bits.
+ * stencil: Boolean that indicates that the drawing buffer has a stencil buffer of at least 8 bits.
+ * antialias: Boolean that indicates whether or not to perform anti-aliasing.
+ * premultipliedAlpha: Boolean that indicates that the page compositor will assume the drawing
+ *         buffer contains colors with pre-multiplied alpha.
+ * preserveDrawingBuffer: If the value is true the buffers will not be cleared and will preserve
+ *         their values until cleared or overwritten by the author.
+ * failIfMajorPerformanceCaveat: Boolean that indicates if a context will be created if the system
+ *         performance is low.
+ */
+
+
 class Context {
     static _gl: WebGL2RenderingContext = null;
     static _canvas: HTMLCanvasElement = null;

@@ -161,12 +161,10 @@ class Framebuffer {
         this._attachments.forEach((tex: Texture, idx: number) => {
             tex.bind(idx);
         });
-    }
-
+    };
     public unbind() {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    }
-
+    };
     public rebuild(size: Vector2<number>) {
         if (!size.isEqual(this._size)) {
             // TODO
@@ -180,8 +178,7 @@ class Framebuffer {
                 this._renderBuffer.resize(size);
             }
         }
-    }
-
+    };
     public destroy() {
         let oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
@@ -206,6 +203,9 @@ class Framebuffer {
             this._depth.destroy();
             this._depth = null;
         }
+    };
+    public blit(fbo: Framebuffer) {
+        // TODO: gl.blitFramebuffer()
     }
 };
 

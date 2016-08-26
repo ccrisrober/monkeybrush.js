@@ -17,6 +17,9 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
     <img src="descarga (4).png" width="33%" />
 </div>
 
+## Doc
+<a href="./tutorials.md">Doc</a>
+
 ## TODO
 
 ### Models

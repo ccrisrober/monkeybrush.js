@@ -289,10 +289,10 @@ interface WebGL2RenderingContext extends WebGLRenderingContext {
   TEXTURE_IMMUTABLE_LEVELS: number;
   TIMEOUT_IGNORED: number;
   MAX_CLIENT_WAIT_TIMEOUT_WEBGL: number;
-  // TODO: bufferData(target: number, size: number, usage: number): void;
-  // TODO: bufferData(target: number, srcData: ArrayBuffer, usage: number): void;
+  // bufferData(target: number, size: number, usage: number): void;
+  // bufferData(target: number, srcData: ArrayBuffer, usage: number): void;
   bufferSubData(target: number, dstByteOffset: number, srcData: ArrayBuffer): void;
-  // TODO: bufferData(target: number, srcData: ArrayBufferView, usage: number, srcOffset: number): void;
+  // bufferData(target: number, srcData: ArrayBufferView, usage: number, srcOffset: number): void;
   bufferSubData(target: number, dstByteOffset: number, srcData: ArrayBufferView, srcOffset: number): void;
   copyBufferSubData(readTarget: number, writeTarget: number, readOffset: number, writeOffset: number, size: number): void;
   getBufferSubData(target: number, srcByteOffset: number, dstData: ArrayBufferView): void;

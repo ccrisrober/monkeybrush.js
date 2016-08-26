@@ -102,8 +102,9 @@ class GBuffer {
             this.framebuffer.destroy();
         }
     }
-
-    // TODO: Rebuild
+    public rebuild(size: Vector2<number>) {
+        this.framebuffer.rebuild(size);
+    }
 };
 
 export default GBuffer;

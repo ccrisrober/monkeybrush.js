@@ -136,6 +136,11 @@ class VertexBuffer {
             numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
             offset // Offset from the beginning of a single vertex to this attribute
         );
+    };
+
+    public copySub(readTarget: number, writeTarget: number, readOffset: number, writeOffset: number, size: number) {
+        // TODO: https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/copyBufferSubData
+        gl.copyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
     }
 }
 

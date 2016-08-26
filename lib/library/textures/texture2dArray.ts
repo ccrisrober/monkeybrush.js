@@ -36,9 +36,9 @@ class Texture2DArray extends Texture {
 
         gl.bindTexture(this._target, this._handle);
 
-        var width = 512;
-        var height = width;
-        var count = images.length;
+        const width = 512;
+        const height = width;
+        const count = images.length;
 
         gl.pixelStorei(gl.UNPACK_ROW_LENGTH, width);
         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);

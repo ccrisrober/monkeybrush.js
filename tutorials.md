@@ -57,25 +57,25 @@ samplerA.setParams({
     minFilter: gl.NEAREST,
     magFilter: gl.NEAREST,
     wrapS: gl.CLAMP_TO_EDGE,
-    wrapT: gl.CLAMP_TO_EDGE,
+    wrapT: gl.CLAMP_TO_EDGE/*,
     wrapR: gl.CLAMP_TO_EDGE,
     compareFunc: gl.NONE,
-    compareMode: gl.LEQUAL
+    compareMode: gl.LEQUAL*/
 });
 let samplerB = new Sampler();
 samplerB.setParams({
     minFilter: gl.LINEAR,
     magFilter: gl.LINEAR,
     wrapS: gl.REPEAT,
-    wrapT: gl.REPEAT,
+    wrapT: gl.REPEAT/*,
     minLOD: -1000.0,
-    maxLOD: 1000.0
+    maxLOD: 1000.0*/
 });
 
 let samplerC = new Sampler();
 samplerC.setParams({
     minFilter: gl.NEAREST,
-    magFilter: gl.LINEAR_MIPMAP_LINEAR,
+    magFilter: gl.LINEAR,
     wrapS: gl.MIRRORED_REPEAT,
     wrapT: gl.CLAMP_TO_EDGE,
 });
