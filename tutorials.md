@@ -97,3 +97,44 @@ function draw(...) {
 }
 
 ```
+
+## Uniform Buffer Object (UBO)
+```glsl
+#version 300 es
+precision highp float;
+...
+
+layout(std140, column_major) uniform;
+
+uniform UboDemo {
+    mat4 projection;
+    mat4 view;
+} ubo1;
+
+uniform mat4 model;
+
+...
+
+void main() {
+    ...
+    outPosition = model * vec4(pos, 1.0);
+    outPosition = ubo1.view * outPosition;
+    gl_Position = ubo1.projection * outPosition;
+}
+```
+
+```typescript
+// Create
+let uniformPerDrawBuffer: VertexUBO = new VertexUBO(program, "UboDemo", 0);
+
+// Update
+let transforms = new Float32Array([]);
+transforms = utils.Float32Concat(transforms, projection);
+transforms = utils.Float32Concat(transforms, view);
+
+uniformPerDrawBuffer.update(transforms);
+
+// Drawing
+...
+...
+```

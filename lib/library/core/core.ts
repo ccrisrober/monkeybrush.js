@@ -70,7 +70,7 @@ class Core {
         // Set images to flip y axis to match the texture coordinate space.
         // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-        Cull.enable();
+        Cull.disable();
         Blend.disable();
     }
 

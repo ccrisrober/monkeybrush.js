@@ -19,8 +19,10 @@
 
 
 /// <reference path="drawable.ts" />
+/// <reference path="../maths/vect3.ts" />
 
 import Drawable from "./drawable";
+import Vect3 from "../maths/vect3";
 
 "use strict";
 
@@ -61,7 +63,44 @@ class CustomModel extends Drawable {
         }
 
         this._indicesLen = indices.length;
-    }
+
+        this.vertices = vertices;
+        this.faces = indices;
+    };
+    public vertices: Array<number>;
+    public faces: Array<number>;
+
+    public recalculateNormals() {
+        let normals: Array<number> = new Array(this.vertices.length);
+
+        function getPoint(face: number): Array<number> {
+            let arr: Array<number> = new Array(3);
+
+            arr[0] = this.vertices[face * 3];
+            arr[1] = this.vertices[(face * 3) + 1];
+            arr[2] = this.vertices[(face * 3) + 2];
+
+            return arr;
+        }
+
+        for (let i = 0; i < this.faces.length; i += 3) {
+            let p1 = new Vect3(getPoint(i)[0], getPoint(i)[1], getPoint(i)[2]) ;
+            let p2 = new Vect3(getPoint(i + 1)[0], getPoint(i + 1)[1], getPoint(i + 1)[2]) ;
+            let p3 = new Vect3(getPoint(i + 2)[0], getPoint(i + 2)[1], getPoint(i + 2)[2]) ;
+
+            let a = Vect3.rem(p2, p1);
+            let b = Vect3.rem(p3, p1);
+            let n = Vect3.cross(a, b).normalize();
+
+            // normals[faces[i]] += n;
+            // normals[faces[i+1]] += n;
+            // normals[faces[i+2]] += n;
+        }
+
+        for (let i = 0; i < normals.length; ++i) {
+            // normals[i] = glm::normalize(normals[i]);
+        }
+    };
 };
 
 export default CustomModel;

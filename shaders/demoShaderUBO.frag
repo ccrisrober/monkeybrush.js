@@ -54,9 +54,9 @@ void main() {
 	fragColor = vec4(outUV, 0.0, 1.0);
 	vec3 color = texture(texSampler, normalize(outNormal).xy).rgb;
 	fragColor = vec4(color, 1.0);*/
-    /*
+
 	vec3 ambColor = vec3(0.24725, 0.1995, 0.0745);
-	vec3 objectColor = vec3(1.0, 0.0, 0.0); // texture(texSampler, outUV).rgb;
+	vec3 objectColor = texture(texSampler, outUV).rgb;
 	vec3 specColor = vec3(0.628281, 0.555802, 0.366065);
 	float shininess = 0.4;
 
@@ -76,7 +76,6 @@ void main() {
 
     vec3 lightDir = normalize(lp - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
-    diff = floor(diff * levels) * (1.0 / levels);
     vec3 diffuse = diff * lightColor;
 
     // Specular
@@ -99,7 +98,7 @@ void main() {
 
     vec3 result = ((ambient + diffuse + specular) * attenuation) * objectColor;
 
-    fragColor = vec4(result, 1.0);*/
+    fragColor = vec4(result, 1.0);
 
     //float avg = (fragColor.r + fragColor.g + fragColor.b) / 3.0;
     //float avg2 = (0.2126 * fragColor.r + 0.7152 * fragColor.g + 0.0722 * fragColor.b);
@@ -111,8 +110,8 @@ void main() {
     //fragColor = texture(texSampler, matcap(outPosition, norm));
     // Apply fog
     //colorWithFog(fragColor.rgb);
-    fragColor = vec4(normalize(outNormal), lol[0] + 1.0);
-    fragColor = vec4(0.0, 0.0, 1.0, 1.0);
+    //fragColor = vec4(normalize(outNormal), lol[0] + 1.0);
+    //fragColor = vec4(0.0, 0.0, 1.0, 1.0);
     //fragColor = vec4(outUV, 0.0, 1.0);
 
     //fragColor = vec4(0.0, 0.0, 0.0, 1.0);

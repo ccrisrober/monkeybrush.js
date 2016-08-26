@@ -169,6 +169,16 @@ class Vect3 {
         dest.z = vector.z + vector2.z;
 
         return dest;
+    };
+
+    static rem(vector: Vect3, vector2: Vect3, dest: Vect3 = null): Vect3 {
+        if (!dest) dest = new Vect3();
+
+        dest.x = vector.x - vector2.x;
+        dest.y = vector.y - vector2.y;
+        dest.z = vector.z - vector2.z;
+
+        return dest;
     }
 
     static diff(vector: Vect3, vector2: Vect3, dest: Vect3 = null): Vect3 {

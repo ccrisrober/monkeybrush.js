@@ -24,6 +24,8 @@
 /// <reference path="./core/input.ts" />
 /// <reference path="./core/program.ts" />
 /// <reference path="./core/postProcess.ts" />
+/// <reference path="./core/vertexUBO.ts" />
+/// <reference path="./core/utils.ts" />
 
 /// <reference path="./resources/programManager.ts" />
 /// <reference path="./resources/resourceMap.ts" />
@@ -39,6 +41,7 @@
 /// <reference path="./models/prism.ts" />
 /// <reference path="./models/cylinder.ts" />
 /// <reference path="./models/mesh.ts" />
+/// <reference path="./models/customModel.ts" />
 
 /// <reference path="./textures/texture2d.ts" />
 /// <reference path="./textures/texture2dArray.ts" />
