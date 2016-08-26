@@ -28,7 +28,14 @@ import SyncParam from "../constants/SyncParam";
 
 const gl = Core.getInstance().getGL();
 
-class Sync {
+export enum SyncCte {
+    AlreadySignaled = gl.ALREADY_SIGNALED,
+    TimeoutExpired = gl.TIMEOUT_EXPIRED,
+    ConditionSatisfied = gl.CONDITION_SATISFIED,
+    Failed = gl.WAIT_FAILED
+};
+
+export class Sync {
     protected _handle: WebGLSync;
     constructor(condition: number, flags: number) {
         condition = condition || gl.SYNC_GPU_COMMANDS_COMPLETE;
@@ -58,4 +65,4 @@ class Sync {
     };
 };
 
-export default Sync;
+//export default Sync;

@@ -43,6 +43,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Add texture 2D
 - [x] Add texture 3D
 - [x] Add framebuffer
+- [ ] Inmutable texturea
 
 ### WebGL2
 - [x] Transform feedback

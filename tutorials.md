@@ -14,8 +14,8 @@ gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, 4);
 ```
 
 ## Occlusion query
-```javascript
-let query = new Query();
+```typescript
+let query: Query = new Query();
 
 // =======================================
 // =======================================
@@ -51,8 +51,8 @@ query.destroy();
 ```
 
 ## Sampler
-```javascript
-let samplerA = new Sampler();
+```typescript
+let samplerA: Sampler = new Sampler();
 samplerA.setParams({
     minFilter: gl.NEAREST,
     magFilter: gl.NEAREST,
@@ -62,7 +62,7 @@ samplerA.setParams({
     compareFunc: gl.NONE,
     compareMode: gl.LEQUAL*/
 });
-let samplerB = new Sampler();
+let samplerB: Sampler = new Sampler();
 samplerB.setParams({
     minFilter: gl.LINEAR,
     magFilter: gl.LINEAR,
@@ -72,7 +72,7 @@ samplerB.setParams({
     maxLOD: 1000.0*/
 });
 
-let samplerC = new Sampler();
+let samplerC: Sampler = new Sampler();
 samplerC.setParams({
     minFilter: gl.NEAREST,
     magFilter: gl.LINEAR,
@@ -82,4 +82,18 @@ samplerC.setParams({
 
 samplerA.bind(0);
 tex2d.bind(0);
+```
+## Sync
+```typescript
+let sync: Sync;
+function update(...) {
+    // ...
+    sync = new Sync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+}
+function draw(...) {
+    sync.wait(0, gl.TIMEOUT_IGNORED);
+    sync.destroy();
+    // draw objects
+}
+
 ```

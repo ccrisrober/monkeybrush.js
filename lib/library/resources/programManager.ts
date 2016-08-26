@@ -24,12 +24,12 @@ import Program from "../core/program";
 
 "use strict";
 
-interface ProgramCallback {
+/*interface ProgramCallback {
     (): Program;
 };
 interface ProgramUseCallback {
     (prog: Program): void;
-};
+};*/
 namespace ProgramManager {
     /**
      * [Program cache]
@@ -52,7 +52,7 @@ namespace ProgramManager {
      * @param  {string} name: Program name
      * @param {ProgramUseCallback}: Function to execute
      */
-    export function getCB(name: string, cb: ProgramUseCallback) {
+    export function getCB(name: string, cb: (prog: Program) => void) {
         let prog = get(name);
         if (!prog) {
             throw new Error(`Program ${name} undefined`);
@@ -64,7 +64,7 @@ namespace ProgramManager {
      * @param {string} name: Program name
      * @param {ProgramCallback}: Function that creates the program (return program)
      */
-    export function addWithFun(name: string, fn: ProgramCallback) {
+    export function addWithFun(name: string, fn: () => Program) {
         add(name, fn());
     }
     /**

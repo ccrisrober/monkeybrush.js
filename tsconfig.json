@@ -9,8 +9,8 @@
     "noImplicitAny": false,
     "sourceMap": false,
     "outDir": "ts-build",
-    "experimentalDecorators": true/*,
-    "removeComments": true*/
+    "experimentalDecorators": true,
+    "removeComments": true
   },
   "exclude": [
     "node_modules"

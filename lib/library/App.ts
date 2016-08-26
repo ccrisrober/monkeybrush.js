@@ -33,6 +33,8 @@ import Timer from "./extras/timer";
 
 "use strict";
 
+/*
+TODO
 interface IApp {
     title?: string;
     webglVersion?: number;    // TODO: Unused
@@ -42,7 +44,7 @@ interface IApp {
     draw: (app_: App, dt?: number) => void;
     cameraUpdate: () => void;
     textCB: (gui: dat.GUI) => void;
-}
+}*/
 
 @Decorators.sealed
 class App {
@@ -51,7 +53,7 @@ class App {
     protected gui: dat.GUI;
 
     protected cameraUpdateCb;
-    constructor(init: IApp, text: any) {
+    constructor(init: any/*IApp*/, text: any) {
         if (!init.webglVersion) {
             init.webglVersion = 2;
         }
@@ -179,7 +181,7 @@ class App {
         }
     }
 
-    protected _appFunctions: IApp;
+    protected _appFunctions: any; //IApp;
 };
 
 export default App;

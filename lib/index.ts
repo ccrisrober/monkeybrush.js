@@ -20,6 +20,7 @@ import Vector3 from "./library/maths/vector3";
 import Camera2 from "./library/_demoCamera";
 // import Skybox from "./library/extras/skybox";
 import {/*SamplerParams, */Sampler} from "./library/extras/sampler";
+import {SyncCte, Sync} from "./library/extras/sync";
 
 import ProgramCte from "./library/constants/ProgramCte";
 // import TextureFormat from "./library/constants/TextureFormat";
@@ -48,6 +49,8 @@ let identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
 // let model = mat4.create();
 let angle = 0;
+
+let sync: Sync;
 
 let text = SimpleConfig();
 function loadAssets() {
@@ -84,7 +87,7 @@ function initialize(app: App) {
             precision highp float;
             uniform sampler2D dataTexture;
 
-            out vec4 fragColor;
+            layout (location = 0) out vec4 fragColor;
             in vec2 texCoord;
 
             uniform float tcdiv;
@@ -160,8 +163,6 @@ function drawScene(app: App) {
     prog.use();
 
     tex2d.bind(0);
-    // const gl = Core.getInstance().getGL();
-
 
     const renderMode = text.render;
     let mode: Sampler;
@@ -186,6 +187,10 @@ function drawScene(app: App) {
     // let dd = -1;
 
     // let m = 0;
+
+    const gl = Core.getInstance().getGL();
+    sync.wait(0, gl.TIMEOUT_IGNORED);
+    sync.destroy();
 
     PostProcess.bind();
     PostProcess.render();
@@ -224,6 +229,11 @@ function updateScene(app: App, dt: number) {
     camera.update(cameraUpdateCb);
 
     angle += Timer.deltaTime() * 0.001;
+
+    const gl = Core.getInstance().getGL();
+
+    sync = new Sync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+
 };
 
 /**/
