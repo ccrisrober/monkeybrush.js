@@ -21,8 +21,8 @@
 /// <reference path="../core/context.ts" />
 /// <reference path="../extras/extensions.ts" />
 
-import Context from "../core/context";
-import extensions from "../extras/extensions";
+import { Context } from "../core/context";
+import { extensions } from "../extras/extensions";
 
 "use strict";
 
@@ -73,7 +73,7 @@ enum DrawBuffer {
     ColorAttach15 = gl.COLOR_ATTACHMENT15  ||  gl.DRAW_BUFFER15_WEBGL
 };
 
-export default DrawBuffer;
+export { DrawBuffer };
 
 /**
  * extension( WEBGL_draw_buffers )

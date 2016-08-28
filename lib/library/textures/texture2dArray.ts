@@ -20,8 +20,8 @@
 
 /// <reference path="texture.ts" />
 
-import Texture from "./texture";
-import Core from "../core/core";
+import { Texture } from "./texture";
+import { Core } from "../core/core";
 
 "use strict";
 
@@ -73,4 +73,4 @@ class Texture2DArray extends Texture {
     };
 };
 
-export default Texture2DArray;
+export { Texture2DArray };

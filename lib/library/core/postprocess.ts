@@ -23,11 +23,11 @@
 /// <reference path="./vertexArray.ts" />
 /// <reference path="../constants/_constants.ts" />
 
-import Core from "./core.ts";
-import VertexArray from "./vertexArray.ts";
-import VertexBuffer from "./vertexBuffer.ts";
-import UsageType from "../constants/UsageType.ts";
-import BufferType from "../constants/BufferType.ts";
+import { Core } from "./core.ts";
+import { VertexArray } from "./vertexArray.ts";
+import { VertexBuffer } from "./vertexBuffer.ts";
+import { UsageType } from "../constants/UsageType.ts";
+import { BufferType } from "../constants/BufferType.ts";
 
 "use strict";
 
@@ -88,4 +88,4 @@ class PostProcess {
 
 PostProcess.initialize();
 
-export default PostProcess;
+export { PostProcess };

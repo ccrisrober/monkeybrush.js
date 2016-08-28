@@ -21,8 +21,8 @@
 /// <reference path="drawable.ts" />
 /// <reference path="../maths/vect3.ts" />
 
-import Drawable from "./drawable";
-import Vect3 from "../maths/vect3";
+import { Drawable } from "./drawable";
+import { Vect3 } from "../maths/vect3";
 
 "use strict";
 
@@ -103,4 +103,4 @@ class CustomModel extends Drawable {
     };
 };
 
-export default CustomModel;
+export { CustomModel };

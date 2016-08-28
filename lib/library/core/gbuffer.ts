@@ -23,10 +23,10 @@
 /// <reference path="core.ts" />
 /// <reference path="framebuffer.ts" />
 
-import Vector2 from "../maths/vector2";
-import SimpleTexture2D from "../textures/simpleTexture2D";
-import Core from "./core";
-import Framebuffer from "./framebuffer";
+import { Core } from "./core";
+import { Vector2 } from "../maths/vector2";
+import { SimpleTexture2D } from "../textures/simpleTexture2d";
+import { Framebuffer } from "./framebuffer";
 
 "use strict";
 
@@ -107,4 +107,4 @@ class GBuffer {
     }
 };
 
-export default GBuffer;
+export { GBuffer };

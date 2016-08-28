@@ -42,4 +42,4 @@ abstract class Scene {
     protected _animate: boolean;
 };
 
-export default Scene;
+export { Scene };

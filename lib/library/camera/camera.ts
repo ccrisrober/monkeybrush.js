@@ -135,4 +135,4 @@ abstract class Camera {
     set aspRatio(ar: number) { this._ar = ar; };
 };
 
-export default Camera;
+export { Camera };

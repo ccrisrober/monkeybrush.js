@@ -23,7 +23,7 @@
 /// <reference path="mat3.ts" />
 /// <reference path="mat4.ts" />
 
-import Vect2 from "./vect2";
+import {Vect2} from "./vect2";
 // import mat3 from "./mat3";
 // import mat4 from "./mat4";
 
@@ -158,4 +158,4 @@ class Mat2 {
     };
 };
 
-export default Mat2;
+export { Mat2 };

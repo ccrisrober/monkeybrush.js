@@ -19,8 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-///
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -31,4 +30,4 @@ enum TextureFormat {
     Float = gl.FLOAT
 };
 
-export default TextureFormat;
+export { TextureFormat };

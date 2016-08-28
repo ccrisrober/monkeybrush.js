@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -36,4 +36,4 @@ enum DataType {
     Float = gl.FLOAT
 };
 
-export default DataType;
+export { DataType };

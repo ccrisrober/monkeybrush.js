@@ -19,8 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-///
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -46,4 +45,4 @@ enum TransfFeedCte {
     Binding = gl.TRANSFORM_FEEDBACK_BINDING
 };
 
-export default TransfFeedCte;
+export { TransfFeedCte };

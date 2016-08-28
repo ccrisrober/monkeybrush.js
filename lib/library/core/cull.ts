@@ -21,7 +21,7 @@
 /// <reference path="../constants/_constants.ts" />
 /// <reference path="context.ts" />
 
-import Context from "./context";
+import { Context } from "./context";
 
 "use strict";
 
@@ -70,6 +70,7 @@ class Cull {
     }
 };
 
-import Face from "../constants/Face";
+import { Face } from "../constants/Face";
 
-export default Cull;
+export { Cull };
+

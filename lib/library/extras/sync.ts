@@ -21,8 +21,8 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../constants/SyncParam.ts" />
 
-import Core from "../core/core";
-import SyncParam from "../constants/SyncParam";
+import { Core } from "../core/core";
+import { SyncParam } from "../constants/SyncParam";
 
 "use strict";
 

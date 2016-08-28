@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -37,4 +37,4 @@ namespace ProgramCte {
     }
 };
 
-export default ProgramCte;
+export { ProgramCte };

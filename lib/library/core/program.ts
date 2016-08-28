@@ -21,8 +21,8 @@
 /// <reference path="core.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 
-import Core from "./core";
-import ProgramCte from "../constants/ProgramCte";
+import { Core } from "./core";
+import { ProgramCte } from "../constants/ProgramCte";
 
 "use strict";
 
@@ -492,4 +492,4 @@ class Program {
     };
 };
 
-export default Program;
+export { Program };

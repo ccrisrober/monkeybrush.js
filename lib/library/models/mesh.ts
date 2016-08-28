@@ -20,7 +20,7 @@
 
 /// <reference path="drawable.ts" />
 
-import Drawable from "./drawable";
+import { Drawable } from "./drawable";
 
 "use strict";
 
@@ -88,4 +88,4 @@ class Mesh extends Drawable {
     }
 };
 
-export default Mesh;
+export { Mesh };

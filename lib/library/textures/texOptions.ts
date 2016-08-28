@@ -21,8 +21,8 @@
 /// <reference path="../constants/TextureFormat.ts" />
 /// <reference path="../constants/TextureType.ts" />
 
-import TextureFormat from "../constants/TextureFormat";
-import TextureType from "../constants/TextureType";
+import { TextureFormat } from "../constants/TextureFormat";
+import { TextureType } from "../constants/TextureType";
 
 "use strict";
 
@@ -42,4 +42,4 @@ interface TexOptions {
     border?: number;
 };
 
-export default TexOptions;
+export { TexOptions };

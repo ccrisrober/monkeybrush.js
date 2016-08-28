@@ -95,6 +95,11 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Rim Lighting
 - [x] Deferred Shading
 - [x] Tone mapping
+- [x] Skybox reflection and refraction
+- [ ] Heightmap
+- [ ] Texture LOD DEMO
+- [ ] Normal Mapping
+- [ ] Bump Mapping
 - [ ] Tiled Deferred Shading
 - [ ] SSAO
 - [ ] HDR

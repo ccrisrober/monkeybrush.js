@@ -23,9 +23,9 @@
 // var log = log4javascript.getDefaultLogger();
 // log.setLevel(log4javascript.Level.INFO);
 
-let consoleAppender, logger;
-logger = log4javascript.getLogger("my_logger");
+let consoleAppender, log;
+log = log4javascript.getLogger("my_logger");
 consoleAppender = new log4javascript.BrowserConsoleAppender();
-logger.addAppender(consoleAppender);
+log.addAppender(consoleAppender);
 
-export default logger;
+export { log };

@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -40,4 +40,4 @@ enum UsageType {
     StreamCopy = gl.STREAM_COPY,
 };
 
-export default UsageType;
+export { UsageType };

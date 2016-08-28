@@ -21,8 +21,8 @@
 /// <reference path="../extras/color.ts" />
 /// <reference path="../maths/vector3.ts" />
 
-import Color from "../extras/color";
-import Vector3 from "../maths/vector3";
+import { Color } from "../extras/color";
+import { Vector3 } from "../maths/vector3";
 
 "use strict";
 
@@ -111,4 +111,4 @@ abstract class Light {
     set color(color: Color) { this._color = color; }
 };
 
-export default Light;
+export { Light };

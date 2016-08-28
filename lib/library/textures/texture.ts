@@ -21,8 +21,10 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../maths/vector2.ts" />
 
-import Core from "../core/core";
-import Vector2 from "../maths/vector2";
+// TODO: hacer unbind al crear textura!!
+
+import { Core } from "../core/core";
+import { Vector2 } from "../maths/vector2";
 
 "use strict";
 
@@ -57,10 +59,15 @@ abstract class Texture {
             console.log("TEXTURE LOD isn´t supported");
         }
     }
+    public generateMipMap() {
+        const gl = Core.getInstance().getGL();
+        this.bind();
+        gl.generateMipmap(this._target);
+    }
 
     // TODO: Move to abstract methods
     public getHeight(): number { return -1; }
     public getWidth(): number { return -1; }
 };
 
-export default Texture;
+export { Texture };

@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -36,4 +36,4 @@ enum RenderType {
     TriangleFan = gl.TRIANGLE_FAN,
 };
 
-export default RenderType;
+export { RenderType };

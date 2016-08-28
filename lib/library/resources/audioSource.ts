@@ -20,7 +20,7 @@
 
 /// <reference path="resourceMap.ts" />
 
-import ResourceMap from "./resourceMap";
+import { ResourceMap } from "./resourceMap";
 
 "use strict";
 
@@ -104,4 +104,4 @@ class AudioSource {
     }
 };
 
-export default AudioSource;
+export { AudioSource };

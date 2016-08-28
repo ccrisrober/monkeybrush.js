@@ -21,9 +21,9 @@
 /// <reference path="texture.ts" />
 /// <reference path="texOptions.ts" />
 
-import Texture from "./texture";
-import Core from "../core/core";
-import TexOptions from "./texOptions";
+import { Texture } from "./texture";
+import { Core } from "../core/core";
+import { TexOptions } from "./texOptions";
 
 "use strict";
 
@@ -49,7 +49,7 @@ class CubeMapTexture extends Texture {
     public addImage(i: number, data) {
         const gl = Core.getInstance().getGL();
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
-            gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+            gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, data);
     }
     public bind(slot?: number) {
         const gl = Core.getInstance().getGL();
@@ -84,4 +84,4 @@ class CubeMapTexture extends Texture {
     }
 };
 
-export default CubeMapTexture;
+export { CubeMapTexture };

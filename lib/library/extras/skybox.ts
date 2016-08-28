@@ -28,20 +28,20 @@
 /// <reference path="../core/vertexBuffer.ts" />
 /// <reference path="../core/vertexArray.ts" />
 
-import Core from "../core/core.ts";
-import Program from "../core/program.ts";
-import ResourceMap from "../resources/resourceMap.ts";
-import CubeMapTexture from "../textures/cubemapTexture.ts";
-import Depth from "../core/depth.ts";
+import { Core } from "../core/core.ts";
+import { Program } from "../core/program.ts";
+import { ResourceMap } from "../resources/resourceMap.ts";
+import { CubeMapTexture } from "../textures/cubemapTexture.ts";
+import { Depth } from "../core/depth.ts";
 
-import ProgramCte from "../constants/ProgramCte";
-import ComparisonFunc from "../constants/ComparisonFunc";
+import { ProgramCte } from "../constants/ProgramCte";
+import { ComparisonFunc } from "../constants/ComparisonFunc";
 
-import VertexBuffer from "../core/vertexBuffer.ts";
-import VertexArray from "../core/vertexArray";
+import { VertexBuffer } from "../core/vertexBuffer.ts";
+import { VertexArray } from "../core/vertexArray";
 
-import UsageType from "../constants/UsageType.ts";
-import BufferType from "../constants/BufferType.ts";
+import { UsageType } from "../constants/UsageType.ts";
+import { BufferType } from "../constants/BufferType.ts";
 
 "use strict";
 
@@ -66,6 +66,7 @@ class Skybox {
      * @type {CubeMapTexture}
      */
     protected cubeMapTexture: CubeMapTexture;
+    get texture(): CubeMapTexture { return this.cubeMapTexture; }
     /**
      * @param {string}
      */
@@ -249,4 +250,4 @@ class Skybox {
     }
 };
 
-export default Skybox;
+export { Skybox };

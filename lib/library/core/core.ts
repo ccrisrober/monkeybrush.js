@@ -22,8 +22,8 @@
 /// <reference path="context.ts" />
 /// <reference path="../constants/_constants.ts" />
 
-import Context from "./context";
-import Input from "./input";
+import { Context } from "./context";
+import { Input } from "./input";
 
 "use strict";
 /**
@@ -70,7 +70,7 @@ class Core {
         // Set images to flip y axis to match the texture coordinate space.
         // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-        Cull.disable();
+        Cull.enable();
         Blend.disable();
     }
 
@@ -95,10 +95,10 @@ class Core {
 Context.getContext();
 Core.getInstance();
 
-import Depth from "./depth";
-import Cull from "./cull";
-import Blend from "./blend";
+import { Depth } from "./depth";
+import { Cull } from "./cull";
+import { Blend } from "./blend";
 
-import ComparisonFunc from "../constants/ComparisonFunc";
+import { ComparisonFunc } from "../constants/ComparisonFunc";
 
-export default Core;
+export { Core };

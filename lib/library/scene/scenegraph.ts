@@ -21,8 +21,8 @@
 /// <reference path="object3d.ts" />
 /// <reference path="../lights/light.ts" />
 
-import Object3D from "./object3d";
-import Light from "./../lights/light";
+import { Object3D } from "./object3d";
+import { Light } from "./../lights/light";
 
 "use strict";
 
@@ -37,4 +37,4 @@ class SceneGraph {
     }
 };
 
-export default SceneGraph;
+export { SceneGraph };

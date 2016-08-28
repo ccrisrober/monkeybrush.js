@@ -165,4 +165,4 @@ namespace ResourceMap {
     };
 };
 
-export default ResourceMap;
+export { ResourceMap };

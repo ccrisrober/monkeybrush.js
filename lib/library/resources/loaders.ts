@@ -20,7 +20,7 @@
 
 /// <reference path="resourceMap.ts" />
 
-import ResourceMap from "./resourceMap";
+import { ResourceMap } from "./resourceMap";
 
 "use strict";
 
@@ -194,4 +194,4 @@ namespace loaders {
     }
 };
 
-export default loaders;
+export { loaders };

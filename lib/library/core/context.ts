@@ -21,7 +21,7 @@
 /// <reference path="../../typings/webgl2.d.ts" />
 /// <reference path="./log.ts" />
 
-import log from "./log";
+import { log } from "./log";
 // TODO: in getContext, check antialias or anothers params
 /**
  * alpha: Boolean that indicates if the canvas contains an alpha buffer.
@@ -36,14 +36,13 @@ import log from "./log";
  *         performance is low.
  */
 
-
 class Context {
     static _gl: WebGL2RenderingContext = null;
     static _canvas: HTMLCanvasElement = null;
     static getContext(canvasName?: string): WebGL2RenderingContext {
         if (!Context._gl) {
             if (!canvasName) {
-                log.info("Not canvas. Create one ...");
+                console.log("Not canvas. Create one ...");
                 this._canvas = document.createElement("canvas");
                 this._canvas.width = 800;
                 this._canvas.height = 800;
@@ -52,13 +51,13 @@ class Context {
             } else {
                 this._canvas = <HTMLCanvasElement>document.getElementById(canvasName);
             }
-            log.info("Get context");
+            console.log("Get context");
             Context._gl = Context._getContext(this._canvas);
             if (!Context._gl) {
                 document.write("<br><b>WebGL is not supported!</b>");
                 throw new Error("WebGL is not supported!");
             }
-            log.info("WebGL2RenderingContext OK :)");
+            console.log("WebGL2RenderingContext OK :)");
             Context._getVendors();
         }
         return Context._gl;
@@ -69,7 +68,9 @@ class Context {
         let ctx;
         for (let i = 0; i < contexts.length; ++i) {
             ctx = contexts[i];
-            gl = <WebGL2RenderingContext>canvas.getContext(contexts[i]);
+            gl = <WebGL2RenderingContext>canvas.getContext(contexts[i], {
+                antialias: false
+            });
             if (gl) {
                 return gl;
             }
@@ -112,4 +113,4 @@ class Context {
     }
 };
 
-export default Context;
+export { Context };

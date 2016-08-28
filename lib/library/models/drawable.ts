@@ -24,12 +24,12 @@
 /// <reference path="../constants/_constants.ts" />
 /// <reference path="../extras/extensions.ts" />
 
-import Core from "../core/core.ts";
-import VertexArray from "../core/vertexArray.ts";
-import VertexBuffer from "../core/vertexBuffer.ts";
-import UsageType from "../constants/UsageType.ts";
-import BufferType from "../constants/BufferType.ts";
-import extensions from "../extras/extensions";
+import { Core } from "../core/core.ts";
+import { VertexArray } from "../core/vertexArray.ts";
+import { VertexBuffer } from "../core/vertexBuffer.ts";
+import { UsageType } from "../constants/UsageType.ts";
+import { BufferType } from "../constants/BufferType.ts";
+import { extensions } from "../extras/extensions";
 
 "use strict";
 
@@ -158,6 +158,6 @@ abstract class Drawable {
         this._vao.unbind();
     };
 
-}
+};
 
-export default Drawable;
+export { Drawable };

@@ -295,7 +295,7 @@ interface WebGL2RenderingContext extends WebGLRenderingContext {
   // bufferData(target: number, srcData: ArrayBufferView, usage: number, srcOffset: number): void;
   bufferSubData(target: number, dstByteOffset: number, srcData: ArrayBufferView, srcOffset: number): void;
   copyBufferSubData(readTarget: number, writeTarget: number, readOffset: number, writeOffset: number, size: number): void;
-  getBufferSubData(target: number, srcByteOffset: number, dstData: ArrayBufferView): void;
+  getBufferSubData(target: number, srcByteOffset: number, dstData: ArrayBufferView | ArrayBuffer): void;
   blitFramebuffer(srcX0: number, srcY0: number, srcX1: number, srcY1: number, dstX0: number, dstY0: number, dstX1: number, dstY1: number, mask: number, filter: number): void;
   framebufferTextureLayer(target: number, attachment: number, texture: WebGLTexture, level: number, layer: number): void;
   invalidateFramebuffer(target: number, attachments: number[]): void;

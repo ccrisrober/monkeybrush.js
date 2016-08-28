@@ -20,7 +20,7 @@
 
 /// <reference path="drawable.ts" />
 
-import Drawable from "./drawable";
+import { Drawable } from "./drawable";
 
 "use strict";
 
@@ -138,4 +138,4 @@ class Cone extends Drawable {
     }
 };
 
-export default Cone;
+export { Cone };

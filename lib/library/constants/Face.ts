@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -32,4 +32,4 @@ enum Face {
     FrontAndBack = gl.FRONT_AND_BACK        ///< Cull Front and back-facing primitives
 };
 
-export default Face;
+export { Face };

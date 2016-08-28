@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -37,4 +37,4 @@ enum StencilOp {
     Invert = gl.INVERT                      ///< Invert the stencil data (bitwise not)
 };
 
-export default StencilOp;
+export { StencilOp };

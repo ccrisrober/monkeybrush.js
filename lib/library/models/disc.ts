@@ -20,7 +20,7 @@
 
 /// <reference path="drawable.ts" />
 
-import Drawable from "./drawable";
+import { Drawable } from "./drawable";
 
 "use strict";
 
@@ -113,4 +113,4 @@ class Disc extends Drawable {
     }
 };
 
-export default Disc;
+export { Disc };

@@ -115,4 +115,4 @@ class Vect4 {
     };
 };
 
-export default Vect4;
+export { Vect4 };

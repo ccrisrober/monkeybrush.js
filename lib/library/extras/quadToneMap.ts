@@ -21,8 +21,8 @@
 /// <reference path="../core/program.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 
-import Program from "../core/program.ts";
-import ProgramCte from "../constants/ProgramCte";
+import { Program } from "../core/program.ts";
+import { ProgramCte } from "../constants/ProgramCte";
 
 "use strict";
 
@@ -162,4 +162,4 @@ namespace ToneMap {
   export let textureQuadUncharted2Program: Program = new Program();
 };
 
-export default ToneMap;
+export { ToneMap };

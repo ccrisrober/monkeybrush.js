@@ -21,7 +21,7 @@
 /// <reference path="../../typings/gl-matrix.d.ts" />
 /// <reference path="vect3.ts" />
 
-import Vect3 from "./vect3";
+import {Vect3} from "./vect3";
 
 "use strict";
 
@@ -410,4 +410,4 @@ class Mat4 {
     static identity = new Mat4().identify();
 };
 
-export default Mat4;
+export { Mat4 };

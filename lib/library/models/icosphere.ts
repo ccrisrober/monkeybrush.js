@@ -20,7 +20,7 @@
 
 /// <reference path="drawable.ts" />
 
-import Drawable from "./drawable";
+import { Drawable } from "./drawable";
 
 "use strict";
 
@@ -83,4 +83,4 @@ class Icosphere extends Drawable {
     }
 };
 
-export default Icosphere;
+export { Icosphere };

@@ -19,7 +19,7 @@
 
 
 /// <reference path="camera.ts" />
-import Camera from "./camera";
+import { Camera } from "./camera";
 
 "use strict";
 
@@ -43,4 +43,4 @@ class OrthoCamera extends Camera {
     }
 };
 
-export default OrthoCamera;
+export { OrthoCamera };

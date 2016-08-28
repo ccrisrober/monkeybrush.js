@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -44,4 +44,4 @@ enum BlendingType {
     OneMinusCteAlpha = gl.ONE_MINUS_CONSTANT_ALPHA,
 };
 
-export default BlendingType;
+export { BlendingType };

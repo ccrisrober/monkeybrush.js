@@ -25,16 +25,14 @@
 /// <reference path="extras/timer.ts" />
 /// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 
-import Decorators from "./_decorators";
-import Core from "./core/core";
-import Input from "./core/input";
-import ResourceMap from "./resources/resourceMap";
-import Timer from "./extras/timer";
+import { decorators } from "./_decorators";
+import { Core } from "./core/core";
+import { Input } from "./core/input";
+import { ResourceMap } from "./resources/resourceMap";
+import { Timer } from "./extras/timer";
 
 "use strict";
 
-/*
-TODO
 interface IApp {
     title?: string;
     webglVersion?: number;    // TODO: Unused
@@ -44,9 +42,9 @@ interface IApp {
     draw: (app_: App, dt?: number) => void;
     cameraUpdate: () => void;
     textCB: (gui: dat.GUI) => void;
-}*/
+}
 
-@Decorators.sealed
+@decorators.sealed
 class App {
 
     protected stats: Stats;
@@ -184,4 +182,4 @@ class App {
     protected _appFunctions: any; //IApp;
 };
 
-export default App;
+export { App, IApp };

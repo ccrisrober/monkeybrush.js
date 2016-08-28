@@ -1,38 +1,13 @@
 /// <reference path="library/references.d.ts" />
-// TODO: Texture LOD DEMO
-import App from "./library/App";
+// TODO:
+import * as MonkeyBrush from "./library/MonkeyBrush"
 
-import Core from "./library/core/core";
-import Input from "./library/core/input";
-import PostProcess from "./library/core/postProcess";
-import utils from "./library/core/utils";
-import Texture2D from "./library/textures/texture2d";
-// import Texture2DArray from "./library/textures/texture2dArray";
-// import SimpleTexture2D from "./library/textures/simpleTexture2d";
-import Program from "./library/core/program";
-import Cone from "./library/models/cone";
-import VertexUBO from "./library/core/vertexUBO";
-// import Framebuffer from "./library/core/framebuffer";
-import ProgramManager from "./library/resources/programManager";
-import ResourceMap from "./library/resources/resourceMap";
-import loaders from "./library/resources/loaders";
-import CustomModel from "./library/models/customModel";
-import Timer from "./library/extras/timer";
-import PointLight from "./library/lights/pointLight";
-// import Vector2 from "./library/maths/vector2";
-import Vector3 from "./library/maths/vector3";
-import Camera2 from "./library/_demoCamera";
-// import Skybox from "./library/extras/skybox";
-import {/*SamplerParams, */Sampler} from "./library/extras/sampler";
-import {SyncCte, Sync} from "./library/extras/sync";
-
-import ProgramCte from "./library/constants/ProgramCte";
-// import TextureFormat from "./library/constants/TextureFormat";
-import TextureType from "./library/constants/TextureType";
+import { ProgramCte } from "./library/constants/ProgramCte";
+import { TextureType } from "./library/constants/TextureType";
 
 "use strict";
 
-let camera = new Camera2(new Float32Array([-2.7, -1.4, 11.8]));
+let camera = new MonkeyBrush.Camera2(new Float32Array([-2.7, -1.4, 11.8]));
 
 let SimpleConfig = function() {
     return {
@@ -42,194 +17,138 @@ let SimpleConfig = function() {
     };
 };
 
-let conito: Cone;
+let cubito: MonkeyBrush.Cube;
+let skybox: MonkeyBrush.Skybox;
 
 let view;
 let projection;
 
-let customModel: CustomModel;
-
-let tex2d: Texture2D;
-
-let _light = new PointLight(new Vector3<number>( -5.0, 0.0, 0.0 ));
+let customModel: MonkeyBrush.CustomModel;
 
 let identityMatrix = mat4.create();
 mat4.identity(identityMatrix);
 let model = mat4.create();
 let angle = 0;
 
-let sync: Sync;
+let tex: MonkeyBrush.Texture2D;
+let tex2: MonkeyBrush.Texture2D;
 
 let text = SimpleConfig();
 function loadAssets() {
-    loaders.loadImage("descarga (4).png", "exampleImg");
     // skybox
-    loaders.loadImage("assets/images/canyon/back.jpg");
-    loaders.loadImage("assets/images/canyon/bottom.jpg");
-    loaders.loadImage("assets/images/canyon/front.jpg");
-    loaders.loadImage("assets/images/canyon/left.jpg");
-    loaders.loadImage("assets/images/canyon/right.jpg");
-    loaders.loadImage("assets/images/canyon/top.jpg");
+    MonkeyBrush.loaders.loadImage("assets/images/skybox2/back.jpg");
+    MonkeyBrush.loaders.loadImage("assets/images/skybox2/bottom.jpg");
+    MonkeyBrush.loaders.loadImage("assets/images/skybox2/front.jpg");
+    MonkeyBrush.loaders.loadImage("assets/images/skybox2/left.jpg");
+    MonkeyBrush.loaders.loadImage("assets/images/skybox2/right.jpg");
+    MonkeyBrush.loaders.loadImage("assets/images/skybox2/top.jpg");
+
+    MonkeyBrush.loaders.loadImage("heightmap.png", "heightmap");
+    MonkeyBrush.loaders.loadImage("grass.png", "grass");
 }
 
 const mainShader: string = "progubo";
 
-function initialize(app: App) {
+function initialize(app: MonkeyBrush.App) {
+    skybox = new MonkeyBrush.Skybox("assets/images/skybox2", false);
 
-    conito = new Cone(15.0, 0.0, 15.0, 3.0, 2.0);
-
-    customModel = new CustomModel([
-        0,  1,  2,
-        0,  2,  3,
-        0,  3,  4,
-        0,  4,  5,
-        0,  5,  6,
-        0,  6,  7,
-        0,  7,  8,
-        0,  8,  9,
-        0,  9, 10,
-        0, 10,  1
-    ], [
-          1.5,       0.0,       0.0,
-         -1.5,       1.0,       0.0,
-         -1.5,  0.809017,  0.587785,
-         -1.5,  0.309017,  0.951057,
-         -1.5, -0.309017,  0.951057,
-         -1.5, -0.809017,  0.587785,
-         -1.5,      -1.0,       0.0,
-         -1.5, -0.809017, -0.587785,
-         -1.5, -0.309017, -0.951057,
-         -1.5,  0.309017, -0.951057,
-         -1.5,  0.809017, -0.587785
-    ]);
+    cubito = new MonkeyBrush.Cube(15.0);
 
     const webgl2 = app.webglVersion() === 2;
 
-    ProgramManager.addWithFun("pp", (): Program => {
-        let prog2: Program = new Program();
-        prog2.addShader(`#version 300 es
-            precision highp float;
-            layout(location = 0) in vec3 vertPosition;
-            uniform float tcdiv;
-            out vec2 texCoord;
-            void main(void) {
-                texCoord = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-                //texCoord.x *= tcdiv / 5.0;
-                //texCoord.y *= tcdiv / 5.0;
-                gl_Position = vec4(vertPosition, 1.0);
-            }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
-        prog2.addShader(`#version 300 es
-            precision highp float;
-            uniform sampler2D dataTexture;
+    MonkeyBrush.ProgramManager.addWithFun("progubo", (): MonkeyBrush.Program => {
+        let prog: MonkeyBrush.Program = new MonkeyBrush.Program();
+        prog.addShader(`#version 300 es
+    precision highp float;
 
-            layout (location = 0) out vec4 fragColor;
-            in vec2 texCoord;
+    layout(location = 0) in vec3 position;
+    layout(location = 1) in vec3 normal;
+    layout(location = 2) in vec2 uv;
 
-            uniform float tcdiv;
+    uniform mat4 model;
 
-            void main() {
+    layout(std140, column_major) uniform;
 
-                if(length(texCoord - 0.5) > 0.5){
-                    discard;
-                }
-                vec2 tc = texCoord * vec2(tcdiv / 5.0);
-                //fragColor = vec4(texCoord, 0.0, 1.0);
-                fragColor = vec4(texture(dataTexture, tc).rgb, 1.0);
-            }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
-        prog2.compile();
+    uniform UboDemo {
+        mat4 projection;
+        mat4 view;
+    } ubo1;
 
-        prog2.addUniforms(["tcdiv"]);
+    out vec3 outPosition;
+    out vec3 outNormal;
 
-        console.log(prog2);
-        return prog2;
-    });
+    void main() {
+        mat3 normalMatrix = mat3(inverse(transpose(model)));
 
+        gl_Position = ubo1.projection * ubo1.view * model * vec4(position, 1.0f);
+        outNormal = mat3(transpose(inverse(model))) * normal;
+        outPosition = vec3(model * vec4(position, 1.0f));
 
-    ProgramManager.addWithFun("prog", (): Program => {
-        let prog: Program = new Program();
-        if (webgl2) {
-            prog.addShader("./shaders/demoShader.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-            prog.addShader("./shaders/demoShader.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
-        } else {
-            prog.addShader("./shaders/demowebgl1.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-            prog.addShader("./shaders/demowebgl1.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
-        }
+        gl_PointSize = 5.0;
+    }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
+        prog.addShader(`#version 300 es
+    precision highp float;
+
+    in vec3 outNormal;
+    in vec3 outPosition;
+    out vec4 fragColor;
+
+    uniform vec3 cameraPos;
+    uniform samplerCube CubeMap;
+
+    void main() {
+        /**/
+        vec3 I = normalize(outPosition - cameraPos);
+        vec3 R = reflect(I, normalize(outNormal));
+        fragColor = texture(CubeMap, R);
+        /**/
+
+        /**
+        float ratio = 1.00 / 1.33;
+        vec3 I = normalize(outPosition - cameraPos);
+        vec3 R = refract(I, normalize(outNormal), ratio);
+        fragColor = texture(CubeMap, R);
+        /**/
+    }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
         prog.compile();
 
-        const gl = Core.getInstance().getGL();
-
-        prog.addUniforms(["projection", "view", "model",
-            "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
-        return prog;
-    });
-    ProgramManager.addWithFun("progubo", (): Program => {
-        let prog: Program = new Program();
-        //if (webgl2) {
-            prog.addShader("./shaders/demoShaderUBO.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-            prog.addShader("./shaders/demoShaderUBO.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
-        //} else {
-        //    prog.addShader("./shaders/demowebgl1.vert", ProgramCte.shader_type.vertex, ProgramCte.mode.read_file);
-        //    prog.addShader("./shaders/demowebgl1.frag", ProgramCte.shader_type.fragment, ProgramCte.mode.read_file);
-        //}
-        prog.compile();
-
-        const gl = Core.getInstance().getGL();
-
-        let data = {
-            projection: new Float32Array(16),
-            view: new Float32Array(16),
-            model: new Float32Array(16),
-        };
-
-        //let buff = gl.createBuffer();
-        //gl.bufferData(gl.UNIFORM_BUFFER, data, gl.STATIC_DRAW);
-
-        //let uniformIdx = gl.getUniformBlockIndex(prog.program(), "ObjectData");
-        //gl.uniformBlockBinding(prog.program(), uniformIdx, n);
-        //gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, buff);
+        const gl = MonkeyBrush.Core.getInstance().getGL();
 
         prog.use();
 
         var program = prog.program();
 
-        uniformPerDrawBuffer = new VertexUBO(program, "UboDemo", 0);
+        uniformPerDrawBuffer = new MonkeyBrush.VertexUBO(program, "UboDemo", 0);
 
         prog.addUniforms(["projection", "view", "model",
-            "normalMatrix", "texSampler", "viewPos", "lightPosition"]);
+            "normalMatrix", "viewPos", "CubeMap"]);
+
         return prog;
     });
 
-    const gl = Core.getInstance().getGL();
+    const gl = MonkeyBrush.Core.getInstance().getGL();
 
-    let cubeImage = ResourceMap.retrieveAsset("exampleImg");
-    tex2d = new Texture2D(cubeImage, {
-        flipY: true,
-        minFilter: TextureType.Linear,
-        magFilter: TextureType.Linear,
-        wrapS: TextureType.Clamp2Edge,
-        wrapT: TextureType.Clamp2Edge
-    });
+    //
+    for (var i = 0; i < 10; ++i) {
+        console.log(MonkeyBrush.utils.random.nextInt(1, 6));
+    }
 
     cameraUpdateCb();
 };
-var uniformPerDrawBuffer: VertexUBO;
-let samplerA: Sampler;
-let samplerB: Sampler;
-let samplerC: Sampler;
+var uniformPerDrawBuffer: MonkeyBrush.VertexUBO;
 
-// let layer = 0;
+function drawScene(app: MonkeyBrush.App) {
+    MonkeyBrush.Core.getInstance().clearColorAndDepth();
 
-function drawScene(app: App) {
-    Core.getInstance().clearColorAndDepth();
-
-    let prog = ProgramManager.get(mainShader);
+    let prog = MonkeyBrush.ProgramManager.get(mainShader);
     prog.use();
 
     let varvar = text.max;
     let i = 0, j = 0, k = 0;
     let dd = -1;
 
-    let m = 0;
+    skybox.texture.bind(0);
+    prog.sendUniform1i("CubeMap", 0);
 
     const renderMode = text.render;
     let mode: string;
@@ -245,22 +164,22 @@ function drawScene(app: App) {
             break;
     }
 
-    for (i = -varvar; i < varvar; i += 5.0) {
-        for (j = -varvar; j < varvar; j += 5.0) {
-            for (k = -varvar; k < varvar; k += 5.0) {
+    for (i = -varvar; i < varvar; i += 10.0) {
+        for (j = -varvar; j < varvar; j += 10.0) {
+            for (k = -varvar; k < varvar; k += 10.0) {
                 dd *= -1;
                 mat4.translate(model, identityMatrix,
                     vec3.fromValues(i * 1.0, j * 1.0, k * 1.0));
                 mat4.rotateY(model, model, 90.0 * Math.PI / 180);
-                mat4.rotateY(model, model, angle * dd);
-                mat4.scale(model, model, vec3.fromValues(0.1, 0.1, 0.1));
+                mat4.rotateY(model, model, angle * 0.5 * dd);
+                mat4.scale(model, model, vec3.fromValues(0.25, 0.25, 0.25));
 
                 prog.sendUniformMat4("model", model);
-
-                conito[mode]();
+                cubito[mode]();
             }
         }
     }
+    skybox.render(view, projection);
 }
 
 // ============================================================================================ //
@@ -271,52 +190,41 @@ function drawScene(app: App) {
 // ============================================================================================ //
 
 function cameraUpdateCb() {
-    let canvas = Core.getInstance().canvas();
+    let canvas = MonkeyBrush.Core.getInstance().canvas();
     view = camera.GetViewMatrix();
     projection = camera.GetProjectionMatrix(canvas.width, canvas.height);
 
-    let prog = ProgramManager.get(mainShader);
+    let prog = MonkeyBrush.ProgramManager.get(mainShader);
     prog.use();
-    //prog.sendUniformMat4("view", view);
-    //prog.sendUniformMat4("projection", projection);
+
     prog.sendUniformVec3("viewPos", camera.position);
 
-
-    let gl = Core.getInstance().getGL();
-
-    // var uniformPerDrawLocation = gl.getUniformBlockIndex(prog.program(), 'PerDraw');
+    let gl = MonkeyBrush.Core.getInstance().getGL();
 
     var transforms = new Float32Array([]);
-    transforms = utils.Float32Concat(transforms, projection);
-    transforms = utils.Float32Concat(transforms, view);
-    //console.log(transforms);
-
+    transforms = MonkeyBrush.utils.Float32Concat(transforms, projection);
+    transforms = MonkeyBrush.utils.Float32Concat(transforms, view);
 
     uniformPerDrawBuffer.update(transforms);
 }
 
 // @param dt: Global time in seconds
-function updateScene(app: App, dt: number) {
-    if (Input.getInstance().isButtonClicked(Input.mouseButton.Left)) {
+function updateScene(app: MonkeyBrush.App, dt: number) {
+    if (MonkeyBrush.Input.getInstance().isButtonClicked(MonkeyBrush.Input.mouseButton.Left)) {
         console.log("Mouse left clicked");
     }
 
-    camera.timeElapsed = Timer.deltaTime() / 10.0;
+    camera.timeElapsed = MonkeyBrush.Timer.deltaTime() / 10.0;
 
     camera.update(cameraUpdateCb);
 
-    angle += Timer.deltaTime() * 0.001;
-
-    const gl = Core.getInstance().getGL();
-
-    sync = new Sync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
-
+    angle += MonkeyBrush.Timer.deltaTime() * 0.001;
 };
 
 /**/
 window.onload = () => {
-    new App({
-        // title: "Demo appp",
+    new MonkeyBrush.App({
+        title: "Demo appp",
         webglVersion: 2,
         loadAssets: loadAssets,
         initialize: initialize,
@@ -333,31 +241,3 @@ window.onload = () => {
         }
     }, text).start();
 };
-/**/
-
-
-//
-//
-// http://malideveloper.arm.com/downloads/OpenGL_ES_3.0.pdf
-//
-//
-// uniform ObjectData {
-//     vec4 position[NumObjects];
-//      vec4 velocity[NumObjects];
-//      float drag[NumObjects];
-// };
-//
-//
-//
-// OLD
-// glUniform4fv( positionLoc, NumObjects, data.position );
-// glUniform4fv( velocityLoc, NumObjects, data.velocity );
-// glUniform4fv( dragLoc, NumObjects, data.drag );
-//
-// NEW
-// glGenBuffer( 1, &uniformBuffer );
-// glBufferData( GL_UNIFORM_BUFFER, sizeof(data), data, GL_STATIC_DRAW );
-// GLuint uniformIndex = glGetUniformBlockIndex( program, “ObjectData” );
-// glUniformBlockBinding( program, uniformIndex, n );
-// glBindBufferBase( GL_UNIFORM_BUFFER, 0, uniformBuffer );
-

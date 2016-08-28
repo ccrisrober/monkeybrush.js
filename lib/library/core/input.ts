@@ -20,7 +20,7 @@
 
 /// <reference path="context.ts" />
 
-import Context from "./context";
+import { Context } from "./context";
 
 "use strict";
 // TODO: Remove Input singleton mode :S
@@ -247,4 +247,4 @@ class Input {
     }
 };
 
-export default Input;
+export { Input };

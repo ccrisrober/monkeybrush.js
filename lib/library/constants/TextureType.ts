@@ -19,8 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-///
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -32,4 +31,4 @@ enum TextureType {
     Clamp2Edge = gl.CLAMP_TO_EDGE
 };
 
-export default TextureType;
+export { TextureType };

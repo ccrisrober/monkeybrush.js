@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -37,4 +37,4 @@ enum BufferType {
     CopyWrite = gl.COPY_WRITE_BUFFER,
 };
 
-export default BufferType;
+export { BufferType };

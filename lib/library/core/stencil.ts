@@ -18,12 +18,12 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="core.ts" />
+/// <reference path="context.ts" />
 /// <reference path="../constants/_constants.ts" />
-import Core from "./core";
-import ComparisonFunc from "../constants/ComparisonFunc";
-import StencilOp from "../constants/StencilOp";
-import Face from "../constants/Face";
+import { Context } from "./context";
+import { ComparisonFunc } from "../constants/ComparisonFunc";
+import { StencilOp } from "../constants/StencilOp";
+import { Face } from "../constants/Face";
 
 "use strict";
 
@@ -36,7 +36,7 @@ class Stencil {
      * Enable stencil test
      */
     public static use() {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.enable(gl.STENCIL_TEST);
     }
     /**
@@ -47,7 +47,7 @@ class Stencil {
      *    reference value and the stored stencil value when the test is done.
      */
     public static func(compFun: ComparisonFunc, ref: number, mask: number) {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.stencilFunc(compFun, ref, mask);
     }
     /**
@@ -59,7 +59,7 @@ class Stencil {
      *    and depth test passes.
      */
     public static operation(fail: StencilOp, zfail: StencilOp, zpass: StencilOp) {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.stencilOp(fail, zfail, zpass);
     }
     /**
@@ -68,7 +68,7 @@ class Stencil {
      *    individual bits in the stencil planes.
      */
     public static mask(mask: number) {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.stencilMask(mask);
     }
     /**
@@ -78,33 +78,33 @@ class Stencil {
      *    bits in the stencil planes.
      */
     public static maskFace(face: Face, mask: number) {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.stencilMaskSeparate(face, mask);
     }
     public static getFrontWriteMasks(): number {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.getParameter(gl.STENCIL_WRITEMASK);
     }
     public static getBackWriteMask(): number {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.getParameter(gl.STENCIL_BACK_WRITEMASK);
     }
     public static getBits(): number {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.getParameter(gl.STENCIL_BITS);
     }
     /**
      * Clear stencil values
      */
     public static clear() {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.clear(gl.STENCIL_BUFFER_BIT);
     }
     /**
      * Disable stencil test
      */
     public static unuse() {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.disable(gl.STENCIL_TEST);
     }
 
@@ -113,9 +113,9 @@ class Stencil {
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.isEnabled(gl.STENCIL_TEST);
     }
 };
 
-export default Stencil;
+export { Stencil };

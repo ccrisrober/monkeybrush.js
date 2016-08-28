@@ -21,9 +21,9 @@
 /// <reference path="texture2d.ts" />
 /// <reference path="texOptions.ts" />
 
-import Texture2D from "./texture2d";
-import Core from "../core/core";
-import TexOptions from "./texOptions";
+import { Texture2D } from "./texture2d";
+import { Core } from "../core/core";
+import { TexOptions } from "./texOptions";
 
 "use strict";
 // TODO: https://github.com/mdn/webgl-examples/blob/gh-pages/tutorial/sample8/webgl-demo.js
@@ -74,4 +74,4 @@ class VideoTexture extends Texture2D {
     }
 };
 
-export default VideoTexture;
+export { VideoTexture };

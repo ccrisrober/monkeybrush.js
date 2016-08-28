@@ -54,4 +54,4 @@ class Object3D {
     }
 };
 
-export default Object3D;
+export { Object3D };

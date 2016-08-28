@@ -202,4 +202,4 @@ class Vect3 {
     }
 };
 
-export default Vect3;
+export { Vect3 };

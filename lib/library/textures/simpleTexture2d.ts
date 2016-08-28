@@ -24,13 +24,13 @@
 /// <reference path="../constants/TextureFormat.ts" />
 /// <reference path="../constants/TextureType.ts" />
 
-import Core from "../core/core";
-import Texture from "./texture";
-import Vector2 from "../maths/vector2";
-import TexOptions from "./texOptions";
+import { Core } from "../core/core";
+import { Texture } from "./texture";
+import { Vector2 } from "../maths/vector2";
+import { TexOptions } from "./texOptions";
 
-import TextureFormat from "../constants/TextureFormat";
-import TextureType from "../constants/TextureType";
+import { TextureFormat } from "../constants/TextureFormat";
+import { TextureType } from "../constants/TextureType";
 
 "use strict";
 
@@ -159,4 +159,4 @@ class SimpleTexture2D extends Texture {
     }
 };
 
-export default SimpleTexture2D;
+export { SimpleTexture2D };

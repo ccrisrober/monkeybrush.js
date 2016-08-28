@@ -21,8 +21,8 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../extras/extensions.ts" />
 
-import Core from "../core/core";
-import extensions from "../extras/extensions";
+import { Core } from "../core/core";
+import { extensions } from "../extras/extensions";
 
 "use strict";
 
@@ -124,4 +124,4 @@ class VertexArray {
     /**/
 };
 
-export default VertexArray;
+export { VertexArray };

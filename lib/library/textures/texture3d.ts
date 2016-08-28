@@ -22,10 +22,10 @@
 /// <reference path="../maths/vector3.ts" />
 /// <reference path="texOptions.ts" />
 
-import Vector3 from "../maths/vector3";
-import Texture from "./texture";
-import Core from "../core/core";
-import TexOptions from "./texOptions";
+import { Vector3 } from "../maths/vector3";
+import { Texture } from "./texture";
+import { Core } from "../core/core";
+import { TexOptions } from "./texOptions";
 
 "use strict";
 
@@ -108,4 +108,4 @@ class Texture3D extends Texture {
     };
 };
 
-export default Texture3D;
+export { Texture3D };

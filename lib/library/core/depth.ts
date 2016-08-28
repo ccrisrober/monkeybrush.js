@@ -21,8 +21,8 @@
 /// <reference path="../constants/_constants.ts" />
 /// <reference path="context.ts" />
 
-import Context from "./context";
-import ComparisonFunc from "../constants/ComparisonFunc";
+import { Context } from "./context";
+import { ComparisonFunc } from "../constants/ComparisonFunc";
 
 "use strict";
 
@@ -105,4 +105,4 @@ class Depth {
     }
 };
 
-export default Depth;
+export { Depth };

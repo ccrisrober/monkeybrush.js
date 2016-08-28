@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -32,4 +32,4 @@ enum SyncParam {
     Flags = gl.SYNC_FLAGS
 };
 
-export default SyncParam;
+export { SyncParam };

@@ -20,14 +20,14 @@
 
 /// <reference path="core.ts" />
 /// <reference path="../maths/vector2.ts" />
-/// <reference path="../textures/simpleTexture2D.ts" />
+/// <reference path="../textures/simpleTexture2d.ts" />
 /// <reference path="../textures/texture2D.ts" />
 /// <reference path="../textures/renderBufferTexture.ts" />
 
-import Core from "./core.ts";
-import Vector2 from "../maths/vector2.ts";
-import SimpleTexture2D from "../textures/simpleTexture2D.ts";
-import RenderBufferTexture from "../textures/renderBufferTexture.ts";
+import { Core } from "./core.ts";
+import { Vector2 } from "../maths/vector2.ts";
+import { SimpleTexture2D } from "../textures/simpleTexture2d.ts";
+import { RenderBufferTexture } from "../textures/renderBufferTexture.ts";
 
 "use strict";
 
@@ -174,18 +174,18 @@ class GBufferSSAO {
             this.ssaoNoise.push(noise[1]);
             this.ssaoNoise.push(noise[2]);
         }
-        /*let noiseTexture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, noiseTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, /*gl.RGB16F*/ /*gl.RGBA,
-            4, 4, 0, gl.RGB, gl.FLOAT, new Float32Array(this.ssaoNoise));
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-            gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER,
-            gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,
-            gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T,
-            gl.REPEAT);*/
+        // let noiseTexture = gl.createTexture();
+        // gl.bindTexture(gl.TEXTURE_2D, noiseTexture);
+        // gl.texImage2D(gl.TEXTURE_2D, 0, /*gl.RGB16F*/ /*gl.RGBA,
+        //     4, 4, 0, gl.RGB, gl.FLOAT, new Float32Array(this.ssaoNoise));
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
+        //     gl.NEAREST);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER,
+        //     gl.NEAREST);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,
+        //     gl.REPEAT);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T,
+        //     gl.REPEAT);
 
     }
 
@@ -227,4 +227,4 @@ class GBufferSSAO {
     }
 };
 
-export default GBufferSSAO;
+export { GBufferSSAO };

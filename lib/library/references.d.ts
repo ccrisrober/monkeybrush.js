@@ -18,6 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+/// <reference path="./MonkeyBrush.ts" />
 /// <reference path="./App.ts" />
 
 /// <reference path="./core/core.ts" />
@@ -30,7 +31,9 @@
 /// <reference path="./resources/programManager.ts" />
 /// <reference path="./resources/resourceMap.ts" />
 /// <reference path="./resources/loaders.ts" />
+/// <reference path="./resources/objLoader.ts" />
 
+/// <reference path="./models/floor.ts" />
 /// <reference path="./models/torus.ts" />
 /// <reference path="./models/sphere.ts" />
 /// <reference path="./models/plane.ts" />
@@ -45,6 +48,8 @@
 
 /// <reference path="./textures/texture2d.ts" />
 /// <reference path="./textures/texture2dArray.ts" />
+
+/// <reference path="./extras/axis.ts" />
 
 /// <reference path="./extras/query.ts" />
 /// <reference path="./extras/sync.ts" />

@@ -28,4 +28,4 @@ class VideoSource {
 
 };
 
-export default VideoSource;
+export { VideoSource };

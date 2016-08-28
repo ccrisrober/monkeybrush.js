@@ -127,4 +127,4 @@ class Quaternion {
     }
 };
 
-export default Quaternion;
+export { Quaternion };

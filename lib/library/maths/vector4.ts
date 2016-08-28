@@ -53,4 +53,4 @@ class Vector4<T> {
     }
 };
 
-export default Vector4;
+export { Vector4 };

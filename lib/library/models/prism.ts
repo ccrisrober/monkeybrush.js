@@ -20,7 +20,7 @@
 
 /// <reference path="cone.ts" />
 
-import Cone from "./cone";
+import { Cone } from "./cone";
 
 "use strict";
 
@@ -44,4 +44,4 @@ class Prism extends Cone {
     }
 };
 
-export default Prism;
+export { Prism };

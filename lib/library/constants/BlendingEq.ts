@@ -21,8 +21,8 @@
 /// <reference path="../core/context.ts" />
 /// <reference path="../extras/extensions.ts" />
 
-import Context from "../core/context";
-import extensions from "../extras/extensions";
+import { Context } from "../core/context";
+import { extensions } from "../extras/extensions";
 
 const ext = extensions.get("WEBGL_draw_buffers");
 
@@ -38,4 +38,4 @@ enum BlendingEq {
     Max = gl.MAX || ext.EXT_blend_minmax
 };
 
-export default BlendingEq;
+export { BlendingEq };

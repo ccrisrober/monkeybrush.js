@@ -127,4 +127,4 @@ namespace ObjLoader {
     }
 };
 
-export default ObjLoader;
+export { ObjLoader };

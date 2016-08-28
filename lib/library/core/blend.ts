@@ -21,10 +21,10 @@
 /// <reference path="../constants/_constants.ts" />
 /// <reference path="context.ts" />
 
-import Context from "./context";
+import { Context } from "./context";
 
-import BlendingEq from "../constants/BlendingEq";
-import BlendingType from "../constants/BlendingType";
+import { BlendingEq } from "../constants/BlendingEq";
+import { BlendingType } from "../constants/BlendingType";
 
 "use strict";
 
@@ -135,4 +135,4 @@ class Blend {
 
 };
 
-export default Blend;
+export { Blend };

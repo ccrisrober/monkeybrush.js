@@ -20,7 +20,7 @@
 
 /// <reference path="cone.ts" />
 
-import Cone from "./cone";
+import { Cone } from "./cone";
 
 "use strict";
 
@@ -47,4 +47,4 @@ class Cylinder extends Cone {
     }
 };
 
-export default Cylinder;
+export { Cylinder };

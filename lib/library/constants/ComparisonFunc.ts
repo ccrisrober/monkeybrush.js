@@ -19,7 +19,7 @@
 
 
 /// <reference path="../core/context.ts" />
-import Context from "../core/context";
+import { Context } from "../core/context";
 
 "use strict";
 
@@ -37,4 +37,4 @@ enum ComparisonFunc {
     GreaterEqual = gl.GEQUAL                ///< Passes if source is greater than or equal to the destination
 };
 
-export default ComparisonFunc;
+export { ComparisonFunc };

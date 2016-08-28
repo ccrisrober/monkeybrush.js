@@ -18,13 +18,34 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="core.ts" />
-
-import Core from "./core.ts";
-
 "use strict";
 
 namespace utils {
+    class RNG {
+        private _seed:number;
+
+        constructor(seed:number) {
+            this._seed = seed;
+        };
+        private _next(min:number, max:number):number {
+            max = max || 0;
+            min = min || 0;
+
+            this._seed = (this._seed * 9301 + 49297) % 233280;
+            var rnd = this._seed / 233281;
+
+            return min + rnd * (max - min);
+        };
+        public nextInt(min:number, max:number):number {
+            return Math.floor(this._next(min, max));
+        };
+        public next():number {
+            return this._next(0, 1);
+        };
+    }
+
+    export let random: RNG = new RNG(new Date().getTime());
+
     export function Uint8Concat(first, second) {
         var firstLength = first.length,
             result = new Uint8Array(firstLength + second.length);
@@ -102,4 +123,4 @@ namespace utils {
     };
 };
 
-export default utils;
+export { utils };

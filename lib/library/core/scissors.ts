@@ -18,21 +18,21 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="core.ts" />
-import Core from "./core";
+/// <reference path="context.ts" />
+import { Context } from "./context";
 
 "use strict";
 
 /**
- * scissor wrapper
- * @class Scissor
+ * scissors wrapper
+ * @class Scissors
  */
-class Scissor {
+class Scissors {
     /**
      * Enable scissor test.
      */
     public static use() {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.enable(gl.SCISSOR_TEST);
     }
     /**
@@ -43,7 +43,7 @@ class Scissor {
      * @param {number} height: Specifying the height of the scissor box.
      */
     public setRectangle(x: number, y: number, width: number, height: number) {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.scissor(x, y, width, height);
     }
     /**
@@ -51,14 +51,14 @@ class Scissor {
      * @return {Int32Array}: Scissor box size [x, y, width, height]
      */
     public getRectangle(): Int32Array {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.getParameter(gl.SCISSOR_BOX);
     }
     /**
      * Disable scissor test.
      */
     public static unuse() {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         gl.disable(gl.SCISSOR_TEST);
     }
 
@@ -67,9 +67,9 @@ class Scissor {
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
-        const gl = Core.getInstance().getGL();
+        const gl = Context.getContext();
         return gl.isEnabled(gl.SCISSOR_TEST);
     }
 };
 
-export default Scissor;
+export { Scissors };

@@ -22,10 +22,10 @@
 /// <reference path="texOptions.ts" />
 /// <reference path="../extras/extensions.ts" />
 
-import Core from "../core/core";
-import Texture from "./texture";
-import TexOptions from "./texOptions";
-import extensions from "../extras/extensions";
+import { Core } from "../core/core";
+import { Texture } from "./texture";
+import { TexOptions } from "./texOptions";
+import { extensions } from "../extras/extensions";
 
 "use strict";
 
@@ -144,4 +144,4 @@ class Texture2D extends Texture {
     }
 };
 
-export default Texture2D;
+export { Texture2D };

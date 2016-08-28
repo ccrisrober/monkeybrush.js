@@ -22,9 +22,9 @@
 /// <reference path="../core/program.ts" />
 /// <reference path="../constants/TransfFeedCte.ts" />
 
-import Core from "../core/core";
-import Program from "../core/program";
-import TransfFeedCte from "../constants/TransfFeedCte";
+import { Core } from "../core/core";
+import { Program } from "../core/program";
+import { TransfFeedCte } from "../constants/TransfFeedCte";
 
 "use strict";
 

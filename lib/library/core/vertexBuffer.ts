@@ -21,9 +21,9 @@
 /// <reference path="../core/core.ts" />
 /// <reference path="../constants/_constants.ts" />
 
-import Core from "../core/core";
-import BufferType from "../constants/BufferType";
-import UsageType from "../constants/UsageType";
+import { Core } from "../core/core";
+import { BufferType } from "../constants/BufferType";
+import { UsageType } from "../constants/UsageType";
 
 "use strict";
 
@@ -144,4 +144,4 @@ class VertexBuffer {
     }
 }
 
-export default VertexBuffer;
+export { VertexBuffer };

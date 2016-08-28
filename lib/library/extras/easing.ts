@@ -176,4 +176,4 @@ namespace easing {
     };
 };
 
-export default easing;
+export { easing };

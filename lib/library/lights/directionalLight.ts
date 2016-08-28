@@ -20,8 +20,8 @@
 
 /// <reference path="light.ts" />
 
-import Light from "./light";
-import Vector3 from "../maths/vector3";
+import { Light } from "./light";
+import { Vector3 } from "../maths/vector3";
 
 "use strict";
 
@@ -57,4 +57,4 @@ class DirectionalLight extends Light {
     set direction(direction: Vector3<number>) { this._direction = direction; }
 };
 
-export default DirectionalLight;
+export { DirectionalLight };

@@ -20,7 +20,7 @@
 
 /// <reference path="drawable.ts" />
 
-import Drawable from "./drawable";
+import { Drawable } from "./drawable";
 
 "use strict";
 
@@ -125,4 +125,4 @@ class Torus extends Drawable {
         // gl.drawElements(gl.LINE_LOOP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
 };
 
-export default Torus;
+export { Torus };
