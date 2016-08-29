@@ -26,10 +26,10 @@
  * @class Vector4<T>
  */
 class Vector4<T> {
-    public x: T;
-    public y: T;
-    public z: T;
-    public w: T;
+    protected _x: T;
+    protected _y: T;
+    protected _z: T;
+    protected _w: T;
     /**
      * Vector4<T> constructor
      * @param {T} x: First value
@@ -38,10 +38,10 @@ class Vector4<T> {
      * @param {T} z: Fourth value
      */
     constructor(x: T, y: T, z: T, w: T) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
+        this._x = x;
+        this._y = y;
+        this._z = z;
+        this._w = w;
     }
     /**
      * Check if two vector4<T> are equals
@@ -51,6 +51,14 @@ class Vector4<T> {
     public isEqual(other: Vector4<T>): boolean {
         return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
     }
+    get x(): T { return this._x; };
+    get y(): T { return this._y; };
+    get z(): T { return this._z; };
+    get w(): T { return this._w; };
+    set x(x: T) { this._x = x; };
+    set y(y: T) { this._y = y; };
+    set z(z: T) { this._z = z; };
+    set w(w: T) { this._w = w; };
 };
 
 export { Vector4 };

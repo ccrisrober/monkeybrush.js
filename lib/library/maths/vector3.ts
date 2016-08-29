@@ -26,9 +26,9 @@
  * @class Vector3<T>
  */
 class Vector3<T> {
-    public x: T;
-    public y: T;
-    public z: T;
+    protected _x: T;
+    protected _y: T;
+    protected _z: T;
     /**
      * Vector3<T> constructor
      * @param {T} x: First value
@@ -36,9 +36,9 @@ class Vector3<T> {
      * @param {T} z: Third value
      */
     constructor(x: T, y: T, z: T) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this._x = x;
+        this._y = y;
+        this._z = z;
     }
     /**
      * Check if two vector3<T> are equals
@@ -48,6 +48,12 @@ class Vector3<T> {
     public isEqual(other: Vector3<T>): boolean {
         return this.x === other.x && this.y === other.y && this.z === other.z;
     }
+    get x(): T { return this._x; };
+    get y(): T { return this._y; };
+    get z(): T { return this._z; };
+    set x(x: T) { this._x = x; };
+    set y(y: T) { this._y = y; };
+    set z(z: T) { this._z = z; };
 };
 
 export { Vector3 };

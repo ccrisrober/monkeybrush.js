@@ -26,16 +26,16 @@
  * @class Vector2<T>
  */
 class Vector2<T> {
-    public x: T;
-    public y: T;
+    protected _x: T;
+    protected _y: T;
     /**
      * Vector2<T> constructor
      * @param {T} x: First value
      * @param {T} y: Second value
      */
     constructor(x: T, y: T) {
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
     }
     /**
      * Check if two vector2<T> are equals
@@ -45,6 +45,10 @@ class Vector2<T> {
     public isEqual(other: Vector2<T>): boolean {
         return this.x === other.x && this.y === other.y;
     }
+    get x(): T { return this._x; };
+    get y(): T { return this._y; };
+    set x(x: T) { this._x = x; };
+    set y(y: T) { this._y = y; };
 };
 
 export { Vector2 };
