@@ -22,7 +22,7 @@
 /// <reference path="../maths/vector3.ts" />
 /// <reference path="texOptions.ts" />
 
-import { Vector3 } from "../maths/vector3";
+import { Vect3 } from "../maths/vect3";
 import { Texture } from "./texture";
 import { Core } from "../core/core";
 import { TexOptions } from "./texOptions";
@@ -32,7 +32,7 @@ import { TexOptions } from "./texOptions";
 declare var WebGL2RenderingContext: any;
 
 class Texture3D extends Texture {
-    constructor (data, size: Vector3<number>, options: TexOptions = {}) {
+    constructor (data, size: Vect3, options: TexOptions = {}) {
         const gl = Core.getInstance().getGL();
         if (!(gl instanceof WebGL2RenderingContext)) {
             throw new Error("Must provide a WebGL2 context ...");

@@ -47,13 +47,15 @@ class Program {
     public attribLocations: { [key: string]: number; } = {};
 
     /**
-     * @param {string[]}
+     * [addAttributesArgs description]
+     * @param {string[]} ...attrs [description]
      */
     public addAttributesArgs(...attrs: string[]) {
         this.addAttributes(attrs);
     }
     /**
-     * @param {Array<string>}
+     * [addAttributes description]
+     * @param {Array<string>} attrs [description]
      */
     public addAttributes(attrs: Array<string>) {
         const gl = Core.getInstance().getGL();
@@ -68,13 +70,15 @@ class Program {
         }
     }
     /**
-     * @param {string[]}
+     * [addUniformsArgs description]
+     * @param {string[]} ...unifs [description]
      */
     public addUniformsArgs(...unifs: string[]) {
         this.addUniforms(unifs);
     }
     /**
-     * @param {Array<string>}
+     * [addUniforms description]
+     * @param {Array<string>} unifs [description]
      */
     public addUniforms(unifs: Array<string>) {
         const gl = Core.getInstance().getGL();
@@ -89,15 +93,17 @@ class Program {
         }
     }
     /**
-     * @return {WebGLProgram}
+     * [id description]
+     * @return {WebGLProgram} [description]
      */
-    public program(): WebGLProgram {
+    public id(): WebGLProgram {
         return this._compiledShader;
     }
     /**
-     * @param {string}
-     * @param {shader_type}
-     * @param {mode}
+     * [addShader description]
+     * @param {string}                 shader_ [description]
+     * @param {ProgramCte.shader_type} type    [description]
+     * @param {ProgramCte.mode}        _mode   [description]
      */
     public addShader(shader_: string, type: ProgramCte.shader_type, _mode: ProgramCte.mode) {
         let shader: WebGLShader;

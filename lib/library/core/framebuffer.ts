@@ -28,7 +28,7 @@ import { Core } from "./core";
 import { Texture } from "../textures/texture";
 import { SimpleTexture2D } from "../textures/simpleTexture2D";
 import { RenderBufferTexture } from "../textures/renderBufferTexture";
-import { Vector2 } from "../maths/vector2";
+import { Vect2 } from "../maths/vect2";
 
 "use strict";
 
@@ -36,14 +36,14 @@ const gl = Core.getInstance().getGL();
 
 // TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
 class Framebuffer {
-    protected _size: Vector2<number>;
+    protected _size: Vect2;
     protected _handle: WebGLFramebuffer;
     protected _attachments: Array<Texture>;
     public _renderBuffer: RenderBufferTexture;
     public _depth: SimpleTexture2D;
 
     // TODO: Stencil unused
-    constructor(textures: Array<Texture>, size: Vector2<number>, depth: boolean = false,
+    constructor(textures: Array<Texture>, size: Vect2, depth: boolean = false,
         stencil: boolean = false, options = {}) {
         let numColors = textures.length;
         if (numColors < 0) {
@@ -165,7 +165,7 @@ class Framebuffer {
     public unbind() {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     };
-    public rebuild(size: Vector2<number>) {
+    public rebuild(size: Vect2) {
         if (!size.isEqual(this._size)) {
             // TODO
             this._attachments.forEach((tex: Texture) => {

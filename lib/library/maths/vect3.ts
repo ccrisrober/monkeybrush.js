@@ -28,6 +28,9 @@
  */
 class Vect3 {
     protected _value: Float32Array;
+    static create(value: Float32Array): Vect3 {
+        return new Vect3(value[0], value[1], value[2]);
+    };
     /**
      * Creates a new vect3
      * @param {number = 0.0} x

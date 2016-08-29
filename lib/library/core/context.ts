@@ -21,7 +21,7 @@
 /// <reference path="../../typings/webgl2.d.ts" />
 /// <reference path="./log.ts" />
 
-import { log } from "./log";
+// import { log } from "./log";
 // TODO: in getContext, check antialias or anothers params
 /**
  * alpha: Boolean that indicates if the canvas contains an alpha buffer.

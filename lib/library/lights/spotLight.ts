@@ -21,12 +21,9 @@
 /// <reference path="light.ts" />
 
 import { Light } from "./light";
-import { Vector3 } from "../maths/vector3";
+import { Vect3 } from "../maths/vect3";
 
 "use strict";
-
-// TODO: Replace Vector3 to Vect3
-
 
 /**
  * Spot light class
@@ -35,14 +32,14 @@ import { Vector3 } from "../maths/vector3";
 class SpotLight extends Light {
     /**
      * [Light position]
-     * @type {Vector3<number>}
+     * @type {Vect3}
      */
-    protected _position: Vector3<number>;
+    protected _position: Vect3;
     /**
      * [Light direction]
-     * @type {Vector3<number>}
+     * @type {Vect3}
      */
-    protected _direction: Vector3<number>;
+    protected _direction: Vect3;
     /**
      * [CutOff flashlight]
      * @type {number}
@@ -51,12 +48,12 @@ class SpotLight extends Light {
 
     /**
      * Spotlight constructor
-     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} position  [description]
-     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction [description]
+     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} position  [description]
+     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction [description]
      * @param {number = 1.0} cuttoff [description]
      */
-    constructor(position: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0),
-        direction: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0), cuttoff: number = 1.0) {
+    constructor(position: Vect3 = new Vect3(0.0, 0.0, 0.0),
+        direction: Vect3 = new Vect3(0.0, 0.0, 0.0), cuttoff: number = 1.0) {
         super();
         this._direction = direction;
         this._position = position;
@@ -74,25 +71,25 @@ class SpotLight extends Light {
     set cutoff(v: number) { this._cutOff = v; }
     /**
      * Get light position
-     * @return {Vector3<number>}
+     * @return {Vect3}
      */
-    get position(): Vector3<number> { return this._position; }
+    get position(): Vect3 { return this._position; }
     /**
      * Set light position
-     * @param {Vector3<number>} position
+     * @param {Vect3} position
      */
-    set position(position: Vector3<number>) { this._position = position; }
+    set position(position: Vect3) { this._position = position; }
 
     /**
      * Get light direction
-     * @return {Vector3<number>}
+     * @return {Vect3}
      */
-    get direction(): Vector3<number> { return this._direction; }
+    get direction(): Vect3 { return this._direction; }
     /**
      * Set light direction
-     * @param {Vector3<number>} direction
+     * @param {Vect3} direction
      */
-    set direction(direction: Vector3<number>) { this._direction = direction; }
+    set direction(direction: Vect3) { this._direction = direction; }
 };
 
 export { SpotLight };

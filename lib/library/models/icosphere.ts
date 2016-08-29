@@ -41,7 +41,8 @@ class Icosphere extends Drawable {
     constructor(radius: number, subdivisions: number = 1) {
         super();
 
-        subdivisions = Math.trunc(subdivisions);
+        // subdivisions = Math.trunc(subdivisions);
+        // const t = ( 1 + Math.sqrt( 5 ) ) / 2;
 
         // create 12 vertices of a Icosahedron
         // let t = (1 + Math.sqrt(5)) / 2;

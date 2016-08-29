@@ -26,7 +26,7 @@
 
 import { Core } from "../core/core";
 import { Texture } from "./texture";
-import { Vector2 } from "../maths/vector2";
+import { Vect2 } from "../maths/vect2";
 import { TexOptions } from "./texOptions";
 
 import { TextureFormat } from "../constants/TextureFormat";
@@ -46,8 +46,8 @@ class SimpleTexture2D extends Texture {
     protected _format: TextureFormat;
     protected _type: TextureFormat;
     protected _level: number;
-    protected _size: Vector2<number>;
-    constructor(size: Vector2<number>, options: TexOptions = {}) {
+    protected _size: Vect2;
+    constructor(size: Vect2, options: TexOptions = {}) {
         super(gl.TEXTURE_2D);
         options = options || {};
 
@@ -141,7 +141,7 @@ class SimpleTexture2D extends Texture {
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
     }*/
 
-    public resize(size: Vector2<number>) {
+    public resize(size: Vect2) {
         if (!size.isEqual(this._size)) {
             gl.bindTexture(this.target, this._handle);
             gl.texImage2D(

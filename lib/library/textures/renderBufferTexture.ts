@@ -22,7 +22,7 @@
 /// <reference path="../core/Core.ts" />
 
 import { Core } from "../core/core";
-import { Vector2 } from "../maths/vector2";
+import { Vect2 } from "../maths/vect2";
 
 "use strict";
 
@@ -30,9 +30,9 @@ const gl = Core.getInstance().getGL();
 
 class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
-    protected _size: Vector2<number>;
+    protected _size: Vect2;
     protected _format: number;
-    constructor(size: Vector2<number>, format: number, attachment: number) {
+    constructor(size: Vect2, format: number, attachment: number) {
         this._handle = gl.createRenderbuffer();
         this._size = size;
         this._format = format;
@@ -50,7 +50,7 @@ class RenderBufferTexture {
     public destroy() {
         gl.deleteTexture(this._handle);
     };
-    public resize(size: Vector2<number>) {
+    public resize(size: Vect2) {
         if (!size.isEqual(this._size)) {
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
             gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);

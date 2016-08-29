@@ -74,6 +74,7 @@ class Axis extends Drawable {
     };
     // TODO: Usar otro tipo de shader y enviar el color de las líneas de los ejes ...
     private _createVertices(dim: number): Array<number> {
+        /* tslint:disable */
         return [
             -dim,    0.0,  0.0,
              dim,    0.0,  0.0,
@@ -82,6 +83,7 @@ class Axis extends Drawable {
              0.0,    0.0, -dim,
              0.0,    0.0,  dim
         ];
+        /* tslint:enable */
     };
     public render() {
         const gl = Core.getInstance().getGL();

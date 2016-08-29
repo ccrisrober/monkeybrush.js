@@ -24,7 +24,7 @@
 /// <reference path="framebuffer.ts" />
 
 import { Core } from "./core";
-import { Vector2 } from "../maths/vector2";
+import { Vect2 } from "../maths/vect2";
 import { SimpleTexture2D } from "../textures/simpleTexture2d";
 import { Framebuffer } from "./framebuffer";
 
@@ -48,9 +48,9 @@ class GBuffer {
     protected framebuffer: Framebuffer;
     /**
      * [constructor description]
-     * @param {Vector2<number>} size [description]
+     * @param {Vect2} size [description]
      */
-    constructor(size: Vector2<number>) {
+    constructor(size: Vect2) {
         const gl = Core.getInstance().getGL();
 
         this.framebuffer = new Framebuffer([
@@ -102,7 +102,7 @@ class GBuffer {
             this.framebuffer.destroy();
         }
     }
-    public rebuild(size: Vector2<number>) {
+    public rebuild(size: Vect2) {
         this.framebuffer.rebuild(size);
     }
 };

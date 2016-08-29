@@ -24,7 +24,7 @@
 // TODO: hacer unbind al crear textura!!
 
 import { Core } from "../core/core";
-import { Vector2 } from "../maths/vector2";
+import { Vect2 } from "../maths/vect2";
 
 "use strict";
 
@@ -46,7 +46,7 @@ abstract class Texture {
         return this._handle;
     }
 
-    public resize(size: Vector2<number>) {
+    public resize(size: Vect2) {
         // Nothing to do here
     }
 

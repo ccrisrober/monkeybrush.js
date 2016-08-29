@@ -1,7 +1,9 @@
+// export * from "./constants/constants";
 
 // __root__
 export { Camera2 } from "./_demoCamera";
 export { App, IApp } from "./App";
+export { Scene } from "./Scene";
 
 // Core
 export { Camera } from "./camera/camera";
@@ -80,12 +82,13 @@ export { ObjLoader } from "./resources/objLoader";
 export { ProgramManager } from "./resources/programManager";
 export { ResourceMap } from "./resources/resourceMap";
 export { VideoSource } from "./resources/videoSource";
+export { cache } from "./resources/cache";
 
 // Scenes
-export { Object3D } from "./scene/object3d";
-export { Pick } from "./scene/pick";
-export { Scene } from "./scene/scene";
-export { SceneGraph } from "./scene/scenegraph";
+//// export { Object3D } from "./scene/object3d";
+//// export { Pick } from "./scene/pick";
+//// export { Scene } from "./scene/scene";
+//// export { SceneGraph } from "./scene/scenegraph";
 
 // Textures
 export { CubeMapTexture } from "./textures/cubemapTexture";

@@ -25,7 +25,7 @@
 /// <reference path="../textures/renderBufferTexture.ts" />
 
 import { Core } from "./core.ts";
-import { Vector2 } from "../maths/vector2.ts";
+import { Vect2 } from "../maths/vect2.ts";
 import { SimpleTexture2D } from "../textures/simpleTexture2d.ts";
 import { RenderBufferTexture } from "../textures/renderBufferTexture.ts";
 
@@ -49,7 +49,7 @@ class GBufferSSAO {
 
     protected _depthTexture; RenderBufferTexture;
     protected _textures: Array<SimpleTexture2D> = new Array(gbufferssao_type.num_textures);
-    constructor(size: Vector2<number>) {
+    constructor(size: Vect2) {
         const gl = Core.getInstance().getGL();
 
         this._textures = new Array(3);

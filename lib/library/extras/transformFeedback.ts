@@ -57,10 +57,10 @@ class TransformFeedback {
         gl.endTransformFeedback();
     };
     public varyings(program: Program, varyings: Array<string>, bufferMode: number) {
-        return gl.transformFeedbackVaryings(program.program(), varyings, bufferMode);
+        return gl.transformFeedbackVaryings(program.id(), varyings, bufferMode);
     };
     public getVarying(program: Program, idx: number) {
-        return gl.getTransformFeedbackVarying(program.program(), idx);
+        return gl.getTransformFeedbackVarying(program.id(), idx);
     };
     public isValid(): boolean {
         return gl.isTransformFeedback(this._handle);

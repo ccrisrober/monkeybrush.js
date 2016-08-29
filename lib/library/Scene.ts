@@ -17,14 +17,6 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-/// <reference path="./_decorators.ts" />
-/// <reference path="core/core.ts" />
-/// <reference path="core/input.ts" />
-/// <reference path="resources/resourceMap.ts" />
-/// <reference path="extras/timer.ts" />
-/// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
-
 import { decorators } from "./_decorators";
 import { Core } from "./core/core";
 import { Input } from "./core/input";
@@ -33,46 +25,43 @@ import { Timer } from "./extras/timer";
 
 "use strict";
 
-interface IApp {
-    title?: string;
-    webglVersion?: number;    // TODO: Unused
-    loadAssets: () => void;
-    initialize: (app_: App) => void;
-    update: (app_: App, dt: number) => void;
-    draw: (app_: App, dt?: number) => void;
-    cameraUpdate: () => void;
-    textCB: (gui: dat.GUI) => void;
-}
-
 @decorators.sealed
-class App {
+abstract class Scene {
 
     protected stats: Stats;
     protected gui: dat.GUI;
+    protected _webglVersion;
 
-    protected cameraUpdateCb;
-    constructor(init: any/*IApp*/, text: any) {
-        if (!init.webglVersion) {
-            init.webglVersion = 2;
+    protected text: any;
+
+    constructor(text: any, title: string = null, webglVersion: number = 2) {
+        if (!webglVersion) {
+            webglVersion = 2;
         }
-        this._appFunctions = init;
-        console.log(this._appFunctions);
+        this._webglVersion = webglVersion;
+        this.text = text;
 
-        document.title = init.title || `WebGL${init.webglVersion} app`;
+        document.title = title || `WebGL${webglVersion} app`;
 
         this.__init__(text);
     };
 
     public webglVersion(): number {
-        return this._appFunctions.webglVersion;
+        return this._webglVersion;
     }
+    abstract loadAssets();
+    abstract initialize();
+    abstract update(dt: number);
+    abstract draw(dt?: number);
+    abstract cameraUpdate();
+    abstract textCB(gui: dat.GUI);
 
     private __init__(text) {
         Core.getInstance().initialize([1.0, 0.0, 1.0, 1.0]);
 
         this.gui = new dat.GUI();
 
-        this._appFunctions.textCB(this.gui);
+        this.textCB(this.gui);
 
         let self = this;
         this.gui.add(text, "resume", true).onChange(function(v) {
@@ -87,7 +76,7 @@ class App {
         this.stats.setMode(0);
         document.body.appendChild(this.stats.domElement);
 
-        this._appFunctions.loadAssets();
+        this.loadAssets();
     }
 
     public start() {
@@ -95,7 +84,7 @@ class App {
         ResourceMap.setLoadCompleteCallback(function() {
             console.log("ALL RESOURCES LOADED!!!!");
 
-            self._appFunctions.initialize(self);
+            self.initialize();
 
             // Remove loader css3 window
             document.getElementById("spinner").remove();
@@ -125,8 +114,8 @@ class App {
                     // self.__resize__();
 
                     if (self._resume) {
-                        self._appFunctions.update(self, dt);
-                        self._appFunctions.draw(self, dt);    // Draw user function
+                        self.update(dt);
+                        self.draw(dt);    // Draw user function
                     }
 
                     self.stats.end();
@@ -175,11 +164,9 @@ class App {
             // Set the viewport to match
             Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
 
-            this.cameraUpdateCb();
+            this.cameraUpdate();
         }
     }
-
-    protected _appFunctions: IApp;
 };
 
-export { App, IApp };
+export { Scene };

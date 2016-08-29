@@ -30,7 +30,7 @@ import {Vect3} from "./vect3";
  * @class Mat4
  */
 class Mat4 {
-    protected _value: Float32Array = new Float32Array(16);
+    public _value: Float32Array = new Float32Array(16);
     constructor(values: number[] = null) {
         if (values) {
             this.init(values);

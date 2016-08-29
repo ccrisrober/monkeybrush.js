@@ -22,12 +22,9 @@
 /// <reference path="../maths/vector3.ts" />
 
 import { Color } from "../extras/color";
-import { Vector3 } from "../maths/vector3";
+import { Vect3 } from "../maths/vect3";
 
 "use strict";
-
-// TODO: Replace Vector3 to Vect3
-
 
 /**
  * Light abstract class
@@ -47,14 +44,14 @@ abstract class Light {
     protected _enable: boolean;
     /**
      * [Attenuation light value]
-     * @type {Vector3<number>}
+     * @type {Vect3}
      */
-    protected _attenuation: Vector3<number>;
+    protected _attenuation: Vect3;
     constructor() {
         this._intensity = 1.0;
         this._color = new Color(1.0, 1.0, 1.0);
         this._enable = true;
-        this._attenuation = new Vector3<number>(
+        this._attenuation = new Vect3(
             1.0,        // Constant
             0.014,      // Linear
             0.0007      // Quadratic
@@ -84,9 +81,9 @@ abstract class Light {
     }
     /**
      * Get light attenuation value.
-     * @return {Vector3<number>}
+     * @return {Vect3}
      */
-    get attenuation(): Vector3<number> { return this._attenuation; }
+    get attenuation(): Vect3 { return this._attenuation; }
 
     /**
      * Get light intensity.

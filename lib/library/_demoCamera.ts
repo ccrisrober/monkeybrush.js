@@ -21,6 +21,8 @@
 /// <reference path="core/input.ts" />
 
 import { Input } from "./core/input";
+import { Mat4 } from "./maths/mat4";
+import { Vect3 } from "./maths/vect3";
 
 "use strict";
 
@@ -41,9 +43,6 @@ class Camera2 {
     protected mouseSensivity: number = 0.25;
     protected _updateCamera: boolean = false;
     public timeElapsed: number;
-
-    private view: Float32Array = mat4.create();
-    private proj: Float32Array = mat4.create();
 
     public GetPos(): Float32Array {
         return this.position;
@@ -171,24 +170,25 @@ class Camera2 {
     }
 
     public GetViewMatrix(): Float32Array {
-        let aux = vec3.create();
-        this.view = mat4.lookAt(this.view, this.position, vec3.add(aux, this.position, this.front), this.up);
-        return this.view;
+        return Mat4.lookAt(
+                Vect3.create(this.position),
+                Vect3.sum(
+                    Vect3.create(this.position),
+                    Vect3.create(this.front)
+                ), Vect3.create(this.up))._value;
     }
     public GetOrthoProjectionMatrix(w: number, h: number): Float32Array {
         const ymax = 0.001 * Math.tan(45.0 * Math.PI / 360);
         const ymin = -ymax;
         const xmin = ymin * (w * 1.0) / (h * 1.0);
         const xmax = ymax * (w * 1.0) / (h * 1.0);
-        this.proj = mat4.ortho(this.proj, xmin, xmax, ymin, ymax, 0.001, 1000.0);
-        return this.proj;
+
+        return Mat4.orthographic(xmin, xmax, ymin, ymax, 0.001, 1000.0)._value;
+        //this.proj = mat4.ortho(this.proj, xmin, xmax, ymin, ymax, 0.001, 1000.0);
+        //return this.proj;
     }
     public GetProjectionMatrix(w: number, h: number): Float32Array {
-        this.proj = mat4.perspective(this.proj, 45.0, (w * 1.0) / (h * 1.0), 0.001, 1000.0);
-
-        // this.proj = mat4.ortho(this.proj, -10.0, 10.0, -10.0, 10.0, 0.001, 1000.0);
-
-        return this.proj;
+        return Mat4.perspective(45.0, (w * 1.0) / (h * 1.0), 0.0001, 1000.0)._value;
     }
 };
 

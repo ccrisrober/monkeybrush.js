@@ -21,14 +21,14 @@
 /// <reference path="texture3d.ts" />
 /// <reference path="texOptions.ts" />
 
-import { Vector3 } from "../maths/vector3";
+import { Vect3 } from "../maths/vect3";
 import { Texture3D } from "./texture3d";
 import { TexOptions } from "./texOptions";
 
 "use strict";
 
 class SimpleTexture3D extends Texture3D {
-    constructor(size: Vector3<number>, options: TexOptions = {}, onSuccess: () => void) {
+    constructor(size: Vect3, options: TexOptions = {}, onSuccess: () => void) {
         super(null, size, options);
     };
 };

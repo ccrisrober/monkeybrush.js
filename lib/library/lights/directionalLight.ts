@@ -21,11 +21,9 @@
 /// <reference path="light.ts" />
 
 import { Light } from "./light";
-import { Vector3 } from "../maths/vector3";
+import { Vect3 } from "../maths/vect3";
 
 "use strict";
-
-// TODO: Replace Vector3 to Vect3
 
 /**
  * Directional light class
@@ -34,27 +32,27 @@ import { Vector3 } from "../maths/vector3";
 class DirectionalLight extends Light {
     /**
      * [Light direction]
-     * @type {Vector3<number>}
+     * @type {Vect3}
      */
-    protected _direction: Vector3<number>;
+    protected _direction: Vect3;
     /**
      * Directional light constructor
-     * @param {Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)} direction [description]
+     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction [description]
      */
-    constructor(direction: Vector3<number> = new Vector3<number>(0.0, 0.0, 0.0)) {
+    constructor(direction: Vect3 = new Vect3(0.0, 0.0, 0.0)) {
         super();
         this._direction = direction;
     }
     /**
      * Get light direction
-     * @return {Vector3<number>}
+     * @return {Vect3}
      */
-    get direction(): Vector3<number> { return this._direction; }
+    get direction(): Vect3 { return this._direction; }
     /**
      * Set light direction
-     * @param {Vector3<number>} direction
+     * @param {Vect3} direction
      */
-    set direction(direction: Vector3<number>) { this._direction = direction; }
+    set direction(direction: Vect3) { this._direction = direction; }
 };
 
 export { DirectionalLight };
