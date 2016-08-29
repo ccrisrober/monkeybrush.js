@@ -18,7 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../../typings/gl-matrix.d.ts" />
 
 "use strict";
 
@@ -56,7 +55,7 @@ class Quaternion {
      * @param {number = 0.0} w
      */
     constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
-        this._value = quat.fromValues(x, y, z, w);
+        this._value = new Float32Array([x, y, z, w]);
     }
     /**
      * Set quaternion value to identity

@@ -33,6 +33,8 @@ import { Program } from "../core/program.ts";
 import { ResourceMap } from "../resources/resourceMap.ts";
 import { CubeMapTexture } from "../textures/cubemapTexture.ts";
 import { Depth } from "../core/depth.ts";
+import { Mat3 } from "../maths/mat3.ts";
+import { Mat4 } from "../maths/mat4.ts";
 
 import { ProgramCte } from "../constants/ProgramCte";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
@@ -195,11 +197,7 @@ class Skybox {
 
         this.skyboxVAO.unbind();
     }
-    /**
-     * @param {Float32Array}
-     * @param {Float32Array}
-     */
-    public render(view: Float32Array, projection: Float32Array) {
+    public render(view, projection) {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
         let currDepthComp = Depth.currentComparation();
@@ -207,17 +205,11 @@ class Skybox {
         Depth.comparison(ComparisonFunc.LessEqual);
         this._prog.use();
 
-        let auxView = mat3.create();
-        auxView = mat3.fromMat4(auxView, view);
         // Remove any translation
-        auxView = new Float32Array([
-            auxView[0], auxView[1], auxView[2], 0.0,
-            auxView[3], auxView[4], auxView[5], 0.0,
-            auxView[6], auxView[7], auxView[8], 0.0,
-                   0.0,        0.0,        0.0, 0.0
-        ]);
-        this._prog.sendUniformMat4("view", auxView);
-        this._prog.sendUniformMat4("projection", projection);
+        let auxView = view.toMat3().toMat4();
+
+        this._prog.sendUniformMat4("view", auxView._value);
+        this._prog.sendUniformMat4("projection", projection._value);
 
         this.cubeMapTexture.bind(0);
 

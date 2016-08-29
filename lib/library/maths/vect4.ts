@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../../typings/gl-matrix.d.ts" />
-
 "use strict";
 
 /**
@@ -27,7 +25,10 @@
  * @class Vect4
  */
 class Vect4 {
-    protected _value: Float32Array;
+    public _value: Float32Array;
+    static create(value: Float32Array): Vect4 {
+        return new Vect4(value[0], value[1], value[2], value[3]);
+    };
     /**
      * Creates a new vect2
      * @param {number = 0.0} x
@@ -36,33 +37,80 @@ class Vect4 {
      * @param {number = 0.0} w
      */
     constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
-        this._value = vec4.fromValues(x, y, z, w);
+        this._value = new Float32Array([x, y, z, w]);
     }
 
     public toString = () : string => {
-        return vec4.str(this._value);
+        return "NULL";
     }
 
-    public add(v: Vect4) {
-        vec4.add(this._value, this._value, v._value);
+    public add(v: Vect4): Vect4 {
+        this.x += v.x;
+        this.y += v.y;
+        this.z += v.z;
+        this.w += v.w;
+
+        return this;
+    };
+    public sub(v: Vect4): Vect4 {
+        this.x -= v.x;
+        this.y -= v.y;
+        this.z -= v.z;
+        this.w -= v.w;
+
+        return this;
+    };
+    public mult(v: Vect4): Vect4 {
+        this.x *= v.x;
+        this.y *= v.y;
+        this.z *= v.z;
+        this.w *= v.w;
+
+        return this;
+    };
+    public div(v: Vect4): Vect4 {
+        this.x /= v.x;
+        this.y /= v.y;
+        this.z /= v.z;
+        this.w /= v.w;
+
+        return this;
+    };
+    public negate(dest: Vect4 = null): Vect4 {
+        if (!dest) dest = this;
+
+        dest.x = -this.x;
+        dest.y = -this.y;
+        dest.z = -this.z;
+        dest.w = -this.w;
+
+        return dest;
     }
-    public sub(v: Vect4) {
-        vec4.sub(this._value, this._value, v._value);
+    public scale(value: number, dest: Vect4 = null): Vect4 {
+        if (!dest) dest = this;
+
+        dest.x *= value;
+        dest.y *= value;
+        dest.z *= value;
+        dest.w *= value;
+
+        return dest;
     }
-    public mult(other: Vect4) {
-        vec4.multiply(this._value, this._value, other._value);
+    static distance(v: Vect4, v2: Vect4): number {
+        var x = v2.x - v.x,
+            y = v2.y - v.y,
+            z = v2.z - v.z,
+            w = v2.w - v.w;
+
+        return Math.sqrt(this.squaredDistance(v, v2));
     }
-    public div(other: Vect4) {
-        vec4.div(this._value, this._value, other._value);
-    }
-    public negate() {
-        vec4.negate(this._value, this._value);
-    }
-    public scale(value: number) {
-        vec4.scale(this._value, this._value, value);
-    }
-    public distance(): number {
-        return vec4.squaredLength(this._value);
+    static squaredDistance(v: Vect4, v2: Vect4): number {
+        var x = v2.x - v.x,
+            y = v2.y - v.y,
+            z = v2.z - v.z,
+            w = v2.w - v.w;
+
+        return (x * x + y * y + z * z + w * w);
     }
     get x(): number { return this._value[0]; }
     get y(): number { return this._value[1]; }
@@ -80,23 +128,21 @@ class Vect4 {
     set w(value: number) {
         this._value[3] = value;
     }
-    public lerp(other: Vect4, t: number): Vect4 {
-        let ax = this._value[0],
-            ay = this._value[1],
-            az = this._value[2],
-            aw = this._value[3];
-        return new Vect4(
-            ax + t * (other.x - ax),
-            ay + t * (other.y - ay),
-            az + t * (other.z - az),
-            aw + t * (other.w - aw)
-        );
-    }
     public isEqual(other: Vect4): boolean {
         return this.x === other.x && this.y === other.y  && this.z === other.z  && this.w === other.w;
     }
-    public dot(other: Vect4): number {
-        return vec4.dot(this._value, other._value);
+    static dot(v: Vect4, v2: Vect4): number {
+        var x = v.x,
+            y = v.y,
+            z = v.z,
+            w = v.w;
+
+        var x2 = v2.x,
+            y2 = v2.y,
+            z2 = v2.z,
+            w2 = v2.w;
+
+        return (x * x2 + y * y2 + z * z2 + w * w2);
     }
     public isEquals(vec: Vect4, threshold: boolean = false): boolean {
         for (let i = 0; i < 4; ++i) {

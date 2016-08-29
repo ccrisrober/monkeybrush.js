@@ -18,7 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../../typings/gl-matrix.d.ts" />
 /// <reference path="vect2.ts" />
 /// <reference path="mat3.ts" />
 /// <reference path="mat4.ts" />
@@ -34,7 +33,7 @@ import {Vect2} from "./vect2";
  * @class Mat2
  */
 class Mat2 {
-    protected _value: Float32Array = new Float32Array(4);
+    public _value: Float32Array = new Float32Array(4);
     constructor(values: number[] = null) {
         if (values) {
             this.init(values);

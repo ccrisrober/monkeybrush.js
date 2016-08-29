@@ -1,6 +1,6 @@
 /// <reference path="library/references.d.ts" />
 // TODO:
-import * as MonkeyBrush from "./library/MonkeyBrush";
+import * as MB from "./library/MonkeyBrush";
 
 import { ProgramCte } from "./library/constants/ProgramCte";
 // import { TextureType } from "./library/constants/TextureType";
@@ -15,46 +15,50 @@ let SimpleConfig = function() {
     };
 };
 
-class MyScene extends MonkeyBrush.Scene {
-    protected camera = new MonkeyBrush.Camera2(new Float32Array([-2.7, -1.4, 11.8]));
+class MyScene extends MB.Scene {
+    protected camera = new MB.Camera2(new MB.Vect3(-2.7, -1.4, 11.8));
 
-    protected cubito: MonkeyBrush.Cube;
-    protected skybox: MonkeyBrush.Skybox;
+    protected cubito: MB.Cube;
+    protected floor: MB.Floor;
+    protected skybox: MB.Skybox;
     protected view;
     protected projection;
 
-    protected identityMatrix = mat4.create();
-    protected model = mat4.create();
+    protected identityMatrix;
+    protected model;
     protected angle = 0;
 
-    protected uniformPerDrawBuffer: MonkeyBrush.VertexUBO;
+    protected uniformPerDrawBuffer: MB.VertexUBO;
+    protected uniformPerDrawBuffer2: MB.VertexUBO;
 
     constructor() {
         super(SimpleConfig(), "App", 2);
-        mat4.identity(this.identityMatrix);
+        this.identityMatrix = new MB.Mat4().identity();
+        this.model = new MB.Mat4();
     }
 
     protected mainShader: string = "progubo";
 
     loadAssets() {
         // skybox
-        MonkeyBrush.loaders.loadImage("assets/images/skybox2/back.jpg");
-        MonkeyBrush.loaders.loadImage("assets/images/skybox2/bottom.jpg");
-        MonkeyBrush.loaders.loadImage("assets/images/skybox2/front.jpg");
-        MonkeyBrush.loaders.loadImage("assets/images/skybox2/left.jpg");
-        MonkeyBrush.loaders.loadImage("assets/images/skybox2/right.jpg");
-        MonkeyBrush.loaders.loadImage("assets/images/skybox2/top.jpg");
+        MB.loaders.loadImage("assets/images/skybox2/back.jpg");
+        MB.loaders.loadImage("assets/images/skybox2/bottom.jpg");
+        MB.loaders.loadImage("assets/images/skybox2/front.jpg");
+        MB.loaders.loadImage("assets/images/skybox2/left.jpg");
+        MB.loaders.loadImage("assets/images/skybox2/right.jpg");
+        MB.loaders.loadImage("assets/images/skybox2/top.jpg");
 
-        MonkeyBrush.loaders.loadImage("heightmap.png", "heightmap");
-        MonkeyBrush.loaders.loadImage("grass.png", "grass");
+        MB.loaders.loadImage("heightmap.png", "heightmap");
+        MB.loaders.loadImage("grass.png", "grass");
     }
     initialize() {
-        this.skybox = new MonkeyBrush.Skybox("assets/images/skybox2", false);
+        this.skybox = new MB.Skybox("assets/images/skybox2", false);
 
-        this.cubito = new MonkeyBrush.Cube(15.0);
+        this.cubito = new MB.Cube(15.0);
+        this.floor = new MB.Floor(82.0);
 
-        MonkeyBrush.ProgramManager.addWithFun("progubo", (): MonkeyBrush.Program => {
-            let prog: MonkeyBrush.Program = new MonkeyBrush.Program();
+        MB.ProgramManager.addWithFun("progubo", (): MB.Program => {
+            let prog: MB.Program = new MB.Program();
             prog.addShader(
         `#version 300 es
         precision highp float;
@@ -95,16 +99,20 @@ class MyScene extends MonkeyBrush.Scene {
         uniform vec3 cameraPos;
         uniform samplerCube CubeMap;
 
+        const float invGamma = 1.0/2.2;
+
+        const mat4 mSH_R =mat4( 0.0151426, 0.0441249, -0.0200723, 0.040842, 0.0441249, -0.0151426, 0.0147908, 0.161876, -0.0200723, 0.0147908, 0.0476559, 0.016715, 0.040842, 0.161876, 0.016715, 0.394388);
+        const mat4 mSH_G =mat4( 0.0158047, -0.0553513, -0.0183098, -0.0649404, -0.0553513, -0.0158047, 0.0294534, 0.147578, -0.0183098, 0.0294534, -0.0211293, 0.030445, -0.0649404, 0.147578, 0.030445, 0.381122);
+        const mat4 mSH_B =mat4( -0.00060538, -0.143711, -0.0279153, -0.15276, -0.143711, 0.00060538, 0.0364631, 0.183909, -0.0279153, 0.0364631, -0.0566425, 0.0386598, -0.15276, 0.183909, 0.0386598, 0.419227);
+
         void main() {
-            vec3 I = normalize(outPosition - cameraPos);
-            vec3 R = reflect(I, normalize(outNormal));
-            fragColor = texture(CubeMap, R);
-
-            // float ratio = 1.00 / 1.33;
-            // vec3 I = normalize(outPosition - cameraPos);
-            // vec3 R = refract(I, normalize(outNormal), ratio);
-            // fragColor = texture(CubeMap, R);
-
+            vec4 nor = vec4(normalize(outNormal),1.0);
+            vec3 col;
+            col.x = dot(nor,(mSH_R*nor));
+            col.y = dot(nor,(mSH_G*nor));
+            col.z = dot(nor,(mSH_B*nor));
+            //Gamma correction
+            fragColor = vec4(pow(col.xyz, vec3(invGamma)),1.0);
         }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
             prog.compile();
 
@@ -112,7 +120,7 @@ class MyScene extends MonkeyBrush.Scene {
 
             const program = prog.id();
 
-            this.uniformPerDrawBuffer = new MonkeyBrush.VertexUBO(program, "UboDemo", 0);
+            this.uniformPerDrawBuffer = new MB.VertexUBO(program, "UboDemo", 0);
 
             prog.addUniforms(["projection", "view", "model",
                 "normalMatrix", "viewPos", "CubeMap"]);
@@ -120,27 +128,69 @@ class MyScene extends MonkeyBrush.Scene {
             return prog;
         });
 
+        MB.ProgramManager.addWithFun("floor", (): MB.Program => {
+            let prog: MB.Program = new MB.Program();
+            prog.addShader(
+        `#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+
+        uniform mat4 model;
+
+        layout(std140, column_major) uniform;
+
+        uniform UboDemo {
+            mat4 projection;
+            mat4 view;
+        } ubo1;
+
+        void main() {
+            gl_Position = ubo1.projection * ubo1.view * model * vec4(position, 1.0f);
+        }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
+            prog.addShader(
+        `#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+
+        void main() {
+            fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
+            prog.compile();
+
+            prog.use();
+
+            const program = prog.id();
+
+            this.uniformPerDrawBuffer2 = new MB.VertexUBO(program, "UboDemo", 0);
+
+            prog.addUniforms(["projection", "view", "model"]);
+
+            return prog;
+        });
+
         for (let i = 0; i < 10; ++i) {
-            console.log(MonkeyBrush.utils.random.nextInt(1, 6));
+            console.log(MB.utils.random.nextInt(1, 6));
         }
 
         this.cameraUpdate();
     }
     update(dt: number) {
-        if (MonkeyBrush.Input.getInstance().isButtonClicked(MonkeyBrush.Input.mouseButton.Left)) {
+        if (MB.Input.getInstance().isButtonClicked(MB.Input.mouseButton.Left)) {
             console.log("Mouse left clicked");
         }
 
-        this.camera.timeElapsed = MonkeyBrush.Timer.deltaTime() / 10.0;
+        this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
 
         this.camera.update(this.cameraUpdate.bind(this));
 
-        this.angle += MonkeyBrush.Timer.deltaTime() * 0.001;
+        this.angle += MB.Timer.deltaTime() * 0.001;
     }
     draw(dt?: number) {
-        MonkeyBrush.Core.getInstance().clearColorAndDepth();
+        MB.Core.getInstance().clearColorAndDepth();
 
-        let prog = MonkeyBrush.ProgramManager.get(this.mainShader);
+        let prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
 
         let varvar = this.text.max;
@@ -168,34 +218,42 @@ class MyScene extends MonkeyBrush.Scene {
             for (j = -varvar; j < varvar; j += 10.0) {
                 for (k = -varvar; k < varvar; k += 10.0) {
                     dd *= -1;
-                    mat4.translate(this.model, this.identityMatrix,
-                        vec3.fromValues(i * 1.0, j * 1.0, k * 1.0));
-                    mat4.rotateY(this.model, this.model, 90.0 * Math.PI / 180);
-                    mat4.rotateY(this.model, this.model, this.angle * 0.5 * dd);
-                    mat4.scale(this.model, this.model, vec3.fromValues(0.25, 0.25, 0.25));
-
-                    prog.sendUniformMat4("model", this.model);
+                    this.model =
+                        this.model
+                            .reset()
+                            .translate(new MB.Vect3(i * 1.0, j * 1.0, k * 1.0))
+                            .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                            .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
+                            .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                    prog.sendUniformMat4("model", this.model._value);
                     this.cubito[mode]();
                 }
             }
         }
+        /*prog = MB.ProgramManager.get("floor");
+        prog.use();
+        mat4.translate(this.model, this.identityMatrix, vec3.fromValues(0.0, 0.0, 0.0));
+
+        prog.sendUniformMat4("model", this.model);
+        this.floor.render();*/
         this.skybox.render(this.view, this.projection);
     }
     cameraUpdate() {
-        let canvas = MonkeyBrush.Core.getInstance().canvas();
+        let canvas = MB.Core.getInstance().canvas();
         this.view = this.camera.GetViewMatrix();
         this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
 
-        let prog = MonkeyBrush.ProgramManager.get(this.mainShader);
+        let prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
 
-        prog.sendUniformVec3("viewPos", this.camera.position);
+        prog.sendUniformVec3("viewPos", this.camera.GetPos()._value);
 
         let transforms = new Float32Array([]);
-        transforms = MonkeyBrush.utils.Float32Concat(transforms, this.projection);
-        transforms = MonkeyBrush.utils.Float32Concat(transforms, this.view);
+        transforms = MB.utils.Float32Concat(transforms, this.projection._value);
+        transforms = MB.utils.Float32Concat(transforms, this.view._value);
 
         this.uniformPerDrawBuffer.update(transforms);
+        this.uniformPerDrawBuffer2.update(transforms);
     }
     textCB(gui: dat.GUI) {
         gui.add(this.text, "max", 5, 100);

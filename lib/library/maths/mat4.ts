@@ -18,10 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../../typings/gl-matrix.d.ts" />
 /// <reference path="vect3.ts" />
 
 import {Vect3} from "./vect3";
+import {Mat3} from "./mat3";
 
 "use strict";
 
@@ -42,6 +42,22 @@ class Mat4 {
         }
         return this;
     };
+    toMat3(): Mat3 {
+        return new Mat3([
+            this._value[0],
+            this._value[1],
+            this._value[2],
+            this._value[4],
+            this._value[5],
+            this._value[6],
+            this._value[8],
+            this._value[9],
+            this._value[10]
+        ]);
+    }
+    reset(): Mat4 {
+        return this.identity();
+    }
     isEquals(mat: Mat4, threshold: boolean = false): boolean {
         for (let i = 0; i < 16; ++i) {
             if (threshold) {
@@ -178,7 +194,7 @@ class Mat4 {
             this._value[2] * x + this._value[6] * y + this._value[10] * z + this._value[14]
         );
     };
-    identify(): Mat4 {
+    identity(): Mat4 {
         this._value[0] = 1;
         this._value[1] = 0;
         this._value[2] = 0;
@@ -273,10 +289,10 @@ class Mat4 {
         return this;
     };
     scale(v: Vect3): Mat4 {
-        const x =
-            v[0],
-            y = v[1],
-            z = v[2];
+        const
+            x = v.x,
+            y = v.y,
+            z = v.z;
 
         this._value[0] *= x;
         this._value[1] *= x;
@@ -407,7 +423,7 @@ class Mat4 {
             ]);
         }
     };
-    static identity = new Mat4().identify();
+    static identity = new Mat4().identity();
 };
 
 export { Mat4 };

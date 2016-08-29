@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../../typings/gl-matrix.d.ts" />
-
 "use strict";
 
 /**
@@ -27,42 +25,72 @@
  * @class Vect2
  */
 class Vect2 {
-    protected _value: Float32Array;
+    public _value: Float32Array;
+    static create(values: Float32Array): Vect2 {
+        return new Vect2(values[0], values[1]);
+    }
     /**
      * Creates a new vect2
      * @param {number = 0.0} x
      * @param {number = 0.0} y
      */
     constructor(x: number = 0.0, y: number = 0.0) {
-        this._value = vec2.fromValues(x, y);
-    }
-
+        this._value = new Float32Array([x, y]);
+    };
     public toString = () : string => {
-        return vec2.str(this._value);
-    }
+        return "NULL";
+    };
     public value(): Float32Array {
         return this._value;
+    };
+    public add(v: Vect2): Vect2 {
+        this.x += v.x;
+        this.y += v.y;
+
+        return this;
+    };
+    public sub(v: Vect2): Vect2 {
+        this.x -= v.x;
+        this.y -= v.y;
+
+        return this;
+    };
+    public mult(v: Vect2): Vect2 {
+        this.x *= v.x;
+        this.y *= v.y;
+
+        return this;
+    };
+    public div(v: Vect2): Vect2 {
+        this.x /= v.x;
+        this.y /= v.y;
+
+        return this;
+    };
+    public negate(dest: Vect2 = null): Vect2 {
+        if (!dest) dest = this;
+
+        dest.x = -this.x;
+        dest.y = -this.y;
+
+        return dest;
     }
-    public add(v: Vect2) {
-        vec2.add(this._value, this._value, v._value);
+    public scale(value: number, dest: Vect2 = null): Vect2 {
+        if (!dest) dest = this;
+
+        dest.x *= value;
+        dest.y *= value;
+
+        return dest;
     }
-    public sub(v: Vect2) {
-        vec2.sub(this._value, this._value, v._value);
+    static squaredDistance(v: Vect2, v2: Vect2): number {
+        var x = v2.x - v.x,
+            y = v2.y - v.y;
+
+        return (x * x + y * y);
     }
-    public mult(other: Vect2) {
-        vec2.multiply(this._value, this._value, other._value);
-    }
-    public div(other: Vect2) {
-        vec2.div(this._value, this._value, other._value);
-    }
-    public negate() {
-        vec2.negate(this._value, this._value);
-    }
-    public scale(value: number) {
-        vec2.scale(this._value, this._value, value);
-    }
-    public distance(): number {
-        return vec2.squaredLength(this._value);
+    static distance(v: Vect2, v2: Vect2): number {
+        return Math.sqrt(this.squaredDistance(v, v2));
     }
     get x(): number { return this._value[0]; }
     get y(): number { return this._value[1]; }
@@ -72,19 +100,11 @@ class Vect2 {
     set y(value: number) {
         this._value[1] = value;
     }
-    public lerp(other: Vect2, t: number): Vect2 {
-        let ax = this._value[0],
-            ay = this._value[1];
-        return new Vect2(
-            ax + t * (other.x - ax),
-            ay + t * (other.y - ay)
-        );
-    }
     public isEqual(other: Vect2): boolean {
         return this.x === other.x && this.y === other.y;
     }
-    public dot(other: Vect2): number {
-        return vec2.dot(this._value, other._value);
+    public static dot(v: Vect2, v2: Vect2): number {
+        return (v.x * v2.x + v.y * v2.y);
     }
     public isEquals(vec: Vect2, threshold: boolean = false): boolean {
         for (let i = 0; i < 2; ++i) {

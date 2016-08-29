@@ -18,17 +18,19 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../../typings/gl-matrix.d.ts" />
+import { Mat4 } from "../maths/mat4";
+import { Vect3 } from "../maths/vect3";
 
 "use strict";
+
 /**
  * Camera abstract class
  * @class Camera
  */
 abstract class Camera {
     protected _position: Float32Array;
-    protected _view: Float32Array;
-    protected _projection: Float32Array;
+    protected _view: Mat4;
+    protected _projection: Mat4;
     protected _fov: number;
     protected _ar: number;
     protected _near: number;
@@ -53,8 +55,8 @@ abstract class Camera {
         up: Float32Array = new Float32Array([0.0, 1.0, 0.0])) {
 
         this._position = pos;
-        this._projection = mat4.create();
-        this._view = mat4.create();
+        this._projection = new Mat4();
+        this._view = new Mat4();
 
         this._up = up;
         this._look = target;
@@ -84,14 +86,14 @@ abstract class Camera {
      * @return {Float32Array}
      */
     public getViewMatrix(): Float32Array {
-        return this._view;
+        return this._view._value;
     };
     /**
      * Get current projection matrix from camera
      * @return {Float32Array}
      */
     public getProjectionMatrix(): Float32Array {
-        return this._projection;
+        return this._projection._value;
     };
     /**
      * [near description]

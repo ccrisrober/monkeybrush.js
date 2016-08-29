@@ -18,12 +18,12 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../../typings/gl-matrix.d.ts" />
 /// <reference path="vect2.ts" />
 /// <reference path="vect3.ts" />
 
-import {Vect2} from "./vect2";
-import {Vect3} from "./vect3";
+import { Vect2 } from "./vect2";
+import { Vect3 } from "./vect3";
+import { Mat4 } from "./mat4";
 
 "use strict";
 
@@ -32,7 +32,7 @@ import {Vect3} from "./vect3";
  * @class Mat3
  */
 class Mat3 {
-    protected _value: Float32Array = new Float32Array(9);
+    public _value: Float32Array = new Float32Array(9);
     constructor(values: number[] = null) {
         if (values) {
             this.init(values);
@@ -59,6 +59,56 @@ class Mat3 {
 
         return true;
     };
+    toMat4(result: Mat4 = null): Mat4 {
+        if (result) {
+            result.init([
+                this._value[0],
+                this._value[1],
+                this._value[2],
+                0,
+
+                this._value[3],
+                this._value[4],
+                this._value[5],
+                0,
+
+                this._value[6],
+                this._value[7],
+                this._value[8],
+                0,
+
+                0,
+                0,
+                0,
+                1
+            ]);
+
+            return result;
+        }
+        else {
+            return new Mat4([
+                this._value[0],
+                this._value[1],
+                this._value[2],
+                0,
+
+                this._value[3],
+                this._value[4],
+                this._value[5],
+                0,
+
+                this._value[6],
+                this._value[7],
+                this._value[8],
+                0,
+
+                0,
+                0,
+                0,
+                1
+            ]);
+        }
+    }
     transpose(): Mat3 {
         const t01 = this._value[1],
             t02 = this._value[2],
@@ -152,7 +202,7 @@ class Mat3 {
 
         return this;
     };
-    identify(): Mat3 {
+    identity(): Mat3 {
         this._value[0] = 1;
         this._value[1] = 0;
         this._value[2] = 0;
