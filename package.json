@@ -12,13 +12,19 @@
     "url": "git+https://github.com/maldicion069/monkeybrush.js.git"
   },
   "keywords": [
-    "webgl2",
-    "rendering",
+    "monkeybrush",
+    "monkeybrushjs",
+    "monkeybrush.js",
+    "3D",
     "webgl",
+    "webgl2",
+    "ts",
+    "typescript",
+    "rendering",
     "shader",
     "graphics"
   ],
-  "author": "maldicion069 (Cristian Rodríguez Bernal)",
+  "author": "maldicion069",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/maldicion069/monkeybrush.js/issues"

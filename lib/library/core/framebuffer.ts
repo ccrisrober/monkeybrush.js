@@ -25,6 +25,7 @@
 /// <reference path="..//maths/vector2.ts" />
 ///
 import { Core } from "./core";
+import { DrawBuffer } from "../constants/DrawBuffer";
 import { Texture } from "../textures/texture";
 import { SimpleTexture2D } from "../textures/simpleTexture2D";
 import { RenderBufferTexture } from "../textures/renderBufferTexture";
@@ -49,7 +50,7 @@ class Framebuffer {
         if (numColors < 0) {
             throw new Error("must specify >= 0 color attachments");
         } else if (numColors > 1) {
-            if (numColors > gl.getParameter(gl.MAX_COLOR_ATTACHMENTS)) {
+            if (numColors > gl.getParameter(DrawBuffer.MaxColorAttch)) {
                 throw new Error(`GL context doesn´t support ${numColors} color attachments`);
             }
         }
@@ -70,7 +71,7 @@ class Framebuffer {
             let target = texture.target;
 
             gl.framebufferTexture2D(gl.FRAMEBUFFER,
-                gl.COLOR_ATTACHMENT0 + i,
+                DrawBuffer.ColorAttach0 + i,
                 target,
                 texture.handle(), 0);
 

@@ -107,14 +107,11 @@ class Vect3 {
         return dest;
     }
     static distance(v: Vect3, v2: Vect3): number {
-        var x = v2.x - v.x,
-            y = v2.y - v.y,
-            z = v2.z - v.z;
-
         return Math.sqrt(this.squaredDistance(v, v2));
     }
     static squaredDistance(v: Vect3, v2: Vect3): number {
-        var x = v2.x - v.x,
+        const
+            x = v2.x - v.x,
             y = v2.y - v.y,
             z = v2.z - v.z;
 
@@ -133,11 +130,13 @@ class Vect3 {
         this._value[2] = value;
     };
     static dot(v: Vect3, v2: Vect3): number {
-        var x = v.x,
+        const
+            x = v.x,
             y = v.y,
             z = v.z;
 
-        var x2 = v2.x,
+        const
+            x2 = v2.x,
             y2 = v2.y,
             z2 = v2.z;
 
@@ -162,7 +161,8 @@ class Vect3 {
         return Math.sqrt(this.squaredLength());
     }
     public squaredLength(): number {
-        var x = this.x,
+        const
+            x = this.x,
             y = this.y,
             z = this.z;
 

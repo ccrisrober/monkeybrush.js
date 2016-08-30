@@ -18,18 +18,13 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Cull mode
 enum Face {
-    Front = gl.FRONT,                       ///< Cull front-facing primitives
-    Back = gl.BACK,                         ///< Cull back-facing primitives
-    FrontAndBack = gl.FRONT_AND_BACK        ///< Cull Front and back-facing primitives
+    Front = 0x0404,                        ///< Cull front-facing primitives
+    Back = 0x0405,                         ///< Cull back-facing primitives
+    FrontAndBack = 0x0408                  ///< Cull Front and back-facing primitives
 };
 
 export { Face };

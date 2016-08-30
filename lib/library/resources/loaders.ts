@@ -191,6 +191,15 @@ namespace loaders {
      */
     export function unloadHDRImage(imageSrc: string) {
         ResourceMap.unloadAsset(imageSrc);
+    };
+
+    export function xhrLoader(url: string, sync: boolean = true,
+        responseType: string = "arraybuffer", onLoad, onError) {
+        let request = new XMLHttpRequest();
+        request.open("GET", url, sync);
+        request.responseType = responseType;
+        request.onload = onLoad;
+        request.onerror = onError;
     }
 };
 

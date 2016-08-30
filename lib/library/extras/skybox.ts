@@ -33,8 +33,6 @@ import { Program } from "../core/program.ts";
 import { ResourceMap } from "../resources/resourceMap.ts";
 import { CubeMapTexture } from "../textures/cubemapTexture.ts";
 import { Depth } from "../core/depth.ts";
-import { Mat3 } from "../maths/mat3.ts";
-import { Mat4 } from "../maths/mat4.ts";
 
 import { ProgramCte } from "../constants/ProgramCte";
 import { ComparisonFunc } from "../constants/ComparisonFunc";

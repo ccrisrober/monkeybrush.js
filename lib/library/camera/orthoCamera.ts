@@ -21,7 +21,6 @@
 /// <reference path="camera.ts" />
 import { Camera } from "./camera";
 import { Mat4 } from "../maths/mat4";
-import { Vect3 } from "../maths/vect3";
 
 "use strict";
 
@@ -39,7 +38,7 @@ class OrthoCamera extends Camera {
         const xMin = yMin + this.aspRatio;
         const xMax = yMax + this.aspRatio;
         this._projection = Mat4.orthographic(xMin, xMax, yMin, yMax, this._near, this._far);
-        this._view = Mat4.lookAt(Vect3.create(this._position), Vect3.create(this._look), Vect3.create(this._up));
+        this._view = Mat4.lookAt(this._position, this._look, this._up);
         // target: vec3.add(vec3.create(), this.position, this._front) /*
     }
 };

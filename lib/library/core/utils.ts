@@ -148,6 +148,40 @@ namespace utils {
         const r1 = lerp(y, y1, y2, x10, x11);
 
         return lerp(z, z1, z2, r0, r1);
+    };
+
+    export const Deg2Rad: number = Math.PI / 180;
+    export const Rad2Deg: number = 180 / Math.PI;
+
+    export function nearestPOT(v: number): number {
+        return Math.pow(2, Math.round(Math.log(v) / Math.LN2));
+    }
+    export function degToRad ( degs ): number {
+        return degs * this.Deg2Rad;
+    }
+    export function radToDeg ( rads ): number {
+        return rads * this.Rad2Deg;
+    }
+    export function isPowerOfTwo ( v ): boolean {
+        return (v & (v - 1)) === 0 && v !== 0;
+    }
+    export function clamp(v: number, min: number, max: number): number {
+        return Math.max(min, Math.min(max, v));
+    }
+    export function smoothstep(x: number, min: number, max: number): number {
+        if (x <= min) return 0;
+        if (x >= max) return 1;
+
+        x = (x - min) / (max - min);
+
+        return x * x * (3 - 2 * x);
+
+    }
+    export function smootherstep(x: number, min: number, max: number): number {
+        if (x <= min) return 0;
+        if (x >= max) return 1;
+        x = (x - min) / (max - min);
+        return Math.pow(x, 3) * (x * (x * 6 - 15) + 10);
     }
 };
 

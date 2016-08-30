@@ -18,22 +18,17 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Render Primitive type
 enum RenderType {
-    Points = gl.POINTS,
-    Lines = gl.LINES,
-    LineLoop = gl.LINE_LOOP,
-    LineStrip = gl.LINE_STRIP,
-    Triangles = gl.TRIANGLES,
-    TriangleStrip = gl.TRIANGLE_STRIP,
-    TriangleFan = gl.TRIANGLE_FAN,
+    Points = 0x0000,
+    Lines = 0x0001,
+    LineLoop = 0x0002,
+    LineStrip = 0x0003,
+    Triangles = 0x0004,
+    TrianStrip = 0x0005,
+    TrianFan = 0x0006,
 };
 
 export { RenderType };

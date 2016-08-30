@@ -18,23 +18,18 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Comparison function
 enum ComparisonFunc {
-    Never = gl.NEVER,                       ///< Comparison always fails
-    Always = gl.ALWAYS,                     ///< Comparison always succeeds
-    Less = gl.LESS,                         ///< Passes if source is less than the destination
-    Equal = gl.EQUAL,                       ///< Passes if source is equal to the destination
-    NotEqual = gl.NOTEQUAL,                 ///< Passes if source is not equal to the destination
-    LessEqual = gl.LEQUAL,                  ///< Passes if source is less than or equal to the destination
-    Greater = gl.GREATER,                   ///< Passes if source is greater than to the destination
-    GreaterEqual = gl.GEQUAL                ///< Passes if source is greater than or equal to the destination
+    Never = 0x0200,                  ///< Comparison always fails
+    Less = 0x0201,                   ///< Passes if source is less than the destination
+    Equal = 0x0202,                  ///< Passes if source is equal to the destination
+    LessEqual = 0x0203,              ///< Passes if source is less than or equal to the destination
+    Greater = 0x0204,                ///< Passes if source is greater than to the destination
+    NotEqual = 0x0205,               ///< Passes if source is not equal to the destination
+    GreaterEqual = 0x0206,           ///< Passes if source is greater than or equal to the destination
+    Always = 0x0207                  ///< Comparison always succeeds
 };
 
 export { ComparisonFunc };

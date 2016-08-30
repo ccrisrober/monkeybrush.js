@@ -18,16 +18,11 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
 
-const gl = Context.getContext();
-
 enum TextureFormat {
-    RGB = gl.RGB,
-    Float = gl.FLOAT
+    RGB = 0x1907,
+    RGBA = 0x1908
 };
 
 export { TextureFormat };

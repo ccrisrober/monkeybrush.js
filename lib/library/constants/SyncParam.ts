@@ -18,18 +18,22 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
 
-const gl = Context.getContext();
-
 enum SyncParam {
-    ObjectType = gl.OBJECT_TYPE,
-    Status = gl.SYNC_STATUS,
-    Condition = gl.SYNC_CONDITION,
-    Flags = gl.SYNC_FLAGS
+    ObjectType = 0x9112,
+    Status = 0x9114,
+    Condition = 0x9113,
+    Flags = 0x9115,
+    Fence = 0x9116,
+    GpuCommandsComplete = 0x9117,
+    Unsignaled = 0x9118,
+    Signaled = 0x9119,
+    AlreadySignaled = 0x911A,
+    TimeoutExpired = 0x911B,
+    ConditionSatisfied = 0x911C,
+    WaitFailed = 0x911D,
+    SyncflushCommandsBit = 0x00000001
 };
 
 export { SyncParam };

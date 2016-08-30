@@ -18,26 +18,21 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Usage type
 enum UsageType {
-    StaticDraw = gl.STATIC_DRAW,
-    DynamicDraw = gl.DYNAMIC_DRAW,
-    StreamDraw = gl.STREAM_DRAW,
+    StaticDraw = 0x88E4,
+    DynamicDraw = 0x88E8,
+    StreamDraw = 0x88E0,
 
-    StaticRead = gl.STATIC_READ,
-    DynamicRead = gl.DYNAMIC_READ,
-    StreamRead = gl.STREAM_READ,
+    StaticRead = 0x88E5,
+    DynamicRead = 0x88E9,
+    StreamRead = 0x88E1,
 
-    StaticCopy = gl.STATIC_COPY,
-    DynamicCopy = gl.DYNAMIC_COPY,
-    StreamCopy = gl.STREAM_COPY,
+    StaticCopy = 0x88E9,
+    DynamicCopy = 0x88EA,
+    StreamCopy = 0x88E2,
 };
 
 export { UsageType };

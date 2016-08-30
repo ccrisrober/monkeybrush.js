@@ -24,11 +24,12 @@
 /// <reference path="../constants/_constants.ts" />
 /// <reference path="../extras/extensions.ts" />
 
-import { Core } from "../core/core.ts";
-import { VertexArray } from "../core/vertexArray.ts";
-import { VertexBuffer } from "../core/vertexBuffer.ts";
-import { UsageType } from "../constants/UsageType.ts";
-import { BufferType } from "../constants/BufferType.ts";
+import { Core } from "../core/core";
+import { VertexArray } from "../core/vertexArray";
+import { VertexBuffer } from "../core/vertexBuffer";
+import { UsageType } from "../constants/UsageType";
+import { RenderType } from "../constants/RenderType";
+import { BufferType } from "../constants/BufferType";
 import { extensions } from "../extras/extensions";
 
 "use strict";
@@ -86,19 +87,19 @@ abstract class Drawable {
      */
     public render() {
         this._vao.bind();
-        gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(RenderType.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
 
     public render2() {
         this._vao.bind();
-        gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(RenderType.LineStrip, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
 
     public render3() {
         this._vao.bind();
-        gl.drawElements(gl.POINTS, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(RenderType.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
 

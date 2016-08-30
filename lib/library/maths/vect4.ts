@@ -97,15 +97,11 @@ class Vect4 {
         return dest;
     }
     static distance(v: Vect4, v2: Vect4): number {
-        var x = v2.x - v.x,
-            y = v2.y - v.y,
-            z = v2.z - v.z,
-            w = v2.w - v.w;
-
         return Math.sqrt(this.squaredDistance(v, v2));
     }
     static squaredDistance(v: Vect4, v2: Vect4): number {
-        var x = v2.x - v.x,
+        const
+            x = v2.x - v.x,
             y = v2.y - v.y,
             z = v2.z - v.z,
             w = v2.w - v.w;
@@ -132,12 +128,14 @@ class Vect4 {
         return this.x === other.x && this.y === other.y  && this.z === other.z  && this.w === other.w;
     }
     static dot(v: Vect4, v2: Vect4): number {
-        var x = v.x,
+        const
+            x = v.x,
             y = v.y,
             z = v.z,
             w = v.w;
 
-        var x2 = v2.x,
+        const
+            x2 = v2.x,
             y2 = v2.y,
             z2 = v2.z,
             w2 = v2.w;

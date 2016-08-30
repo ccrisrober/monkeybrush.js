@@ -18,12 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 namespace ProgramCte {
     export enum mode {
@@ -32,8 +27,8 @@ namespace ProgramCte {
         read_text
     };
     export enum shader_type {
-        vertex = gl.VERTEX_SHADER,
-        fragment = gl.FRAGMENT_SHADER
+        vertex = 0x8B31,
+        fragment = 0x8B30
     }
 };
 

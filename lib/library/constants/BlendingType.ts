@@ -18,30 +18,25 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Blending type
 enum BlendingType {
-    Zero = gl.ZERO,
-    One = gl.ONE,
-    SrcColor = gl.SRC_COLOR,
-    OneMinusSrcColor = gl.ONE_MINUS_SRC_COLOR,
-    SrcAlpha = gl.SRC_ALPHA,
-    OneMinusSrcAlpha = gl.ONE_MINUS_SRC_ALPHA,
-    DstAlpha = gl.DST_ALPHA,
-    OneMinusDstAlpha = gl.ONE_MINUS_DST_ALPHA,
-    DstColor = gl.DST_COLOR,
-    OneMinusDstColor = gl.ONE_MINUS_DST_COLOR,
-    SrcAlphaSaturate = gl.SRC_ALPHA_SATURATE,
-    CteColor = gl.CONSTANT_COLOR,
-    OneMinusCteColor = gl.ONE_MINUS_CONSTANT_COLOR,
-    CteAlpha = gl.CONSTANT_ALPHA,
-    OneMinusCteAlpha = gl.ONE_MINUS_CONSTANT_ALPHA,
+    Zero = 0,
+    One = 1,
+    SrcColor = 0x0300,
+    OneMinusSrcColor = 0x0301,
+    SrcAlpha = 0x0302,
+    OneMinusSrcAlpha = 0x0303,
+    DstAlpha = 0x0304,
+    OneMinusDstAlpha = 0x0305,
+    DstColor = 0x0306,
+    OneMinusDstColor = 0x0307,
+    SrcAlphaSaturate = 0x0308,
+    CteColor = 0x8001,
+    OneMinusCteColor = 0x8002,
+    CteAlpha = 0x8003,
+    OneMinusCteAlpha = 0x8004
 };
 
 export { BlendingType };

@@ -1,7 +1,7 @@
 {
-  "name": "webgl2template",
-  "description": "",
-  "main": "index.js",
+  "name": "monkeybrush.js",
+  "description": "Library that adds OOP for WebGL 1/2 using Typescript",
+  "main": "build/bundle.js",
   "authors": [
     "Cristian Rodríguez <ccrisrober@gmail.com>"
   ],
@@ -13,6 +13,16 @@
     "bower_components",
     "test",
     "tests"
+  ],
+  "keywords": [
+    "monkeybrush",
+    "monkeybrushjs",
+    "monkeybrush.js",
+    "3D",
+    "webgl",
+    "webgl2",
+    "ts",
+    "typescript"
   ],
   "dependencies": {
     "vanillatoasts": "*",

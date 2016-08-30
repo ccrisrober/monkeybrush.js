@@ -18,31 +18,26 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
 
-const gl = Context.getContext();
-
 enum TransfFeedCte {
-    BufferMode = gl.TRANSFORM_FEEDBACK_BUFFER_MODE,
-    SeparateComponents = gl.MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS,
-    Varyings = gl.TRANSFORM_FEEDBACK_VARYINGS,
-    BufferStart = gl.TRANSFORM_FEEDBACK_BUFFER_START,
-    BufferSize = gl.TRANSFORM_FEEDBACK_BUFFER_SIZE,
-    PrimitivesWritten = gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN,
-    MaxInterleavedComponents = gl.MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS,
-    MaxSeparateAttribs = gl.MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS,
+    BufferMode = 0x8C7F,
+    SeparateComponents = 0x8C80,
+    Varyings = 0x8C83,
+    BufferStart = 0x8C84,
+    BufferSize = 0x8C85,
+    PrimitivesWritten = 0x8C88,
+    MaxInterleavedComponents = 0x8C8A,
+    MaxSeparateAttribs = 0x8C8B,
 
-    InterleavedAttribs = gl.INTERLEAVED_ATTRIBS,
-    SeparateAttribs = gl.SEPARATE_ATTRIBS,
-    Buffer = gl.TRANSFORM_FEEDBACK_BUFFER,
-    BufferBinding = gl.TRANSFORM_FEEDBACK_BUFFER_BINDING,
-    Normal = gl.TRANSFORM_FEEDBACK,
-    Paused = gl.TRANSFORM_FEEDBACK_PAUSED,
-    Active = gl.TRANSFORM_FEEDBACK_ACTIVE,
-    Binding = gl.TRANSFORM_FEEDBACK_BINDING
+    InterleavedAttribs = 0x8C8C,
+    SeparateAttribs = 0x8C8D,
+    Buffer = 0x8C8E,
+    BufferBinding = 0x8C8F,
+    Normal = 0x8E22,
+    Paused = 0x8E23,
+    Active = 0x8E24,
+    Binding = 0x8E25
 };
 
 export { TransfFeedCte };

@@ -21,7 +21,6 @@
 /// <reference path="camera.ts" />
 import { Camera } from "./camera";
 import { Mat4 } from "../maths/mat4";
-import { Vect3 } from "../maths/vect3";
 
 "use strict";
 
@@ -35,7 +34,7 @@ class PerspectiveCamera extends Camera {
      */
     public update() {
         this._projection = Mat4.perspective(this.fov, this.aspRatio, this.near, this.far);
-        this._view = Mat4.lookAt(Vect3.create(this._position), Vect3.create(this._look), Vect3.create(this._up));
+        this._view = Mat4.lookAt(this._position, this._look, this._up);
         // target: vec3.add(vec3.create(), this.position, this._front) /*
     }
 };

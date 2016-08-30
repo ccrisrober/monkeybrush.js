@@ -18,17 +18,12 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Front face directions
 enum FaceDir {
-    Clockwise = gl.CW,
-    InvClockwise = gl.CCW
+    Clockwise = 0x0900,
+    InvClockwise = 0x0901
 }
 
 export { FaceDir };

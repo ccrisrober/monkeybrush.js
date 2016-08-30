@@ -28,7 +28,7 @@ import { Vect3 } from "../maths/vect3";
  * @class Camera
  */
 abstract class Camera {
-    protected _position: Float32Array;
+    protected _position: Vect3;
     protected _view: Mat4;
     protected _projection: Mat4;
     protected _fov: number;
@@ -36,23 +36,23 @@ abstract class Camera {
     protected _near: number;
     protected _far: number;
 
-    protected _up: Float32Array;
-    protected _look: Float32Array;
+    protected _up: Vect3;
+    protected _look: Vect3;
     /**
      * Camera definition
-     * @param {Float32Array}
+     * @param {Vect3}
      * @param {number = 45.0}
      * @param {number = 0.01}
      * @param {number = 1000.0}
      * @param {number = 1.0}
-     * @param {Float32Array = new Float32Array([0.0, 0.0, -1.0])}
-     * @param {Float32Array = new Float32Array([0.0, 1.0, 0.0])}
+     * @param {Vect3 = new Vect3([0.0, 0.0, -1.0])}
+     * @param {Vect3 = new Vect3([0.0, 1.0, 0.0])}
      */
-    constructor(pos: Float32Array, fovy: number = 45.0,
+    constructor(pos: Vect3, fovy: number = 45.0,
         near: number = 0.01, far: number = 1000.0,
         aspRatio: number = 1.0,
-        target: Float32Array = new Float32Array([0.0, 0.0, -1.0]),
-        up: Float32Array = new Float32Array([0.0, 1.0, 0.0])) {
+        target: Vect3 = new Vect3(0.0, 0.0, -1.0),
+        up: Vect3 = new Vect3(0.0, 1.0, 0.0)) {
 
         this._position = pos;
         this._projection = new Mat4();
@@ -73,27 +73,27 @@ abstract class Camera {
     abstract update();
     /**
      * Get current camera position
-     * @return {Float32Array}
+     * @return {Vect3}
      */
-    get position(): Float32Array { return this._position; };
+    get position(): Vect3 { return this._position; };
     /**
      * Set camera position
-     * @param {Float32Array}
+     * @param {Vect3}
      */
-    set position(pos: Float32Array) { this._position = pos; };
+    set position(pos: Vect3) { this._position = pos; };
     /**
      * Get current view matrix from camera
-     * @return {Float32Array}
+     * @return {Mat4}
      */
-    public getViewMatrix(): Float32Array {
-        return this._view._value;
+    public getViewMatrix(): Mat4 {
+        return this._view;
     };
     /**
      * Get current projection matrix from camera
-     * @return {Float32Array}
+     * @return {Mat4}
      */
-    public getProjectionMatrix(): Float32Array {
-        return this._projection._value;
+    public getProjectionMatrix(): Mat4 {
+        return this._projection;
     };
     /**
      * [near description]

@@ -23,6 +23,8 @@
 
 import { Core } from "./core";
 import { ProgramCte } from "../constants/ProgramCte";
+import { Vect3 } from "../maths/vect3";
+import { Mat4 } from "../maths/mat4";
 
 "use strict";
 
@@ -385,18 +387,30 @@ class Program {
      * @param {string}
      * @param {Float32Array}
      */
-    public sendUniformVec3(name: string, value: Float32Array) {
+    public sendUniformVec3(name: string, value: Float32Array | Vect3) {
         const gl = Core.getInstance().getGL();
-        gl.uniform3fv(this.uniformLocations[name], value);
+        let val: Float32Array;
+        if (value instanceof Vect3) {
+            val = (<Vect3>value)._value;
+        } else {
+            val = <Float32Array>value;
+        }
+        gl.uniform3fv(this.uniformLocations[name], val);
     }
     /**
      * @param {string}
      * @param {Float32Array}
      * @param {boolean   = false}
      */
-    public sendUniformMat4(name: string, value: Float32Array, transpose: boolean = false) {
+    public sendUniformMat4(name: string, value: Float32Array | Mat4, transpose: boolean = false) {
         const gl = Core.getInstance().getGL();
-        gl.uniformMatrix4fv(this.uniformLocations[name], transpose, value);
+        let val: Float32Array;
+        if (value instanceof Mat4) {
+            val = (<Mat4>value)._value;
+        } else {
+            val = <Float32Array>value;
+        }
+        gl.uniformMatrix4fv(this.uniformLocations[name], transpose, val);
     }
 
 

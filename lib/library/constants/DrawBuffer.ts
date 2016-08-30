@@ -18,65 +18,46 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-/// <reference path="../extras/extensions.ts" />
-
-import { Context } from "../core/context";
-import { extensions } from "../extras/extensions";
-
 "use strict";
 
-let gl: any;
-
-declare var WebGL2RenderingContext: any;
-
-if (gl instanceof WebGL2RenderingContext) {
-    gl = Context.getContext();
-} else {
-    gl = extensions.get("WEBGL_draw_buffers");
-}
+// TODO: extensions.get("WEBGL_draw_buffers");
 
 enum DrawBuffer {
-    MaxDrawBuffers = gl.MAX_DRAW_BUFFERS || gl.MAX_DRAW_BUFFERS_WEBGL,
-    DrawBuffer0  = gl.DRAW_BUFFER0  ||  gl.DRAW_BUFFER0_WEBGL,
-    DrawBuffer1  = gl.DRAW_BUFFER1  ||  gl.DRAW_BUFFER1_WEBGL,
-    DrawBuffer2  = gl.DRAW_BUFFER2  ||  gl.DRAW_BUFFER2_WEBGL,
-    DrawBuffer3  = gl.DRAW_BUFFER3  ||  gl.DRAW_BUFFER3_WEBGL,
-    DrawBuffer4  = gl.DRAW_BUFFER4  ||  gl.DRAW_BUFFER4_WEBGL,
-    DrawBuffer5  = gl.DRAW_BUFFER5  ||  gl.DRAW_BUFFER5_WEBGL,
-    DrawBuffer6  = gl.DRAW_BUFFER6  ||  gl.DRAW_BUFFER6_WEBGL,
-    DrawBuffer7  = gl.DRAW_BUFFER7  ||  gl.DRAW_BUFFER7_WEBGL,
-    DrawBuffer8  = gl.DRAW_BUFFER8  ||  gl.DRAW_BUFFER8_WEBGL,
-    DrawBuffer9  = gl.DRAW_BUFFER9  ||  gl.DRAW_BUFFER9_WEBGL,
-    DrawBuffer10 = gl.DRAW_BUFFER10 ||  gl.DRAW_BUFFER9_WEBGL10,
-    DrawBuffer11 = gl.DRAW_BUFFER11 ||  gl.DRAW_BUFFER9_WEBGL11,
-    DrawBuffer12 = gl.DRAW_BUFFER12 ||  gl.DRAW_BUFFER9_WEBGL12,
-    DrawBuffer13 = gl.DRAW_BUFFER13 ||  gl.DRAW_BUFFER9_WEBGL13,
-    DrawBuffer14 = gl.DRAW_BUFFER14 ||  gl.DRAW_BUFFER9_WEBGL14,
-    DrawBuffer15 = gl.DRAW_BUFFER15 ||  gl.DRAW_BUFFER9_WEBGL15,
+    MaxDrawBuffers = 0x8824,
+    DrawBuffer0  = 0x8825,
+    DrawBuffer1  = 0x8826,
+    DrawBuffer2  = 0x8827,
+    DrawBuffer3  = 0x8828,
+    DrawBuffer4  = 0x8829,
+    DrawBuffer5  = 0x882A,
+    DrawBuffer6  = 0x882B,
+    DrawBuffer7  = 0x882C,
+    DrawBuffer8  = 0x882D,
+    DrawBuffer9  = 0x882E,
+    DrawBuffer10 = 0x882F,
+    DrawBuffer11 = 0x8830,
+    DrawBuffer12 = 0x8831,
+    DrawBuffer13 = 0x8832,
+    DrawBuffer14 = 0x8833,
+    DrawBuffer15 = 0x8834,
 
-    MaxColorAttch = gl.MAX_COLOR_ATTACHMENTS || gl.MAX_COLOR_ATTACHMENTS_WEBGL,
-    ColorAttach1  = gl.COLOR_ATTACHMENT1   ||  gl.DRAW_BUFFER1_WEBGL,
-    ColorAttach2  = gl.COLOR_ATTACHMENT2   ||  gl.DRAW_BUFFER2_WEBGL,
-    ColorAttach3  = gl.COLOR_ATTACHMENT3   ||  gl.DRAW_BUFFER3_WEBGL,
-    ColorAttach4  = gl.COLOR_ATTACHMENT4   ||  gl.DRAW_BUFFER4_WEBGL,
-    ColorAttach5  = gl.COLOR_ATTACHMENT5   ||  gl.DRAW_BUFFER5_WEBGL,
-    ColorAttach6  = gl.COLOR_ATTACHMENT6   ||  gl.DRAW_BUFFER6_WEBGL,
-    ColorAttach7  = gl.COLOR_ATTACHMENT7   ||  gl.DRAW_BUFFER7_WEBGL,
-    ColorAttach8  = gl.COLOR_ATTACHMENT8   ||  gl.DRAW_BUFFER8_WEBGL,
-    ColorAttach9  = gl.COLOR_ATTACHMENT9   ||  gl.DRAW_BUFFER9_WEBGL,
-    ColorAttach10 = gl.COLOR_ATTACHMENT10  ||  gl.DRAW_BUFFER10_WEBGL,
-    ColorAttach11 = gl.COLOR_ATTACHMENT11  ||  gl.DRAW_BUFFER11_WEBGL,
-    ColorAttach12 = gl.COLOR_ATTACHMENT12  ||  gl.DRAW_BUFFER12_WEBGL,
-    ColorAttach13 = gl.COLOR_ATTACHMENT13  ||  gl.DRAW_BUFFER13_WEBGL,
-    ColorAttach14 = gl.COLOR_ATTACHMENT14  ||  gl.DRAW_BUFFER14_WEBGL,
-    ColorAttach15 = gl.COLOR_ATTACHMENT15  ||  gl.DRAW_BUFFER15_WEBGL
+    MaxColorAttch = 0x8CDF,
+    ColorAttach0  = 0x8CE0,
+    ColorAttach1  = 0x8CE1,
+    ColorAttach2  = 0x8CE2,
+    ColorAttach3  = 0x8CE3,
+    ColorAttach4  = 0x8CE4,
+    ColorAttach5  = 0x8CE4,
+    ColorAttach6  = 0x8CE6,
+    ColorAttach7  = 0x8CE7,
+    ColorAttach8  = 0x8CE8,
+    ColorAttach9  = 0x8CE9,
+    ColorAttach10 = 0x8CEA,
+    ColorAttach11 = 0x8CEB,
+    ColorAttach12 = 0x8CEC,
+    ColorAttach13 = 0x8CED,
+    ColorAttach14 = 0x8CEE,
+    ColorAttach15 = 0x8CEF
 };
 
 export { DrawBuffer };
-
-/**
- * extension( WEBGL_draw_buffers )
- * - COLOR_ATTACHMENT0_WEBGL
- * - DRAW_BUFFER0_WEBGL
- */

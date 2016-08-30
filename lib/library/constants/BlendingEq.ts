@@ -18,24 +18,16 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-/// <reference path="../extras/extensions.ts" />
-
-import { Context } from "../core/context";
-import { extensions } from "../extras/extensions";
-
-const ext = extensions.get("WEBGL_draw_buffers");
+// TODO: extensions.get("WEBdraw_buffers");
 
 "use strict";
 
-const gl = Context.getContext();
-
 enum BlendingEq {
-    Add = gl.FUNC_ADD,
-    Substract = gl.FUNC_SUBTRACT,
-    RevSubstract = gl.FUNC_REVERSE_SUBTRACT,
-    Min = gl.MIN || ext.EXT_blend_minmax,
-    Max = gl.MAX || ext.EXT_blend_minmax
+    Add = 0x8006,
+    Substract = 0x800A,
+    RevSubstract = 0x800B,
+    Min = 0x8007,
+    Max = 0x8008
 };
 
 export { BlendingEq };

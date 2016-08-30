@@ -99,20 +99,36 @@ class MyScene extends MB.Scene {
         uniform vec3 cameraPos;
         uniform samplerCube CubeMap;
 
-        const float invGamma = 1.0/2.2;
+        const float invGamma = 1.0 / 2.2;
 
-        const mat4 mSH_R =mat4( 0.0151426, 0.0441249, -0.0200723, 0.040842, 0.0441249, -0.0151426, 0.0147908, 0.161876, -0.0200723, 0.0147908, 0.0476559, 0.016715, 0.040842, 0.161876, 0.016715, 0.394388);
-        const mat4 mSH_G =mat4( 0.0158047, -0.0553513, -0.0183098, -0.0649404, -0.0553513, -0.0158047, 0.0294534, 0.147578, -0.0183098, 0.0294534, -0.0211293, 0.030445, -0.0649404, 0.147578, 0.030445, 0.381122);
-        const mat4 mSH_B =mat4( -0.00060538, -0.143711, -0.0279153, -0.15276, -0.143711, 0.00060538, 0.0364631, 0.183909, -0.0279153, 0.0364631, -0.0566425, 0.0386598, -0.15276, 0.183909, 0.0386598, 0.419227);
+        const mat4 shR = mat4(
+            0.0151426, 0.0441249, -0.0200723, 0.040842,
+            0.0441249, -0.0151426, 0.0147908, 0.161876,
+            -0.0200723, 0.0147908, 0.0476559, 0.016715,
+            0.040842, 0.161876, 0.016715, 0.394388
+        );
+        const mat4 shG = mat4(
+            0.0158047, -0.0553513, -0.0183098, -0.0649404,
+            -0.0553513, -0.0158047, 0.0294534, 0.147578,
+            -0.0183098, 0.0294534, -0.0211293, 0.030445,
+            -0.0649404, 0.147578, 0.030445, 0.381122
+        );
+        const mat4 shB = mat4(
+            -0.00060538, -0.143711, -0.0279153, -0.15276,
+            -0.143711, 0.00060538, 0.0364631, 0.183909,
+            -0.0279153, 0.0364631, -0.0566425, 0.0386598,
+            -0.15276, 0.183909, 0.0386598, 0.419227
+        );
 
         void main() {
-            vec4 nor = vec4(normalize(outNormal),1.0);
+            vec4 nor = vec4(normalize(outNormal), 1.0);
             vec3 col;
-            col.x = dot(nor,(mSH_R*nor));
-            col.y = dot(nor,(mSH_G*nor));
-            col.z = dot(nor,(mSH_B*nor));
+            col.x = dot(nor, (shR * nor));
+            col.y = dot(nor, (shG * nor));
+            col.z = dot(nor, (shB * nor));
+
             //Gamma correction
-            fragColor = vec4(pow(col.xyz, vec3(invGamma)),1.0);
+            fragColor = vec4(pow(col.xyz, vec3(invGamma)), 1.0);
         }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
             prog.compile();
 
@@ -122,8 +138,7 @@ class MyScene extends MB.Scene {
 
             this.uniformPerDrawBuffer = new MB.VertexUBO(program, "UboDemo", 0);
 
-            prog.addUniforms(["projection", "view", "model",
-                "normalMatrix", "viewPos", "CubeMap"]);
+            prog.addUniforms(["model", "CubeMap"]);
 
             return prog;
         });
@@ -165,14 +180,10 @@ class MyScene extends MB.Scene {
 
             this.uniformPerDrawBuffer2 = new MB.VertexUBO(program, "UboDemo", 0);
 
-            prog.addUniforms(["projection", "view", "model"]);
+            prog.addUniforms(["model"]);
 
             return prog;
         });
-
-        for (let i = 0; i < 10; ++i) {
-            console.log(MB.utils.random.nextInt(1, 6));
-        }
 
         this.cameraUpdate();
     }
@@ -225,7 +236,7 @@ class MyScene extends MB.Scene {
                             .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                             .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
                             .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                    prog.sendUniformMat4("model", this.model._value);
+                    prog.sendUniformMat4("model", this.model);
                     this.cubito[mode]();
                 }
             }
@@ -246,7 +257,7 @@ class MyScene extends MB.Scene {
         let prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
 
-        prog.sendUniformVec3("viewPos", this.camera.GetPos()._value);
+        prog.sendUniformVec3("viewPos", this.camera.GetPos());
 
         let transforms = new Float32Array([]);
         transforms = MB.utils.Float32Concat(transforms, this.projection._value);

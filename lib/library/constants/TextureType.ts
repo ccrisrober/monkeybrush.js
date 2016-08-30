@@ -18,17 +18,14 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
 
-const gl = Context.getContext();
-
 enum TextureType {
-    Nearest = gl.NEAREST,
-    Linear = gl.LINEAR,
-    Clamp2Edge = gl.CLAMP_TO_EDGE
+    Nearest = 0x2600,
+    Linear = 0x2601,
+    Clamp2Edge = 0x812F,
+    Repeat = 0x2901,
+    MirroredRepeat = 0x8370
 };
 
 export { TextureType };

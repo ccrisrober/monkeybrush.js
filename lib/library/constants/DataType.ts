@@ -18,22 +18,17 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Data type
 enum DataType {
-    Byte = gl.BYTE,
-    UByte = gl.UNSIGNED_BYTE,
-    Short = gl.SHORT,
-    UShort = gl.UNSIGNED_SHORT,
-    Int = gl.INT,
-    UInt = gl.UNSIGNED_INT,
-    Float = gl.FLOAT
+    Byte = 0x1400,
+    UByte = 0x1401,
+    Short = 0x1402,
+    UShort = 0x1403,
+    Int = 0x1404,
+    UInt = 0x1405,
+    Float = 0x1406
 };
 
 export { DataType };

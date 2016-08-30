@@ -68,19 +68,19 @@ class Quaternion {
 
         return this;
     }
-    public add(q: Quaternion) : Quaternion {
+    public add(q: Quaternion): Quaternion {
         for (let i = 0; i < 4; ++i) {
             this._value[i] += q._value[i];
         }
         return this;
     }
-    public rem(q: Quaternion) : Quaternion {
+    public rem(q: Quaternion): Quaternion {
         for (let i = 0; i < 4; ++i) {
             this._value[i] -= q._value[i];
         }
         return this;
     }
-    static add(q: Quaternion, q2: Quaternion, dest: Quaternion = null) : Quaternion {
+    static add(q: Quaternion, q2: Quaternion, dest: Quaternion = null): Quaternion {
         if (!dest) dest = new Quaternion();
 
         dest.x = q.x + q2.x;
@@ -90,7 +90,7 @@ class Quaternion {
 
         return dest;
     }
-    static rem(q: Quaternion, q2: Quaternion, dest: Quaternion = null) : Quaternion {
+    static rem(q: Quaternion, q2: Quaternion, dest: Quaternion = null): Quaternion {
         if (!dest) dest = new Quaternion();
 
         dest.x = q.x - q2.x;
@@ -101,7 +101,8 @@ class Quaternion {
         return dest;
     }
     public roll(): number {
-        var x = this.x,
+        const
+            x = this.x,
             y = this.y,
             z = this.z,
             w = this.w;
@@ -109,7 +110,8 @@ class Quaternion {
         return Math.atan2(2.0 * (x * y + w * z), w * w + x * x - y * y - z * z);
     }
     public pitch(): number {
-        var x = this.x,
+        const
+            x = this.x,
             y = this.y,
             z = this.z,
             w = this.w;
@@ -141,12 +143,14 @@ class Quaternion {
      * Calculate multiplication with another quaternion
      */
     public mult(q: Quaternion): Quaternion {
-        var q1x = this._value[0],
+        const
+            q1x = this._value[0],
             q1y = this._value[1],
             q1z = this._value[2],
             q1w = this._value[3];
 
-        var q2x = q.x,
+        const
+            q2x = q.x,
             q2y = q.y,
             q2z = q.z,
             q2w = q.w;
@@ -164,12 +168,13 @@ class Quaternion {
     public normalize(dest: Quaternion = null): Quaternion {
         if (!dest) dest = this;
 
-        var x = this.x,
+        const
+            x = this.x,
             y = this.y,
             z = this.z,
             w = this.w;
 
-        var length = Math.sqrt(x * x + y * y + z * z + w * w);
+        let length = Math.sqrt(x * x + y * y + z * z + w * w);
 
         if (!length) {
             dest.x = 0;
@@ -192,8 +197,8 @@ class Quaternion {
     /**
      * Invert quaternion
      */
-    public inverse() : Quaternion {
-        var dot = Quaternion.dot(this, this);
+    public inverse(): Quaternion {
+        const dot = Quaternion.dot(this, this);
 
         if (!dot) {
             this.reset();
@@ -201,7 +206,7 @@ class Quaternion {
             return this;
         }
 
-        var invDot = dot ? 1.0 / dot : 0;
+        const invDot = dot ? 1.0 / dot : 0;
 
         this.x *= -invDot;
         this.y *= -invDot;

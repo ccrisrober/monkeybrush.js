@@ -18,23 +18,18 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Array buffer type
 enum BufferType {
-    Array = gl.ARRAY_BUFFER,
-    ElementArray = gl.ELEMENT_ARRAY_BUFFER,
-    TransformFeedback = gl.TRANSFORM_FEEDBACK_BUFFER,
-    Uniform = gl.UNIFORM_BUFFER,
-    PixelPack = gl.PIXEL_PACK_BUFFER,
-    PixelUnpack = gl.PIXEL_UNPACK_BUFFER,
-    CopyRead = gl.COPY_READ_BUFFER,
-    CopyWrite = gl.COPY_WRITE_BUFFER,
+    Array = 0x8892,
+    ElementArray = 0x8893,
+    TransformFeedback = 0x8C8E,
+    Uniform = 0x8A11,
+    PixelPack = 0x88EB,
+    PixelUnpack = 0x88EC,
+    CopyRead = 0x8F36,
+    CopyWrite = 0x8F37,
 };
 
 export { BufferType };

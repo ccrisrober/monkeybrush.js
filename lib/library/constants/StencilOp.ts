@@ -18,23 +18,18 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/context.ts" />
-import { Context } from "../core/context";
-
 "use strict";
-
-const gl = Context.getContext();
 
 // Stencil operation
 enum StencilOp {
-    Keep = gl.KEEP,                         ///< Keep the stencil value
-    Zero = gl.ZERO,                         ///< Set the stencil value to zero
-    Replace = gl.REPLACE,                   ///< Replace the stencil value with the reference value
-    Increase = gl.INCR,                     ///< Increase the stencil value by one, wrap if necessary
-    IncreaseSaturate = gl.INCR_WRAP,        ///< Increase the stencil value by one, clamp if necessary
-    Decrease = gl.DECR,                     ///< Decrease the stencil value by one, wrap if necessary
-    DecreaseSaturate = gl.DECR_WRAP,        ///< Decrease the stencil value by one, clamp if necessary
-    Invert = gl.INVERT                      ///< Invert the stencil data (bitwise not)
+    Keep = 0x1E00,                          ///< Keep the stencil value
+    Zero = 0,                               ///< Set the stencil value to zero
+    Replace = 0x1E01,                       ///< Replace the stencil value with the reference value
+    Increase = 0x1E02,                      ///< Increase the stencil value by one, wrap if necessary
+    IncreaseSaturate = 0x8507,              ///< Increase the stencil value by one, clamp if necessary
+    Decrease = 0x1E03,                      ///< Decrease the stencil value by one, wrap if necessary
+    DecreaseSaturate = 0x8508,              ///< Decrease the stencil value by one, clamp if necessary
+    Invert = 0x150A                         ///< Invert the stencil data (bitwise not)
 };
 
 export { StencilOp };

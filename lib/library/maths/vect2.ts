@@ -84,7 +84,8 @@ class Vect2 {
         return dest;
     }
     static squaredDistance(v: Vect2, v2: Vect2): number {
-        var x = v2.x - v.x,
+        const
+            x = v2.x - v.x,
             y = v2.y - v.y;
 
         return (x * x + y * y);

@@ -26,6 +26,7 @@
 
 import { Core } from "./core.ts";
 import { Vect2 } from "../maths/vect2.ts";
+import { Vect3 } from "../maths/vect3.ts";
 import { SimpleTexture2D } from "../textures/simpleTexture2d.ts";
 import { RenderBufferTexture } from "../textures/renderBufferTexture.ts";
 
@@ -44,7 +45,7 @@ class GBufferSSAO {
     protected _fbo: WebGLFramebuffer;
 
     protected kernelSize: number;
-    protected ssaoKernel: Array<Float32Array> = [];
+    protected ssaoKernel: Array<Vect3> = [];
     protected ssaoNoise: Array<number> = [];
 
     protected _depthTexture; RenderBufferTexture;
@@ -143,12 +144,11 @@ class GBufferSSAO {
         }
 
         for (let i = 0; i < this.kernelSize; ++i) {
-            let sample = vec3.fromValues(
+            let sample = new Vect3(
                 randomFloats(0.0, 1.0) * 2.0 - 1.0,
                 randomFloats(0.0, 1.0) * 2.0 - 1.0,
                 randomFloats(0.0, 1.0)
-            );
-            vec3.normalize(sample, sample);
+            ).normalize();
             sample[0] *= randomFloats(0.0, 1.0);
             sample[1] *= randomFloats(0.0, 1.0);
             sample[2] *= randomFloats(0.0, 1.0);
@@ -165,7 +165,7 @@ class GBufferSSAO {
         // Noise texture
         for (let i = 0; i < 16; ++i) {
             // rotate around z-axis (in tangent space)
-            let noise = vec3.fromValues(
+            let noise = new Vect3(
                 randomFloats(0.0, 1.0) * 2.0 - 1.0,
                 randomFloats(0.0, 1.0) * 2.0 - 1.0,
                 0.0

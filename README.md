@@ -52,7 +52,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Query object
 - [x] Sampler object
 - [x] Sync object
-- [ ] UBO (projection, view, model, normalMatrix)
+- [x] UBO (projection, view example)
 
 ### Maths
 - [x] Vect2
@@ -62,6 +62,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Mat2
 - [x] Mat3
 - [x] Mat4
+- [x] Box2D
+- [x] Box3D
 
 ### Resources
 - [x] Audio supporting (Background)
@@ -81,6 +83,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Easing functions
 - [x] VertexArray class
 - [x] Instancing
+- [x] Pollyfills
 - [ ] Sprites (HUD)
 - [ ] Picking
 - [ ] Multi context
