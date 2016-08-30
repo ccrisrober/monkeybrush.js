@@ -45,7 +45,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Add texture 2D
 - [x] Add texture 3D
 - [x] Add framebuffer
-- [ ] Inmutable texturea
+- [ ] Inmutable textures
 
 ### WebGL2
 - [x] Transform feedback
@@ -65,6 +65,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Mat4
 - [x] Box2D
 - [x] Box3D
+- [x] DoubleLinkedList (List)
 
 ### Resources
 - [x] Audio supporting (Background)
@@ -84,11 +85,17 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Easing functions
 - [x] VertexArray class
 - [x] Instancing
-- [x] Pollyfills
 - [ ] Sprites (HUD)
 - [ ] Picking
 - [ ] Multi context
-- [ ] Workers
+
+### Polyfills
+- [x] Epsilon
+- [x] SmallEpsilon
+- [x] Default IOR (air)
+- [x] Element DOM remove
+- [ ] Array remove by index
+
 
 ### Development
 - [x] Grunt integration

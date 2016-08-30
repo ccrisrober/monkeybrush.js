@@ -73,7 +73,8 @@ abstract class Drawable {
 
         //linearize
         var unique = indexer.unique;
-        var buffer = num_vertices > 256*256 ? new Uint32Array( unique.length * 2 ) : new Uint16Array( unique.length * 2 );
+        var buffer = num_vertices > 256*256 ? new Uint32Array( unique.length * 2 )
+            : new Uint16Array( unique.length * 2 );
         for(var i = 0, l = unique.length; i < l; ++i)
             buffer.set(unique[i],i*2);
 

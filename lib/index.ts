@@ -124,8 +124,6 @@ class MyScene extends MB.Scene {
 
             prog.use();
 
-            const program = prog.id();
-
             prog.addUniforms(["projection", "view", "model", "tex"]);
 
             return prog;

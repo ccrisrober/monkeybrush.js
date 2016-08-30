@@ -28,6 +28,7 @@ import { Drawable } from "./drawable";
  * Icosphere class
  * @class Icosphere
  */
+// Code based on: http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 class Icosphere extends Drawable {
     /**
      * Icosphere constructor
@@ -51,10 +52,12 @@ class Icosphere extends Drawable {
              1,  t,  0,
             -1, -t,  0,
              1, -t,  0,
+
              0, -1,  t,
              0,  1,  t,
              0, -1, -t,
              0,  1, -t,
+
              t,  0, -1,
              t,  0,  1,
             -t,  0, -1,
@@ -85,7 +88,7 @@ class Icosphere extends Drawable {
              9,  8,  1
         ];
 
-        //normalize
+        // normalize
         for (let i = 0, size = verts.length; i < size; i += 3) {
             let mod = Math.sqrt(verts[i] * verts[i] + verts[i + 1] * verts[i + 1] +
                 verts[i + 2] * verts[i + 2]);
@@ -99,12 +102,12 @@ class Icosphere extends Drawable {
             verts[i + 2] *= radius / mod;
         }
 
-        let middles = {};
+        let pointsCache = {};
 
         function midPoint(A: number, B: number) {
             let key = el[A] < el[B] ? el[A] + ":" + el[B] : el[B] + ":" + el[A];
-            let r = middles[key];
-            if(r) {
+            let r = pointsCache[key];
+            if (r) {
                 return r;
             }
             let index = verts.length / 3;
@@ -115,7 +118,7 @@ class Icosphere extends Drawable {
             let mod = Math.sqrt(verts[index * 3] *
                 verts[index * 3] + verts[index * 3 + 1] *
                 verts[index * 3 + 1] + verts[index * 3 + 2] * verts[index * 3 + 2]);
-            let nX = verts[index *3] / mod;
+            let nX = verts[index * 3] / mod;
             let nY = verts[index * 3 + 1] / mod;
             let nZ = verts[index * 3 + 2] / mod;
             norms.push(nX, nY, nZ);
@@ -125,13 +128,13 @@ class Icosphere extends Drawable {
             verts[index * 3 + 1] *= radius / mod;
             verts[index * 3 + 2] *= radius / mod;
 
-            middles[key] = index;
+            pointsCache[key] = index;
             return index;
         }
 
-        for (let iR = 0; iR < subdivisions; ++iR) {
+        for (let ir = 0; ir < subdivisions; ++ir) {
             let new_el = [];
-            for(let i = 0, size = el.length; i < size; i+=3) {
+            for (let i = 0, size = el.length; i < size; i += 3) {
                 let midA = midPoint(i, i + 1);
                 let midB = midPoint(i + 1, i + 2);
                 let midC = midPoint(i + 2, i);
@@ -142,8 +145,6 @@ class Icosphere extends Drawable {
             }
             el = new_el;
         }
-
-        middles = {};
 
         this._handle = [];
         this._vao.bind();
