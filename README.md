@@ -100,6 +100,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Deferred Shading
 - [x] Tone mapping
 - [x] Skybox reflection and refraction
+- [x] Spherical Harmonics
 - [ ] Heightmap
 - [ ] Texture LOD DEMO
 - [ ] Normal Mapping
