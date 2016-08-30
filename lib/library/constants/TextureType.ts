@@ -28,4 +28,12 @@ enum TextureType {
     MirroredRepeat = 0x8370
 };
 
-export { TextureType };
+enum TextureTarget {
+    Texture2D = 0x0DE1,
+    Texture3D = 0x806F,
+    Texture2DArray = 0x8C1A
+};
+// TODO: LinerMipMap
+
+export { TextureType, TextureTarget };
+

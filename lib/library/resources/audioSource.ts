@@ -67,6 +67,8 @@ class AudioSource {
             sourceNode.buffer = clip;
             sourceNode.connect(this._audioContext.destination);
             // TODO: Volume!!
+            // let gain = this._audioContext.createGain();
+            // gain.connect(sourceNode);
             sourceNode.start(0);
         }
     }

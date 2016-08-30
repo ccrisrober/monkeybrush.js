@@ -35,13 +35,16 @@ class Ray {
     get direction(): Vect3 { return this._direction; }
     set direction(direction: Vect3) { this._direction = direction; }
 
-    public point_at(t: number) {
+    public at(t: number) {
         return new Vect3(
             this._origin.x + t * this._direction.x,
             this._origin.y + t * this._direction.y,
             this._origin.z + t * this._direction.z
         );
-    }
+    };
+    public lookAt(v: Vect3) {
+        this._direction = Vect3.rem(v, this._origin).normalize();
+    };
 };
 
 export { Ray };

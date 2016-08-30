@@ -19,129 +19,66 @@
 
 
 /// <reference path="texture.ts" />
-/// <reference path="texOptions.ts" />
 /// <reference path="../extras/extensions.ts" />
 
 import { Core } from "../core/core";
-import { Texture } from "./texture";
-import { TexOptions } from "./texOptions";
-import { extensions } from "../extras/extensions";
+import { Texture, TexOptions } from "./texture";
+
+import { TextureFormat } from "../constants/TextureFormat";
+import { TextureType, TextureTarget } from "../constants/TextureType";
 
 "use strict";
 
 const gl = Core.getInstance().getGL();
 
 class Texture2D extends Texture {
-    protected _flipY: boolean;
-    protected _minFilter: number;
-    protected _magFilter: number;
-    protected _wraps: Array<number>;
     // TODO: Add onSuccess a todas las texturas ...
     constructor(data: HTMLImageElement, options: TexOptions = {}, onSuccess: () => void = null) {
-        super(gl.TEXTURE_2D);
-        // options = options || {};
+        super(TextureTarget.Texture2D);
 
         // TODO: Support compression
 
-        this._flipY = Boolean(options.flipY);
-        this._handle = gl.createTexture();
+        this._flipY_ = Boolean(options.flipY);
+        this._handle_ = gl.createTexture();
 
-        let _internalformat = options.internalFormat || gl.RGBA;
-        let _format = options.format || gl.RGBA;
-        let _type = options.type || gl.UNSIGNED_BYTE;
-        const _level = options.level || 0;
-
-        this._minFilter = options.minFilter || gl.NEAREST;
-        this._magFilter = options.magFilter || gl.NEAREST;
-        let wraps = [
-            options.wrapS || options.wrap || gl.CLAMP_TO_EDGE,
-            options.wrapT || options.wrap || gl.CLAMP_TO_EDGE,
-        ];
+        this._internalformat_ = options.internalFormat || TextureFormat.RGBA;
+        this._format_ = options.format || TextureFormat.RGBA;
+        this._type_ = options.type || TextureFormat.UnsignedByte;
+        this._level_ = options.level || 0;
 
         this.bind();
 
         gl.texImage2D(
-            this._target,
-            _level, // Level of details
-            _internalformat, // Internal format
-            _format, // Format
-            _type, // Size of each channel
+            this._target_,
+            this._level_, // Level of details
+            this._internalformat_, // Internal format
+            this._format_, // Format
+            this._type_, // Size of each channel
             data
         );
 
-        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, this._minFilter);
-        gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, this._magFilter);
-        this.wrap(wraps);
+        this.minFilter(options.minFilter || TextureType.Nearest);
+        this.magFilter(options.minFilter || TextureType.Nearest);
 
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
+        this.wrap([
+            options.wrapS || TextureType.Clamp2Edge,
+            options.wrapT || TextureType.Clamp2Edge
+        ]);
 
-        /*// Prevent NPOT textures
-        // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        // Prevents s-coordinate wrapping (repeating).
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        // Prevents t-coordinate wrapping (repeating).
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
+        if (this._flipY_) {
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
+        }
 
+        this.unbind();
         if (onSuccess) {
             onSuccess();
         }
-    }
-    public genMipMap() {
-        this.bind();
-        // TODO: Check NPOT??
-        gl.generateMipmap(this._target);
-    }
-    public wrap(modes: Array<number>) {
-        if (modes.length !== 2) {
-            throw new Error("Must specify wrapS, wrapT modes");
-        }
-        this.bind();
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, modes[0]);
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, modes[1]);
-        this._wraps = modes;
-    }
-    public minFilter(filter: number) {
-        this.bind();
-        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, filter);
-        this._minFilter = filter;
-    }
-    public magFilter(filter: number) {
-        this.bind();
-        gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, filter);
-        this._magFilter = filter;
-    }
-    public bind(slot?: number) {
-        if (typeof slot === "number") {
-            gl.activeTexture(gl.TEXTURE0 + slot);
-        }
-        gl.bindTexture(this._target, this._handle);
-    }
-    public unbind() {
-        gl.bindTexture(this._target, null);
-    }
-    public destroy() {
-        gl.deleteTexture(this._handle);
-        this._handle = null;
     }
     /*public setPixelStorage() {
         //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
         //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
     }*/
-
-    /**
-     * Set texture anisotropic level
-     * @param {number = 0} level: Anisotropic level
-     */
-    public setAnisotropic(level: number = 0) {
-        level = Math.floor(level);
-        const ext = extensions.get("EXT_texture_filter_anisotropic");
-        const max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-        if (max_anisotropy < level) {
-            gl.texParameterf(this._target, ext.TEXTURE_MAX_ANISOTROPY_EXT, level);
-        }
-    }
 };
 
 export { Texture2D };

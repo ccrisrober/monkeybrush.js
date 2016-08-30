@@ -53,6 +53,35 @@ abstract class Drawable {
         this._vao = new VertexArray();
     };
 
+    createWireframe() {
+        /**
+        var index_buffer = this.indexBuffers["triangles"];
+
+        var vertices = this.vertexBuffers["vertices"].data;
+        var num_vertices = (vertices.length/3);
+
+        var data = index_buffer.data;
+
+        var indexer = new GL.Indexer();
+        for (var i = 0; i < data.length; i+=3) {
+          var t = data.subarray(i,i+3);
+          for (var j = 0; j < t.length; j++) {
+            var a = t[j], b = t[(j + 1) % t.length];
+            indexer.add([Math.min(a, b), Math.max(a, b)]);
+          }
+        }
+
+        //linearize
+        var unique = indexer.unique;
+        var buffer = num_vertices > 256*256 ? new Uint32Array( unique.length * 2 ) : new Uint16Array( unique.length * 2 );
+        for(var i = 0, l = unique.length; i < l; ++i)
+            buffer.set(unique[i],i*2);
+
+        //create stream
+        this.createIndexBuffer('wireframe', buffer);
+        /**/
+    }
+
     /**
      * Add Element buffer object.
      * @param {Uint16Array} data [description]

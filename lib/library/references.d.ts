@@ -47,7 +47,6 @@
 /// <reference path="./models/customModel.ts" />
 
 /// <reference path="./textures/texture2d.ts" />
-/// <reference path="./textures/texture2dArray.ts" />
 
 /// <reference path="./extras/axis.ts" />
 

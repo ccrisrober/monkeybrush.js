@@ -1,5 +1,5 @@
 import "./polyfills.js";
-// export * from "./constants/constants";
+export * from "./constants/constants";
 
 // __root__
 export { Camera2 } from "./_demoCamera";
@@ -93,13 +93,12 @@ export { cache } from "./resources/cache";
 
 // Textures
 export { CubeMapTexture } from "./textures/cubemapTexture";
-export { FloatTexture } from "./textures/floatTexture";
+// export { FloatTexture } from "./textures/floatTexture";
 export { RenderBufferTexture } from "./textures/renderBufferTexture";
 export { SimpleTexture2D } from "./textures/simpleTexture2d";
-export { SimpleTexture3D } from "./textures/simpleTexture3d";
-export { TexOptions } from "./textures/texOptions";
+// export { SimpleTexture3D } from "./textures/simpleTexture3d";
 export { Texture } from "./textures/texture";
 export { Texture2D } from "./textures/texture2d";
-export { Texture2DArray } from "./textures/texture2dArray";
-export { Texture3D } from "./textures/texture3d";
-export { VideoTexture } from "./textures/videoTexture";
+// export { Texture2DArray } from "./textures/texture2dArray";
+// export { Texture3D } from "./textures/texture3d";
+// export { VideoTexture } from "./textures/videoTexture";

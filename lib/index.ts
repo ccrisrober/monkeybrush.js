@@ -18,7 +18,7 @@ let SimpleConfig = function() {
 class MyScene extends MB.Scene {
     protected camera = new MB.Camera2(new MB.Vect3(-2.7, -1.4, 11.8));
 
-    protected cubito: MB.Cube;
+    protected cubito: MB.Icosphere;
     protected floor: MB.Floor;
     protected skybox: MB.Skybox;
     protected view;
@@ -27,9 +27,6 @@ class MyScene extends MB.Scene {
     protected identityMatrix;
     protected model;
     protected angle = 0;
-
-    protected uniformPerDrawBuffer: MB.VertexUBO;
-    protected uniformPerDrawBuffer2: MB.VertexUBO;
 
     constructor() {
         super(SimpleConfig(), "App", 2);
@@ -48,13 +45,34 @@ class MyScene extends MB.Scene {
         MB.loaders.loadImage("assets/images/skybox2/right.jpg");
         MB.loaders.loadImage("assets/images/skybox2/top.jpg");
 
+        MB.loaders.loadImage("descarga (2).png", "descarga");
         MB.loaders.loadImage("heightmap.png", "heightmap");
         MB.loaders.loadImage("grass.png", "grass");
     }
+    protected tex2d: MB.Texture2D;
+    protected tex2d2: MB.Texture2D;
     initialize() {
         this.skybox = new MB.Skybox("assets/images/skybox2", false);
 
-        this.cubito = new MB.Cube(15.0);
+        let grassImage = MB.ResourceMap.retrieveAsset("grass");
+        this.tex2d = new MB.Texture2D(grassImage, {
+            flipY: true,
+            minFilter: MB.TextureType.Linear,
+            magFilter: MB.TextureType.Linear,
+            wrapS: MB.TextureType.Clamp2Edge,
+            wrapT: MB.TextureType.Clamp2Edge
+        });
+
+        let heightmapImage = MB.ResourceMap.retrieveAsset("descarga");
+        this.tex2d2 = new MB.Texture2D(heightmapImage, {
+            flipY: true,
+            minFilter: MB.TextureType.Nearest,
+            magFilter: MB.TextureType.Nearest,
+            wrapS: MB.TextureType.MirroredRepeat,
+            wrapT: MB.TextureType.MirroredRepeat
+        });
+
+        this.cubito = new MB.Icosphere(15.0, 1.0);
         this.floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("progubo", (): MB.Program => {
@@ -65,26 +83,24 @@ class MyScene extends MB.Scene {
 
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec3 normal;
-        layout(location = 2) in vec2 uv;
+        layout(location = 2) in vec2 uv_;
 
+        uniform mat4 projection;
+        uniform mat4 view;
         uniform mat4 model;
-
-        layout(std140, column_major) uniform;
-
-        uniform UboDemo {
-            mat4 projection;
-            mat4 view;
-        } ubo1;
 
         out vec3 outPosition;
         out vec3 outNormal;
+        out vec2 uv;
 
         void main() {
             mat3 normalMatrix = mat3(inverse(transpose(model)));
 
-            gl_Position = ubo1.projection * ubo1.view * model * vec4(position, 1.0f);
+            gl_Position = projection * view * model * vec4(position, 1.0f);
             outNormal = mat3(transpose(inverse(model))) * normal;
             outPosition = vec3(model * vec4(position, 1.0f));
+
+            uv = uv_;
 
             gl_PointSize = 5.0;
         }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
@@ -94,41 +110,15 @@ class MyScene extends MB.Scene {
 
         in vec3 outNormal;
         in vec3 outPosition;
+        in vec2 uv;
+
         out vec4 fragColor;
 
         uniform vec3 cameraPos;
-        uniform samplerCube CubeMap;
-
-        const float invGamma = 1.0 / 2.2;
-
-        const mat4 shR = mat4(
-            0.0151426, 0.0441249, -0.0200723, 0.040842,
-            0.0441249, -0.0151426, 0.0147908, 0.161876,
-            -0.0200723, 0.0147908, 0.0476559, 0.016715,
-            0.040842, 0.161876, 0.016715, 0.394388
-        );
-        const mat4 shG = mat4(
-            0.0158047, -0.0553513, -0.0183098, -0.0649404,
-            -0.0553513, -0.0158047, 0.0294534, 0.147578,
-            -0.0183098, 0.0294534, -0.0211293, 0.030445,
-            -0.0649404, 0.147578, 0.030445, 0.381122
-        );
-        const mat4 shB = mat4(
-            -0.00060538, -0.143711, -0.0279153, -0.15276,
-            -0.143711, 0.00060538, 0.0364631, 0.183909,
-            -0.0279153, 0.0364631, -0.0566425, 0.0386598,
-            -0.15276, 0.183909, 0.0386598, 0.419227
-        );
+        uniform sampler2D tex;
 
         void main() {
-            vec4 nor = vec4(normalize(outNormal), 1.0);
-            vec3 col;
-            col.x = dot(nor, (shR * nor));
-            col.y = dot(nor, (shG * nor));
-            col.z = dot(nor, (shB * nor));
-
-            //Gamma correction
-            fragColor = vec4(pow(col.xyz, vec3(invGamma)), 1.0);
+            fragColor = texture(tex, uv);
         }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
             prog.compile();
 
@@ -136,51 +126,7 @@ class MyScene extends MB.Scene {
 
             const program = prog.id();
 
-            this.uniformPerDrawBuffer = new MB.VertexUBO(program, "UboDemo", 0);
-
-            prog.addUniforms(["model", "CubeMap"]);
-
-            return prog;
-        });
-
-        MB.ProgramManager.addWithFun("floor", (): MB.Program => {
-            let prog: MB.Program = new MB.Program();
-            prog.addShader(
-        `#version 300 es
-        precision highp float;
-
-        layout(location = 0) in vec3 position;
-
-        uniform mat4 model;
-
-        layout(std140, column_major) uniform;
-
-        uniform UboDemo {
-            mat4 projection;
-            mat4 view;
-        } ubo1;
-
-        void main() {
-            gl_Position = ubo1.projection * ubo1.view * model * vec4(position, 1.0f);
-        }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
-            prog.addShader(
-        `#version 300 es
-        precision highp float;
-
-        out vec4 fragColor;
-
-        void main() {
-            fragColor = vec4(0.0, 0.0, 0.0, 1.0);
-        }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
-            prog.compile();
-
-            prog.use();
-
-            const program = prog.id();
-
-            this.uniformPerDrawBuffer2 = new MB.VertexUBO(program, "UboDemo", 0);
-
-            prog.addUniforms(["model"]);
+            prog.addUniforms(["projection", "view", "model", "tex"]);
 
             return prog;
         });
@@ -209,7 +155,8 @@ class MyScene extends MB.Scene {
         let dd = -1;
 
         this.skybox.texture.bind(0);
-        prog.sendUniform1i("CubeMap", 0);
+        this.tex2d2.bind(0);
+        prog.sendUniform1i("tex", 0);
 
         const renderMode = this.text.render;
         let mode: string;
@@ -224,6 +171,10 @@ class MyScene extends MB.Scene {
                 mode = "render3";
                 break;
         }
+
+        const gl = MB.Core.getInstance().getGL();
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
 
         for (i = -varvar; i < varvar; i += 10.0) {
             for (j = -varvar; j < varvar; j += 10.0) {
@@ -258,13 +209,9 @@ class MyScene extends MB.Scene {
         prog.use();
 
         prog.sendUniformVec3("viewPos", this.camera.GetPos());
+        prog.sendUniformMat4("projection", this.projection);
+        prog.sendUniformMat4("view", this.view);
 
-        let transforms = new Float32Array([]);
-        transforms = MB.utils.Float32Concat(transforms, this.projection._value);
-        transforms = MB.utils.Float32Concat(transforms, this.view._value);
-
-        this.uniformPerDrawBuffer.update(transforms);
-        this.uniformPerDrawBuffer2.update(transforms);
     }
     textCB(gui: dat.GUI) {
         gui.add(this.text, "max", 5, 100);

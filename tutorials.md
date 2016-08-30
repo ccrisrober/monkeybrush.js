@@ -175,3 +175,32 @@ for (var i = 0; i < 10; ++i) {
     console.log(utils.random.next());
 }
 ```
+
+
+## Stereo rendering (anaglyph)
+```typescript
+if (enableStereo) {
+    this.camera.translate(-this.dio, 0.0, 0.0);
+    gl.colorMask(true, false, false, false);
+    // Draw scene
+    this.camera.translate(this.dio, 0.0, 0.0);
+    gl.colorMask(false, true, true, true);
+    // Draw scene
+    gl.colorMask(true, true, true, true);
+}
+```
+
+## Stereo rendering (complex)
+```typescript
+// left eye
+gl.viewport(0, 0, canvas.width / 2, canvas.height);
+mat4.multiply(mvpMatrix, leftEyeProjectionMatrix, leftEyeViewMatrix);
+gl.uniformMatrix4fv(uniforms.uMVPMatrixLocation, false, mvpMatrix);
+// Draw scene
+
+// right eye
+gl.viewport(canvas.width / 2, 0, canvas.width / 2, canvas.height);
+mat4.multiply(mvpMatrix, rightEyeProjectionMatrix, rightEyeViewMatrix);
+gl.uniformMatrix4fv(uniforms.uMVPMatrixLocation, false, mvpMatrix);
+// Draw scene
+```` 

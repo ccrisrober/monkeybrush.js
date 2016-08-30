@@ -19,121 +19,77 @@
 
 
 /// <reference path="texture.ts" />
-/// <reference path="texOptions.ts" />
 
 /// <reference path="../constants/TextureFormat.ts" />
 /// <reference path="../constants/TextureType.ts" />
 
 import { Core } from "../core/core";
-import { Texture } from "./texture";
+import { Texture, TexOptions } from "./texture";
 import { Vect2 } from "../maths/vect2";
-import { TexOptions } from "./texOptions";
 
 import { TextureFormat } from "../constants/TextureFormat";
-import { TextureType } from "../constants/TextureType";
+import { TextureType, TextureTarget } from "../constants/TextureType";
 
 "use strict";
 
 const gl = Core.getInstance().getGL();
 
 class SimpleTexture2D extends Texture {
-    protected _flipY: boolean;
-    protected _minFilter: number;
-    protected _magFilter: number;
-    protected _wraps: Array<TextureType>;
-
-    protected _internalformat: TextureFormat;
-    protected _format: TextureFormat;
-    protected _type: TextureFormat;
-    protected _level: number;
     protected _size: Vect2;
-    constructor(size: Vect2, options: TexOptions = {}) {
-        super(gl.TEXTURE_2D);
-        options = options || {};
+
+    public getWidth(): number {
+        return this._size.x;
+    }
+    public getHeight(): number {
+        return this._size.y;
+    }
+
+    constructor(size: Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
+        super(TextureTarget.Texture2D);
 
         this._size = size;
 
-        this._handle = gl.createTexture();
+        this._handle_ = gl.createTexture();
 
         // TODO: Support compression
 
-        this._flipY = options.flipY === true;
+        this._flipY_ = options.flipY === true;
 
-        this._internalformat = options.internalFormat || gl.RGBA;
-        this._format = options.format || gl.RGBA;
-        this._type = options.type || gl.UNSIGNED_BYTE;
-        this._level = options.level || 0;
-
-        this._minFilter = options.minFilter || gl.NEAREST;
-        this._magFilter = options.magFilter || gl.NEAREST;
-        const wraps = [
-            options.wrapS || options.wrap || gl.CLAMP_TO_EDGE,
-            options.wrapT || options.wrap || gl.CLAMP_TO_EDGE,
-        ];
+        this._internalformat_ = options.internalFormat || TextureFormat.RGBA;
+        this._format_ = options.format || gl.RGBA;
+        this._type_ = options.type || TextureFormat.UnsignedByte;
+        this._level_ = options.level || 0;
 
         this.bind();
 
         gl.texImage2D(
-            this._target,
-            this._level, // Level of details
-            this._internalformat, // Internal format
-            size.x,
-            size.y,
+            this._target_,
+            this._level_, // Level of details
+            this._internalformat_, // Internal format
+            this.getWidth(),
+            this.getHeight(),
             0,
-            this._format, // Format
-            this._type, // Size of each channel
+            this._format_, // Format
+            this._type_, // Size of each channel
             null
         );
 
-        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, this._minFilter);
-        gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, this._magFilter);
-        this.wrap(wraps);
+        this.minFilter(options.minFilter || TextureType.Nearest);
+        this.magFilter(options.minFilter || TextureType.Nearest);
 
-        /*// Prevent NPOT textures
-        // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        // Prevents s-coordinate wrapping (repeating).
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        // Prevents t-coordinate wrapping (repeating).
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);*/
-    }
-    public genMipMap() {
-        const gl = Core.getInstance().getGL();
-        this.bind();
-        // TODO: Check NPOT??
-        gl.generateMipmap(this._target);
-    }
-    public wrap(modes: Array<number>) {
-        if (modes.length !== 2) {
-            throw new Error("Must specify wrapS, wrapT modes");
+        this.wrap([
+            options.wrapS || TextureType.Clamp2Edge,
+            options.wrapT || TextureType.Clamp2Edge
+        ]);
+
+        if (this._flipY_) {
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
         }
-        this.bind();
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, modes[0]);
-        gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, modes[1]);
-        this._wraps = modes;
-    }
-    public minFilter(filter: number) {
-        this.bind();
-        gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, filter);
-        this._minFilter = filter;
-    }
-    public magFilter(filter: number) {
-        this.bind();
-        gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, filter);
-        this._magFilter = filter;
-    }
-    public bind(slot?: number) {
-        if (typeof slot === "number") {
-            gl.activeTexture(gl.TEXTURE0 + slot);
+
+        this.unbind();
+        if (onSuccess) {
+            onSuccess();
         }
-        gl.bindTexture(this._target, this._handle);
-    }
-    public unbind() {
-        gl.bindTexture(this._target, null);
-    }
-    public destroy() {
-        gl.deleteTexture(this._handle);
-        this._handle = null;
     }
     /*public setPixelStorage() {
         //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
@@ -143,16 +99,16 @@ class SimpleTexture2D extends Texture {
 
     public resize(size: Vect2) {
         if (!size.isEqual(this._size)) {
-            gl.bindTexture(this.target, this._handle);
+            gl.bindTexture(this.target, this._handle_);
             gl.texImage2D(
-                this._target,
-                this._level, // Level of details
-                this._internalformat, // Internal format
+                this._target_,
+                this._level_, // Level of details
+                this._internalformat_, // Internal format
                 size.x,
                 size.y,
                 0,
-                this._format, // Format
-                this._type, // Size of each channel
+                this._format_, // Format
+                this._type_, // Size of each channel
                 null
             );
         }

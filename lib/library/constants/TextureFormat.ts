@@ -22,7 +22,8 @@
 
 enum TextureFormat {
     RGB = 0x1907,
-    RGBA = 0x1908
+    RGBA = 0x1908,
+    UnsignedByte = 0x1401
 };
 
 export { TextureFormat };

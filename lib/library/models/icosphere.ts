@@ -38,38 +38,112 @@ class Icosphere extends Drawable {
      * @param {number} radius: [description]
      * @param {number} subdivisions: [description]
      */
-    constructor(radius: number, subdivisions: number = 1) {
+    constructor(radius: number = 1.0, subdivisions: number = 1) {
         super();
 
-        // subdivisions = Math.trunc(subdivisions);
-        // const t = ( 1 + Math.sqrt( 5 ) ) / 2;
+        // TODO: Subdivision > 16: WARNING
 
-        // create 12 vertices of a Icosahedron
-        // let t = (1 + Math.sqrt(5)) / 2;
+        subdivisions = Math.trunc(subdivisions);
+        const t = (1 + Math.sqrt(5)) / 2;
 
-        let verts = [];
-        /*    -1.0,  0.0,  0.0,
-             0.0,  1.0,  0.0,
-
-             0.0,  0.0, -1.0,
-             0.0,  0.0,  1.0,
-
-             0.0, -1.0,  0.0,
-             1.0,  0.0,  0.0
-        ];*/
+        let verts = [
+            -1,  t,  0,
+             1,  t,  0,
+            -1, -t,  0,
+             1, -t,  0,
+             0, -1,  t,
+             0,  1,  t,
+             0, -1, -t,
+             0,  1, -t,
+             t,  0, -1,
+             t,  0,  1,
+            -t,  0, -1,
+            -t,  0,  1
+        ];
         let norms = new Array();
         let tex = new Array();
-        let el = [];
-        /*    3, 4, 5,
-            3, 5, 1,
-            3, 1, 0,
-            3, 0, 4,
-            4, 0, 2,
-            4, 2, 5,
-            2, 0, 1,
-            5, 2, 1
-        ];*/
+        let el = [
+             0, 11,  5,
+             0,  5,  1,
+             0,  1,  7,
+             0,  7, 10,
+             0, 10, 11,
+             1,  5,  9,
+             5, 11,  4,
+            11, 10,  2,
+            10,  7,  6,
+             7,  1,  8,
+             3,  9,  4,
+             3,  4,  2,
+             3,  2,  6,
+             3,  6,  8,
+             3,  8,  9,
+             4,  9,  5,
+             2,  4, 11,
+             6,  2, 10,
+             8,  6,  7,
+             9,  8,  1
+        ];
 
+        //normalize
+        for (let i = 0, size = verts.length; i < size; i += 3) {
+            let mod = Math.sqrt(verts[i] * verts[i] + verts[i + 1] * verts[i + 1] +
+                verts[i + 2] * verts[i + 2]);
+            let nX = verts[i] / mod;
+            let nY = verts[i + 1] / mod;
+            let nZ = verts[i + 2] / mod;
+            norms.push(nX, nY, nZ);
+            tex.push(Math.atan2(nX, nZ), Math.acos(nY));
+            verts[i] *= radius / mod;
+            verts[i + 1] *= radius / mod;
+            verts[i + 2] *= radius / mod;
+        }
+
+        let middles = {};
+
+        function midPoint(A: number, B: number) {
+            let key = el[A] < el[B] ? el[A] + ":" + el[B] : el[B] + ":" + el[A];
+            let r = middles[key];
+            if(r) {
+                return r;
+            }
+            let index = verts.length / 3;
+            verts.push((verts[el[A] * 3] + verts[el[B] * 3]) * 0.5,
+                        (verts[el[A] * 3 + 1] + verts[el[B] * 3 + 1]) * 0.5,
+                        (verts[el[A] * 3 + 2] + verts[el[B] * 3 + 2]) * 0.5);
+
+            let mod = Math.sqrt(verts[index * 3] *
+                verts[index * 3] + verts[index * 3 + 1] *
+                verts[index * 3 + 1] + verts[index * 3 + 2] * verts[index * 3 + 2]);
+            let nX = verts[index *3] / mod;
+            let nY = verts[index * 3 + 1] / mod;
+            let nZ = verts[index * 3 + 2] / mod;
+            norms.push(nX, nY, nZ);
+            tex.push((Math.atan2(nX, nZ) / Math.PI) * 0.5,
+                (Math.acos(nY) / Math.PI));
+            verts[index * 3] *= radius / mod;
+            verts[index * 3 + 1] *= radius / mod;
+            verts[index * 3 + 2] *= radius / mod;
+
+            middles[key] = index;
+            return index;
+        }
+
+        for (let iR = 0; iR < subdivisions; ++iR) {
+            let new_el = [];
+            for(let i = 0, size = el.length; i < size; i+=3) {
+                let midA = midPoint(i, i + 1);
+                let midB = midPoint(i + 1, i + 2);
+                let midC = midPoint(i + 2, i);
+                new_el.push(el[i], midA, midC);
+                new_el.push(el[i + 1], midB, midA);
+                new_el.push(el[i + 2], midC, midB);
+                new_el.push(midA, midB, midC);
+            }
+            el = new_el;
+        }
+
+        middles = {};
 
         this._handle = [];
         this._vao.bind();
