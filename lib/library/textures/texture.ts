@@ -42,6 +42,8 @@ interface TexOptions {
     wrapS?: TextureType;
     wrapT?: TextureType;
     wrapR?: TextureType;
+    minLOD?: number;
+    maxLOD?: number;
     autoMipMap?: boolean;
     format?: TextureFormat;
     border?: number;

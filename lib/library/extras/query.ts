@@ -24,29 +24,34 @@ import { Core } from "../core/core";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 class Query {
     protected _handle: WebGLQuery;
     constructor() {
+        const gl = Core.getInstance().getGL();
         this._handle = gl.createQuery();
     }
     public destroy() {
+        const gl = Core.getInstance().getGL();
         gl.deleteQuery(this._handle);
     }
     public begin(target) {
+        const gl = Core.getInstance().getGL();
         gl.beginQuery(target, this._handle);
     }
     public end(target) {
+        const gl = Core.getInstance().getGL();
         gl.endQuery(target);
     };
     public useAnySamples(cb: Function) {
+        const gl = Core.getInstance().getGL();
         this.oneUse(gl.ANY_SAMPLES_PASSED, cb);
     };
     public useAnySamplesConservative(cb: Function) {
+        const gl = Core.getInstance().getGL();
         this.oneUse(gl.ANY_SAMPLES_PASSED_CONSERVATIVE, cb);
     };
     public useTransfFeedbackPrimWritten(cb: Function) {
+        const gl = Core.getInstance().getGL();
         this.oneUse(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, cb);
     };
     public oneUse(target, cb: Function) {
@@ -55,12 +60,15 @@ class Query {
         this.end(target);
     }
     public getParameter(param: number) {
+        const gl = Core.getInstance().getGL();
         return gl.getQueryParameter(this._handle, param);
     }
     public isResultAvailable() {
+        const gl = Core.getInstance().getGL();
         return this.getParameter(gl.QUERY_RESULT_AVAILABLE);
     }
     public getResult() {
+        const gl = Core.getInstance().getGL();
         return this.getParameter(gl.QUERY_RESULT);
     }
 };

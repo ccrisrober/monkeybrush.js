@@ -28,41 +28,50 @@ import { TransfFeedCte } from "../constants/TransfFeedCte";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 class TransformFeedback {
     protected _handle: WebGLTransformFeedback;
     constructor() {
+        const gl = Core.getInstance().getGL();
         this._handle = gl.createTransformFeedback();
     };
     public destroy() {
+        const gl = Core.getInstance().getGL();
         gl.deleteTransformFeedback(this._handle);
     };
     public bind() {
+        const gl = Core.getInstance().getGL();
         gl.bindTransformFeedback(TransfFeedCte.Normal, this._handle);
     };
     public unbind() {
+        const gl = Core.getInstance().getGL();
         gl.bindTransformFeedback(TransfFeedCte.Normal, null);
     };
     public begin(primitiveMode: number) {
+        const gl = Core.getInstance().getGL();
         gl.beginTransformFeedback(primitiveMode);
     };
     public pause() {
+        const gl = Core.getInstance().getGL();
         gl.pauseTransformFeedback();
     };
     public resume() {
+        const gl = Core.getInstance().getGL();
         gl.resumeTransformFeedback();
     };
     public end() {
+        const gl = Core.getInstance().getGL();
         gl.endTransformFeedback();
     };
     public varyings(program: Program, varyings: Array<string>, bufferMode: number) {
+        const gl = Core.getInstance().getGL();
         return gl.transformFeedbackVaryings(program.id(), varyings, bufferMode);
     };
     public getVarying(program: Program, idx: number) {
+        const gl = Core.getInstance().getGL();
         return gl.getTransformFeedbackVarying(program.id(), idx);
     };
     public isValid(): boolean {
+        const gl = Core.getInstance().getGL();
         return gl.isTransformFeedback(this._handle);
     };
 }

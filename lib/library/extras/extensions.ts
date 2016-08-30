@@ -24,8 +24,6 @@ import { Core } from "../core/core";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 namespace extensions {
     /**
      * [_extensions description]
@@ -40,6 +38,7 @@ namespace extensions {
         if (name in _extensions) {
             return _extensions[name];
         }
+        const gl = Core.getInstance().getGL();
         let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
 
         if (ext === null) {

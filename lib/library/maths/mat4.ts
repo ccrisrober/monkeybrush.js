@@ -31,6 +31,10 @@ import {Mat3} from "./mat3";
  */
 class Mat4 {
     public _value: Float32Array = new Float32Array(16);
+    /**
+     * Mat4 constructor
+     * @param {number[] = null} values [description]
+     */
     constructor(values: number[] = null) {
         if (values) {
             this.init(values);

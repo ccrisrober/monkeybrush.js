@@ -1,9 +1,5 @@
 /// <reference path="library/references.d.ts" />
-// TODO:
 import * as MB from "./library/MonkeyBrush";
-
-import { ProgramCte } from "./library/constants/ProgramCte";
-// import { TextureType } from "./library/constants/TextureType";
 
 "use strict";
 
@@ -18,7 +14,7 @@ let SimpleConfig = function() {
 class MyScene extends MB.Scene {
     protected camera = new MB.Camera2(new MB.Vect3(-2.7, -1.4, 11.8));
 
-    protected cubito: MB.Icosphere;
+    protected cubito: MB.Cube;
     protected floor: MB.Floor;
     protected skybox: MB.Skybox;
     protected view;
@@ -45,7 +41,9 @@ class MyScene extends MB.Scene {
         MB.loaders.loadImage("assets/images/skybox2/right.jpg");
         MB.loaders.loadImage("assets/images/skybox2/top.jpg");
 
-        MB.loaders.loadImage("descarga (2).png", "descarga");
+        MB.loaders.loadImage("assets/images/matcap_058.png", "monkey");
+
+        MB.loaders.loadImage("descarga (1).png", "descarga");
         MB.loaders.loadImage("heightmap.png", "heightmap");
         MB.loaders.loadImage("grass.png", "grass");
     }
@@ -54,16 +52,17 @@ class MyScene extends MB.Scene {
     initialize() {
         this.skybox = new MB.Skybox("assets/images/skybox2", false);
 
-        let grassImage = MB.ResourceMap.retrieveAsset("grass");
+        /*let grassImage = MB.ResourceMap.retrieveAsset("grass");
         this.tex2d = new MB.Texture2D(grassImage, {
             flipY: true,
             minFilter: MB.TextureType.Linear,
             magFilter: MB.TextureType.Linear,
             wrapS: MB.TextureType.Clamp2Edge,
             wrapT: MB.TextureType.Clamp2Edge
-        });
+        });*/
 
-        let heightmapImage = MB.ResourceMap.retrieveAsset("descarga");
+        let heightmapImage = MB.ResourceMap.retrieveAsset("monkey");
+        // const gl = MB.Core.getInstance().getGL();
         this.tex2d2 = new MB.Texture2D(heightmapImage, {
             flipY: true,
             minFilter: MB.TextureType.Nearest,
@@ -72,7 +71,7 @@ class MyScene extends MB.Scene {
             wrapT: MB.TextureType.MirroredRepeat
         });
 
-        this.cubito = new MB.Icosphere(15.0, 1.0);
+        this.cubito = new MB.Cube(17.5);
         this.floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("progubo", (): MB.Program => {
@@ -94,19 +93,16 @@ class MyScene extends MB.Scene {
         out vec2 uv;
 
         void main() {
-            mat3 normalMatrix = mat3(inverse(transpose(model)));
-
             gl_Position = projection * view * model * vec4(position, 1.0f);
             outNormal = mat3(transpose(inverse(model))) * normal;
             outPosition = vec3(model * vec4(position, 1.0f));
-
             uv = uv_;
-
             gl_PointSize = 5.0;
-        }`, ProgramCte.shader_type.vertex, ProgramCte.mode.read_text);
+        }`, MB.ProgramCte.shader_type.vertex, MB.ProgramCte.mode.read_text);
             prog.addShader(
         `#version 300 es
         precision highp float;
+        precision highp int;
 
         in vec3 outNormal;
         in vec3 outPosition;
@@ -115,11 +111,12 @@ class MyScene extends MB.Scene {
         out vec4 fragColor;
 
         uniform vec3 cameraPos;
-        uniform sampler2D tex;
+        uniform sampler2D  tex;
 
         void main() {
             fragColor = texture(tex, uv);
-        }`, ProgramCte.shader_type.fragment, ProgramCte.mode.read_text);
+            if (fragColor.a < 1.0) discard;
+        }`, MB.ProgramCte.shader_type.fragment, MB.ProgramCte.mode.read_text);
             prog.compile();
 
             prog.use();
@@ -172,7 +169,7 @@ class MyScene extends MB.Scene {
 
         const gl = MB.Core.getInstance().getGL();
         gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
+        gl.depthFunc(gl.LESS);
 
         for (i = -varvar; i < varvar; i += 10.0) {
             for (j = -varvar; j < varvar; j += 10.0) {

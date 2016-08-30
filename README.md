@@ -16,6 +16,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
     <img src="descarga (2).png" width="33%" />
     <img src="descarga (3).png" width="33%" />
     <img src="descarga (4).png" width="33%" />
+    <img src="descarga (5).png" width="33%" />
 </div>
 
 ## Doc
@@ -45,7 +46,9 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Add texture 2D
 - [x] Add texture 3D
 - [x] Add framebuffer
-- [ ] Inmutable textures
+- [x] Inmutable textures
+- [ ] Video texture
+- [ ] Webcam texture
 
 ### WebGL2
 - [x] Transform feedback
@@ -74,8 +77,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Image upload
 - [x] Skybox supporting
 - [ ] Fonts
-- [ ] Video texture
-- [ ] Webcam texture
+- [ ] Video loader
+- [ ] Webcam loader
 - [ ] Generate video capture
 
 ### Core
@@ -88,6 +91,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [ ] Sprites (HUD)
 - [ ] Picking
 - [ ] Multi context
+- [ ] PBO (http://www.songho.ca/opengl/gl_pbo.html#create)
 
 ### Polyfills
 - [x] Epsilon

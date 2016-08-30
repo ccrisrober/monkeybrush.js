@@ -29,12 +29,12 @@ import { TextureType, TextureTarget } from "../constants/TextureType";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 class Texture2D extends Texture {
     // TODO: Add onSuccess a todas las texturas ...
     constructor(data: HTMLImageElement, options: TexOptions = {}, onSuccess: () => void = null) {
         super(TextureTarget.Texture2D);
+
+        const gl = Core.getInstance().getGL();
 
         // TODO: Support compression
 

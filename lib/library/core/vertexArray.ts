@@ -26,8 +26,6 @@ import { extensions } from "../extras/extensions";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 declare var WebGL2RenderingContext: any;
 
 class VertexArray {
@@ -44,6 +42,7 @@ class VertexArray {
         if (vao !== undefined) {
             this._handle = vao;
         } else {
+            const gl = Core.getInstance().getGL();
             if (gl instanceof WebGL2RenderingContext) {
                 this._handle = gl.createVertexArray();
             } else {
@@ -66,6 +65,7 @@ class VertexArray {
      * [bind description]
      */
     public bind() {
+        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             gl.bindVertexArray(this._handle);
             return;
@@ -79,6 +79,7 @@ class VertexArray {
      * [unbind description]
      */
     public unbind() {
+        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             gl.bindVertexArray(null);
             return;
@@ -92,6 +93,7 @@ class VertexArray {
      * Destroy vertex array
      */
     public destroy() {
+        const gl = Core.getInstance().getGL();
         this.bind();
         if (gl instanceof WebGL2RenderingContext) {
             gl.deleteVertexArray(this._handle);
@@ -107,6 +109,7 @@ class VertexArray {
      * @return {boolean} True if current context supports VertexArray
      */
     public static isSupported(): boolean {
+        const gl = Core.getInstance().getGL();
         return gl instanceof WebGL2RenderingContext ||
             extensions.get("OES_vertex_array_object");
     }

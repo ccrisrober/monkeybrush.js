@@ -23,6 +23,11 @@
 enum TextureType {
     Nearest = 0x2600,
     Linear = 0x2601,
+    NearestMMNearest = 0x2700,
+    LinearMMNearest = 0x2701,
+    NearestMMLinear = 0x2702,
+    LinearMMLinear = 0x2703,
+
     Clamp2Edge = 0x812F,
     Repeat = 0x2901,
     MirroredRepeat = 0x8370
@@ -33,7 +38,6 @@ enum TextureTarget {
     Texture3D = 0x806F,
     Texture2DArray = 0x8C1A
 };
-// TODO: LinerMipMap
 
 export { TextureType, TextureTarget };
 

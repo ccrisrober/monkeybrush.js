@@ -96,13 +96,13 @@ abstract class Camera {
         return this._projection;
     };
     /**
-     * [near description]
-     * @return {number} [description]
+     * Get current near of view from camera
+     * @return {number}
      */
     get near(): number { return this._near; };
     /**
-     * [far description]
-     * @return {number} [description]
+     * Get current far of view from camera
+     * @return {number}
      */
     get far(): number { return this._far; };
     /**
@@ -117,22 +117,22 @@ abstract class Camera {
     get aspRatio(): number { return this._ar; };
     /**
      * Set near
-     * @param {number} near
+     * @param {number} near: New near value
      */
     set near(near: number) { this._near = near; };
     /**
      * Set far
-     * @param {number} far
+     * @param {number} far: New far value
      */
     set far(far: number) { this._far = far; };
     /**
      * Set field of view
-     * @param {number} fovy
+     * @param {number} fovy: New field of view value
      */
     set fov(fovy: number) { this._fov = fovy; };
     /**
      * Set aspect ratio
-     * @param {number} ar
+     * @param {number} ar: New aspect ratio value
      */
     set aspRatio(ar: number) { this._ar = ar; };
 };

@@ -27,8 +27,8 @@ enum RenderType {
     LineLoop = 0x0002,
     LineStrip = 0x0003,
     Triangles = 0x0004,
-    TrianStrip = 0x0005,
-    TrianFan = 0x0006,
+    TriangleStrip = 0x0005,
+    TriangleFan = 0x0006,
 };
 
 export { RenderType };

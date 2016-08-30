@@ -24,8 +24,6 @@ import { Core } from "../core/core";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 declare var WebGL2RenderingContext: any;
 
 class VertexUBO {
@@ -35,7 +33,8 @@ class VertexUBO {
     // TODO: A futuro usar el program y no
     //         WebGLProgram (cachear ubo también en program ...)
     constructor(prog: WebGLProgram, name: string, blockBindIdx: number) {
-       if (gl instanceof WebGL2RenderingContext) {
+        const gl = Core.getInstance().getGL();
+        if (gl instanceof WebGL2RenderingContext) {
             this._handle = gl.createBuffer();
             const index = gl.getUniformBlockIndex(prog, name);
             if (index === 4294967295) {
@@ -46,6 +45,7 @@ class VertexUBO {
         }
     };
     public bind() {
+        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             gl.bindBuffer(gl.UNIFORM_BUFFER, this._handle);
             return;
@@ -53,9 +53,11 @@ class VertexUBO {
     };
     // TODO: USED??
     public bindBB() {
+        const gl = Core.getInstance().getGL();
         gl.bindBufferBase(gl.UNIFORM_BUFFER, this._index, this._handle);
     };
     public update(data: Float32Array) {
+        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             gl.bindBuffer(gl.UNIFORM_BUFFER, this._handle);
             gl.bufferData(gl.UNIFORM_BUFFER, data, gl.STATIC_DRAW);
@@ -64,6 +66,7 @@ class VertexUBO {
         }
     };
     public unbind() {
+        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             gl.bindBuffer(gl.UNIFORM_BUFFER, null);
             return;
@@ -71,12 +74,14 @@ class VertexUBO {
     };
     public destroy() {
         this.bind();
+        const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
             gl.deleteBuffer(this._handle);
             return;
         }
     };
     public static isSupported(): boolean {
+        const gl = Core.getInstance().getGL();
         return gl instanceof WebGL2RenderingContext;
     };
 };

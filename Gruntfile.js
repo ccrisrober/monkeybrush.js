@@ -23,7 +23,11 @@ module.exports = function (grunt) {
                 options: {
                     out: './docs',
                     name: 'monkeybrush.js',
-                    target: 'ES6'
+                    target: 'ES6',
+                    mode: "file",
+                    readme: "./READMEDOC.md",
+                    externalPattern: "node_modules",
+                    theme: "minimal"
                 },
                 src: ['./lib/**/*']
             }

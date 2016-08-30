@@ -24,8 +24,6 @@ import { Core } from "../core/core";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 export interface SamplerParams {
     minFilter?: number;
     magFilter?: number;
@@ -45,9 +43,11 @@ export interface SamplerParams {
 export class Sampler {
     public _handle: WebGLSampler;
     constructor() {
+        const gl = Core.getInstance().getGL();
         this._handle = gl.createSampler();
     };
     public setParams(params: SamplerParams) {
+        const gl = Core.getInstance().getGL();
         if (params.minFilter) {
             this.parameteri(gl.TEXTURE_MIN_FILTER, params.minFilter);
         }
@@ -85,24 +85,31 @@ export class Sampler {
      *                       to which to bind the sampler
      */
     public bind(unit: number) {
+        const gl = Core.getInstance().getGL();
         gl.bindSampler(unit, this._handle);
     };
     public unbind(unit: number) {
+        const gl = Core.getInstance().getGL();
         gl.bindSampler(unit, null);
     };
     public parameteri(name: number, param: number) {
+        const gl = Core.getInstance().getGL();
         gl.samplerParameteri(this._handle, name, param);
     };
     public parameterf(name: number, param: number) {
+        const gl = Core.getInstance().getGL();
         gl.samplerParameterf(this._handle, name, param);
     };
     public getParameter(name: number) {
+        const gl = Core.getInstance().getGL();
         return gl.getSamplerParameter(this._handle, name);
     };
     public destroy() {
+        const gl = Core.getInstance().getGL();
         gl.deleteSampler(this._handle);
     };
     public isValid(): boolean {
+        const gl = Core.getInstance().getGL();
         return gl.isSampler(this._handle);
     };
 };

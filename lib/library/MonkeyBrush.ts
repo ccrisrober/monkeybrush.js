@@ -1,4 +1,4 @@
-import "./polyfills.js";
+import "./polyfills";
 export * from "./constants/constants";
 
 // __root__

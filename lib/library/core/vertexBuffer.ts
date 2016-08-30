@@ -27,8 +27,6 @@ import { UsageType } from "../constants/UsageType";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 class VertexBuffer {
     /**
      * [_buffer description]
@@ -45,6 +43,7 @@ class VertexBuffer {
      * @param {BufferType = BufferType.Array}
      */
     constructor(type: BufferType = BufferType.Array) {
+        const gl = Core.getInstance().getGL();
         this._buffer = gl.createBuffer();
         this._type = type;
         this.bind();
@@ -57,12 +56,14 @@ class VertexBuffer {
         if (type !== undefined) {
             this._type = type;
         }
+        const gl = Core.getInstance().getGL();
         gl.bindBuffer(this._type, this._buffer);
     }
     /**
      * [unbind description]
      */
     public unbind() {
+        const gl = Core.getInstance().getGL();
         gl.bindBuffer(this._type, null);
     }
     /**
@@ -83,6 +84,7 @@ class VertexBuffer {
      * [destroy description]
      */
     public destroy() {
+        const gl = Core.getInstance().getGL();
         gl.bindBuffer(this._type, 0);
         if (!this._buffer) {
             gl.deleteBuffer(this._buffer);
@@ -96,6 +98,7 @@ class VertexBuffer {
      */
     public bufferData(data: Float32Array | Uint16Array, usage: UsageType = UsageType.StaticDraw) {
         this.bind();
+        const gl = Core.getInstance().getGL();
         gl.bufferData(this._type, data, usage);
     };
     /**
@@ -107,6 +110,7 @@ class VertexBuffer {
      */
     public attribDivisor(position: number, length: number, divisor: number, stride: number = 0) {
         this.bind();
+        const gl = Core.getInstance().getGL();
         gl.enableVertexAttribArray(position);
         gl.vertexAttribPointer(position,
             length,
@@ -127,6 +131,7 @@ class VertexBuffer {
     public vertexAttribPointer(attribLocation: number, numElems: number, type: number,
         normalized: boolean = false, offset: number = 0) {
         this.bind();
+        const gl = Core.getInstance().getGL();
         gl.enableVertexAttribArray(attribLocation);
         gl.vertexAttribPointer(
             attribLocation, // Attribute location
@@ -140,6 +145,7 @@ class VertexBuffer {
 
     public copySub(readTarget: number, writeTarget: number, readOffset: number, writeOffset: number, size: number) {
         // TODO: https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/copyBufferSubData
+        const gl = Core.getInstance().getGL();
         gl.copyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
     }
 }

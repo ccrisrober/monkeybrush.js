@@ -32,8 +32,6 @@ import { TextureType, TextureTarget } from "../constants/TextureType";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 class SimpleTexture2D extends Texture {
     protected _size: Vect2;
 
@@ -49,6 +47,7 @@ class SimpleTexture2D extends Texture {
 
         this._size = size;
 
+        const gl = Core.getInstance().getGL();
         this._handle_ = gl.createTexture();
 
         // TODO: Support compression
@@ -97,8 +96,16 @@ class SimpleTexture2D extends Texture {
         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
     }*/
 
+    public setInmutable(size: Vect2 = this._size) {
+        this.bind();
+        const gl = Core.getInstance().getGL();
+        gl.texStorage2D(this.target, 1, gl.RGB8, size.x, size.y);
+        this.unbind();
+    }
+
     public resize(size: Vect2) {
         if (!size.isEqual(this._size)) {
+            const gl = Core.getInstance().getGL();
             gl.bindTexture(this.target, this._handle_);
             gl.texImage2D(
                 this._target_,

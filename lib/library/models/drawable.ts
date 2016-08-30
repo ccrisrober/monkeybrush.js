@@ -34,8 +34,6 @@ import { extensions } from "../extras/extensions";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 declare var WebGL2RenderingContext: any;
 
 /**
@@ -105,6 +103,7 @@ abstract class Drawable {
      */
     protected addBufferArray(attribLocation: number,
         data: Float32Array, numElems: number, type: UsageType = UsageType.StaticDraw): VertexBuffer {
+        const gl = Core.getInstance().getGL();
         let vb: VertexBuffer = new VertexBuffer(BufferType.Array);
         vb.bufferData(data, type);
         vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
@@ -116,18 +115,21 @@ abstract class Drawable {
      * Normal render
      */
     public render() {
+        const gl = Core.getInstance().getGL();
         this._vao.bind();
         gl.drawElements(RenderType.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
 
     public render2() {
+        const gl = Core.getInstance().getGL();
         this._vao.bind();
         gl.drawElements(RenderType.LineStrip, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
 
     public render3() {
+        const gl = Core.getInstance().getGL();
         this._vao.bind();
         gl.drawElements(RenderType.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
@@ -138,6 +140,7 @@ abstract class Drawable {
      * @param {number} numInstances: Instances to render
      */
     public renderElementInstance(numInstances: number) {
+        const gl = Core.getInstance().getGL();
         this._vao.bind();
         if (gl instanceof WebGL2RenderingContext) {
             gl.drawElementsInstanced(
@@ -167,6 +170,7 @@ abstract class Drawable {
      * @param {number} numInstances: Instances to render
      */
     public renderArrayInstance(numInstances: number) {
+        const gl = Core.getInstance().getGL();
         this._vao.bind();
         if (gl instanceof WebGL2RenderingContext) {
             gl.drawArraysInstanced(

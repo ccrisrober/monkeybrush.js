@@ -1,4 +1,4 @@
-if (Number.epsilon === undefined ) {
+/*if (Number.epsilon === undefined ) {
     Number.epsilon = 0.0001;
 }
 if (Number.smallEpsilon === undefined ) {
@@ -6,16 +6,16 @@ if (Number.smallEpsilon === undefined ) {
 }
 if (Number.defaultIOR === undefined ) {
     Number.defaultIOR = 1.000277;
+}*/
+if (Math["degree"] === undefined) {
+    Math["degree"] = Math.PI / 180.0;
 }
-if (Math.degree === undefined) {
-    Math.degree = Math.PI / 180;
-}
-if (Math.toRadian === undefined) {
-    Math.toRadian = function(a) {
-        return a * Math.degree;
+if (Math["toRadian"] === undefined) {
+    Math["toRadian"] = function(a) {
+        return a * Math["degree"];
     }
 }
-
+/*
 Element.prototype.remove = function() {
     this.parentElement.removeChild(this);
 };
@@ -64,14 +64,14 @@ if (!Array.prototype.findIndex) {
         return -1;
     };
 }
-
-    /*Array.prototype.removeByIndex = function(index) {
-        if (this === null) {
-            throw new TypeError('Array.prototype.removeByIndex called on null or undefined');
-        }
-        if (index + 1 > this.length || index < 0) {
-            throw new Error("Array limit index");
-        }
-        //this.splice(index, 1);
-        return this;
-    };*/
+*/
+/*Array.prototype.removeByIndex = function(index) {
+    if (this === null) {
+        throw new TypeError('Array.prototype.removeByIndex called on null or undefined');
+    }
+    if (index + 1 > this.length || index < 0) {
+        throw new Error("Array limit index");
+    }
+    //this.splice(index, 1);
+    return this;
+};*/

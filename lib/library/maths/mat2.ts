@@ -19,12 +19,8 @@
 
 
 /// <reference path="vect2.ts" />
-/// <reference path="mat3.ts" />
-/// <reference path="mat4.ts" />
 
 import {Vect2} from "./vect2";
-// import mat3 from "./mat3";
-// import mat4 from "./mat4";
 
 "use strict";
 
@@ -34,6 +30,10 @@ import {Vect2} from "./vect2";
  */
 class Mat2 {
     public _value: Float32Array = new Float32Array(4);
+    /**
+     * Mat2 constructor
+     * @param {number[] = null} values [description]
+     */
     constructor(values: number[] = null) {
         if (values) {
             this.init(values);

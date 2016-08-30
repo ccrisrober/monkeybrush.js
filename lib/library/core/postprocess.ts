@@ -31,8 +31,6 @@ import { BufferType } from "../constants/BufferType.ts";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 /**
 * This class wrap PostProcess effects
 *
@@ -44,6 +42,7 @@ class PostProcess {
      */
     static initialize() {
         if (!PostProcess._planeVAO) {
+            const gl = Core.getInstance().getGL();
             const positions = [
                 -1.0, -1.0,
                  1.0, -1.0,
@@ -69,6 +68,7 @@ class PostProcess {
      *
      */
     public static render() {
+        const gl = Core.getInstance().getGL();
         // console.log("DRAW QUAD");
         PostProcess._planeVAO.bind();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

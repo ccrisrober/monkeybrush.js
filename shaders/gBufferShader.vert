@@ -27,4 +27,5 @@ void main() {
 	outUV = uv;
 	outNormal = normalize(normalMatrix * normal);
 	gl_Position = projection * view * model * vec4(pos, 1.0);
+    gl_PointSize = 5.0;
 }

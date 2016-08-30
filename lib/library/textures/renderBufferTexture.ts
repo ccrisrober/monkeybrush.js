@@ -26,13 +26,12 @@ import { Vect2 } from "../maths/vect2";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 class RenderBufferTexture {
     protected _handle: WebGLRenderbuffer;
     protected _size: Vect2;
     protected _format: number;
     constructor(size: Vect2, format: number, attachment: number) {
+        const gl = Core.getInstance().getGL();
         this._handle = gl.createRenderbuffer();
         this._size = size;
         this._format = format;
@@ -42,16 +41,20 @@ class RenderBufferTexture {
         gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     };
     public bind() {
+        const gl = Core.getInstance().getGL();
         gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
     };
     public unbind() {
+        const gl = Core.getInstance().getGL();
         gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     }
     public destroy() {
+        const gl = Core.getInstance().getGL();
         gl.deleteTexture(this._handle);
     };
     public resize(size: Vect2) {
         if (!size.isEqual(this._size)) {
+            const gl = Core.getInstance().getGL();
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
             gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
         }

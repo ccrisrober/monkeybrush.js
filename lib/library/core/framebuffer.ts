@@ -33,8 +33,6 @@ import { Vect2 } from "../maths/vect2";
 
 "use strict";
 
-const gl = Core.getInstance().getGL();
-
 // TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
 class Framebuffer {
     protected _size: Vect2;
@@ -47,6 +45,7 @@ class Framebuffer {
     constructor(textures: Array<Texture>, size: Vect2, depth: boolean = false,
         stencil: boolean = false, options = {}) {
         let numColors = textures.length;
+        const gl = Core.getInstance().getGL();
         if (numColors < 0) {
             throw new Error("must specify >= 0 color attachments");
         } else if (numColors > 1) {
@@ -139,6 +138,7 @@ class Framebuffer {
     }
 
     private checkStatus(status: number) {
+        const gl = Core.getInstance().getGL();
         switch (status) {
             case gl.FRAMEBUFFER_UNSUPPORTED:
                 throw new Error("framebuffer: Framebuffer unsupported");
@@ -154,16 +154,19 @@ class Framebuffer {
     }
 
     public bind() {
+        const gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
     }
 
     public onlyBindTextures() {
+        const gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this._attachments.forEach((tex: Texture, idx: number) => {
             tex.bind(idx);
         });
     };
     public unbind() {
+        const gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     };
     public rebuild(size: Vect2) {
@@ -181,6 +184,7 @@ class Framebuffer {
         }
     };
     public destroy() {
+        const gl = Core.getInstance().getGL();
         let oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
         if (oldBinding === this._handle) {
