@@ -13,6 +13,7 @@ uniform sampler2D texSampler;
 uniform vec3 viewPos;
 
 void main() {
-    fragColor = vec4(outUV, 0.0, 1.0);
-    fragColor = texture(texSampler, outUV);
+    //fragColor = vec4(outUV, 0.0, 1.0);
+    //fragColor = texture(texSampler, outUV);
+    fragColor = vec4(normalize(outNormal), 1.0);
 }

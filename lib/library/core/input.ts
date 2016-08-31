@@ -207,11 +207,11 @@ class Input {
         const canvas = Core.getInstance().canvas();
         let bbox = canvas.getBoundingClientRect();
 
-        // const x = Math.round((ev.clientX - bbox.left) * (canvas.width / bbox.width));
-        // const y = Math.round((ev.clientY - bbox.top) * (canvas.width / bbox.width));
+        const x = Math.round((ev.clientX - bbox.left) * (canvas.width / bbox.width));
+        const y = Math.round((ev.clientY - bbox.top) * (canvas.width / bbox.width));
 
-        const x = ((ev.clientX - bbox.left) - canvas.height / 2) / (canvas.height / 2);
-        const y = (canvas.width / 2 - (ev.clientY - bbox.top)) / (canvas.width / 2);
+        // const x = ((ev.clientX - bbox.left) - canvas.height / 2) / (canvas.height / 2);
+        // const y = (canvas.width / 2 - (ev.clientY - bbox.top)) / (canvas.width / 2);
 
         if ((x >= 0) && (x < canvas.width) &&
             (y >= 0) && (y < canvas.height)) {

@@ -53,6 +53,11 @@ class Camera2 {
         return this.position;
     }
 
+    public setHome(v: Vect3) {
+        this.position = v;
+        this.updateCameraVectors();
+    }
+
     constructor(position: Vect3 = new Vect3(0, 0, 0),
         up: Vect3 = new Vect3(0, 1, 0), yaw: number = -90.0, pitch: number = 0.0) {
         this.front = new Vect3(0, 0, -1);

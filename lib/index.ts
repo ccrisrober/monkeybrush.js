@@ -12,7 +12,8 @@ let SimpleConfig = function() {
 };
 
 class MyScene extends MB.Scene {
-    protected camera = new MB.Camera2(new MB.Vect3(-2.7, -1.4, 11.8));
+    protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
+    protected camera = new MB.Camera2(this.homePoint);
 
     protected cubito: MB.Cube;
     protected Floor: MB.Floor;
@@ -34,12 +35,12 @@ class MyScene extends MB.Scene {
 
     loadAssets() {
         // skybox
-        MB.Loaders.loadImage("assets/images/hw_mystic/back.jpg");
-        MB.Loaders.loadImage("assets/images/hw_mystic/bottom.jpg");
-        MB.Loaders.loadImage("assets/images/hw_mystic/front.jpg");
-        MB.Loaders.loadImage("assets/images/hw_mystic/left.jpg");
-        MB.Loaders.loadImage("assets/images/hw_mystic/right.jpg");
-        MB.Loaders.loadImage("assets/images/hw_mystic/top.jpg");
+        MB.Loaders.loadImage("assets/images/canyon/back.jpg");
+        MB.Loaders.loadImage("assets/images/canyon/bottom.jpg");
+        MB.Loaders.loadImage("assets/images/canyon/front.jpg");
+        MB.Loaders.loadImage("assets/images/canyon/left.jpg");
+        MB.Loaders.loadImage("assets/images/canyon/right.jpg");
+        MB.Loaders.loadImage("assets/images/canyon/top.jpg");
 
         MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
 
@@ -50,7 +51,7 @@ class MyScene extends MB.Scene {
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;
     initialize() {
-        this.skybox = new MB.Skybox("assets/images/hw_mystic", this._webglVersion === 2);
+        this.skybox = new MB.Skybox("assets/images/canyon", this._webglVersion === 2);
 
         /*let grassImage = MB.ResourceMap.retrieveAsset("grass");
         this.tex2d = new MB.Texture2D(grassImage, {
@@ -102,6 +103,11 @@ class MyScene extends MB.Scene {
     update(dt: number) {
         if (MB.Input.getInstance().isButtonClicked(MB.Input.mouseButton.Left)) {
             console.log("Mouse left clicked");
+        }
+
+        if (MB.Input.getInstance().isKeyClicked(MB.Input.getInstance().keys.Y)) {
+            console.log("Key Y clicked");
+            this.camera.setHome(this.homePoint);
         }
 
         this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
