@@ -1,12 +1,12 @@
 // TODO!!!
 
-/// <reference path="../models/drawable.ts" />
+/// <reference path="../models/Drawable.ts" />
 
-import { Core } from "../core/core";
-import { Program } from "../core/program";
+import { Core } from "../core/Core";
+import { Program } from "../core/Program";
 import { ProgramCte } from "../constants/ProgramCte";
-import { ProgramManager } from "../resources/programManager";
-import { Drawable } from "../models/drawable";
+import { ProgramManager } from "../resources/ProgramManager";
+import { Drawable } from "../models/Drawable";
 
 class Axis extends Drawable {
     public indices = [0, 1, 2, 3, 4, 5];
@@ -44,9 +44,9 @@ class Axis extends Drawable {
                 layout(location = 0) in vec3 position;
                 layout(location = 1) in vec3 color;
 
-                uniform mat4 projection;
-                uniform mat4 view;
-                uniform mat4 model;
+                uniform Mat4 projection;
+                uniform Mat4 view;
+                uniform Mat4 model;
 
                 void main() {
                     gl_Position = projection * view * model * vec4(position, 1.0);

@@ -18,12 +18,20 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="input.ts" />
-/// <reference path="context.ts" />
+/// <reference path="Input.ts" />
+/// <reference path="Context.ts" />
 /// <reference path="../constants/_constants.ts" />
 
-import { Context } from "./context";
-import { Input } from "./input";
+import { Context } from "./Context";
+import { PostProcess } from "./PostProcess";
+import { Input } from "./Input";
+import { Log } from "./Log";
+
+import { WebGLDepth } from "./WebGLDepth";
+import { WebGLCull } from "./WebGLCull";
+import { WebGLBlend } from "./WebGLBlend";
+
+import { ComparisonFunc } from "../constants/ComparisonFunc";
 
 "use strict";
 /**
@@ -32,17 +40,16 @@ import { Input } from "./input";
 * @class core.Core
 */
 class Core {
-    private static _instance: Core = new Core();
+    private static _instance: Core = null;
 
     private _gl: WebGL2RenderingContext;
 
     constructor() {
+        Log.info("INIT CORE");
         if (Core._instance) {
             throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
         }
         this._gl = Context.getContext();
-
-        Input.getInstance();
 
         Core._instance = this;
     }
@@ -64,14 +71,14 @@ class Core {
         return this._gl.canvas;
     }
     protected init() {
-        Depth.enable();
-        Depth.comparison(ComparisonFunc.Less);
+        Input.getInstance();
+        PostProcess.initialize();
 
-        // Set images to flip y axis to match the texture coordinate space.
-        // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        WebGLDepth.enable();
+        WebGLDepth.comparison(ComparisonFunc.Less);
 
-        Cull.enable();
-        Blend.disable();
+        WebGLCull.enable();
+        WebGLBlend.disable();
     }
 
     public static getInstance(): Core {
@@ -92,13 +99,7 @@ class Core {
         return this._gl;
     }
 };
-Context.getContext();
-Core.getInstance();
-
-import { Depth } from "./depth";
-import { Cull } from "./cull";
-import { Blend } from "./blend";
-
-import { ComparisonFunc } from "../constants/ComparisonFunc";
+// Context.getContext();
+// Core.getInstance();
 
 export { Core };

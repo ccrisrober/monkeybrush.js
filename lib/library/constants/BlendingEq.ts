@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-// TODO: extensions.get("WEBdraw_buffers");
+// TODO: ("WEBdraw_buffers");
 
 "use strict";
 

@@ -18,10 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="light.ts" />
+/// <reference path="Light.ts" />
 
-import { Light } from "./light";
-import { Vect3 } from "../maths/vect3";
+import { Light } from "./Light";
+import { Vect3 } from "../maths/Vect3";
 
 "use strict";
 
@@ -36,6 +36,7 @@ class PointLight extends Light {
      */
     protected _position: Vect3;
     /**
+     * Point light constructor
      * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} position
      */
     constructor(position: Vect3 = new Vect3(0.0, 0.0, 0.0)) {

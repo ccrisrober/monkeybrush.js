@@ -18,10 +18,12 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import { decorators } from "./_decorators";
-import { Core } from "./core/core";
-import { Input } from "./core/input";
-import { ResourceMap } from "./resources/resourceMap";
-import { Timer } from "./extras/timer";
+import { Core } from "./core/Core";
+import { Context } from "./core/Context";
+import { Input } from "./core/Input";
+import { ResourceMap } from "./resources/ResourceMap";
+import { Timer } from "./extras/Timer";
+import { Log } from "./core/Log";
 
 "use strict";
 
@@ -35,9 +37,15 @@ abstract class Scene {
     protected text: any;
 
     constructor(text: any, title: string = null, webglVersion: number = 2) {
+        Log.info("init scene");
         if (!webglVersion) {
             webglVersion = 2;
         }
+        console.log(Context.webglVersion);
+        Context.webglVersion = webglVersion;
+        console.log(Context.webglVersion);
+        Core.getInstance();
+        console.log(Context.webglVersion);
         this._webglVersion = webglVersion;
         this.text = text;
 

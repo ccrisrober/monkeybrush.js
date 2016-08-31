@@ -18,14 +18,14 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="core.ts" />
-/// <reference path="./vertexBuffer.ts" />
-/// <reference path="./vertexArray.ts" />
+/// <reference path="Core.ts" />
+/// <reference path="./VertexBuffer.ts" />
+/// <reference path="./VertexArray.ts" />
 /// <reference path="../constants/_constants.ts" />
 
-import { Core } from "./core.ts";
-import { VertexArray } from "./vertexArray.ts";
-import { VertexBuffer } from "./vertexBuffer.ts";
+import { Core } from "./Core.ts";
+import { VertexArray } from "./VertexArray.ts";
+import { VertexBuffer } from "./VertexBuffer.ts";
 import { UsageType } from "../constants/UsageType.ts";
 import { BufferType } from "../constants/BufferType.ts";
 
@@ -85,7 +85,5 @@ class PostProcess {
      */
     protected static _planeVertexVBO: VertexBuffer = null;
 };
-
-PostProcess.initialize();
 
 export { PostProcess };

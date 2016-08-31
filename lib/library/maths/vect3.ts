@@ -33,7 +33,7 @@ class Vect3 {
     static yAxis = new Vect3(0.0, 1.0, 0.0);
     static zAxis = new Vect3(0.0, 0.0, 1.0);
     /**
-     * Creates a new vect3
+     * Vect3 constructor
      * @param {number = 0.0} x
      * @param {number = 0.0} y
      * @param {number = 0.0} z

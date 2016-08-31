@@ -18,11 +18,11 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="texture.ts" />
-/// <reference path="../extras/extensions.ts" />
+/// <reference path="Texture.ts" />
+/// <reference path="../extras/Extensions.ts" />
 
-import { Core } from "../core/core";
-import { Texture, TexOptions } from "./texture";
+import { Core } from "../core/Core";
+import { Texture, TexOptions } from "./Texture";
 
 import { TextureFormat } from "../constants/TextureFormat";
 import { TextureType, TextureTarget } from "../constants/TextureType";
@@ -30,7 +30,12 @@ import { TextureType, TextureTarget } from "../constants/TextureType";
 "use strict";
 
 class Texture2D extends Texture {
-    // TODO: Add onSuccess a todas las texturas ...
+    /**
+     * Texture2D constructor
+     * @param {HTMLImageElement} data: Image data
+     * @param {TexOptions = {}} options: Texture options
+     * @param {() => void = null} onSuccess: Optional callback is called at the end.
+     */
     constructor(data: HTMLImageElement, options: TexOptions = {}, onSuccess: () => void = null) {
         super(TextureTarget.Texture2D);
 
@@ -74,11 +79,6 @@ class Texture2D extends Texture {
             onSuccess();
         }
     }
-    /*public setPixelStorage() {
-        //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
-        //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
-        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
-    }*/
 };
 
 export { Texture2D };

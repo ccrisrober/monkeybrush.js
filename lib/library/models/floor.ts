@@ -18,10 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Core } from "../core/core.ts";
-import { Drawable } from "./drawable";
+import { Core } from "../core/Core.ts";
+import { Drawable } from "./Drawable";
 
 "use strict";
 

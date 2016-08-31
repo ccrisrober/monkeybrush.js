@@ -58,12 +58,12 @@ namespace ResourceMap {
      * [MapEntry description]
      * @type {[type]}
      */
-    export let _resourceMap: { [ key: string ]: MapEntry; } = {};
+    export let _ResourceMap: { [ key: string ]: MapEntry; } = {};
     /**
      * @param {string}
      */
     export function asyncLoadRequested(resName: string) {
-        _resourceMap[resName] = new MapEntry(resName);
+        _ResourceMap[resName] = new MapEntry(resName);
         ++_numOutstandingLoads;
     };
     /**
@@ -98,7 +98,7 @@ namespace ResourceMap {
             type: "success",
             timeout: 1500
         });
-        _resourceMap[resName].setAsset(loadedAsset);
+        _ResourceMap[resName].setAsset(loadedAsset);
         --_numOutstandingLoads;
         _checkForAllLoadCompleted();
     };
@@ -127,8 +127,8 @@ namespace ResourceMap {
      */
     export function retrieveAsset(resName: string): any {
         let r = null;
-        if (resName in _resourceMap) {
-            r = _resourceMap[resName].getAsset();
+        if (resName in _ResourceMap) {
+            r = _ResourceMap[resName].getAsset();
         } else {
             alert(`retrieveAsset: [${resName}] not in map!`);
         }
@@ -140,13 +140,13 @@ namespace ResourceMap {
      * @return {boolean}: True if resource exist
      */
     export function isAssetLoaded(resName: string): boolean {
-        return (resName in _resourceMap);
+        return (resName in _ResourceMap);
     };
     /**
      * @param {string}
      */
     export function incAssetRefCount (resName: string) {
-        _resourceMap[resName].incCount();
+        _ResourceMap[resName].incCount();
     };
     /**
      * Unload a existing resource.
@@ -154,11 +154,11 @@ namespace ResourceMap {
      */
     export function unloadAsset (resName: string) {
         let c = 0;
-        if (resName in _resourceMap) {
-            _resourceMap[resName].decCount();
-            c = _resourceMap[resName].count();
+        if (resName in _ResourceMap) {
+            _ResourceMap[resName].decCount();
+            c = _ResourceMap[resName].count();
             if (c === 0) {
-                delete _resourceMap[resName];
+                delete _ResourceMap[resName];
             }
         }
         return c;

@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
+/// <reference path="../core/Core.ts" />
 
-import { Core } from "../core/core";
+import { Core } from "../core/Core";
 
 "use strict";
 

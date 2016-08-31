@@ -18,13 +18,24 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
-/// <reference path="../maths/vect3.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
-// import { Vect3 } from "../maths/vect3";
+import { Drawable } from "./Drawable";
 
 "use strict";
+
+/**
+ * ICustomModel interface
+ * @interface ICustomModel
+ */
+interface ICustomModel {
+    indices: Array<number>;
+    vertices: Array<number>;
+    normals: Array<number>;
+    regenerateNormals: boolean;    // TODO: Unused
+    generateTangents: boolean;    // TODO: Unused
+    texCoords: Array<number>;
+};
 
 /**
  * CustomModel class
@@ -33,39 +44,44 @@ import { Drawable } from "./drawable";
 class CustomModel extends Drawable {
     /**
      * CustomModel constructor
-     * @param {Array<number> = null} indices [description]
-     * @param {Array<number>} vertices [description]
-     * @param {Array<number> = null} normals [description]
-     * @param {Array<number> = null} texcoords [description]
+     * @param {ICustomModel} model: Model data
      */
-    constructor(indices: Array<number>, vertices: Array<number>, normals: Array<number> = null,
-        texcoords: Array<number> = null) {
+    constructor(model: ICustomModel) {
         super();
 
         this._handle = [];
         this._vao.bind();
 
-        if (indices && indices.length) {
-            this.addElementArray(new Uint16Array(indices));
+        if (model.indices && model.indices.length) {
+            this.addElementArray(new Uint16Array(model.indices));
         } else {
             throw new Error("Indices undefined");
         }
-        if (vertices && vertices.length && vertices.length % 3 === 0) {
-            this.addBufferArray(0, new Float32Array(vertices), 3);
+        if (model.vertices && model.vertices.length && model.vertices.length % 3 === 0) {
+            this.addBufferArray(0, new Float32Array(model.vertices), 3);
         } else {
             throw new Error("Vertices undefined");
         }
-        if (normals && normals.length && normals.length % 3 === 0) {
-            this.addBufferArray(1, new Float32Array(normals), 3);
+        if (model.regenerateNormals === false) {
+            if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
+                this.addBufferArray(1, new Float32Array(model.normals), 3);
+            }
+        } else if (model.regenerateNormals === true) {
+            this.recalculateNormals(); // TODO
         }
-        if (texcoords && texcoords.length && texcoords.length % 2 === 0) {
-            this.addBufferArray(2, new Float32Array(texcoords), 2);
+        if (model.texCoords && model.texCoords.length && model.texCoords.length % 2 === 0) {
+            this.addBufferArray(2, new Float32Array(model.texCoords), 2);
         }
 
-        this._indicesLen = indices.length;
+        if (model.generateTangents === true) {
+            this.addBufferArray(3, new Float32Array([]), 3);
+            // TODO: generateTangents
+        }
 
-        this.vertices = vertices;
-        this.faces = indices;
+        this._indicesLen = model.indices.length;
+
+        this.vertices = model.vertices;
+        this.faces = model.indices;
     };
     public vertices: Array<number>;
     public faces: Array<number>;
@@ -103,4 +119,4 @@ class CustomModel extends Drawable {
     };
 };
 
-export { CustomModel };
+export { CustomModel, ICustomModel };

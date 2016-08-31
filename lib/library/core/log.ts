@@ -20,12 +20,12 @@
 
 /// <reference path="../../typings/log4javascript.d.ts" />
 
-// var log = log4javascript.getDefaultLogger();
-// log.setLevel(log4javascript.Level.INFO);
+// var Log = Log4javascript.getDefaultLogger();
+// Log.setLevel(Log4javascript.Level.INFO);
 
-let consoleAppender, log;
-log = log4javascript.getLogger("my_logger");
+let consoleAppender;
+let Log: log4javascript.Logger = log4javascript.getLogger("my_Logger");
 consoleAppender = new log4javascript.BrowserConsoleAppender();
-log.addAppender(consoleAppender);
+Log.addAppender(consoleAppender);
 
-export { log };
+export { Log };

@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
+import { Drawable } from "./Drawable";
 
 "use strict";
 
@@ -41,8 +41,9 @@ class Plane extends Drawable {
     constructor(xsize: number, zsize: number, xdivs: number, zdivs: number,
         smax: number = 1.0, tmax: number = 1.0) {
         super();
-        let v = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
-        let n = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
+
+        let verts = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
+        let norms = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
         let tex = new Array(2.0 * (xdivs + 1.0) * (zdivs + 1.0));
         let el = new Array(6 * xdivs * zdivs);
 
@@ -59,12 +60,12 @@ class Plane extends Drawable {
             z = iFactor * i - z2;
             for (let j = 0; j <= xdivs; ++j) {
                 x = jFactor * j - x2;
-                v[vidx] = x;
-                v[vidx + 1] = 0.0;
-                v[vidx + 2] = z;
-                n[vidx] = 0.0;
-                n[vidx + 1] = 1.0;
-                n[vidx + 2] = 0.0;
+                verts[vidx] = x;
+                verts[vidx + 1] = 0.0;
+                verts[vidx + 2] = z;
+                norms[vidx] = 0.0;
+                norms[vidx + 1] = 1.0;
+                norms[vidx + 2] = 0.0;
                 vidx += 3;
                 tex[tidx] = j * texi;
                 tex[tidx + 1] = i * texj;
@@ -94,8 +95,8 @@ class Plane extends Drawable {
 
         this.addElementArray(new Uint16Array(el));
 
-        this.addBufferArray(0, new Float32Array(v), 3);
-        this.addBufferArray(1, new Float32Array(n), 3);
+        this.addBufferArray(0, new Float32Array(verts), 3);
+        this.addBufferArray(1, new Float32Array(norms), 3);
         this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;

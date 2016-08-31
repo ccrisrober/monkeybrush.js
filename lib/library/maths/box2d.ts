@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Vect2 } from "./vect2";
+import { Vect2 } from "./Vect2";
 
 "use strict";
 
@@ -39,7 +39,7 @@ class Box2D {
     protected _max: Vect2;
 
     /**
-     * Box2D definition
+     * Box2D constructor
      * @param {Vect2 = new Vect2(Infinity, Infinity)} min: Box min corner
      * @param {Vect2 = new Vect2(-Infinity, Infinity)} max: Box max corner
      */

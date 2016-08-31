@@ -18,17 +18,22 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="resourceMap.ts" />
+/// <reference path="ResourceMap.ts" />
 
-import { ResourceMap } from "./resourceMap";
+import { ResourceMap } from "./ResourceMap";
 
 "use strict";
 
-namespace loaders {
-    function _getAlias(imageSrc: string, alias: string): string {
-        return (alias.length < 1) ? imageSrc : alias;
-    }
-
+namespace Loaders {
+    /**
+     * Get alias from src resource
+     * @param  {string} src: Src name
+     * @param  {string = ""} alias: Optional alias
+     * @return {string}: Src if alias undefined. Otherwise, alias.
+     */
+    function _getAlias(src: string, alias: string = ""): string {
+        return (alias.length < 1) ? src : alias;
+    };
     export function loadVideo(videoSrc: string, alias: string = "") {
         /*alias = _getAlias(videoSrc, alias);
         if (!ResourceMap.isAssetLoaded(alias)) {
@@ -59,8 +64,7 @@ namespace loaders {
         video.crossOrigin = 'anonymous';
         video.loop = true;
         video.play();*/
-    }
-
+    };
     /**
      * @param {string}
      * @param {string = ""}
@@ -82,13 +86,13 @@ namespace loaders {
         } else {
             ResourceMap.incAssetRefCount(alias);
         }
-    }
+    };
     /**
      * @param {string}
      */
     export function unloadImage(imageSrc: string) {
         ResourceMap.unloadAsset(imageSrc);
-    }
+    };
     /**
      * @param {string}
      */
@@ -115,7 +119,7 @@ namespace loaders {
             }.bind(this);
             request.send();
         }
-    }
+    };
     /**
      * @param {string}
      */
@@ -192,9 +196,8 @@ namespace loaders {
     export function unloadHDRImage(imageSrc: string) {
         ResourceMap.unloadAsset(imageSrc);
     };
-
     export function xhrLoader(url: string, sync: boolean = true,
-        responseType: string = "arraybuffer", onLoad, onError) {
+        responseType: string = "arraybuffer", onLoad, onError = () => { /**/ }) {
         let request = new XMLHttpRequest();
 
         request.open("GET", url, sync);
@@ -205,7 +208,7 @@ namespace loaders {
         request.onerror = onError;
 
         request.send();
-    }
+    };
 };
 
-export { loaders };
+export { Loaders };

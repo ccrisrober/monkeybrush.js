@@ -18,57 +18,59 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
-/// <reference path="../core/program.ts" />
-/// <reference path="../resources/resourceMap.ts" />
-/// <reference path="../textures/cubemapTexture.ts" />
-/// <reference path="../core/depth.ts" />
+/// <reference path="../core/Core.ts" />
+/// <reference path="../core/Program.ts" />
+/// <reference path="../resources/ResourceMap.ts" />
+/// <reference path="../textures/CubemapTexture.ts" />
+/// <reference path="../core/WebGLDepth.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 /// <reference path="../constants/ComparisonFunc.ts" />
-/// <reference path="../core/vertexBuffer.ts" />
-/// <reference path="../core/vertexArray.ts" />
+/// <reference path="../core/VertexBuffer.ts" />
+/// <reference path="../core/VertexArray.ts" />
 
-import { Core } from "../core/core.ts";
-import { Program } from "../core/program.ts";
-import { ResourceMap } from "../resources/resourceMap.ts";
-import { CubeMapTexture } from "../textures/cubemapTexture.ts";
-import { Depth } from "../core/depth.ts";
+import { Core } from "../core/Core";
+import { Program } from "../core/Program";
+import { ResourceMap } from "../resources/ResourceMap";
+import { CubeMapTexture } from "../textures/CubemapTexture";
+import { WebGLDepth } from "../core/WebGLDepth";
 
 import { ProgramCte } from "../constants/ProgramCte";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
 
-import { VertexBuffer } from "../core/vertexBuffer.ts";
-import { VertexArray } from "../core/vertexArray";
+import { VertexBuffer } from "../core/VertexBuffer";
+import { VertexArray } from "../core/VertexArray";
 
-import { UsageType } from "../constants/UsageType.ts";
-import { BufferType } from "../constants/BufferType.ts";
+import { UsageType } from "../constants/UsageType";
+import { BufferType } from "../constants/BufferType";
 
 "use strict";
 
 class Skybox {
     /**
-     * [skyboxVAO description]
+     * [_VertexArray description]
      * @type {VertexArray}
      */
-    protected skyboxVAO: VertexArray;
+    protected _VertexArray: VertexArray;
     /**
-     * [skyboxVBO description]
+     * [_VertexBuffer description]
      * @type {VertexBuffer}
      */
-    protected skyboxVBO: VertexBuffer;
+    protected _VertexBuffer: VertexBuffer;
     /**
      * [_prog description]
      * @type {Program}
      */
     protected _prog: Program;
     /**
-     * [cubeMapTexture description]
+     * [CubeMapTexture description]
      * @type {CubeMapTexture}
      */
-    protected cubeMapTexture: CubeMapTexture;
-    get texture(): CubeMapTexture { return this.cubeMapTexture; }
+    protected CubeMapTexture: CubeMapTexture;
+    get texture(): CubeMapTexture { return this.CubeMapTexture; }
     /**
-     * @param {string}
+     * Skybox constructor
+     * @param {string} dir Skybox directory (without "/")
+     * @param {boolean = true} isWebGL2 [description]
      */
     constructor(dir: string, isWebGL2: boolean = true) {
         let faces: Array<string> = [];
@@ -184,23 +186,23 @@ class Skybox {
              1.0, -1.0,  1.0
         ]);
 
-        this.skyboxVAO = new VertexArray();
-        this.skyboxVAO.bind();
+        this._VertexArray = new VertexArray();
+        this._VertexArray.bind();
 
-        this.skyboxVBO = new VertexBuffer(BufferType.Array);
-        this.skyboxVBO.bind();
-        this.skyboxVBO.bufferData(skyboxVertices, UsageType.StaticDraw);
-        this.skyboxVBO.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
+        this._VertexBuffer = new VertexBuffer(BufferType.Array);
+        this._VertexBuffer.bind();
+        this._VertexBuffer.bufferData(skyboxVertices, UsageType.StaticDraw);
+        this._VertexBuffer.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
         this._loadCubemap(faces);
 
-        this.skyboxVAO.unbind();
+        this._VertexArray.unbind();
     }
     public render(view, projection) {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
-        let currDepthComp = Depth.currentComparation();
+        let currDepthComp = WebGLDepth.currentComparation();
 
-        Depth.comparison(ComparisonFunc.LessEqual);
+        WebGLDepth.comparison(ComparisonFunc.LessEqual);
         this._prog.use();
 
         // Remove any translation
@@ -209,34 +211,34 @@ class Skybox {
         this._prog.sendUniformMat4("view", auxView._value);
         this._prog.sendUniformMat4("projection", projection._value);
 
-        this.cubeMapTexture.bind(0);
+        this.CubeMapTexture.bind(0);
 
-        this.skyboxVAO.bind();
+        this._VertexArray.bind();
         gl.drawArrays(gl.TRIANGLES, 0, 36);
-        this.skyboxVAO.unbind();
+        this._VertexArray.unbind();
 
-        Depth.comparison(currDepthComp);
+        WebGLDepth.comparison(currDepthComp);
     }
     /**
      *
      */
     public destroy() {
-        this.cubeMapTexture.destroy();
+        this.CubeMapTexture.destroy();
     }
     /**
      * @param {Array<string>}
      */
     protected _loadCubemap(faces: Array<string>) {
-        this.cubeMapTexture = new CubeMapTexture();
-        this.cubeMapTexture.bind();
+        this.CubeMapTexture = new CubeMapTexture();
+        this.CubeMapTexture.bind();
 
         faces.forEach(function(face: string, i: number) {
             let img = ResourceMap.retrieveAsset(face);
-            this.cubeMapTexture.addImage(i, img);
+            this.CubeMapTexture.addImage(i, img);
         }.bind(this));
 
-        this.cubeMapTexture.finishTex();
-        this.cubeMapTexture.unbind();
+        this.CubeMapTexture.finishTex();
+        this.CubeMapTexture.unbind();
     }
 };
 

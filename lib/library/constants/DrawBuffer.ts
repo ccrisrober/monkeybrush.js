@@ -20,7 +20,7 @@
 
 "use strict";
 
-// TODO: extensions.get("WEBGL_draw_buffers");
+// TODO ("WEBGL_draw_buffers");
 
 enum DrawBuffer {
     MaxDrawBuffers = 0x8824,

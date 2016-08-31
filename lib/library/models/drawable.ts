@@ -18,19 +18,19 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
-/// <reference path="../core/vertexArray.ts" />
-/// <reference path="../core/vertexBuffer.ts" />
+/// <reference path="../core/Core.ts" />
+/// <reference path="../core/VertexArray.ts" />
+/// <reference path="../core/VertexBuffer.ts" />
 /// <reference path="../constants/_constants.ts" />
-/// <reference path="../extras/extensions.ts" />
+/// <reference path="../extras/Extensions.ts" />
 
-import { Core } from "../core/core";
-import { VertexArray } from "../core/vertexArray";
-import { VertexBuffer } from "../core/vertexBuffer";
+import { Core } from "../core/Core";
+import { VertexArray } from "../core/VertexArray";
+import { VertexBuffer } from "../core/VertexBuffer";
 import { UsageType } from "../constants/UsageType";
 import { RenderType } from "../constants/RenderType";
 import { BufferType } from "../constants/BufferType";
-import { extensions } from "../extras/extensions";
+import { Extensions } from "../extras/Extensions";
 
 "use strict";
 
@@ -55,7 +55,7 @@ abstract class Drawable {
         /**
         var index_buffer = this.indexBuffers["triangles"];
 
-        var vertices = this.vertexBuffers["vertices"].data;
+        var vertices = this.VertexBuffers["vertices"].data;
         var num_vertices = (vertices.length/3);
 
         var data = index_buffer.data;
@@ -151,7 +151,7 @@ abstract class Drawable {
                 numInstances
             );
         } else {
-            const ext = extensions.get("ANGLE_instanced_arrays");
+            const ext = Extensions.get("ANGLE_instanced_arrays");
             if (ext) {
                 ext.drawElementsInstancedANGLE(
                     gl.TRIANGLES,
@@ -180,7 +180,7 @@ abstract class Drawable {
                 numInstances
             );
         } else {
-            const ext = extensions.get("ANGLE_instanced_arrays");
+            const ext = Extensions.get("ANGLE_instanced_arrays");
             if (ext) {
                 ext.drawArraysInstancedANGLE(
                     gl.TRIANGLES,

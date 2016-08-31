@@ -19,9 +19,9 @@
 
 
 /// <reference path="../../typings/webgl2.d.ts" />
-/// <reference path="./log.ts" />
+/// <reference path="./Log.ts" />
 
-// import { log } from "./log";
+import { Log } from "./Log";
 // TODO: in getContext, check antialias or anothers params
 /**
  * alpha: Boolean that indicates if the canvas contains an alpha buffer.
@@ -39,10 +39,17 @@
 class Context {
     static _gl: WebGL2RenderingContext = null;
     static _canvas: HTMLCanvasElement = null;
+
+    public static webglVersion: number = 0;
+
     static getContext(canvasName?: string): WebGL2RenderingContext {
+        console.log(Context.webglVersion);
+        if (Context.webglVersion === 0) {
+            return;
+        }
         if (!Context._gl) {
             if (!canvasName) {
-                console.log("Not canvas. Create one ...");
+                Log.info("Not canvas. Create one ...");
                 this._canvas = document.createElement("canvas");
                 this._canvas.width = 800;
                 this._canvas.height = 800;
@@ -51,19 +58,24 @@ class Context {
             } else {
                 this._canvas = <HTMLCanvasElement>document.getElementById(canvasName);
             }
-            console.log("Get context");
+            Log.info("Get context");
             Context._gl = Context._getContext(this._canvas);
             if (!Context._gl) {
                 document.write("<br><b>WebGL is not supported!</b>");
                 throw new Error("WebGL is not supported!");
             }
-            console.log("WebGL2RenderingContext OK :)");
+            Log.info("WebGL2RenderingContext OK :)");
             Context._getVendors();
         }
         return Context._gl;
     }
     protected static _getContext(canvas: HTMLCanvasElement): WebGL2RenderingContext {
-        let contexts: string[] = "webgl2,webgl,experimental-webgl2".split(",");
+        let contexts: string[];
+        if (Context.webglVersion === 1) {
+            contexts = "webgl,experimental-webgl".split(",");
+        } else {
+            contexts = "webgl2,experimental-webgl2".split(",");
+        }
         let gl: WebGL2RenderingContext;
         let ctx;
         for (let i = 0; i < contexts.length; ++i) {

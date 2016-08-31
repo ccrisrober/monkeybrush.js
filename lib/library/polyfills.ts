@@ -13,7 +13,7 @@ if (Math["degree"] === undefined) {
 if (Math["toRadian"] === undefined) {
     Math["toRadian"] = function(a) {
         return a * Math["degree"];
-    }
+    };
 }
 /*
 Element.prototype.remove = function() {

@@ -1,7 +1,7 @@
 // Code based on jackunion tooloud project
 // https://github.com/jackunion/tooloud/tree/master/examples
 
-namespace noise {
+namespace Noise {
     export namespace fractal {
         export function noise(x, y, z, octaves, noiseCallback) {
             let t = 0, f = 1, n = 0;
@@ -59,24 +59,24 @@ namespace noise {
                 if (i + 1 < arr.length) arr[i + 1] = temp;
             }
         };
-        function noise(input, distanceFunc) {
+        function noise(Input, distanceFunc) {
             let lastRandom,
                 numberFeaturePoints,
                 randomDiff = { x: 0, y: 0, z: 0 },
                 featurePoint = { x: 0, y: 0, z: 0 };
-            let cubeX, cubeY, cubeZ;
+            let CubeX, CubeY, CubeZ;
             let distanceArray = [9999999, 9999999, 9999999];
 
             for (let i = -1; i < 2; ++i)
                 for (let j = -1; j < 2; ++j)
                     for (let k = -1; k < 2; ++k) {
-                        cubeX = Math.floor(input.x) + i;
-                        cubeY = Math.floor(input.y) + j;
-                        cubeZ = Math.floor(input.z) + k;
+                        CubeX = Math.floor(Input.x) + i;
+                        CubeY = Math.floor(Input.y) + j;
+                        CubeZ = Math.floor(Input.z) + k;
                         lastRandom = xorshift(
-                            hash((cubeX + _seed) & 0xffffffff,
-                                (cubeY) & 0xffffffff,
-                                (cubeZ) & 0xffffffff));
+                            hash((CubeX + _seed) & 0xffffffff,
+                                (CubeY) & 0xffffffff,
+                                (CubeZ) & 0xffffffff));
                         numberFeaturePoints = probLookup(lastRandom);
                         for (let l = 0; l < numberFeaturePoints; ++l) {
                             lastRandom = xorshift(lastRandom);
@@ -89,8 +89,8 @@ namespace noise {
                             randomDiff.z = lastRandom / 0x100000000;
 
                             featurePoint
-                                = { x: randomDiff.x + cubeX, y: randomDiff.y + cubeY, z: randomDiff.z + cubeZ };
-                            insert(distanceArray, distanceFunc(input, featurePoint));
+                                = { x: randomDiff.x + CubeX, y: randomDiff.y + CubeY, z: randomDiff.z + CubeZ };
+                            insert(distanceArray, distanceFunc(Input, featurePoint));
                         }
                     }
 
@@ -256,4 +256,4 @@ namespace noise {
     };
 };
 
-export { noise };
+export { Noise };

@@ -18,11 +18,11 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../maths/vector2.ts" />
+/// <reference path="../maths/Vector2.ts" />
 /// <reference path="../core/Core.ts" />
 
-import { Core } from "../core/core";
-import { Vect2 } from "../maths/vect2";
+import { Core } from "../core/Core";
+import { Vect2 } from "../maths/Vect2";
 
 "use strict";
 

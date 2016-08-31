@@ -18,13 +18,13 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
+/// <reference path="../core/Core.ts" />
 
-import { Core } from "../core/core";
+import { Core } from "../core/Core";
 
 "use strict";
 
-export interface SamplerParams {
+interface SamplerParams {
     minFilter?: number;
     magFilter?: number;
     wrapS?: number;
@@ -40,7 +40,7 @@ export interface SamplerParams {
     baseLevel?: number;       // TODO gl.TEXTURE_BASE_LEVEL
 };
 // TODO: Added this to textures
-export class Sampler {
+class Sampler {
     public _handle: WebGLSampler;
     constructor() {
         const gl = Core.getInstance().getGL();
@@ -81,7 +81,7 @@ export class Sampler {
     };
     /**
      * [bind description]
-     * @param {number} unit: Specifying the index of the texture
+     * @param {number} unit Specifying the index of the texture
      *                       to which to bind the sampler
      */
     public bind(unit: number) {
@@ -114,4 +114,4 @@ export class Sampler {
     };
 };
 
-// export default Sampler;
+export { SamplerParams, Sampler };

@@ -18,11 +18,11 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="object3d.ts" />
-/// <reference path="../lights/light.ts" />
+/// <reference path="Object3D.ts" />
+/// <reference path="../lights/Light.ts" />
 
-import { Object3D } from "./object3d";
-import { Light } from "./../lights/light";
+import { Object3D } from "./Object3D";
+import { Light } from "./../lights/Light";
 
 "use strict";
 

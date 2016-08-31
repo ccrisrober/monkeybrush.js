@@ -18,10 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="light.ts" />
+/// <reference path="Light.ts" />
 
-import { Light } from "./light";
-import { Vect3 } from "../maths/vect3";
+import { Light } from "./Light";
+import { Vect3 } from "../maths/Vect3";
 
 "use strict";
 
@@ -47,7 +47,7 @@ class SpotLight extends Light {
     protected _cutOff: number;
 
     /**
-     * Spotlight constructor
+     * Spot light constructor
      * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} position  [description]
      * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction [description]
      * @param {number = 1.0} cuttoff [description]

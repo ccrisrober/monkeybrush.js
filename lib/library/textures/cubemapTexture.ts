@@ -18,10 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="texture.ts" />
+/// <reference path="Texture.ts" />
 
-import { Texture, TexOptions } from "./texture";
-import { Core } from "../core/core";
+import { Texture, TexOptions } from "./Texture";
+import { Core } from "../core/Core";
 import { TextureType } from "../constants/TextureType";
 
 "use strict";
@@ -30,6 +30,10 @@ class CubeMapTexture extends Texture {
 
     protected finished: boolean;
 
+    /**
+     * CubeMapTexture constructor
+     * @param {TexOptions = {}} options: Texture options
+     */
     constructor(options: TexOptions = {}) {
         const gl = Core.getInstance().getGL();
         super(gl.TEXTURE_CUBE_MAP);

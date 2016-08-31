@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="camera.ts" />
-import { Camera } from "./camera";
-import { Mat4 } from "../maths/mat4";
+/// <reference path="Camera.ts" />
+import { Camera } from "./Camera";
+import { Mat4 } from "../maths/Mat4";
 
 "use strict";
 

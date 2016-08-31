@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="cone.ts" />
+/// <reference path="Cone.ts" />
 
-import { Cone } from "./cone";
+import { Cone } from "./Cone";
 
 "use strict";
 
@@ -33,7 +33,7 @@ class Cylinder extends Cone {
      * Cylinder constructor
      * @param {number} radius: Cylinder radius
      * @param {number} height: Cylinder height
-     * @param {number = 15.0} radialSubDiv: Radial subdivisions around cylinder
+     * @param {number = 15.0} radialSubDiv: Radial subdivisions around Cylinder
      * @param {number = 1.0} heightSubDiv Height subdivisions
      * @param {boolean = true} createTopBase: Create top base
      * @param {boolean = true} createBottomBase: Create bottom base

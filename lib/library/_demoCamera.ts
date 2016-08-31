@@ -18,16 +18,16 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="core/input.ts" />
+/// <reference path="core/Input.ts" />
 
 
 
 
 
 
-import { Input } from "./core/input";
-import { Mat4 } from "./maths/mat4";
-import { Vect3 } from "./maths/vect3";
+import { Input } from "./core/Input";
+import { Mat4 } from "./maths/Mat4";
+import { Vect3 } from "./maths/Vect3";
 
 "use strict";
 

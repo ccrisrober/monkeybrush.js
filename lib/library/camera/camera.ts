@@ -18,8 +18,8 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Mat4 } from "../maths/mat4";
-import { Vect3 } from "../maths/vect3";
+import { Mat4 } from "../maths/Mat4";
+import { Vect3 } from "../maths/Vect3";
 
 "use strict";
 
@@ -39,7 +39,7 @@ abstract class Camera {
     protected _up: Vect3;
     protected _look: Vect3;
     /**
-     * Camera definition
+     * Camera constructor
      * @param {Vect3}
      * @param {number = 45.0}
      * @param {number = 0.01}

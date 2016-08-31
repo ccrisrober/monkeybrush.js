@@ -18,11 +18,11 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../extras/color.ts" />
-/// <reference path="../maths/vector3.ts" />
+/// <reference path="../extras/Color.ts" />
+/// <reference path="../maths/Vector3.ts" />
 
-import { Color } from "../extras/color";
-import { Vect3 } from "../maths/vect3";
+import { Color } from "../extras/Color";
+import { Vect3 } from "../maths/Vect3";
 
 "use strict";
 
@@ -47,6 +47,9 @@ abstract class Light {
      * @type {Vect3}
      */
     protected _attenuation: Vect3;
+    /**
+     * Light constructor
+     */
     constructor() {
         this._intensity = 1.0;
         this._color = new Color(1.0, 1.0, 1.0);

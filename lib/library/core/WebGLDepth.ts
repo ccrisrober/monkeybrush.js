@@ -19,19 +19,23 @@
 
 
 /// <reference path="../constants/_constants.ts" />
-/// <reference path="context.ts" />
+/// <reference path="Core.ts" />
 
-import { Context } from "./context";
+import { Core } from "./Core";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
 
 "use strict";
 
-class Depth {
+/**
+ * WebGLDepth class
+ * @class WebGLDepth
+ */
+class WebGLDepth {
     /**
      * Enable depth testing.
      */
     public static enable() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.enable(gl.DEPTH_TEST);
     }
 
@@ -39,7 +43,7 @@ class Depth {
      * Enable writing into the depth buffer.
      */
     public static use() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.depthMask(true);
     }
 
@@ -48,12 +52,12 @@ class Depth {
      * @param {ComparisonFunc} compFunc: Comparisor mode.
      */
     public static comparison(compFunc: ComparisonFunc) {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.depthFunc(compFunc);
     }
 
     public static currentComparation(): number {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.DEPTH_FUNC);
     };
 
@@ -63,7 +67,7 @@ class Depth {
      * @param {number = 1.0} zfar: Specifies the mapping of the far clipping plane to window coordinates.
      */
     public static depthRange(znear: number = 0.0, zfar: number = 1.0) {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         if (znear > zfar || znear < 0.0 || zfar > 1.0) {
             console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
             return;
@@ -75,7 +79,7 @@ class Depth {
      * Clear depth buffer.
      */
     public static clear() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.clear(gl.DEPTH_BUFFER_BIT);
     }
 
@@ -83,7 +87,7 @@ class Depth {
      * Disable writing into the depth buffer.
      */
     public static unuse() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.depthMask(false);
     }
 
@@ -91,7 +95,7 @@ class Depth {
      * Disable depth testing.
      */
     public static disable() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.disable(gl.DEPTH_TEST);
     }
 
@@ -100,9 +104,9 @@ class Depth {
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         return gl.isEnabled(gl.DEPTH_TEST);
     }
 };
 
-export { Depth };
+export { WebGLDepth };

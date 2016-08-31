@@ -30,7 +30,7 @@ class Vect2 {
         return new Vect2(values[0], values[1]);
     }
     /**
-     * Creates a new vect2
+     * Vect2 constructor
      * @param {number = 0.0} x
      * @param {number = 0.0} y
      */

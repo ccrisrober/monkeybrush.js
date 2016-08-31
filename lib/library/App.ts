@@ -19,17 +19,17 @@
 
 
 /// <reference path="./_decorators.ts" />
-/// <reference path="core/core.ts" />
-/// <reference path="core/input.ts" />
-/// <reference path="resources/resourceMap.ts" />
-/// <reference path="extras/timer.ts" />
+/// <reference path="core/Core.ts" />
+/// <reference path="core/Input.ts" />
+/// <reference path="resources/ResourceMap.ts" />
+/// <reference path="extras/Timer.ts" />
 /// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 
 import { decorators } from "./_decorators";
-import { Core } from "./core/core";
-import { Input } from "./core/input";
-import { ResourceMap } from "./resources/resourceMap";
-import { Timer } from "./extras/timer";
+import { Core } from "./core/Core";
+import { Input } from "./core/Input";
+import { ResourceMap } from "./resources/ResourceMap";
+import { Timer } from "./extras/Timer";
 
 "use strict";
 

@@ -18,25 +18,25 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
+/// <reference path="../core/Core.ts" />
 
-import { Core } from "../core/core";
+import { Core } from "../core/Core";
 
 "use strict";
 
-namespace extensions {
+namespace Extensions {
     /**
-     * [_extensions description]
+     * [_Extensions description]
      * @type {Object}
      */
-    let _extensions = {};
+    let _Extensions = {};
     /**
      * [get description]
      * @param {string} name [description]
      */
     export function get(name: string) {
-        if (name in _extensions) {
-            return _extensions[name];
+        if (name in _Extensions) {
+            return _Extensions[name];
         }
         const gl = Core.getInstance().getGL();
         let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
@@ -45,12 +45,12 @@ namespace extensions {
             console.warn(name + " extension not supported.");
             return;
         }
-        _extensions[name] = ext;
+        _Extensions[name] = ext;
         return ext;
     }
 };
 
-export { extensions };
+export { Extensions };
 
 // const ext = gl_.getExtension("OES_draw_buffers_indexed");
 // console.log(ext);

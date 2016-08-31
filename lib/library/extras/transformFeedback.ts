@@ -18,12 +18,12 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
-/// <reference path="../core/program.ts" />
+/// <reference path="../core/Core.ts" />
+/// <reference path="../core/Program.ts" />
 /// <reference path="../constants/TransfFeedCte.ts" />
 
-import { Core } from "../core/core";
-import { Program } from "../core/program";
+import { Core } from "../core/Core";
+import { Program } from "../core/Program";
 import { TransfFeedCte } from "../constants/TransfFeedCte";
 
 "use strict";
@@ -62,13 +62,13 @@ class TransformFeedback {
         const gl = Core.getInstance().getGL();
         gl.endTransformFeedback();
     };
-    public varyings(program: Program, varyings: Array<string>, bufferMode: number) {
+    public varyings(Program: Program, varyings: Array<string>, bufferMode: number) {
         const gl = Core.getInstance().getGL();
-        return gl.transformFeedbackVaryings(program.id(), varyings, bufferMode);
+        return gl.transformFeedbackVaryings(Program.id(), varyings, bufferMode);
     };
-    public getVarying(program: Program, idx: number) {
+    public getVarying(Program: Program, idx: number) {
         const gl = Core.getInstance().getGL();
-        return gl.getTransformFeedbackVarying(program.id(), idx);
+        return gl.getTransformFeedbackVarying(Program.id(), idx);
     };
     public isValid(): boolean {
         const gl = Core.getInstance().getGL();

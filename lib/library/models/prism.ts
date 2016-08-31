@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="cone.ts" />
+/// <reference path="Cone.ts" />
 
-import { Cone } from "./cone";
+import { Cone } from "./Cone";
 
 "use strict";
 

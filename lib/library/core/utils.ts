@@ -20,7 +20,7 @@
 
 "use strict";
 
-namespace utils {
+namespace Utils {
     class RNG {
         private _seed: number;
 
@@ -216,4 +216,4 @@ namespace utils {
     }
 };
 
-export { utils };
+export { Utils };

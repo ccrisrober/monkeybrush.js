@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
+import { Drawable } from "./Drawable";
 
 "use strict";
 
@@ -42,13 +42,9 @@ class Torus extends Drawable {
         let faces = sides * rings;
         let nVerts  = sides * (rings + 1);   // One extra ring to duplicate first ring
 
-        // v
         let verts = new Array(3 * nVerts);
-        // Normals
         let norms = new Array(3 * nVerts);
-        // Tex coords
         let tex = new Array(2 * nVerts);
-        // Elements
         let el = new Array(6 * faces);
 
         // Generate the vertex data

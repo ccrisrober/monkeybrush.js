@@ -15,7 +15,7 @@ class MyScene extends MB.Scene {
     protected camera = new MB.Camera2(new MB.Vect3(-2.7, -1.4, 11.8));
 
     protected cubito: MB.Cube;
-    protected floor: MB.Floor;
+    protected Floor: MB.Floor;
     protected skybox: MB.Skybox;
     protected view;
     protected projection;
@@ -34,23 +34,23 @@ class MyScene extends MB.Scene {
 
     loadAssets() {
         // skybox
-        MB.loaders.loadImage("assets/images/skybox2/back.jpg");
-        MB.loaders.loadImage("assets/images/skybox2/bottom.jpg");
-        MB.loaders.loadImage("assets/images/skybox2/front.jpg");
-        MB.loaders.loadImage("assets/images/skybox2/left.jpg");
-        MB.loaders.loadImage("assets/images/skybox2/right.jpg");
-        MB.loaders.loadImage("assets/images/skybox2/top.jpg");
+        MB.Loaders.loadImage("assets/images/skybox2/back.jpg");
+        MB.Loaders.loadImage("assets/images/skybox2/bottom.jpg");
+        MB.Loaders.loadImage("assets/images/skybox2/front.jpg");
+        MB.Loaders.loadImage("assets/images/skybox2/left.jpg");
+        MB.Loaders.loadImage("assets/images/skybox2/right.jpg");
+        MB.Loaders.loadImage("assets/images/skybox2/top.jpg");
 
-        MB.loaders.loadImage("assets/images/matcap_058.png", "monkey");
+        MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
 
-        MB.loaders.loadImage("descarga (1).png", "descarga");
-        MB.loaders.loadImage("heightmap.png", "heightmap");
-        MB.loaders.loadImage("grass.png", "grass");
+        MB.Loaders.loadImage("descarga (1).png", "descarga");
+        MB.Loaders.loadImage("heightmap.png", "heightmap");
+        MB.Loaders.loadImage("grass.png", "grass");
     }
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;
     initialize() {
-        this.skybox = new MB.Skybox("assets/images/skybox2", false);
+        this.skybox = new MB.Skybox("assets/images/skybox2", this._webglVersion === 2);
 
         /*let grassImage = MB.ResourceMap.retrieveAsset("grass");
         this.tex2d = new MB.Texture2D(grassImage, {
@@ -72,11 +72,23 @@ class MyScene extends MB.Scene {
         });
 
         this.cubito = new MB.Cube(17.5);
-        this.floor = new MB.Floor(82.0);
+        this.Floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("progubo", (): MB.Program => {
             let prog: MB.Program = new MB.Program();
-            prog.addShader(
+
+            if (this._webglVersion === 2) {
+                prog.addShader("shaders/demoShader.vert",
+                    MB.ProgramCte.shader_type.vertex, MB.ProgramCte.mode.read_file);
+                prog.addShader("shaders/demoShader.frag",
+                    MB.ProgramCte.shader_type.fragment, MB.ProgramCte.mode.read_file);
+            } else {
+                prog.addShader("shaders/demowebgl1.vert",
+                    MB.ProgramCte.shader_type.vertex, MB.ProgramCte.mode.read_file);
+                prog.addShader("shaders/demowebgl1.frag",
+                    MB.ProgramCte.shader_type.fragment, MB.ProgramCte.mode.read_file);
+            }
+            /*prog.addShader(
         `#version 300 es
         precision highp float;
 
@@ -116,7 +128,7 @@ class MyScene extends MB.Scene {
         void main() {
             fragColor = texture(tex, uv);
             if (fragColor.a < 1.0) discard;
-        }`, MB.ProgramCte.shader_type.fragment, MB.ProgramCte.mode.read_text);
+        }`, MB.ProgramCte.shader_type.fragment, MB.ProgramCte.mode.read_text);*/
             prog.compile();
 
             prog.use();
@@ -149,7 +161,7 @@ class MyScene extends MB.Scene {
         let i = 0, j = 0, k = 0;
         let dd = -1;
 
-        this.skybox.texture.bind(0);
+        // this.skybox.texture.bind(0);
         this.tex2d2.bind(0);
         prog.sendUniform1i("tex", 0);
 
@@ -166,11 +178,6 @@ class MyScene extends MB.Scene {
                 mode = "render3";
                 break;
         }
-
-        const gl = MB.Core.getInstance().getGL();
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LESS);
-
         for (i = -varvar; i < varvar; i += 10.0) {
             for (j = -varvar; j < varvar; j += 10.0) {
                 for (k = -varvar; k < varvar; k += 10.0) {
@@ -187,12 +194,6 @@ class MyScene extends MB.Scene {
                 }
             }
         }
-        /*prog = MB.ProgramManager.get("floor");
-        prog.use();
-        mat4.translate(this.model, this.identityMatrix, vec3.fromValues(0.0, 0.0, 0.0));
-
-        prog.sendUniformMat4("model", this.model);
-        this.floor.render();*/
         this.skybox.render(this.view, this.projection);
     }
     cameraUpdate() {

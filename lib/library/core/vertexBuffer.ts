@@ -18,10 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
+/// <reference path="../core/Core.ts" />
 /// <reference path="../constants/_constants.ts" />
 
-import { Core } from "../core/core";
+import { Core } from "../core/Core";
 import { BufferType } from "../constants/BufferType";
 import { UsageType } from "../constants/UsageType";
 

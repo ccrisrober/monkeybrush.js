@@ -18,17 +18,17 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="core.ts" />
-/// <reference path="../maths/vector2.ts" />
-/// <reference path="../textures/simpleTexture2d.ts" />
-/// <reference path="../textures/texture2D.ts" />
-/// <reference path="../textures/renderBufferTexture.ts" />
+/// <reference path="Core.ts" />
+/// <reference path="../maths/Vector2.ts" />
+/// <reference path="../textures/SimpleTexture2D.ts" />
+/// <reference path="../textures/Texture2D.ts" />
+/// <reference path="../textures/RenderBufferTexture.ts" />
 
-import { Core } from "./core.ts";
-import { Vect2 } from "../maths/vect2.ts";
-import { Vect3 } from "../maths/vect3.ts";
-import { SimpleTexture2D } from "../textures/simpleTexture2d.ts";
-import { RenderBufferTexture } from "../textures/renderBufferTexture.ts";
+import { Core } from "./Core";
+import { Vect2 } from "../maths/Vect2";
+import { Vect3 } from "../maths/Vect3";
+import { SimpleTexture2D } from "../textures/SimpleTexture2D";
+import { RenderBufferTexture } from "../textures/RenderBufferTexture";
 
 "use strict";
 
@@ -116,15 +116,15 @@ class GBufferSSAO {
             // console.log(`Framebuffer error. Status: ${status}`);
             switch (status) {
                 case gl.FRAMEBUFFER_UNSUPPORTED:
-                    throw new Error("framebuffer: Framebuffer unsupported");
+                    throw new Error("Framebuffer: Framebuffer unsupported");
                 case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                    throw new Error("framebuffer: Framebuffer incomplete attachment");
+                    throw new Error("Framebuffer: Framebuffer incomplete attachment");
                 case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-                    throw new Error("framebuffer: Framebuffer incomplete dimensions");
+                    throw new Error("Framebuffer: Framebuffer incomplete dimensions");
                 case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                    throw new Error("framebuffer: Framebuffer incomplete missing attachment");
+                    throw new Error("Framebuffer: Framebuffer incomplete missing attachment");
                 default:
-                    throw new Error("framebuffer: Framebuffer failed for unspecified reason");
+                    throw new Error("Framebuffer: Framebuffer failed for unspecified reason");
             }
             // throw new Error("GBuffer error");
         }

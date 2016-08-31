@@ -18,14 +18,14 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="texture.ts" />
+/// <reference path="Texture.ts" />
 
 /// <reference path="../constants/TextureFormat.ts" />
 /// <reference path="../constants/TextureType.ts" />
 
-import { Core } from "../core/core";
-import { Texture, TexOptions } from "./texture";
-import { Vect2 } from "../maths/vect2";
+import { Core } from "../core/Core";
+import { Texture, TexOptions } from "./Texture";
+import { Vect2 } from "../maths/Vect2";
 
 import { TextureFormat } from "../constants/TextureFormat";
 import { TextureType, TextureTarget } from "../constants/TextureType";
@@ -41,7 +41,12 @@ class SimpleTexture2D extends Texture {
     public getHeight(): number {
         return this._size.y;
     }
-
+    /**
+     * SimpleTexture2D constructor
+     * @param {Vect2} size: Texture size
+     * @param {TexOptions = {}} options: Texture options
+     * @param {() => void = null} onSuccess: Optional callback is called at the end.
+     */
     constructor(size: Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
         super(TextureTarget.Texture2D);
 

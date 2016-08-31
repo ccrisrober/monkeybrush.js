@@ -18,17 +18,17 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../maths/vector2.ts" />
+/// <reference path="../maths/Vector2.ts" />
 /// <reference path="../textures/simpleTexture2D.ts" />
-/// <reference path="core.ts" />
-/// <reference path="framebuffer.ts" />
+/// <reference path="Core.ts" />
+/// <reference path="Framebuffer.ts" />
 
-import { Core } from "./core";
-import { Vect2 } from "../maths/vect2";
+import { Core } from "./Core";
+import { Vect2 } from "../maths/Vect2";
 import { TextureType } from "../constants/TextureType";
 import { TextureFormat } from "../constants/TextureFormat";
-import { SimpleTexture2D } from "../textures/simpleTexture2d";
-import { Framebuffer } from "./framebuffer";
+import { SimpleTexture2D } from "../textures/SimpleTexture2D";
+import { Framebuffer } from "./Framebuffer";
 
 "use strict";
 
@@ -44,10 +44,10 @@ enum gbuffer_type {
  */
 class GBuffer {
     /**
-     * [framebuffer description]
+     * [Framebuffer description]
      * @type {Framebuffer}
      */
-    protected framebuffer: Framebuffer;
+    protected Framebuffer: Framebuffer;
     /**
      * [constructor description]
      * @param {Vect2} size [description]
@@ -55,7 +55,7 @@ class GBuffer {
     constructor(size: Vect2) {
         const gl = Core.getInstance().getGL();
 
-        this.framebuffer = new Framebuffer([
+        this.Framebuffer = new Framebuffer([
             // Position color buffer
             new SimpleTexture2D(size, {
                 internalFormat: TextureFormat.RGBA,
@@ -88,24 +88,24 @@ class GBuffer {
      * [bindForReading description]
      */
     public bindForReading() {
-        this.framebuffer.onlyBindTextures();
+        this.Framebuffer.onlyBindTextures();
     }
     /**
      * [bindForWriting description]
      */
     public bindForWriting() {
-        this.framebuffer.bind();
+        this.Framebuffer.bind();
     }
     /**
      * [destroy description]
      */
     public destroy() {
-        if (this.framebuffer) {
-            this.framebuffer.destroy();
+        if (this.Framebuffer) {
+            this.Framebuffer.destroy();
         }
     }
     public rebuild(size: Vect2) {
-        this.framebuffer.rebuild(size);
+        this.Framebuffer.rebuild(size);
     }
 };
 

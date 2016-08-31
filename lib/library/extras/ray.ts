@@ -18,23 +18,47 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../maths/vector3.ts" />
+/// <reference path="../maths/Vector3.ts" />
 
-import { Vect3 } from "../maths/vect3";
+import { Vect3 } from "../maths/Vect3";
 
 class Ray {
     protected _origin: Vect3;
     protected _direction: Vect3;
-    constructor(origin: Vect3 = new Vect3(0.0, 0.0, 0.0),
-        direction: Vect3 = new Vect3(0.0, 0.0, 0.0)) {
+    /**
+     * Ray constructor
+     * @param {Vect3 = new Vect3()} origin: Ray origin point
+     * @param {Vect3 = new Vect3()} direction: Ray direction
+     */
+    constructor(origin: Vect3 = new Vect3(),
+        direction: Vect3 = new Vect3()) {
         this._origin = origin;
         this._direction = direction;
     }
+    /**
+     * Get origin point
+     * @return {Vect3}
+     */
     get origin(): Vect3 { return this._origin; }
+    /**
+     * Set origin point
+     * @param {Vect3} origin New origin point
+     */
     set origin(origin: Vect3) { this._origin = origin; }
+    /**
+     * Get direction point
+     * @return {Vect3}
+     */
     get direction(): Vect3 { return this._direction; }
+    /**
+     * Set direction point
+     * @param {Vect3} origin New direction point
+     */
     set direction(direction: Vect3) { this._direction = direction; }
-
+    /**
+     * [at description]
+     * @param {number} t [description]
+     */
     public at(t: number) {
         return new Vect3(
             this._origin.x + t * this._direction.x,
@@ -42,6 +66,10 @@ class Ray {
             this._origin.z + t * this._direction.z
         );
     };
+    /**
+     * [lookAt description]
+     * @param {Vect3} v [description]
+     */
     public lookAt(v: Vect3) {
         this._direction = Vect3.rem(v, this._origin).normalize();
     };

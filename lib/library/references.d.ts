@@ -21,40 +21,40 @@
 /// <reference path="./MonkeyBrush.ts" />
 /// <reference path="./App.ts" />
 
-/// <reference path="./core/core.ts" />
-/// <reference path="./core/input.ts" />
-/// <reference path="./core/program.ts" />
-/// <reference path="./core/postProcess.ts" />
-/// <reference path="./core/vertexUBO.ts" />
-/// <reference path="./core/utils.ts" />
+/// <reference path="./core/Core.ts" />
+/// <reference path="./core/Input.ts" />
+/// <reference path="./core/Program.ts" />
+/// <reference path="./core/PostProcess.ts" />
+/// <reference path="./core/VertexUBO.ts" />
+/// <reference path="./core/Utils.ts" />
 
-/// <reference path="./resources/programManager.ts" />
-/// <reference path="./resources/resourceMap.ts" />
-/// <reference path="./resources/loaders.ts" />
-/// <reference path="./resources/objLoader.ts" />
+/// <reference path="./resources/ProgramManager.ts" />
+/// <reference path="./resources/ResourceMap.ts" />
+/// <reference path="./resources/Loaders.ts" />
+/// <reference path="./resources/ObjLoader.ts" />
 
-/// <reference path="./models/floor.ts" />
-/// <reference path="./models/torus.ts" />
-/// <reference path="./models/sphere.ts" />
-/// <reference path="./models/plane.ts" />
-/// <reference path="./models/cube.ts" />
-/// <reference path="./models/disc.ts" />
-/// <reference path="./models/icosphere.ts" />
-/// <reference path="./models/cone.ts" />
-/// <reference path="./models/prism.ts" />
-/// <reference path="./models/cylinder.ts" />
-/// <reference path="./models/mesh.ts" />
-/// <reference path="./models/customModel.ts" />
+/// <reference path="./models/Floor.ts" />
+/// <reference path="./models/Torus.ts" />
+/// <reference path="./models/Sphere.ts" />
+/// <reference path="./models/Plane.ts" />
+/// <reference path="./models/Cube.ts" />
+/// <reference path="./models/Disc.ts" />
+/// <reference path="./models/Icosphere.ts" />
+/// <reference path="./models/Cone.ts" />
+/// <reference path="./models/Prism.ts" />
+/// <reference path="./models/Cylinder.ts" />
+/// <reference path="./models/Mesh.ts" />
+/// <reference path="./models/CustomModel.ts" />
 
-/// <reference path="./textures/texture2d.ts" />
+/// <reference path="./textures/Texture2d.ts" />
 
-/// <reference path="./extras/axis.ts" />
+/// <reference path="./extras/Axis.ts" />
 
-/// <reference path="./extras/query.ts" />
-/// <reference path="./extras/sync.ts" />
-/// <reference path="./extras/sampler.ts" />
-/// <reference path="./extras/timer.ts" />
-/// <reference path="./extras/skybox.ts" />
+/// <reference path="./extras/Query.ts" />
+/// <reference path="./extras/Sync.ts" />
+/// <reference path="./extras/Sampler.ts" />
+/// <reference path="./extras/Timer.ts" />
+/// <reference path="./extras/Skybox.ts" />
 
 /// <reference path="./lights/_lights.ts" />
 /// <reference path="./_demoCamera.ts" />

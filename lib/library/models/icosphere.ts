@@ -18,9 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
+import { Drawable } from "./Drawable";
+import { Log } from "../core/Log";
 
 "use strict";
 
@@ -28,23 +29,23 @@ import { Drawable } from "./drawable";
  * Icosphere class
  * @class Icosphere
  */
-// Code based on: http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
+// Code based on: http://bLog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 class Icosphere extends Drawable {
     /**
      * Icosphere constructor
-     * @param {number} subdivisions: Disc base subdivison (num. of triangles)
-     */
-    /**
-     * Icosphere constructor
-     * @param {number} radius: [description]
-     * @param {number} subdivisions: [description]
+     * @param {number} radius: Icosphere radius
+     * @param {number} subdivisions: Icosphere subdivisions from base icosphere
      */
     constructor(radius: number = 1.0, subdivisions: number = 1) {
         super();
 
-        // TODO: Subdivision > 16: WARNING
-
         subdivisions = Math.trunc(subdivisions);
+
+        if (subdivisions > 10) {
+            Log.warn("Please, don´t use more than 8 subdivisions");
+            return;
+        }
+
         const t = (1 + Math.sqrt(5)) / 2;
 
         let verts = [
@@ -88,7 +89,7 @@ class Icosphere extends Drawable {
              9,  8,  1
         ];
 
-        // normalize
+        // Normalize
         for (let i = 0, size = verts.length; i < size; i += 3) {
             let mod = Math.sqrt(verts[i] * verts[i] + verts[i + 1] * verts[i + 1] +
                 verts[i + 2] * verts[i + 2]);
@@ -132,6 +133,7 @@ class Icosphere extends Drawable {
             return index;
         }
 
+        // Regenerate indices
         for (let ir = 0; ir < subdivisions; ++ir) {
             let new_el = [];
             for (let i = 0, size = el.length; i < size; i += 3) {

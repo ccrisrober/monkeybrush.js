@@ -18,16 +18,16 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
-/// <reference path="../maths/vector2.ts" />
+/// <reference path="../core/Core.ts" />
+/// <reference path="../maths/Vector2.ts" />
 
 // TODO: hacer unbind al crear textura!!
 
-import { Core } from "../core/core";
-import { Vect2 } from "../maths/vect2";
+import { Core } from "../core/Core";
+import { Vect2 } from "../maths/Vect2";
 import { TextureType, TextureTarget } from "../constants/TextureType";
 import { TextureFormat } from "../constants/TextureFormat";
-import { extensions } from "../extras/extensions";
+import { Extensions } from "../extras/Extensions";
 
 "use strict";
 
@@ -76,18 +76,26 @@ abstract class Texture {
 
     protected _level_: number = 0;
 
+    /**
+     * Change texture minification filter
+     * @param {TextureType} filter: Minification filter type
+     */
     public minFilter(filter: TextureType) {
         this.bind();
         const gl = Core.getInstance().getGL();
         gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, filter);
         this._minFilter_ = filter;
-    }
+    };
+    /**
+     * Change texture magnification filter
+     * @param {TextureType} filter: Magnification filter type
+     */
     public magFilter(filter: TextureType) {
         this.bind();
         const gl = Core.getInstance().getGL();
         gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, filter);
         this._magFilter_ = filter;
-    }
+    };
     public wrap(modes: Array<number>) {
         if (modes.length < 2) {
             throw new Error("Must specify wrapS, wrapT modes");
@@ -103,6 +111,9 @@ abstract class Texture {
         this._wrapS_ = modes[0];
         this._wrapT_ = modes[1];
     }
+    /**
+     * Generate mipmap to this texture.
+     */
     public generateMipMap() {
         const gl = Core.getInstance().getGL();
         this.bind();
@@ -117,7 +128,7 @@ abstract class Texture {
     public setAnisotropic(level: number = 0) {
         const gl = Core.getInstance().getGL();
         level = Math.floor(level);
-        const ext = extensions.get("EXT_texture_filter_anisotropic");
+        const ext = Extensions.get("EXT_texture_filter_anisotropic");
         const max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         if (max_anisotropy < level) {
             this._anisotropy_ = level;
@@ -135,6 +146,9 @@ abstract class Texture {
         const gl = Core.getInstance().getGL();
         gl.bindTexture(this._target_, null);
     }
+    /**
+     * Destroy texture
+     */
     public destroy() {
         const gl = Core.getInstance().getGL();
         gl.deleteTexture(this._handle_);

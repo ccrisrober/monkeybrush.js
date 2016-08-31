@@ -29,7 +29,7 @@ void main() {
 	pp = view * pp;
 	outPosition = pp.xyz;
 	outUV = uv;
-	outNormal = normalize(normalMatrix * normal);
+	outNormal = normal;//normalize(normalMatrix * normal);
 	gl_Position = projection * pp;
 
     gl_PointSize = 5.0;

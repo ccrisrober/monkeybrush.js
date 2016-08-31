@@ -22,10 +22,10 @@
 "use strict";
 
 /**
- * Quaternion class
- * @class Quaternion
+ * Quat class
+ * @class Quat
  */
-class Quaternion {
+class Quat {
     protected _value: Float32Array;
 
     get x(): number { return this._value[0]; };
@@ -37,8 +37,8 @@ class Quaternion {
     set z(v: number) { this._value[2] = v; };
     set w(v: number) { this._value[3] = v; };
 
-    static create(values: Float32Array): Quaternion {
-        return new Quaternion(values[0], values[1], values[2], values[3]);
+    static create(values: Float32Array): Quat {
+        return new Quat(values[0], values[1], values[2], values[3]);
     };
 
     public reset() {
@@ -48,7 +48,7 @@ class Quaternion {
     }
 
     /**
-     * Creates a new quaternion
+     * Quat constructor
      * @param {number = 0.0} x
      * @param {number = 0.0} y
      * @param {number = 0.0} z
@@ -60,7 +60,7 @@ class Quaternion {
     /**
      * Set quaternion value to identity
      */
-    public setIdentity(): Quaternion {
+    public setIdentity(): Quat {
         this.x = 0;
         this.y = 0;
         this.z = 0;
@@ -68,20 +68,20 @@ class Quaternion {
 
         return this;
     }
-    public add(q: Quaternion): Quaternion {
+    public add(q: Quat): Quat {
         for (let i = 0; i < 4; ++i) {
             this._value[i] += q._value[i];
         }
         return this;
     }
-    public rem(q: Quaternion): Quaternion {
+    public rem(q: Quat): Quat {
         for (let i = 0; i < 4; ++i) {
             this._value[i] -= q._value[i];
         }
         return this;
     }
-    static add(q: Quaternion, q2: Quaternion, dest: Quaternion = null): Quaternion {
-        if (!dest) dest = new Quaternion();
+    static add(q: Quat, q2: Quat, dest: Quat = null): Quat {
+        if (!dest) dest = new Quat();
 
         dest.x = q.x + q2.x;
         dest.y = q.y + q2.y;
@@ -90,8 +90,8 @@ class Quaternion {
 
         return dest;
     }
-    static rem(q: Quaternion, q2: Quaternion, dest: Quaternion = null): Quaternion {
-        if (!dest) dest = new Quaternion();
+    static rem(q: Quat, q2: Quat, dest: Quat = null): Quat {
+        if (!dest) dest = new Quat();
 
         dest.x = q.x - q2.x;
         dest.y = q.y - q2.y;
@@ -123,10 +123,10 @@ class Quaternion {
     }
     /**
      * Create a copy of this quaternion
-     * @return {Quaternion}
+     * @return {Quat}
      */
-    public clone(): Quaternion {
-        return new Quaternion(
+    public clone(): Quat {
+        return new Quat(
             this._value[0],
             this._value[1],
             this._value[2],
@@ -136,13 +136,13 @@ class Quaternion {
     /**
      * Calculate dot product with another quaternion
      */
-    static dot(q1: Quaternion, q2: Quaternion): number {
+    static dot(q1: Quat, q2: Quat): number {
         return q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
     }
     /**
      * Calculate multiplication with another quaternion
      */
-    public mult(q: Quaternion): Quaternion {
+    public mult(q: Quat): Quat {
         const
             q1x = this._value[0],
             q1y = this._value[1],
@@ -165,7 +165,7 @@ class Quaternion {
     /**
      * Normalize quaternion
      */
-    public normalize(dest: Quaternion = null): Quaternion {
+    public normalize(dest: Quat = null): Quat {
         if (!dest) dest = this;
 
         const
@@ -197,8 +197,8 @@ class Quaternion {
     /**
      * Invert quaternion
      */
-    public inverse(): Quaternion {
-        const dot = Quaternion.dot(this, this);
+    public inverse(): Quat {
+        const dot = Quat.dot(this, this);
 
         if (!dot) {
             this.reset();
@@ -215,7 +215,7 @@ class Quaternion {
 
         return this;
     }
-    conjugate(): Quaternion {
+    conjugate(): Quat {
         this._value[0] = -this._value[0];
         this._value[1] = -this._value[1];
         this._value[2] = -this._value[2];
@@ -224,4 +224,4 @@ class Quaternion {
     }
 };
 
-export { Quaternion };
+export { Quat };

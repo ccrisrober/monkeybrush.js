@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
+import { Drawable } from "./Drawable";
 
 "use strict";
 
@@ -37,7 +37,7 @@ class Cube extends Drawable {
         super();
         const side2 = side / 2.0;
 
-        let v = [
+        let verts = [
             // Front
            -side2, -side2, side2,
             side2, -side2, side2,
@@ -70,7 +70,7 @@ class Cube extends Drawable {
            -side2,  side2, -side2
         ];
 
-        let n = [
+        let norms = [
             // Front
             0.0, 0.0, 1.0,
             0.0, 0.0, 1.0,
@@ -150,8 +150,8 @@ class Cube extends Drawable {
 
         this.addElementArray(new Uint16Array(el));
 
-        this.addBufferArray(0, new Float32Array(v), 3);
-        this.addBufferArray(1, new Float32Array(n), 3);
+        this.addBufferArray(0, new Float32Array(verts), 3);
+        this.addBufferArray(1, new Float32Array(norms), 3);
         this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;

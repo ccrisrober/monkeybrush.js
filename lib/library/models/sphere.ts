@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
+import { Drawable } from "./Drawable";
 
 "use strict";
 
@@ -44,13 +44,9 @@ class Sphere extends Drawable {
         let nv = (slices + 1) * (stacks + 1);
         let elements = (slices * 2 * (stacks - 1)) * 3;
 
-        // v
-        let v = new Array(3 * nv);
-        // Normals
-        let n = new Array(3 * nv);
-        // Tex coords
+        let verts = new Array(3 * nv);
+        let norms = new Array(3 * nv);
         let tex = new Array(2 * nv);
-        // Elements
         let el = new Array(elements);
 
         // Generate the vertex data
@@ -69,8 +65,8 @@ class Sphere extends Drawable {
                 nx = Math.sin(phi) * Math.cos(theta);
                 ny = Math.sin(phi) * Math.sin(theta);
                 nz = Math.cos(phi);
-                v[idx] = radius * nx; v[idx + 1] = radius * ny; v[idx + 2] = radius * nz;
-                n[idx] = nx; n[idx + 1] = ny; n[idx + 2] = nz;
+                verts[idx] = radius * nx; verts[idx + 1] = radius * ny; verts[idx + 2] = radius * nz;
+                norms[idx] = nx; norms[idx + 1] = ny; norms[idx + 2] = nz;
                 idx += 3;
 
                             tex[tIdx] = s;
@@ -112,8 +108,8 @@ class Sphere extends Drawable {
 
         this.addElementArray(new Uint16Array(el));
 
-        this.addBufferArray(0, new Float32Array(v), 3);
-        this.addBufferArray(1, new Float32Array(n), 3);
+        this.addBufferArray(0, new Float32Array(verts), 3);
+        this.addBufferArray(1, new Float32Array(norms), 3);
         this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;

@@ -18,9 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="context.ts" />
+/// <reference path="Core.ts" />
 /// <reference path="../constants/_constants.ts" />
-import { Context } from "./context";
+
+import { Core } from "./Core";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
 import { StencilOp } from "../constants/StencilOp";
 import { Face } from "../constants/Face";
@@ -28,94 +29,106 @@ import { Face } from "../constants/Face";
 "use strict";
 
 /**
- * Stencil wrapper
- * @class Stencil
+ * WebGLStencil wrapper
+ * @class WebGLStencil
  */
-class Stencil {
+class WebGLStencil {
     /**
      * Enable stencil test
      */
     public static use() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.enable(gl.STENCIL_TEST);
     }
     /**
      * Set front and back function and reference value for stencil testing
-     * @param {ComparisonFunc} compFunc: Specifies the test function.
-     * @param {number} ref: Specifies the reference value for the stencil test
-     * @param {number} mask: Specifies a mask that is ANDed with both the
+     * @param {ComparisonFunc} compFunc Specifies the test function.
+     * @param {number} ref Specifies the reference value for the stencil test
+     * @param {number} mask Specifies a mask that is ANDed with both the
      *    reference value and the stored stencil value when the test is done.
      */
     public static func(compFun: ComparisonFunc, ref: number, mask: number) {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.stencilFunc(compFun, ref, mask);
     }
     /**
      * Set front and back stencil test actions.
-     * @param {StencilOp} fail: Action to take when the stencil test fails.
-     * @param {StencilOp} zfail: Stencil action when the stencil test passes,
+     * @param {StencilOp} fail Action to take when the stencil test fails.
+     * @param {StencilOp} zfail Stencil action when the stencil test passes,
      *    but the depth test fails.
-     * @param {StencilOp} zpass: Specifies the stencil action when both the stencil
+     * @param {StencilOp} zpass Specifies the stencil action when both the stencil
      *    and depth test passes.
      */
     public static operation(fail: StencilOp, zfail: StencilOp, zpass: StencilOp) {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.stencilOp(fail, zfail, zpass);
     }
     /**
      * Control the front and back writing of individual bits in the stencil planes
-     * @param {number} mask: Specifies a bit mask to enable and disable writing of
+     * @param {number} mask Specifies a bit mask to enable and disable writing of
      *    individual bits in the stencil planes.
      */
     public static mask(mask: number) {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.stencilMask(mask);
     }
     /**
      * Fontrol the front and/or back writing of individual bits in the stencil planes
-     * @param {Face} face: Specifies whether the front and/or back stencil writemask is updated
-     * @param {number} mask: Specifies a bit mask to enable and disable writing of individual
+     * @param {Face} face Specifies whether the front and/or back stencil writemask is updated
+     * @param {number} mask Specifies a bit mask to enable and disable writing of individual
      *    bits in the stencil planes.
      */
     public static maskFace(face: Face, mask: number) {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.stencilMaskSeparate(face, mask);
     }
-    public static getFrontWriteMasks(): number {
-        const gl = Context.getContext();
+    /**
+     * Get front write mask
+     * @return {number}
+     */
+    public static getFrontWriteMask(): number {
+        const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.STENCIL_WRITEMASK);
     }
+    /**
+     * Get back write mask
+     * @return {number}
+     */
     public static getBackWriteMask(): number {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.STENCIL_BACK_WRITEMASK);
     }
+    /**
+     * Get stencil bits
+     * @return {number}
+     */
     public static getBits(): number {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.STENCIL_BITS);
     }
     /**
      * Clear stencil values
      */
     public static clear() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.clear(gl.STENCIL_BUFFER_BIT);
     }
     /**
      * Disable stencil test
      */
     public static unuse() {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         gl.disable(gl.STENCIL_TEST);
     }
 
     /**
      * Checks if stencil test is activated
-     * @return {boolean}: True if activated
+     * @return {boolean} True if activated
      */
     public static isEnabled(): boolean {
-        const gl = Context.getContext();
+        const gl = Core.getInstance().getGL();
         return gl.isEnabled(gl.STENCIL_TEST);
     }
 };
 
-export { Stencil };
+export { WebGLStencil };

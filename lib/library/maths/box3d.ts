@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Vect3 } from "./vect3";
+import { Vect3 } from "./Vect3";
 
 "use strict";
 
@@ -39,7 +39,7 @@ class Box3D {
     protected _max: Vect3;
 
     /**
-     * Box3D definition
+     * Box3D constructor
      * @param {Vect3 = new Vect3(Infinity, Infinity, Infinity)} min: Box min corner
      * @param {Vect3 = new Vect3(-Infinity, -Infinity, -Infinity)} max: Box max corner
      */

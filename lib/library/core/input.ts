@@ -20,7 +20,7 @@
 
 /// <reference path="context.ts" />
 
-import { Context } from "./context";
+import { Core } from "./Core";
 
 "use strict";
 // TODO: Remove Input singleton mode :S
@@ -203,7 +203,8 @@ class Input {
     public _mousePosY = -1;
     protected _onMouseMove(ev: MouseEvent): boolean {
         let inside = false;
-        const canvas = Context.getContext().canvas;
+
+        const canvas = Core.getInstance().canvas();
         let bbox = canvas.getBoundingClientRect();
 
         // const x = Math.round((ev.clientX - bbox.left) * (canvas.width / bbox.width));

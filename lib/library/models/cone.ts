@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
+import { Drawable } from "./Drawable";
 
 "use strict";
 
@@ -34,7 +34,7 @@ class Cone extends Drawable {
      * @param {number} bottomRadius: Cone bottom radius
      * @param {number} topRadius: Cone top radius
      * @param {number} height: Cone height
-     * @param {number = 3.0} radialSubDiv: Radial subdivisions around cone
+     * @param {number = 3.0} radialSubDiv: Radial subdivisions around Cone
      * @param {number = 1.0} heightSubDiv Height subdivisions
      * @param {boolean = true} createTopBase: Create top base
      * @param {boolean = true} createBottomBase: Create bottom base
@@ -63,7 +63,7 @@ class Cone extends Drawable {
 
         const vertsAroundEdge = radialSubDiv + 1;
 
-        // Slant: Distance from the top of a cone, down the side to a point on the edge of the base.
+        // Slant: Distance from the top of a Cone, down the side to a point on the edge of the base.
         const slantH = Math.atan2(bottomRadius - topRadius, height);
         const cSlantH = Math.cos(slantH);
         const sSlantH = Math.sin(slantH);

@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="resourceMap.ts" />
+/// <reference path="ResourceMap.ts" />
 
-import { ResourceMap } from "./resourceMap";
+import { ResourceMap } from "./ResourceMap";
 
 "use strict";
 

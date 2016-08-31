@@ -7,83 +7,83 @@ export { App, IApp } from "./App";
 export { Scene } from "./Scene";
 
 // Core
-export { Camera } from "./camera/camera";
-export { OrthoCamera } from "./camera/orthoCamera";
-export { PerspectiveCamera } from "./camera/perspectiveCamera";
+export { Camera } from "./camera/Camera";
+export { OrthoCamera } from "./camera/OrthoCamera";
+export { PerspectiveCamera } from "./camera/PerspectiveCamera";
 
 
 // Core
-export { Blend } from "./core/blend";
-export { Cull } from "./core/cull";
-export { Context } from "./core/context";
-export { Core } from "./core/core";
-export { Depth } from "./core/depth";
-export { log } from "./core/log";
-export { GBuffer } from "./core/gbuffer";
-export { GBufferSSAO } from "./core/gbufferSSAO";
-export { Input } from "./core/input";
-export { Framebuffer } from "./core/framebuffer";
-export { Program } from "./core/program";
-export { PostProcess } from "./core/postProcess";
-export { Scissors } from "./core/scissors";
-export { Stencil } from "./core/stencil";
-export { utils } from "./core/utils";
-export { VertexArray } from "./core/vertexArray";
-export { VertexBuffer } from "./core/vertexBuffer";
-export { VertexUBO } from "./core/vertexUBO";
+export { WebGLBlend } from "./core/WebGLBlend";
+export { WebGLCull } from "./core/WebGLCull";
+export { Context } from "./core/Context";
+export { Core } from "./core/Core";
+export { WebGLDepth } from "./core/WebGLDepth";
+export { Log } from "./core/Log";
+export { GBuffer } from "./core/GBuffer";
+export { GBufferSSAO } from "./core/GBufferSSAO";
+export { Input } from "./core/Input";
+export { Framebuffer } from "./core/Framebuffer";
+export { Program } from "./core/Program";
+export { PostProcess } from "./core/PostProcess";
+export { WebGLScissors } from "./core/WebGLScissors";
+export { WebGLStencil } from "./core/WebGLStencil";
+export { Utils } from "./core/Utils";
+export { VertexArray } from "./core/VertexArray";
+export { VertexBuffer } from "./core/VertexBuffer";
+export { VertexUBO } from "./core/VertexUBO";
 
-export { Axis } from "./extras/axis";
-export { Color } from "./extras/color";
-export { easing } from "./extras/easing";
-export { extensions } from "./extras/extensions";
-export { Query } from "./extras/query";
-export { Ray } from "./extras/ray";
-export { Timer } from "./extras/timer";
-export { ToneMap } from "./extras/quadToneMap";
-export { Skybox } from "./extras/skybox";
+export { Axis } from "./extras/Axis";
+export { Color } from "./extras/Color";
+export { Easing } from "./extras/Easing";
+export { Extensions } from "./extras/Extensions";
+export { Query } from "./extras/Query";
+export { Ray } from "./extras/Ray";
+export { Timer } from "./extras/Timer";
+export { ToneMap } from "./extras/ToneMap";
+export { Skybox } from "./extras/Skybox";
 
 
 // Lights
-export { Light } from "./lights/light";
-export { DirectionalLight } from "./lights/directionalLight";
-export { PointLight } from "./lights/pointLight";
-export { SpotLight } from "./lights/spotLight";
+export { Light } from "./lights/Light";
+export { DirectionalLight } from "./lights/DirectionalLight";
+export { PointLight } from "./lights/PointLight";
+export { SpotLight } from "./lights/SpotLight";
 
 // Maths
-export { Mat2 } from "./maths/mat2"
-export { Mat3 } from "./maths/mat3"
-export { Mat4 } from "./maths/mat4"
-export { Quaternion } from "./maths/quaternion"
-export { Vect2 } from "./maths/vect2"
-export { Vect3 } from "./maths/vect3"
-export { Vect4 } from "./maths/vect4"
-export { Vector2 } from "./maths/vector2"
-export { Vector3 } from "./maths/vector3"
-export { Vector4 } from "./maths/vector4"
+export { Mat2 } from "./maths/Mat2"
+export { Mat3 } from "./maths/Mat3"
+export { Mat4 } from "./maths/Mat4"
+export { Quat } from "./maths/Quat"
+export { Vect2 } from "./maths/Vect2"
+export { Vect3 } from "./maths/Vect3"
+export { Vect4 } from "./maths/Vect4"
+export { Vector2 } from "./maths/Vector2"
+export { Vector3 } from "./maths/Vector3"
+export { Vector4 } from "./maths/Vector4"
 
 // Models
-export { Cone } from "./models/cone";
-export { Cube } from "./models/cube";
-export { CustomModel } from "./models/customModel";
-export { Cylinder } from "./models/cylinder";
+export { Cone } from "./models/Cone";
+export { Cube } from "./models/Cube";
+export { CustomModel } from "./models/CustomModel";
+export { Cylinder } from "./models/Cylinder";
 export { Disc } from "./models/disc";
-export { Drawable } from "./models/drawable";
-export { Floor } from "./models/floor";
-export { Icosphere } from "./models/icosphere";
-export { Mesh } from "./models/mesh";
-export { Plane } from "./models/plane";
-export { Prism } from "./models/prism";
-export { Sphere } from "./models/sphere";
-export { Torus } from "./models/torus";
+export { Drawable } from "./models/Drawable";
+export { Floor } from "./models/Floor";
+export { Icosphere } from "./models/Icosphere";
+export { Mesh } from "./models/Mesh";
+export { Plane } from "./models/Plane";
+export { Prism } from "./models/Prism";
+export { Sphere } from "./models/Sphere";
+export { Torus } from "./models/Torus";
 
 // Resources
-export { AudioSource } from "./resources/audioSource";
-export { loaders } from "./resources/loaders";
-export { ObjLoader } from "./resources/objLoader";
-export { ProgramManager } from "./resources/programManager";
-export { ResourceMap } from "./resources/resourceMap";
-export { VideoSource } from "./resources/videoSource";
-export { cache } from "./resources/cache";
+export { AudioSource } from "./resources/AudioSource";
+export { Loaders } from "./resources/Loaders";
+export { ObjLoader } from "./resources/ObjLoader";
+export { ProgramManager } from "./resources/ProgramManager";
+export { ResourceMap } from "./resources/ResourceMap";
+export { VideoSource } from "./resources/VideoSource";
+export { Cache } from "./resources/Cache";
 
 // Scenes
 //// export { Object3D } from "./scene/object3d";
@@ -92,13 +92,13 @@ export { cache } from "./resources/cache";
 //// export { SceneGraph } from "./scene/scenegraph";
 
 // Textures
-export { CubeMapTexture } from "./textures/cubemapTexture";
+export { CubeMapTexture } from "./textures/CubemapTexture";
 // export { FloatTexture } from "./textures/floatTexture";
-export { RenderBufferTexture } from "./textures/renderBufferTexture";
-export { SimpleTexture2D } from "./textures/simpleTexture2d";
+export { RenderBufferTexture } from "./textures/RenderBufferTexture";
+export { SimpleTexture2D } from "./textures/SimpleTexture2D";
 // export { SimpleTexture3D } from "./textures/simpleTexture3d";
-export { Texture } from "./textures/texture";
-export { Texture2D } from "./textures/texture2d";
-// export { Texture2DArray } from "./textures/texture2dArray";
-// export { Texture3D } from "./textures/texture3d";
+export { Texture } from "./textures/Texture";
+export { Texture2D } from "./textures/Texture2D";
+// export { Texture2DArray } from "./textures/Texture2dArray";
+// export { Texture3D } from "./textures/Texture3d";
 // export { VideoTexture } from "./textures/videoTexture";

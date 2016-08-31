@@ -18,7 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
 "use strict";
 
 /**
@@ -44,7 +43,7 @@ class Vector4<T> {
         this._w = w;
     }
     /**
-     * Check if two vector4<T> are equals
+     * Check if two Vector4<T> are equals
      * @param  {Vector4<T>} other: Second vector
      * @return {boolean}: True if both equals
      */

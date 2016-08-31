@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/core.ts" />
+/// <reference path="../core/Core.ts" />
 
-import { Core } from "../core/core";
+import { Core } from "../core/Core";
 
 "use strict";
 
@@ -30,8 +30,8 @@ class VertexUBO {
 
     protected _handle: WebGLBuffer;
     protected _index: number;
-    // TODO: A futuro usar el program y no
-    //         WebGLProgram (cachear ubo también en program ...)
+    // TODO: A futuro usar el Program y no
+    //         WebGLProgram (cachear ubo también en Program ...)
     constructor(prog: WebGLProgram, name: string, blockBindIdx: number) {
         const gl = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {

@@ -18,13 +18,13 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="core.ts" />
+/// <reference path="Core.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 
-import { Core } from "./core";
+import { Core } from "./Core";
 import { ProgramCte } from "../constants/ProgramCte";
-import { Vect3 } from "../maths/vect3";
-import { Mat4 } from "../maths/mat4";
+import { Vect3 } from "../maths/Vect3";
+import { Mat4 } from "../maths/Mat4";
 
 "use strict";
 
@@ -140,7 +140,7 @@ class Program {
         // Checkin errors
         if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
             alert("ERROR");
-            console.warn("Error in program linking:" + gl.getProgramInfoLog(this._compiledShader));
+            console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._compiledShader));
             console.log({
                 vertex: this._vertexSource,
                 fragment: this._fragmentSource
@@ -151,7 +151,7 @@ class Program {
     }
 
     /**
-     * Compile and link program
+     * Compile and link Program
      * @return {boolean}: True if not errors
      */
     public compile(): boolean {
@@ -166,7 +166,7 @@ class Program {
         // Checkin errors
         if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
             alert("ERROR");
-            console.warn("Error in program linking:" + gl.getProgramInfoLog(this._compiledShader));
+            console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._compiledShader));
             console.log({
                 vertex: this._vertexSource,
                 fragment: this._fragmentSource
@@ -427,19 +427,19 @@ class Program {
         "BOOL_VEC2": "bvec2",
         "BOOL_VEC3": "bvec3",
         "BOOL_VEC4": "bvec4",
-        "FLOAT_MAT2": "mat2",
-        "FLOAT_MAT3": "mat3",
-        "FLOAT_MAT4": "mat4",
+        "FLOAT_MAT2": "Mat2",
+        "FLOAT_MAT3": "Mat3",
+        "FLOAT_MAT4": "Mat4",
         "SAMPLER_2D": "sampler2D",
         "SAMPLER_CUBE": "samplerCube",
 
         // WebGL2 constants
-        "FLOAT_MAT2x3": "mat2x3",
-        "FLOAT_MAT2x4": "mat2x4",
-        "FLOAT_MAT3x2": "mat3x2",
-        "FLOAT_MAT3x4": "mat3x4",
-        "FLOAT_MAT4x2": "mat4x2",
-        "FLOAT_MAT4x3": "mat4x3",
+        "FLOAT_MAT2x3": "Mat2x3",
+        "FLOAT_MAT2x4": "Mat2x4",
+        "FLOAT_MAT3x2": "Mat3x2",
+        "FLOAT_MAT3x4": "Mat3x4",
+        "FLOAT_MAT4x2": "Mat4x2",
+        "FLOAT_MAT4x3": "Mat4x3",
         "UNSIGNED_INT": "uint",
         "UNSIGNED_INT_VEC2": "uvec2",
         "UNSIGNED_INT_VEC3": "uvec3",

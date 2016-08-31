@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="drawable.ts" />
+/// <reference path="Drawable.ts" />
 
-import { Drawable } from "./drawable";
+import { Drawable } from "./Drawable";
 
 "use strict";
 
@@ -31,7 +31,7 @@ import { Drawable } from "./drawable";
 class Mesh extends Drawable {
     /**
      * Mesh definition
-     * @param {string} fileRoute: Json file route
+     * @param {string} fileRoute: JSON file route
      */
     constructor(fileRoute: string) {
         super();
@@ -69,7 +69,7 @@ class Mesh extends Drawable {
 
     /**
      * Read JSON file
-     * @param {string} url: Json file route
+     * @param {string} url: JSON file route
      */
     private loadJSON(url: string) {
         let request = new XMLHttpRequest();
