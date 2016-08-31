@@ -22,7 +22,7 @@
 /// <reference path="context.ts" />
 
 import { Core } from "./Core";
-import { Face } from "../constants/Face";
+import { FaceSide } from "../constants/FaceSide";
 
 "use strict";
 
@@ -41,18 +41,18 @@ class WebGLCull {
 
     /**
      * Get current cullFace mode
-     * @return {Face}: Current cullFace mode
+     * @return {FaceSide}: Current cullFace mode
      */
-    public static getMode(): Face {
+    public static getMode(): FaceSide {
         const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.CULL_FACE_MODE);
     }
 
     /**
      * Specify whether front/back-facing facets can be culled.
-     * @param {Face} mode: Cull face mode
+     * @param {FaceSide} mode: Cull face mode
      */
-    public static setMode(mode: Face) {
+    public static setMode(mode: FaceSide) {
         const gl = Core.getInstance().getGL();
         gl.cullFace(mode);
     }

@@ -18,30 +18,27 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+/// <reference path="../maths/Vect3.ts" />
 /// <reference path="Texture.ts" />
-/// <reference path="../extras/Extensions.ts" />
 
 import { Core } from "../core/Core";
-import { Texture, TexOptions } from "./Texture";
+import { Vect3 } from "../maths/Vect3";
 
+import { TexOptions, Texture } from "./Texture";
 import { TextureFormat } from "../constants/TextureFormat";
 import { TextureType, TextureTarget } from "../constants/TextureType";
 
 "use strict";
 
-class Texture2D extends Texture {
-    /**
-     * Texture2D constructor
-     * @param {HTMLImageElement} data: Image data
-     * @param {TexOptions = {}} options: Texture options
-     * @param {() => void = null} onSuccess: Optional callback is called at the end.
-     */
-    constructor(data: HTMLImageElement, options: TexOptions = {}, onSuccess: () => void = null) {
-        super(TextureTarget.Texture2D);
+declare var WebGL2RenderingContext: any;
 
+class Texture3D extends Texture {
+    constructor (data, size: Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
         const gl = Core.getInstance().getGL();
-
-        // TODO: Support compression
+        if (!(gl instanceof WebGL2RenderingContext)) {
+            throw new Error("Must provide a WebGL2 context ...");
+        }
+        super(TextureTarget.Texture3D);
 
         this._flipY_ = Boolean(options.flipY || false);
         this._handle_ = gl.createTexture();
@@ -51,23 +48,55 @@ class Texture2D extends Texture {
         this._type_ = options.type || TextureFormat.UnsignedByte;
         this._level_ = options.level || 0;
 
+        this._compressed_ = Boolean(options.compressed || false);
+        // TODO: WRAP
+
         this.bind();
 
-        gl.texImage2D(
-            this._target_,
-            this._level_, // Level of details
-            this._internalformat_, // Internal format
-            this._format_, // Format
-            this._type_, // Size of each channel
-            data
-        );
+        if (this._compressed_) {
+            /*gl.compressedTexImage3D(
+                this._target,
+                0,  // level
+                format,
+                size.x,
+                size.y,
+                size.z,
+                0,
+                data);*/
+        } else {
+            /*gl.texSubImage3D(
+                this._target,
+                0,  // level
+                _internalformat,    // Internal format A GLenum specifying the format of the texel data
+                size.x,
+                size.y,
+                size.z,
+                0,
+                _format,    // Format2
+                _type,  // A GLenum specifying the data type of the texel data
+                data
+            );*/
+            gl.texImage3D(
+                this._target_,
+                this._level_,
+                this._internalformat_,
+                size.x,
+                size.y,
+                size.z,
+                0,
+                this._format_,
+                this._type_,
+                data
+            );
+        }
 
         this.minFilter(options.minFilter || TextureType.Nearest);
         this.magFilter(options.minFilter || TextureType.Nearest);
 
         this.wrap([
             options.wrapS || TextureType.Clamp2Edge,
-            options.wrapT || TextureType.Clamp2Edge
+            options.wrapT || TextureType.Clamp2Edge,
+            options.wrapR || TextureType.Clamp2Edge
         ]);
 
         if (this._flipY_) {
@@ -79,7 +108,7 @@ class Texture2D extends Texture {
         if (onSuccess) {
             onSuccess();
         }
-    }
+    };
 };
 
-export { Texture2D };
+export { Texture3D };

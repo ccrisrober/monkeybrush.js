@@ -18,12 +18,13 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="material.ts" />
-///
-import Material from "./material";
+"use strict";
 
-class NormalMat extends Material {
-
+// Cull mode
+enum FaceSide {
+    Front = 0x0404,                        ///< Cull front-facing primitives
+    Back = 0x0405,                         ///< Cull back-facing primitives
+    FrontAndBack = 0x0408                  ///< Cull Front and back-facing primitives
 };
 
-export default NormalMat;
+export { FaceSide };

@@ -33,12 +33,11 @@ import { BufferType } from "../constants/BufferType.ts";
 
 /**
 * This class wrap PostProcess effects
-*
 * @class core.PostProcess
 */
 class PostProcess {
     /**
-     *
+     * [initialize description]
      */
     static initialize() {
         if (!PostProcess._planeVAO) {

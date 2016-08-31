@@ -17,8 +17,8 @@ class MyScene extends MB.Scene {
     protected cubito: MB.Cube;
     protected Floor: MB.Floor;
     protected skybox: MB.Skybox;
-    protected view;
-    protected projection;
+    protected view: MB.Mat4;
+    protected projection: MB.Mat4;
 
     protected identityMatrix;
     protected model;
@@ -33,8 +33,6 @@ class MyScene extends MB.Scene {
     protected mainShader: string = "prog";
 
     loadAssets() {
-        // video
-        MB.Loaders.loadVideo("assets/video/Possum vs Cat.mp4", "video");
         // skybox
         MB.Loaders.loadImage("assets/images/hw_mystic/back.jpg");
         MB.Loaders.loadImage("assets/images/hw_mystic/bottom.jpg");
@@ -48,17 +46,10 @@ class MyScene extends MB.Scene {
         MB.Loaders.loadImage("_images/descarga (1).png", "descarga");
         MB.Loaders.loadImage("assets/images/heightmap.png", "heightmap");
         MB.Loaders.loadImage("assets/images/grass.png", "grass");
-
-        // MB.Loaders.loadWebCam();
     }
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;
-    protected videoTex: MB.VideoTexture;
-    protected webcamTex: MB.WebcamTexture;
     initialize() {
-        this.videoTex = new MB.VideoTexture(MB.ResourceMap.retrieveAsset("video"));
-        // this.webcamTex = new MB.WebcamTexture();
-
         this.skybox = new MB.Skybox("assets/images/hw_mystic", this._webglVersion === 2);
 
         /*let grassImage = MB.ResourceMap.retrieveAsset("grass");
@@ -70,7 +61,7 @@ class MyScene extends MB.Scene {
             wrapT: MB.TextureType.Clamp2Edge
         });*/
 
-        let heightmapImage = MB.ResourceMap.retrieveAsset("monkey");
+        let heightmapImage = MB.ResourceMap.retrieveAsset("heightmap");
         // const gl = MB.Core.getInstance().getGL();
         this.tex2d2 = new MB.Texture2D(heightmapImage, {
             flipY: true,
@@ -97,52 +88,11 @@ class MyScene extends MB.Scene {
                 prog.addShader("shaders/demowebgl1.frag",
                     MB.ProgramCte.shader_type.fragment, MB.ProgramCte.mode.read_file);
             }
-            /*prog.addShader(
-        `#version 300 es
-        precision highp float;
-
-        layout(location = 0) in vec3 position;
-        layout(location = 1) in vec3 normal;
-        layout(location = 2) in vec2 uv_;
-
-        uniform mat4 projection;
-        uniform mat4 view;
-        uniform mat4 model;
-
-        out vec3 outPosition;
-        out vec3 outNormal;
-        out vec2 uv;
-
-        void main() {
-            gl_Position = projection * view * model * vec4(position, 1.0f);
-            outNormal = mat3(transpose(inverse(model))) * normal;
-            outPosition = vec3(model * vec4(position, 1.0f));
-            uv = uv_;
-            gl_PointSize = 5.0;
-        }`, MB.ProgramCte.shader_type.vertex, MB.ProgramCte.mode.read_text);
-            prog.addShader(
-        `#version 300 es
-        precision highp float;
-        precision highp int;
-
-        in vec3 outNormal;
-        in vec3 outPosition;
-        in vec2 uv;
-
-        out vec4 fragColor;
-
-        uniform vec3 cameraPos;
-        uniform sampler2D  tex;
-
-        void main() {
-            fragColor = texture(tex, uv);
-            if (fragColor.a < 1.0) discard;
-        }`, MB.ProgramCte.shader_type.fragment, MB.ProgramCte.mode.read_text);*/
             prog.compile();
 
             prog.use();
 
-            prog.addUniforms(["projection", "view", "model", "tex"]);
+            prog.addUniforms(["projection", "view", "model", "tex", "layer"]);
 
             return prog;
         });
@@ -160,6 +110,7 @@ class MyScene extends MB.Scene {
 
         this.angle += MB.Timer.deltaTime() * 0.001;
     }
+    public layer: number = 0;
     draw(dt?: number) {
         MB.Core.getInstance().clearColorAndDepth();
 
@@ -171,7 +122,7 @@ class MyScene extends MB.Scene {
         let dd = -1;
 
         // this.skybox.texture.bind(0);
-        this.videoTex.bind(0);
+        this.tex2d2.bind(0);
         prog.sendUniform1i("tex", 0);
 
         const renderMode = this.text.render;

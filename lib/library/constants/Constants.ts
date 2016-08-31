@@ -4,7 +4,7 @@
 /// <reference path="ComparisonFunc.ts" />
 /// <reference path="DataType.ts" />
 /// <reference path="DrawBuffer.ts" />
-/// <reference path="Face.ts" />
+/// <reference path="FaceSide.ts" />
 /// <reference path="FaceDir.ts" />
 /// <reference path="ProgramCte.ts" />
 /// <reference path="RenderType.ts" />
@@ -20,7 +20,7 @@ export { BufferType } from "./BufferType";
 export { ComparisonFunc } from "./ComparisonFunc";
 export { DataType } from "./DataType";
 export { DrawBuffer } from "./DrawBuffer";
-export { Face } from "./Face";
+export { FaceSide } from "./FaceSide";
 export { FaceDir } from "./FaceDir";
 export { ProgramCte } from "./ProgramCte";
 export { RenderType } from "./RenderType";

@@ -242,3 +242,17 @@ function draw() {
    webcamTex.bind(0); 
 }
 ```
+
+## Texture 2D Array
+```glsl
+precision highp sampler2DArray;
+
+uniform int layer;
+uniform sampler2DArray texSampler;
+
+in vec2 outUV;
+
+void main() {
+    fragColor = texture(texSampler, vec3(outUV, layer));
+}
+```

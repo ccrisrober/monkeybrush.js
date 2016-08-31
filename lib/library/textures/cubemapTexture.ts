@@ -37,7 +37,6 @@ class CubeMapTexture extends Texture {
     constructor(options: TexOptions = {}) {
         const gl = Core.getInstance().getGL();
         super(TextureTarget.TextureCubeMap);
-        options = options || {};
 
         this.finished = false;
 
@@ -57,11 +56,9 @@ class CubeMapTexture extends Texture {
         gl.texParameteri(this._target_, gl.TEXTURE_WRAP_S, TextureType.Clamp2Edge);
         gl.texParameteri(this._target_, gl.TEXTURE_WRAP_T, TextureType.Clamp2Edge);
 
-
         if (gl.TEXTURE_WRAP_R) {
             gl.texParameteri(this._target_, gl.TEXTURE_WRAP_R, TextureType.Clamp2Edge);
         }
-
 
         this.finished = true;
     }

@@ -24,7 +24,7 @@
 import { Core } from "./Core";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
 import { StencilOp } from "../constants/StencilOp";
-import { Face } from "../constants/Face";
+import { FaceSide } from "../constants/FaceSide";
 
 "use strict";
 
@@ -74,11 +74,11 @@ class WebGLStencil {
     }
     /**
      * Fontrol the front and/or back writing of individual bits in the stencil planes
-     * @param {Face} face Specifies whether the front and/or back stencil writemask is updated
+     * @param {FaceSide} face Specifies whether the front and/or back stencil writemask is updated
      * @param {number} mask Specifies a bit mask to enable and disable writing of individual
      *    bits in the stencil planes.
      */
-    public static maskFace(face: Face, mask: number) {
+    public static maskFace(face: FaceSide, mask: number) {
         const gl = Core.getInstance().getGL();
         gl.stencilMaskSeparate(face, mask);
     }

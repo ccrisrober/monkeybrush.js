@@ -20,6 +20,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
     <img src="_images/descarga (6).png" width="33%" />
     <img src="_images/descarga (7).png" width="33%" />
     <img src="_images/descarga (8).png" width="33%" />
+    <img src="_images/descarga (9).png" width="33%" />
 </div>
 
 ## Doc
@@ -47,11 +48,13 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 
 ### Textures
 - [x] Add texture 2D
+- [x] Add texture 2D array
 - [x] Add texture 3D
 - [x] Add framebuffer
 - [x] Inmutable textures
 - [x] Video texture
 - [x] Webcam texture
+- [ ] Compressed texture
 
 ### WebGL2
 - [x] Transform feedback

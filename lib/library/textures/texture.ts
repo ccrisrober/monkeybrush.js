@@ -47,6 +47,7 @@ interface TexOptions {
     autoMipMap?: boolean;
     format?: TextureFormat;
     border?: number;
+    compressed?: boolean;
 };
 
 declare var WebGL2RenderingContext: any;
@@ -75,6 +76,7 @@ abstract class Texture {
     protected _maxLOD_: number;
 
     protected _level_: number = 0;
+    protected _compressed_: boolean = false;
 
     /**
      * Change texture minification filter

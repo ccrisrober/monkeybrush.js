@@ -19,6 +19,8 @@
 
 
 
+import { Vect3 } from "./Vect3";
+
 "use strict";
 
 /**
@@ -214,14 +216,27 @@ class Quat {
         this.w *= invDot;
 
         return this;
-    }
+    };
     conjugate(): Quat {
         this._value[0] = -this._value[0];
         this._value[1] = -this._value[1];
         this._value[2] = -this._value[2];
 
         return this;
-    }
+    };
+    static fromAxis(axis: Vect3, angle: number, dest: Quat = null): Quat {
+        if (!dest) dest = new Quat();
+
+        angle *= 0.5;
+        const sin = Math.sin(angle);
+
+        dest.x = axis.x * sin;
+        dest.y = axis.y * sin;
+        dest.z = axis.z * sin;
+        dest.w = Math.cos(angle);
+
+        return dest;
+        }
 };
 
 export { Quat };

@@ -18,6 +18,8 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+import { Vect3 } from "../maths/Vect3";
+import { Quat } from "../maths/Quat";
 
 "use strict";
 
@@ -42,6 +44,34 @@ class Object3D {
     public removeAll() {
         this._childs = [];
     }
+
+    protected _position: Vect3 = new Vect3();
+    protected _quat: Quat = new Quat();
+    protected _scale: Vect3 = new Vect3(1.0, 1.0, 1.0);
+
+    public rotateX(angle: number) {
+        this.rotateAxis(new Vect3(1, 0, 0), angle);
+    }
+
+    public rotateY(angle: number) {
+        this.rotateAxis(new Vect3(0, 1, 0), angle);
+    }
+
+    public rotateZ(angle: number) {
+        this.rotateAxis(new Vect3(0, 0, 1), angle);
+    }
+
+    protected rotateAxis(axis: Vect3, angle: number) {
+        let q: Quat = new Quat();
+        Quat.fromAxis(axis, angle, q);
+        this._quat = this._quat.mult(q);
+    }
+
+    get position(): Vect3 { return this._position; }
+    get scale(): Vect3 { return this._scale; }
+    set position(v: Vect3) { this._position = v; }
+    set scale(v: Vect3)  { this._scale = v; }
+
 
     // ===========
     // ===========

@@ -1,6 +1,8 @@
 import "./polyfills";
 export * from "./constants/constants";
 
+// export { Decorators } from "./Decorators";
+
 // __root__
 export { Camera2 } from "./Camera2";
 export { App, IApp } from "./App";
@@ -36,6 +38,7 @@ export { Axis } from "./extras/Axis";
 export { Color } from "./extras/Color";
 export { Easing } from "./extras/Easing";
 export { Extensions } from "./extras/Extensions";
+export { Noise } from "./extras/Noise";
 export { Query } from "./extras/Query";
 export { Ray } from "./extras/Ray";
 export { Timer } from "./extras/Timer";
@@ -97,11 +100,12 @@ export { CubeMapTexture } from "./textures/CubemapTexture";
 // export { FloatTexture } from "./textures/floatTexture";
 export { RenderBufferTexture } from "./textures/RenderBufferTexture";
 export { SimpleTexture2D } from "./textures/SimpleTexture2D";
-// export { SimpleTexture3D } from "./textures/simpleTexture3d";
+export { SimpleTexture3D } from "./textures/SimpleTexture3D";
 export { Texture } from "./textures/Texture";
 export { Texture2D } from "./textures/Texture2D";
+export { Texture2DArray } from "./textures/Texture2DArray";
 export { VideoTexture } from "./textures/VideoTexture";
 export { WebcamTexture } from "./textures/WebcamTexture";
+export { Texture3D } from "./textures/Texture3D";
+
 // export { Texture2DArray } from "./textures/Texture2dArray";
-// export { Texture3D } from "./textures/Texture3d";
-// export { VideoTexture } from "./textures/videoTexture";

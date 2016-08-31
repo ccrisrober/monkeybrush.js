@@ -91,15 +91,11 @@ class SimpleTexture2D extends Texture {
         }
 
         this.unbind();
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
         if (onSuccess) {
             onSuccess();
         }
     }
-    /*public setPixelStorage() {
-        //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this.premultiplyAlpha)
-        //gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.unpackAlignment)
-        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this.flipY)
-    }*/
 
     public setInmutable(size: Vect2 = this._size) {
         this.bind();

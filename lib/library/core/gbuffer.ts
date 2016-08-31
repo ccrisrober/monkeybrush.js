@@ -28,6 +28,7 @@ import { Vect2 } from "../maths/Vect2";
 import { TextureType } from "../constants/TextureType";
 import { TextureFormat } from "../constants/TextureFormat";
 import { SimpleTexture2D } from "../textures/SimpleTexture2D";
+import { TexOptions } from "../textures/Texture";
 import { Framebuffer } from "./Framebuffer";
 
 "use strict";
@@ -56,6 +57,14 @@ class GBuffer {
     constructor(size: Vect2) {
         const gl = Core.getInstance().getGL();
 
+        const configTex: TexOptions = {
+            internalFormat: TextureFormat.RGB,
+            format: TextureFormat.RGB,
+            type: gl.FLOAT,
+            minFilter: TextureType.Nearest,
+            magFilter: TextureType.Nearest
+        };
+
         this.Framebuffer = new Framebuffer([
             // Position color buffer
             new SimpleTexture2D(size, {
@@ -66,21 +75,9 @@ class GBuffer {
                 magFilter: TextureType.Nearest
             }),
             // Normal color buffer
-            new SimpleTexture2D(size, {
-                internalFormat: TextureFormat.RGB,
-                format: TextureFormat.RGB,
-                type: gl.FLOAT,
-                minFilter: TextureType.Nearest,
-                magFilter: TextureType.Nearest
-            }),
+            new SimpleTexture2D(size, configTex),
             // Color + Specular color buffer
-            new SimpleTexture2D(size, {
-                internalFormat: TextureFormat.RGB,
-                format: TextureFormat.RGB,
-                type: gl.FLOAT,
-                minFilter: TextureType.Nearest,
-                magFilter: TextureType.Nearest
-            })
+            new SimpleTexture2D(size, configTex)
         ], size, true, true, {});
 
         console.log("done");
