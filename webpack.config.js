@@ -30,7 +30,7 @@ module.exports = {
         new WebpackNotifierPlugin({
             alwaysNotify: true,
             title: "monkeybrush.js",
-            contentImage: path.join(__dirname, 'logo.png')
+            contentImage: path.join(__dirname, '_images/logo.png')
         })
         /*,
         new webpack.ResolverPlugin(

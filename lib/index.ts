@@ -43,9 +43,9 @@ class MyScene extends MB.Scene {
 
         MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
 
-        MB.Loaders.loadImage("descarga (1).png", "descarga");
-        MB.Loaders.loadImage("heightmap.png", "heightmap");
-        MB.Loaders.loadImage("grass.png", "grass");
+        MB.Loaders.loadImage("_images/descarga (1).png", "descarga");
+        MB.Loaders.loadImage("assets/images/heightmap.png", "heightmap");
+        MB.Loaders.loadImage("assets/images/grass.png", "grass");
     }
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;

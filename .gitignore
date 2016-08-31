@@ -36,9 +36,16 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-bower_components
-docs
 
-# build
+bower_components
+
+
+build
 docs
 tslintwarnings.txt
+
+
+__aux__
+__cosas__
+ayudatf
+scripts

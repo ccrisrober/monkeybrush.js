@@ -1,5 +1,5 @@
 # monkeybrush.js
-![Logo](logo.png)
+![Logo](_images/logo.png)
 
 Monkey Brush is a library that adds OOP for WebGL 1/2 using Typescript
 
@@ -11,12 +11,12 @@ npm script build # Compile project
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint rules
 ```
 <div style="width: 100%">
-    <img src="descarga.png" width="33%" />
-    <img src="descarga (1).png" width="33%" />
-    <img src="descarga (2).png" width="33%" />
-    <img src="descarga (3).png" width="33%" />
-    <img src="descarga (4).png" width="33%" />
-    <img src="descarga (5).png" width="33%" />
+    <img src="_images/descarga.png" width="33%" />
+    <img src="_images/descarga (1).png" width="33%" />
+    <img src="_images/descarga (2).png" width="33%" />
+    <img src="_images/descarga (3).png" width="33%" />
+    <img src="_images/descarga (4).png" width="33%" />
+    <img src="_images/descarga (5).png" width="33%" />
 </div>
 
 ## Doc
