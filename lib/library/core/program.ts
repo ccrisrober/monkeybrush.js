@@ -23,7 +23,11 @@
 
 import { Core } from "./Core";
 import { ProgramCte } from "../constants/ProgramCte";
+import { Vect2 } from "../maths/Vect2";
 import { Vect3 } from "../maths/Vect3";
+import { Vect4 } from "../maths/Vect4";
+import { Mat2 } from "../maths/Mat2";
+import { Mat3 } from "../maths/Mat3";
 import { Mat4 } from "../maths/Mat4";
 
 "use strict";
@@ -360,32 +364,93 @@ class Program {
         return generated(this, gl, uniform, location);
     }*/
     /**
-     * @param {string}
-     * @param {number}
+     * [sendUniform1f description]
+     * @param {string} name  [description]
+     * @param {number} value [description]
      */
     public sendUniform1f(name: string, value: number) {
         const gl = Core.getInstance().getGL();
         gl.uniform1f(this.uniformLocations[name], value);
     }
     /**
-     * @param {string}
-     * @param {number}
+     * [sendUniform1i description]
+     * @param {string} name  [description]
+     * @param {number} value [description]
      */
     public sendUniform1i(name: string, value: number) {
         const gl = Core.getInstance().getGL();
         gl.uniform1i(this.uniformLocations[name], value);
     }
     /**
-     * @param {string}
-     * @param {boolean}
+     * [sendUniform1b description]
+     * @param {string}  name  [description]
+     * @param {boolean} value [description]
      */
     public sendUniform1b(name: string, value: boolean) {
         const gl = Core.getInstance().getGL();
         gl.uniform1i(this.uniformLocations[name], value === true ? 1 : 0);
     }
     /**
-     * @param {string}
-     * @param {Float32Array}
+     * [sendUniform1u description]
+     * @param {string} name  [description]
+     * @param {number} value [description]
+     */
+    public sendUniform1u(name: string, value: number) {
+        const gl = Core.getInstance().getGL();
+        gl.uniform1ui(this.uniformLocations[name], value);
+    }
+    /**
+     * [sendUniform2f description]
+     * @param {string} name [description]
+     * @param {number} x    [description]
+     * @param {number} y    [description]
+     */
+    public sendUniform2f(name: string, x: number, y: number) {
+        const gl = Core.getInstance().getGL();
+        gl.uniform2f(this.uniformLocations[name], x, y);
+    }
+    /**
+     * [sendUniform3f description]
+     * @param {string} name [description]
+     * @param {number} x    [description]
+     * @param {number} y    [description]
+     * @param {number} z    [description]
+     */
+    public sendUniform3f(name: string, x: number, y: number, z: number) {
+        const gl = Core.getInstance().getGL();
+        gl.uniform3f(this.uniformLocations[name], x, y, z);
+    }
+    /**
+     * [sendUniform4f description]
+     * @param {string} name [description]
+     * @param {number} x    [description]
+     * @param {number} y    [description]
+     * @param {number} z    [description]
+     * @param {number} w    [description]
+     */
+    public sendUniform4f(name: string, x: number, y: number, z: number, w: number) {
+        const gl = Core.getInstance().getGL();
+        gl.uniform4f(this.uniformLocations[name], x, y, z, w);
+    }
+    /**
+     * [sendUniformVec2 description]
+     * @param {string}          name [description]
+     * @param {Float32Array |    Vect2}       value [description]
+     */
+    public sendUniformVec2(name: string, value: Float32Array | Vect2) {
+        const gl = Core.getInstance().getGL();
+        let val: Float32Array;
+        if (value instanceof Vect2) {
+            val = (<Vect2>value)._value;
+        } else {
+            val = <Float32Array>value;
+        }
+        gl.uniform3fv(this.uniformLocations[name], val);
+    }
+    /**
+     * [sendUniformVec3 description]
+     * @param {string}          name [description]
+     * @param {Float32Array |    Vect3}       value [description]
      */
     public sendUniformVec3(name: string, value: Float32Array | Vect3) {
         const gl = Core.getInstance().getGL();
@@ -398,9 +463,57 @@ class Program {
         gl.uniform3fv(this.uniformLocations[name], val);
     }
     /**
-     * @param {string}
-     * @param {Float32Array}
-     * @param {boolean   = false}
+     * [sendUniformVec4 description]
+     * @param {string}          name [description]
+     * @param {Float32Array |    Vect4}       value [description]
+     */
+    public sendUniformVec4(name: string, value: Float32Array | Vect4) {
+        const gl = Core.getInstance().getGL();
+        let val: Float32Array;
+        if (value instanceof Vect4) {
+            val = (<Vect4>value)._value;
+        } else {
+            val = <Float32Array>value;
+        }
+        gl.uniform3fv(this.uniformLocations[name], val);
+    }
+    /**
+     * [sendUniformMat2 description]
+     * @param {string}          name [description]
+     * @param {Float32Array |    Mat2}        value     [description]
+     * @param {boolean      =    false}       transpose [description]
+     */
+    public sendUniformMat2(name: string, value: Float32Array | Mat2, transpose: boolean = false) {
+        const gl = Core.getInstance().getGL();
+        let val: Float32Array;
+        if (value instanceof Mat2) {
+            val = (<Mat2>value)._value;
+        } else {
+            val = <Float32Array>value;
+        }
+        gl.uniformMatrix2fv(this.uniformLocations[name], transpose, val);
+    }
+    /**
+     * [sendUniformMat3 description]
+     * @param {string}          name [description]
+     * @param {Float32Array |    Mat3}        value     [description]
+     * @param {boolean      =    false}       transpose [description]
+     */
+    public sendUniformMat3(name: string, value: Float32Array | Mat3, transpose: boolean = false) {
+        const gl = Core.getInstance().getGL();
+        let val: Float32Array;
+        if (value instanceof Mat3) {
+            val = (<Mat3>value)._value;
+        } else {
+            val = <Float32Array>value;
+        }
+        gl.uniformMatrix3fv(this.uniformLocations[name], transpose, val);
+    }
+    /**
+     * [sendUniformMat4 description]
+     * @param {string}          name [description]
+     * @param {Float32Array |    Mat4}        value     [description]
+     * @param {boolean      =    false}       transpose [description]
      */
     public sendUniformMat4(name: string, value: Float32Array | Mat4, transpose: boolean = false) {
         const gl = Core.getInstance().getGL();

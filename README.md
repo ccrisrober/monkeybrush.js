@@ -11,16 +11,17 @@ npm script build # Compile project
 tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint rules
 ```
 <div style="width: 100%">
-    <img src="_images/descarga.png" width="33%" />
-    <img src="_images/descarga (1).png" width="33%" />
-    <img src="_images/descarga (2).png" width="33%" />
-    <img src="_images/descarga (3).png" width="33%" />
-    <img src="_images/descarga (4).png" width="33%" />
-    <img src="_images/descarga (5).png" width="33%" />
-    <img src="_images/descarga (6).png" width="33%" />
-    <img src="_images/descarga (7).png" width="33%" />
-    <img src="_images/descarga (8).png" width="33%" />
-    <img src="_images/descarga (9).png" width="33%" />
+    <img src="_images/descarga.png"      width="24.61%" />
+    <img src="_images/descarga (1).png"  width="24.61%" />
+    <img src="_images/descarga (2).png"  width="24.61%" />
+    <img src="_images/descarga (3).png"  width="24.61%" />
+    <img src="_images/descarga (4).png"  width="24.61%" />
+    <img src="_images/descarga (5).png"  width="24.61%" />
+    <img src="_images/descarga (6).png"  width="24.61%" />
+    <img src="_images/descarga (7).png"  width="24.61%" />
+    <img src="_images/descarga (8).png"  width="24.61%" />
+    <img src="_images/descarga (9).png"  width="24.61%" />
+    <img src="_images/descarga (10).png" width="24.61%" />
 </div>
 
 ## Doc
@@ -121,7 +122,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Tone mapping
 - [x] Skybox reflection and refraction
 - [x] Spherical Harmonics
-- [ ] Heightmap
+- [x] Heightmap
 - [ ] Texture LOD DEMO
 - [ ] Normal Mapping
 - [ ] Bump Mapping

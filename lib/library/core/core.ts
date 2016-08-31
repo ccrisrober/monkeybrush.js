@@ -77,7 +77,7 @@ class Core {
         DepthState.enable();
         DepthState.comparison(ComparisonFunc.Less);
 
-        CullingState.enable();
+        CullingState.disable();
         BlendingState.disable();
     }
 

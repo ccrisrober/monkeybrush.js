@@ -5,7 +5,7 @@ import * as MB from "./library/MonkeyBrush";
 
 let SimpleConfig = function() {
     return {
-        max: 10,
+        max: 5,
         resume: true,
         render: "0"
     };
@@ -15,7 +15,7 @@ class MyScene extends MB.Scene {
     protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
     protected camera = new MB.Camera2(this.homePoint);
 
-    protected cubito: MB.Cube;
+    protected cubito: MB.Plane;
     protected Floor: MB.Floor;
     protected skybox: MB.Skybox;
     protected view: MB.Mat4;
@@ -27,7 +27,7 @@ class MyScene extends MB.Scene {
 
     constructor() {
         super(SimpleConfig(), "App", 2);
-        this.identityMatrix = new MB.Mat4().identity();
+        this.identityMatrix = new MB.Mat4().identity;
         this.model = new MB.Mat4();
     }
 
@@ -35,32 +35,33 @@ class MyScene extends MB.Scene {
 
     loadAssets() {
         // skybox
-        MB.Loaders.loadImage("assets/images/canyon/back.jpg");
-        MB.Loaders.loadImage("assets/images/canyon/bottom.jpg");
-        MB.Loaders.loadImage("assets/images/canyon/front.jpg");
-        MB.Loaders.loadImage("assets/images/canyon/left.jpg");
-        MB.Loaders.loadImage("assets/images/canyon/right.jpg");
-        MB.Loaders.loadImage("assets/images/canyon/top.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/back.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/bottom.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/front.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/left.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/right.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/top.jpg");
 
         MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
 
         MB.Loaders.loadImage("_images/descarga (1).png", "descarga");
-        MB.Loaders.loadImage("assets/images/heightmap.png", "heightmap");
-        MB.Loaders.loadImage("assets/images/grass.png", "grass");
+        MB.Loaders.loadImage("assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
+        MB.Loaders.loadImage("assets/images/3_no_ice_clouds_8k.jpg", "earth");
+        MB.Loaders.loadImage("assets/images/55ac38bc604ce.jpg", "55ac38bc604ce");
     }
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;
     initialize() {
-        this.skybox = new MB.Skybox("assets/images/canyon", this._webglVersion === 2);
+        this.skybox = new MB.Skybox("assets/images/hw_mystic", this._webglVersion === 2);
 
-        /*let grassImage = MB.ResourceMap.retrieveAsset("grass");
+        let grassImage = MB.ResourceMap.retrieveAsset("earth");
         this.tex2d = new MB.Texture2D(grassImage, {
             flipY: true,
-            minFilter: MB.TextureType.Linear,
-            magFilter: MB.TextureType.Linear,
+            minFilter: MB.TextureType.Nearest,
+            magFilter: MB.TextureType.Nearest,
             wrapS: MB.TextureType.Clamp2Edge,
             wrapT: MB.TextureType.Clamp2Edge
-        });*/
+        });
 
         let heightmapImage = MB.ResourceMap.retrieveAsset("heightmap");
         // const gl = MB.Core.getInstance().getGL();
@@ -68,11 +69,10 @@ class MyScene extends MB.Scene {
             flipY: true,
             minFilter: MB.TextureType.Nearest,
             magFilter: MB.TextureType.Nearest,
-            wrapS: MB.TextureType.MirroredRepeat,
-            wrapT: MB.TextureType.MirroredRepeat
+            wrapS: MB.TextureType.Clamp2Edge,
+            wrapT: MB.TextureType.Clamp2Edge
         });
-
-        this.cubito = new MB.Cube(15.0);
+        this.cubito = new MB.Plane(50.0, 30.0, 200.0, 200.0);
         this.Floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
@@ -93,7 +93,7 @@ class MyScene extends MB.Scene {
 
             prog.use();
 
-            prog.addUniforms(["projection", "view", "model", "tex", "layer"]);
+            prog.addUniforms(["projection", "view", "model", "tex", "tex2"]);
 
             return prog;
         });
@@ -130,6 +130,8 @@ class MyScene extends MB.Scene {
         // this.skybox.texture.bind(0);
         this.tex2d2.bind(0);
         prog.sendUniform1i("tex", 0);
+        this.tex2d.bind(1);
+        prog.sendUniform1i("tex2", 1);
 
         const renderMode = this.text.render;
         let mode: string;
@@ -153,7 +155,7 @@ class MyScene extends MB.Scene {
                             .reset()
                             .translate(new MB.Vect3(i * 1.0, j * 1.0, k * 1.0))
                             .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                            .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
+                            // .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
                             .scale(new MB.Vect3(0.25, 0.25, 0.25));
                     prog.sendUniformMat4("model", this.model);
                     this.cubito[mode]();

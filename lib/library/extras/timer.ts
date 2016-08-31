@@ -39,6 +39,9 @@ namespace Timer {
     export function deltaTime(): number {
         return _deltaTime;
     }
+    export function timeElapsed(): number {
+        return _timeElapsed;
+    }
 }
 
 export { Timer };
