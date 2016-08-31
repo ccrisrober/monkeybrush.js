@@ -18,14 +18,14 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="./_decorators.ts" />
+/// <reference path="./Decorators.ts" />
 /// <reference path="core/Core.ts" />
 /// <reference path="core/Input.ts" />
 /// <reference path="resources/ResourceMap.ts" />
 /// <reference path="extras/Timer.ts" />
 /// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 
-import { decorators } from "./_decorators";
+import { Decorators } from "./Decorators";
 import { Core } from "./core/Core";
 import { Input } from "./core/Input";
 import { ResourceMap } from "./resources/ResourceMap";
@@ -35,7 +35,7 @@ import { Timer } from "./extras/Timer";
 
 interface IApp {
     title?: string;
-    webglVersion?: number;    // TODO: Unused
+    webglVersion?: number;
     loadAssets: () => void;
     initialize: (app_: App) => void;
     update: (app_: App, dt: number) => void;
@@ -44,14 +44,14 @@ interface IApp {
     textCB: (gui: dat.GUI) => void;
 }
 
-@decorators.sealed
+@Decorators.sealed
 class App {
 
     protected stats: Stats;
     protected gui: dat.GUI;
 
     protected cameraUpdateCb;
-    constructor(init: any/*IApp*/, text: any) {
+    constructor(init: IApp, text: any) {
         if (!init.webglVersion) {
             init.webglVersion = 2;
         }

@@ -36,7 +36,8 @@ enum TextureType {
 enum TextureTarget {
     Texture2D = 0x0DE1,
     Texture3D = 0x806F,
-    Texture2DArray = 0x8C1A
+    Texture2DArray = 0x8C1A,
+    TextureCubeMap = 0x8513
 };
 
 export { TextureType, TextureTarget };

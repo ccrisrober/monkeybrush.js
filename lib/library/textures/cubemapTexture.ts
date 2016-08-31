@@ -22,7 +22,7 @@
 
 import { Texture, TexOptions } from "./Texture";
 import { Core } from "../core/Core";
-import { TextureType } from "../constants/TextureType";
+import { TextureType, TextureTarget } from "../constants/TextureType";
 
 "use strict";
 
@@ -36,7 +36,7 @@ class CubeMapTexture extends Texture {
      */
     constructor(options: TexOptions = {}) {
         const gl = Core.getInstance().getGL();
-        super(gl.TEXTURE_CUBE_MAP);
+        super(TextureTarget.TextureCubeMap);
         options = options || {};
 
         this.finished = false;
@@ -52,14 +52,14 @@ class CubeMapTexture extends Texture {
     }
     public finishTex() {
         const gl = Core.getInstance().getGL();
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, TextureType.Linear);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, TextureType.Linear);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, TextureType.Clamp2Edge);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, TextureType.Clamp2Edge);
+        gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, TextureType.Linear);
+        gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, TextureType.Linear);
+        gl.texParameteri(this._target_, gl.TEXTURE_WRAP_S, TextureType.Clamp2Edge);
+        gl.texParameteri(this._target_, gl.TEXTURE_WRAP_T, TextureType.Clamp2Edge);
 
 
         if (gl.TEXTURE_WRAP_R) {
-            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, TextureType.Clamp2Edge);
+            gl.texParameteri(this._target_, gl.TEXTURE_WRAP_R, TextureType.Clamp2Edge);
         }
 
 

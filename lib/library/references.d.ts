@@ -56,7 +56,4 @@
 /// <reference path="./extras/Timer.ts" />
 /// <reference path="./extras/Skybox.ts" />
 
-/// <reference path="./lights/_lights.ts" />
-/// <reference path="./_demoCamera.ts" />
-
-/// <reference path="./constants/_constants.ts" />
+/// <reference path="./Camera2.ts" />

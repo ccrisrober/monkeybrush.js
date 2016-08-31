@@ -43,7 +43,7 @@ class Texture2D extends Texture {
 
         // TODO: Support compression
 
-        this._flipY_ = Boolean(options.flipY);
+        this._flipY_ = Boolean(options.flipY || false);
         this._handle_ = gl.createTexture();
 
         this._internalformat_ = options.internalFormat || TextureFormat.RGBA;

@@ -31,10 +31,10 @@ import { Drawable } from "./Drawable";
 interface ICustomModel {
     indices: Array<number>;
     vertices: Array<number>;
-    normals: Array<number>;
-    regenerateNormals: boolean;    // TODO: Unused
-    generateTangents: boolean;    // TODO: Unused
-    texCoords: Array<number>;
+    normals?: Array<number>;
+    regenerateNormals?: boolean;    // TODO: Unused
+    generateTangents?: boolean;    // TODO: Unused
+    texCoords?: Array<number>;
 };
 
 /**
@@ -62,7 +62,7 @@ class CustomModel extends Drawable {
         } else {
             throw new Error("Vertices undefined");
         }
-        if (model.regenerateNormals === false) {
+        if (model.regenerateNormals === false || !model.regenerateNormals) {
             if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
                 this.addBufferArray(1, new Float32Array(model.normals), 3);
             }

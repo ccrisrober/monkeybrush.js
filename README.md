@@ -47,8 +47,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Add texture 3D
 - [x] Add framebuffer
 - [x] Inmutable textures
-- [ ] Video texture
-- [ ] Webcam texture
+- [x] Video texture
+- [x] Webcam texture
 
 ### WebGL2
 - [x] Transform feedback
@@ -76,9 +76,9 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] HDR images supporting
 - [x] Image upload
 - [x] Skybox supporting
+- [x] Video loader
+- [x] Webcam loader
 - [ ] Fonts
-- [ ] Video loader
-- [ ] Webcam loader
 - [ ] Generate video capture
 
 ### Core
@@ -88,6 +88,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Easing functions
 - [x] VertexArray class
 - [x] Instancing
+- [x] Clock
 - [ ] Sprites (HUD)
 - [ ] Picking
 - [ ] Multi context

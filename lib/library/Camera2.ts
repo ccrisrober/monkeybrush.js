@@ -196,12 +196,11 @@ class Camera2 {
         );
     }
     public GetOrthoProjectionMatrix(w: number, h: number): Mat4 {
-        const ymax = 0.001 * Math.tan(45.0 * Math.PI / 360);
-        const ymin = -ymax;
-        const xmin = ymin * (w * 1.0) / (h * 1.0);
-        const xmax = ymax * (w * 1.0) / (h * 1.0);
-
-        return Mat4.orthographic(xmin, xmax, ymin, ymax, 0.001, 1000.0);
+        const yMin = -0.0001 * Math.tan(this.fov * Math.PI / 360.0);
+        const yMax = -yMin;
+        const xMin = yMin + (w * 1.0) / (h * 1.0);
+        const xMax = yMax + (w * 1.0) / (h * 1.0);
+        return Mat4.orthographic(xMin, xMax, yMin, yMax, 0.0001, 11000.0);
     }
     public GetProjectionMatrix(w: number, h: number): Mat4 {
         return Mat4.perspective(this.fov, (w * 1.0) / (h * 1.0), 0.0001, 1000.0);

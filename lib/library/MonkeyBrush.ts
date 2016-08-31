@@ -2,7 +2,7 @@ import "./polyfills";
 export * from "./constants/constants";
 
 // __root__
-export { Camera2 } from "./_demoCamera";
+export { Camera2 } from "./Camera2";
 export { App, IApp } from "./App";
 export { Scene } from "./Scene";
 
@@ -71,6 +71,7 @@ export { Drawable } from "./models/Drawable";
 export { Floor } from "./models/Floor";
 export { Icosphere } from "./models/Icosphere";
 export { Mesh } from "./models/Mesh";
+export { Octahedron } from "./models/Octahedron";
 export { Plane } from "./models/Plane";
 export { Prism } from "./models/Prism";
 export { Sphere } from "./models/Sphere";
@@ -99,6 +100,8 @@ export { SimpleTexture2D } from "./textures/SimpleTexture2D";
 // export { SimpleTexture3D } from "./textures/simpleTexture3d";
 export { Texture } from "./textures/Texture";
 export { Texture2D } from "./textures/Texture2D";
+export { VideoTexture } from "./textures/VideoTexture";
+export { WebcamTexture } from "./textures/WebcamTexture";
 // export { Texture2DArray } from "./textures/Texture2dArray";
 // export { Texture3D } from "./textures/Texture3d";
 // export { VideoTexture } from "./textures/videoTexture";

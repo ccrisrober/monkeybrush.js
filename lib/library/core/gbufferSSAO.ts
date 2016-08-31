@@ -32,12 +32,12 @@ import { RenderBufferTexture } from "../textures/RenderBufferTexture";
 
 "use strict";
 
-enum gbufferssao_type {
+enum GBufferSSAOType {
     position,
     normal,
     diffuse,
     num_textures
-}
+};
 
 // TODO: Find a good random uniform number generator
 
@@ -49,7 +49,7 @@ class GBufferSSAO {
     protected ssaoNoise: Array<number> = [];
 
     protected _depthTexture; RenderBufferTexture;
-    protected _textures: Array<SimpleTexture2D> = new Array(gbufferssao_type.num_textures);
+    protected _textures: Array<SimpleTexture2D> = new Array(GBufferSSAOType.num_textures);
     constructor(size: Vect2) {
         const gl = Core.getInstance().getGL();
 
@@ -62,7 +62,7 @@ class GBufferSSAO {
         const _height = size.y;
 
         // Position color buffer
-        (this._textures[gbufferssao_type.position] = new SimpleTexture2D(size, {
+        (this._textures[GBufferSSAOType.position] = new SimpleTexture2D(size, {
             internalFormat: (gl).RGBA,
             format: gl.RGBA,
             type: gl.FLOAT,
@@ -72,22 +72,22 @@ class GBufferSSAO {
             wrapT: gl.CLAMP_TO_EDGE
         })).unbind();
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-            gl.TEXTURE_2D, this._textures[gbufferssao_type.position].handle(), 0);
+            gl.TEXTURE_2D, this._textures[GBufferSSAOType.position].handle(), 0);
 
         // Normal color buffer
-        (this._textures[gbufferssao_type.normal] = new SimpleTexture2D(size, {
+        (this._textures[GBufferSSAOType.normal] = new SimpleTexture2D(size, {
             internalFormat: gl.RGB,
             format: gl.RGB,
             type: gl.FLOAT,
             minFilter: gl.NEAREST,
             magFilter: gl.NEAREST
         })).unbind();
-        this._textures[gbufferssao_type.normal].unbind();
+        this._textures[GBufferSSAOType.normal].unbind();
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1,
-            gl.TEXTURE_2D, this._textures[gbufferssao_type.normal].handle(), 0);
+            gl.TEXTURE_2D, this._textures[GBufferSSAOType.normal].handle(), 0);
 
         // Color + Specular color buffer
-        (this._textures[gbufferssao_type.diffuse] = new SimpleTexture2D(size, {
+        (this._textures[GBufferSSAOType.diffuse] = new SimpleTexture2D(size, {
             internalFormat: gl.RGBA,
             format: gl.RGBA,
             type: gl.FLOAT,
@@ -95,7 +95,7 @@ class GBufferSSAO {
             magFilter: gl.NEAREST
         })).unbind();
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT2,
-            gl.TEXTURE_2D, this._textures[gbufferssao_type.diffuse].handle(), 0);
+            gl.TEXTURE_2D, this._textures[GBufferSSAOType.diffuse].handle(), 0);
 
         // create a renderbuffer object to store depth info
 

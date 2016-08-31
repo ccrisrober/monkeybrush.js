@@ -25,6 +25,43 @@ import { ResourceMap } from "./ResourceMap";
 "use strict";
 
 namespace Loaders {
+    export function loadWebCam() {
+        const alias: string = "webcam";
+        if (!ResourceMap.isAssetLoaded(alias)) {
+            // Update resources in load counter
+            ResourceMap.asyncLoadRequested(alias);
+
+            let video = document.createElement("video");
+            video.autoplay = true;
+
+            video.muted = true;
+            video.loop = true;
+
+            if (navigator["webkitGetUserMedia"]) {
+                navigator["webkitGetUserMedia"]({video: true}, function(stream) {
+                    video.src = URL.createObjectURL(stream);
+                    video.addEventListener("loadeddata", function() {
+                        // Video is loaded and can be played
+                        ResourceMap.asyncLoadCompleted(alias, video);
+                    }, false);
+                }.bind(this), function(err) {
+                    alert("You got no WebRTC webcam ...");
+                });
+            } else if (navigator["mozGetUserMedia"]) {
+                navigator["mozGetUserMedia"]({video: true}, function(stream) {
+                    video.src = URL.createObjectURL(stream);
+                    video.addEventListener("loadeddata", function() {
+                        // Video is loaded and can be played
+                        ResourceMap.asyncLoadCompleted(alias, video);
+                    }, false);
+                }.bind(this), function(error) {
+                    alert("You got no WebRTC webcam ...");
+                });
+            } else {
+                console.assert(false);
+            }
+        }
+    }
     /**
      * Get alias from src resource
      * @param  {string} src: Src name
@@ -35,7 +72,7 @@ namespace Loaders {
         return (alias.length < 1) ? src : alias;
     };
     export function loadVideo(videoSrc: string, alias: string = "") {
-        /*alias = _getAlias(videoSrc, alias);
+        alias = _getAlias(videoSrc, alias);
         if (!ResourceMap.isAssetLoaded(alias)) {
             // Update resources in load counter
             ResourceMap.asyncLoadRequested(alias);
@@ -48,13 +85,16 @@ namespace Loaders {
 
             request.onload = function () {
                 // Asynchronously decode, then call the function in parameter.
-                var video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
+                let video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
                 video.src = videoSrc;
-                ResourceMap.asyncLoadCompleted(alias, video);
+                video.addEventListener("loadeddata", function() {
+                    // Video is loaded and can be played
+                    ResourceMap.asyncLoadCompleted(alias, video);
+                }, false);
             }.bind(this);
 
             request.send();
-        }*/
+        }
         /*// Create HTML Video Element to play the video
         var video = document.createElement('video');
         video.addEventListener('canplay', function (e) {

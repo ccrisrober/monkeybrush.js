@@ -26,8 +26,8 @@ module.exports = function (grunt) {
                     target: 'ES6',
                     mode: "file",
                     readme: "./READMEDOC.md",
-                    externalPattern: "node_modules",
-                    theme: "minimal"
+                    externalPattern: "node_modules"
+                    //theme: "minimal"
                 },
                 src: ['./lib/**/*']
             }

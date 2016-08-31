@@ -30,27 +30,36 @@ class MyScene extends MB.Scene {
         this.model = new MB.Mat4();
     }
 
-    protected mainShader: string = "progubo";
+    protected mainShader: string = "prog";
 
     loadAssets() {
+        // video
+        MB.Loaders.loadVideo("assets/video/Possum vs Cat.mp4", "video");
         // skybox
-        MB.Loaders.loadImage("assets/images/skybox2/back.jpg");
-        MB.Loaders.loadImage("assets/images/skybox2/bottom.jpg");
-        MB.Loaders.loadImage("assets/images/skybox2/front.jpg");
-        MB.Loaders.loadImage("assets/images/skybox2/left.jpg");
-        MB.Loaders.loadImage("assets/images/skybox2/right.jpg");
-        MB.Loaders.loadImage("assets/images/skybox2/top.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/back.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/bottom.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/front.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/left.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/right.jpg");
+        MB.Loaders.loadImage("assets/images/hw_mystic/top.jpg");
 
         MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
 
         MB.Loaders.loadImage("_images/descarga (1).png", "descarga");
         MB.Loaders.loadImage("assets/images/heightmap.png", "heightmap");
         MB.Loaders.loadImage("assets/images/grass.png", "grass");
+
+        // MB.Loaders.loadWebCam();
     }
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;
+    protected videoTex: MB.VideoTexture;
+    protected webcamTex: MB.WebcamTexture;
     initialize() {
-        this.skybox = new MB.Skybox("assets/images/skybox2", this._webglVersion === 2);
+        this.videoTex = new MB.VideoTexture(MB.ResourceMap.retrieveAsset("video"));
+        // this.webcamTex = new MB.WebcamTexture();
+
+        this.skybox = new MB.Skybox("assets/images/hw_mystic", this._webglVersion === 2);
 
         /*let grassImage = MB.ResourceMap.retrieveAsset("grass");
         this.tex2d = new MB.Texture2D(grassImage, {
@@ -71,10 +80,10 @@ class MyScene extends MB.Scene {
             wrapT: MB.TextureType.MirroredRepeat
         });
 
-        this.cubito = new MB.Cube(17.5);
+        this.cubito = new MB.Cube(15.0);
         this.Floor = new MB.Floor(82.0);
 
-        MB.ProgramManager.addWithFun("progubo", (): MB.Program => {
+        MB.ProgramManager.addWithFun("prog", (): MB.Program => {
             let prog: MB.Program = new MB.Program();
 
             if (this._webglVersion === 2) {
@@ -162,7 +171,7 @@ class MyScene extends MB.Scene {
         let dd = -1;
 
         // this.skybox.texture.bind(0);
-        this.tex2d2.bind(0);
+        this.videoTex.bind(0);
         prog.sendUniform1i("tex", 0);
 
         const renderMode = this.text.render;

@@ -10,9 +10,9 @@ new WebpackDevServer(webpack(config), {
     //historyApiFallback: true,
     stats: { colors: true }
 }).listen(port, 'localhost', function (err, result) {
-  if (err) {
-    return console.log(err);
-  }
+    if (err) {
+        return console.log(err);
+    }
 
-  console.log('Listening at http://localhost:' + port + '/');
+    console.log('Listening at http://localhost:' + port + '/');
 });

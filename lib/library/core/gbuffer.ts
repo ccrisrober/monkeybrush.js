@@ -32,12 +32,13 @@ import { Framebuffer } from "./Framebuffer";
 
 "use strict";
 
-enum gbuffer_type {
+enum GBufferType {
     position,
     normal,
     diffuse,
     num_textures
-}
+};
+
 /**
  * GBuffer class
  * @class GBuffer
