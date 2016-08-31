@@ -27,9 +27,9 @@ import { PostProcess } from "./PostProcess";
 import { Input } from "./Input";
 import { Log } from "./Log";
 
-import { WebGLDepth } from "./WebGLDepth";
-import { WebGLCull } from "./WebGLCull";
-import { WebGLBlend } from "./WebGLBlend";
+import { DepthState } from "./DepthState";
+import { CullingState } from "./CullingState";
+import { BlendingState } from "./BlendingState";
 
 import { ComparisonFunc } from "../constants/ComparisonFunc";
 
@@ -74,11 +74,11 @@ class Core {
         Input.getInstance();
         PostProcess.initialize();
 
-        WebGLDepth.enable();
-        WebGLDepth.comparison(ComparisonFunc.Less);
+        DepthState.enable();
+        DepthState.comparison(ComparisonFunc.Less);
 
-        WebGLCull.enable();
-        WebGLBlend.disable();
+        CullingState.enable();
+        BlendingState.disable();
     }
 
     public static getInstance(): Core {

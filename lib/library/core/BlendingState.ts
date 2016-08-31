@@ -29,10 +29,10 @@ import { BlendingType } from "../constants/BlendingType";
 "use strict";
 
 /**
- * WebGLBlend wrapper
- * @class WebGLBlend
+ * BlendingState wrapper
+ * @class BlendingState
  */
-class WebGLBlend {
+class BlendingState {
     /**
      * Enable blending
      */
@@ -135,4 +135,4 @@ class WebGLBlend {
 
 };
 
-export { WebGLBlend };
+export { BlendingState };

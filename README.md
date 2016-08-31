@@ -75,6 +75,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Box2D
 - [x] Box3D
 - [x] DoubleLinkedList (List)
+- [ ] SIMD instructions
 
 ### Resources
 - [x] Audio supporting (Background)

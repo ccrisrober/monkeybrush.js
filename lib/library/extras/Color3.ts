@@ -22,7 +22,7 @@
 
 "use strict";
 
-class Color {
+class Color3 {
     /**
      * [Array description]
      * @param {[type]} 3 [description]
@@ -66,9 +66,9 @@ class Color {
      * @param  {number} r [description]
      * @param  {number} g [description]
      * @param  {number} b [description]
-     * @return {Color}    [description]
+     * @return {Color3}    [description]
      */
-    public setRGB(r: number, g: number, b: number): Color {
+    public setRGB(r: number, g: number, b: number): Color3 {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -77,9 +77,9 @@ class Color {
     }
     /**
      * [toHSL description]
-     * @return {Color} [description]
+     * @return {Color3} [description]
      */
-    public toHSL(): Color {
+    public toHSL(): Color3 {
         const max = Math.max(this.r, this.g, this.b),
             min = Math.min(this.r, this.g, this.b);
 
@@ -98,8 +98,8 @@ class Color {
             }
             h /= 6;
         }
-        return new Color(h, s, l);
+        return new Color3(h, s, l);
     }
 };
 
-export { Color };
+export { Color3 };

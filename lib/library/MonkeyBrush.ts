@@ -15,11 +15,11 @@ export { PerspectiveCamera } from "./camera/PerspectiveCamera";
 
 
 // Core
-export { WebGLBlend } from "./core/WebGLBlend";
-export { WebGLCull } from "./core/WebGLCull";
+export { BlendingState } from "./core/BlendingState";
+export { CullingState } from "./core/CullingState";
 export { Context } from "./core/Context";
 export { Core } from "./core/Core";
-export { WebGLDepth } from "./core/WebGLDepth";
+export { DepthState } from "./core/DepthState";
 export { Log } from "./core/Log";
 export { GBuffer } from "./core/GBuffer";
 export { GBufferSSAO } from "./core/GBufferSSAO";
@@ -27,15 +27,15 @@ export { Input } from "./core/Input";
 export { Framebuffer } from "./core/Framebuffer";
 export { Program } from "./core/Program";
 export { PostProcess } from "./core/PostProcess";
-export { WebGLScissors } from "./core/WebGLScissors";
-export { WebGLStencil } from "./core/WebGLStencil";
+export { ScissorsState } from "./core/ScissorsState";
+export { StencilState } from "./core/StencilState";
 export { Utils } from "./core/Utils";
 export { VertexArray } from "./core/VertexArray";
 export { VertexBuffer } from "./core/VertexBuffer";
 export { VertexUBO } from "./core/VertexUBO";
 
 export { Axis } from "./extras/Axis";
-export { Color } from "./extras/Color";
+export { Color3 } from "./extras/Color3";
 export { Easing } from "./extras/Easing";
 export { Extensions } from "./extras/Extensions";
 export { Noise } from "./extras/Noise";

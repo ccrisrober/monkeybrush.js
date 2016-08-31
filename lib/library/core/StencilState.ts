@@ -29,10 +29,13 @@ import { FaceSide } from "../constants/FaceSide";
 "use strict";
 
 /**
- * WebGLStencil wrapper
- * @class WebGLStencil
+ * StencilState wrapper
+ * @class StencilState
  */
-class WebGLStencil {
+class StencilState {
+
+    // TODO: Cache stencilmask, stencilTest, opstencilfail, ...
+
     /**
      * Enable stencil test
      */
@@ -131,4 +134,4 @@ class WebGLStencil {
     }
 };
 
-export { WebGLStencil };
+export { StencilState };

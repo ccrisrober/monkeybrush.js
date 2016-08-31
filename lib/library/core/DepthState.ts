@@ -27,10 +27,10 @@ import { ComparisonFunc } from "../constants/ComparisonFunc";
 "use strict";
 
 /**
- * WebGLDepth class
- * @class WebGLDepth
+ * DepthState class
+ * @class DepthState
  */
-class WebGLDepth {
+class DepthState {
     /**
      * Enable depth testing.
      */
@@ -109,4 +109,4 @@ class WebGLDepth {
     }
 };
 
-export { WebGLDepth };
+export { DepthState };

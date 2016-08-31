@@ -18,10 +18,10 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../extras/Color.ts" />
+/// <reference path="../extras/Color3.ts" />
 /// <reference path="../maths/Vector3.ts" />
 
-import { Color } from "../extras/Color";
+import { Color3 } from "../extras/Color3";
 import { Vect3 } from "../maths/Vect3";
 
 "use strict";
@@ -38,9 +38,9 @@ abstract class Light {
     protected _intensity: number;
     /**
      * [Light color]
-     * @type {Color}
+     * @type {Color3}
      */
-    protected _color: Color;
+    protected _color: Color3;
     protected _enable: boolean;
     /**
      * [Attenuation light value]
@@ -52,7 +52,7 @@ abstract class Light {
      */
     constructor() {
         this._intensity = 1.0;
-        this._color = new Color(1.0, 1.0, 1.0);
+        this._color = new Color3(1.0, 1.0, 1.0);
         this._enable = true;
         this._attenuation = new Vect3(
             1.0,        // Constant
@@ -101,14 +101,14 @@ abstract class Light {
 
     /**
      * Get light color.
-     * @return {Color}
+     * @return {Color3}
      */
-    get color(): Color { return this._color; }
+    get color(): Color3 { return this._color; }
     /**
      * Set light color
-     * @param {Color} color: Color value
+     * @param {Color3} color: Color value
      */
-    set color(color: Color) { this._color = color; }
+    set color(color: Color3) { this._color = color; }
 };
 
 export { Light };

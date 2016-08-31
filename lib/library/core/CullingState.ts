@@ -18,58 +18,62 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+/// <reference path="../constants/_constants.ts" />
 /// <reference path="context.ts" />
+
 import { Core } from "./Core";
+import { FaceSide } from "../constants/FaceSide";
 
 "use strict";
 
 /**
- * WebGLScissors wrapper
- * @class WebGLScissors
+ * CullingState class
+ * @class CullingState
  */
-class WebGLScissors {
+class CullingState {
     /**
-     * Enable scissor test.
+     * Enable cullFace test.
      */
-    public static use() {
+    public static enable() {
         const gl = Core.getInstance().getGL();
-        gl.enable(gl.SCISSOR_TEST);
-    }
-    /**
-     * Define the scissor box.
-     * @param {number} x: Specifying the horizontal coordinate for the lower left corner of the box.
-     * @param {number} y: Specifying the vertical coordinate for the lower left corner of the box.
-     * @param {number} width: Specifying the width of the scissor box.
-     * @param {number} height: Specifying the height of the scissor box.
-     */
-    public setRectangle(x: number, y: number, width: number, height: number) {
-        const gl = Core.getInstance().getGL();
-        gl.scissor(x, y, width, height);
-    }
-    /**
-     * Get scissor rectangle in use.
-     * @return {Int32Array}: Scissor box size [x, y, width, height]
-     */
-    public getRectangle(): Int32Array {
-        const gl = Core.getInstance().getGL();
-        return gl.getParameter(gl.SCISSOR_BOX);
-    }
-    /**
-     * Disable scissor test.
-     */
-    public static unuse() {
-        const gl = Core.getInstance().getGL();
-        gl.disable(gl.SCISSOR_TEST);
+        gl.enable(gl.CULL_FACE);
     }
 
     /**
-     * Checks if scissor test is activated
+     * Get current cullFace mode
+     * @return {FaceSide}: Current cullFace mode
+     */
+    public static getMode(): FaceSide {
+        const gl = Core.getInstance().getGL();
+        return gl.getParameter(gl.CULL_FACE_MODE);
+    }
+
+    /**
+     * Specify whether front/back-facing facets can be culled.
+     * @param {FaceSide} mode: Cull face mode
+     */
+    public static setMode(mode: FaceSide) {
+        const gl = Core.getInstance().getGL();
+        gl.cullFace(mode);
+    }
+
+    /**
+     * Disable cullFace test.
+     */
+    public static disable() {
+        const gl = Core.getInstance().getGL();
+        gl.disable(gl.CULL_FACE);
+    }
+
+    /**
+     * Checks if cullFace is activated
      * @return {boolean}: True if activated
      */
     public static isEnabled(): boolean {
         const gl = Core.getInstance().getGL();
-        return gl.isEnabled(gl.SCISSOR_TEST);
+        return gl.isEnabled(gl.CULL_FACE);
     }
 };
 
-export { WebGLScissors };
+export { CullingState };
+

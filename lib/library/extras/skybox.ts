@@ -22,7 +22,7 @@
 /// <reference path="../core/Program.ts" />
 /// <reference path="../resources/ResourceMap.ts" />
 /// <reference path="../textures/CubemapTexture.ts" />
-/// <reference path="../core/WebGLDepth.ts" />
+/// <reference path="../core/DepthState.ts" />
 /// <reference path="../constants/ProgramCte.ts" />
 /// <reference path="../constants/ComparisonFunc.ts" />
 /// <reference path="../core/VertexBuffer.ts" />
@@ -32,7 +32,7 @@ import { Core } from "../core/Core";
 import { Program } from "../core/Program";
 import { ResourceMap } from "../resources/ResourceMap";
 import { CubeMapTexture } from "../textures/CubemapTexture";
-import { WebGLDepth } from "../core/WebGLDepth";
+import { DepthState } from "../core/DepthState";
 
 import { ProgramCte } from "../constants/ProgramCte";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
@@ -200,9 +200,9 @@ class Skybox {
     public render(view, projection) {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
-        let currDepthComp = WebGLDepth.currentComparation();
+        let currDepthComp = DepthState.currentComparation();
 
-        WebGLDepth.comparison(ComparisonFunc.LessEqual);
+        DepthState.comparison(ComparisonFunc.LessEqual);
         this._prog.use();
 
         // Remove any translation
@@ -217,7 +217,7 @@ class Skybox {
         gl.drawArrays(gl.TRIANGLES, 0, 36);
         this._VertexArray.unbind();
 
-        WebGLDepth.comparison(currDepthComp);
+        DepthState.comparison(currDepthComp);
     }
     /**
      *

@@ -160,6 +160,8 @@ abstract class Drawable {
                     0,
                     numInstances
                 );
+            } else {
+                throw new Error("Instance array undefined");
             }
         }
         this._vao.unbind();
@@ -188,6 +190,8 @@ abstract class Drawable {
                     this._indicesLen,
                     numInstances
                 );
+            } else {
+                throw new Error("Instance array undefined");
             }
         }
         this._vao.unbind();
