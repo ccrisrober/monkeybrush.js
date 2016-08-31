@@ -17,6 +17,9 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
     <img src="_images/descarga (3).png" width="33%" />
     <img src="_images/descarga (4).png" width="33%" />
     <img src="_images/descarga (5).png" width="33%" />
+    <img src="_images/descarga (6).png" width="33%" />
+    <img src="_images/descarga (7).png" width="33%" />
+    <img src="_images/descarga (8).png" width="33%" />
 </div>
 
 ## Doc

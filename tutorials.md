@@ -203,4 +203,42 @@ gl.viewport(canvas.width / 2, 0, canvas.width / 2, canvas.height);
 mat4.multiply(mvpMatrix, rightEyeProjectionMatrix, rightEyeViewMatrix);
 gl.uniformMatrix4fv(uniforms.uMVPMatrixLocation, false, mvpMatrix);
 // Draw scene
-```` 
+```
+
+## Video texture
+```typescript 
+let videoTex: MB.VideoTexture;
+function load() {
+    // ...
+    MB.Loaders.loadVideo("assets/video/Possum vs Cat.mp4", "video");
+}
+
+function init() {
+    // ...
+    videoTex = new MB.VideoTexture(MB.ResourceMap.retrieveAsset("video"));
+}
+
+function draw() {
+   // ...
+   videoTex.bind(0); 
+}
+```
+
+## Webcamp texture
+```typescript 
+let webcamTex: MB.VideoTexture;
+function load() {
+    // ...
+    MB.Loaders.loadWebCam();    # Only load this one time
+}
+
+function init() {
+    // ...
+    webcamTex = new MB.WebcamTexture();
+}
+
+function draw() {
+   // ...
+   webcamTex.bind(0); 
+}
+```
