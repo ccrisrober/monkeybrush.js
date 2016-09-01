@@ -109,6 +109,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Element DOM remove
 - [ ] Array remove by index
 
+### Others
+- [x] Billboard
 
 ### Development
 - [x] Grunt integration

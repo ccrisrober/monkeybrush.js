@@ -52,29 +52,31 @@ class CustomModel extends Drawable {
         this._handle = [];
         this._vao.bind();
 
+        let i = 0;
+
         if (model.indices && model.indices.length) {
             this.addElementArray(new Uint16Array(model.indices));
         } else {
             throw new Error("Indices undefined");
         }
         if (model.vertices && model.vertices.length && model.vertices.length % 3 === 0) {
-            this.addBufferArray(0, new Float32Array(model.vertices), 3);
+            this.addBufferArray(i++, new Float32Array(model.vertices), 3);
         } else {
             throw new Error("Vertices undefined");
         }
         if (model.regenerateNormals === false || !model.regenerateNormals) {
             if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
-                this.addBufferArray(1, new Float32Array(model.normals), 3);
+                this.addBufferArray(i++, new Float32Array(model.normals), 3);
             }
         } else if (model.regenerateNormals === true) {
             this.recalculateNormals(); // TODO
         }
         if (model.texCoords && model.texCoords.length && model.texCoords.length % 2 === 0) {
-            this.addBufferArray(2, new Float32Array(model.texCoords), 2);
+            this.addBufferArray(i++, new Float32Array(model.texCoords), 2);
         }
 
         if (model.generateTangents === true) {
-            this.addBufferArray(3, new Float32Array([]), 3);
+            this.addBufferArray(i++, new Float32Array([]), 3);
             // TODO: generateTangents
         }
 

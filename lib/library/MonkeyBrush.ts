@@ -1,6 +1,9 @@
 import "./polyfills";
 export * from "./constants/constants";
 
+
+export { BillboardOpts, Billboard } from "./extras/Billboard";
+
 // export { Decorators } from "./Decorators";
 
 // __root__

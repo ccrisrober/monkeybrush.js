@@ -24,7 +24,7 @@ void main() {
 
 	vec3 pos = position;
 
-    float heightFactor = 3.5;
+    float heightFactor = 7.5;
 
     const vec2 size = vec2(0.5,0.0);
     const ivec3 off = ivec3(-1,0,1);
