@@ -47,6 +47,14 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Finish Perspective Camera
 - [x] Finish Orthographic Camera
 
+### Shading lighting
+- [x] Phong shading
+- [x] Blinn-Phong shading
+- [x] Gaussian Phong shading
+- [ ] Benckmann shading
+- [ ] Ward shading
+- [ ] Cook-Torrance shading
+
 ### Textures
 - [x] Add texture 2D
 - [x] Add texture 2D array
