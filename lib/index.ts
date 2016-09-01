@@ -50,8 +50,6 @@ class MyScene extends MB.Scene {
         MB.Loaders.loadImage("assets/images/3_no_ice_clouds_8k.jpg", "earth");
         // MB.Loaders.loadImage("_images/descarga (1).png", "earth");
         MB.Loaders.loadImage("assets/images/55ac38bc604ce.jpg", "55ac38bc604ce");
-
-        MB.Loaders.loadImage("NeGeo.png", "NeoGeo");
     }
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;
@@ -59,7 +57,7 @@ class MyScene extends MB.Scene {
     initialize() {
         this.skybox = new MB.Skybox("assets/images/hw_mystic", this._webglVersion === 2);
 
-        let neoGeoImage = MB.ResourceMap.retrieveAsset("NeoGeo");
+        let neoGeoImage = MB.ResourceMap.retrieveAsset("monkey");
         // const gl = MB.Core.getInstance().getGL();
         this.tex2d3 = new MB.Texture2D(neoGeoImage, {
             flipY: true,
