@@ -69,7 +69,7 @@ export { Cone } from "./models/Cone";
 export { Cube } from "./models/Cube";
 export { CustomModel } from "./models/CustomModel";
 export { Cylinder } from "./models/Cylinder";
-export { Disc } from "./models/disc";
+export { Disc } from "./models/Disc";
 export { Drawable } from "./models/Drawable";
 export { Floor } from "./models/Floor";
 export { Icosphere } from "./models/Icosphere";
