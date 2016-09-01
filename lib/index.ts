@@ -85,7 +85,7 @@ class MyScene extends MB.Scene {
             wrapS: MB.TextureType.Clamp2Edge,
             wrapT: MB.TextureType.Clamp2Edge
         });
-        this.cubito = new MB.Capsule(5.0, 2.5, 24, 24);
+        this.cubito = new MB.Capsule(5.0, 2.5, 12, 12);
         this.Floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
