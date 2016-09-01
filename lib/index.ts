@@ -45,8 +45,10 @@ class MyScene extends MB.Scene {
         MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
 
         MB.Loaders.loadImage("_images/descarga (1).png", "descarga");
-        MB.Loaders.loadImage("assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
-        MB.Loaders.loadImage("assets/images/3_no_ice_clouds_8k.jpg", "earth");
+        // MB.Loaders.loadImage("assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
+        MB.Loaders.loadImage("assets/images/heightmap.png", "heightmap");
+        // MB.Loaders.loadImage("assets/images/3_no_ice_clouds_8k.jpg", "earth");
+        MB.Loaders.loadImage("_images/descarga (1).png", "earth");
         MB.Loaders.loadImage("assets/images/55ac38bc604ce.jpg", "55ac38bc604ce");
     }
     protected tex2d: MB.Texture2D;

@@ -21,7 +21,7 @@
 "use strict";
 
 namespace Utils {
-    class RNG {
+    export class RNG {
         private _seed: number;
 
         constructor(seed: number) {

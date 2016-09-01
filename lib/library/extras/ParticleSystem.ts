@@ -47,7 +47,7 @@ class ParticleSystem {
         }
     };
     protected update(dt: number) {
-        let node = this._active.first();
+        /*let node = this._active.first();
         let last = this._active.last();
 
         while (node !== last) {
@@ -60,8 +60,8 @@ class ParticleSystem {
 
 
             node = node.next;
-        }
+        }*/
     }
 };
 
-export { ParticleSystem };
+export { Particle, ParticleSystem };

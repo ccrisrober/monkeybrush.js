@@ -20,14 +20,14 @@
 
 /// <reference path="Core.ts" />
 /// <reference path="../textures/Texture.ts" />
-/// <reference path="../textures/simpleTexture2D.ts" />
+/// <reference path="../textures/SimpleTexture2D.ts" />
 /// <reference path="../textures/RenderBufferTexture.ts" />
 /// <reference path="..//maths/Vector2.ts" />
 ///
 import { Core } from "./Core";
 import { DrawBuffer } from "../constants/DrawBuffer";
 import { Texture } from "../textures/Texture";
-import { SimpleTexture2D } from "../textures/simpleTexture2D";
+import { SimpleTexture2D } from "../textures/SimpleTexture2D";
 import { RenderBufferTexture } from "../textures/RenderBufferTexture";
 import { Vect2 } from "../maths/Vect2";
 
