@@ -50,7 +50,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 ### Shading lighting
 - [x] Phong shading
 - [x] Blinn-Phong shading
-- [x] Gaussian Phong shading
+- [x] Gaussian shading
 - [ ] Benckmann shading
 - [ ] Ward shading
 - [ ] Cook-Torrance shading
