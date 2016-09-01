@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "declaration": false,
+    "declaration": true,
     "module": "es6",
     "target": "es6",
     "module": "commonjs",
@@ -8,7 +8,6 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "sourceMap": false,
-    "outDir": "ts-build",
     "experimentalDecorators": true,
     "removeComments": true
   },
