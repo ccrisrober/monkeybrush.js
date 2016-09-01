@@ -22,6 +22,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
     <img src="_images/descarga (8).png"  width="24.61%" />
     <img src="_images/descarga (9).png"  width="24.61%" />
     <img src="_images/descarga (10).png" width="24.61%" />
+    <img src="_images/descarga (11).png" width="24.61%" />
+    <img src="_images/descarga (12).png" width="24.61%" />
 </div>
 
 ## Doc
@@ -39,13 +41,17 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Add cylinder model
 - [x] Add disc model
 - [x] Add icosphere model
+- [x] Add capsule model
 - [x] Add object parser (faces: x1/y1/z1 x2/y2/z2 x3/y3/z3)
 - [x] Add custom model (indices, vertices, normals and texcoords list)
 - [ ] Add glTF (https://github.com/KhronosGroup/glTF)
 
 ### Cameras
-- [x] Finish Perspective Camera
-- [x] Finish Orthographic Camera
+- [x] Perspective Camera
+- [x] Orthographic Camera
+- [ ] Orbit Camera
+- [ ] Free Camera (FPS Camera)
+- [ ] Cube Camera
 
 ### Shading lighting
 - [x] Phong shading

@@ -89,6 +89,21 @@ class Plane extends Drawable {
             }
         }
 
+        /*
+        WIREFRAME!!
+        var newcells = []
+
+        for (var i = 0; i < el.length; i+=3) {
+            var a = el[i + 0];
+            var b = el[i + 1];
+            var c = el[i + 2];
+            if (a !== null && b !== null) newcells.push(a, b);
+            if (b !== null && c !== null) newcells.push(b, c);
+            if (a !== null && c !== null) newcells.push(c, a);
+        }
+
+        el = newcells;*/
+
         this._handle = [];
 
         this._vao.bind();

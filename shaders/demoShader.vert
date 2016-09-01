@@ -38,7 +38,7 @@ void main() {
     vec3 vb = normalize(vec3(size.yx,s12-s10));
     vec4 bump = vec4( cross(va,vb), s11 );
 
-    pos.y += heightFactor * bump.w; // * sin(time + bump.w);
+    //pos.y += heightFactor * bump.w; // * sin(time + bump.w);
     outNormal = bump.xyz;
 
 

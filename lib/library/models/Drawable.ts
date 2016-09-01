@@ -124,7 +124,7 @@ abstract class Drawable {
     public render2() {
         const gl = Core.getInstance().getGL();
         this._vao.bind();
-        gl.drawElements(RenderType.LineStrip, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(RenderType.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
 
