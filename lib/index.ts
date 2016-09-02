@@ -15,7 +15,7 @@ class MyScene extends MB.Scene {
     protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
     protected camera = new MB.Camera2(this.homePoint);
 
-    protected cubito: MB.Capsule;
+    protected cubito: MB.CustomModel;
     protected Floor: MB.Floor;
     protected skybox: MB.Skybox;
     protected view: MB.Mat4;
@@ -85,7 +85,15 @@ class MyScene extends MB.Scene {
             wrapS: MB.TextureType.Clamp2Edge,
             wrapT: MB.TextureType.Clamp2Edge
         });
-        this.cubito = new MB.Capsule(5.0, 2.5, 12, 12);
+
+        const obj = MB.ObjLoader.loadObj("assets/objects/example.obj");
+        this.cubito = new MB.CustomModel({
+            vertices: obj["vertices"],
+            normals: obj["normals"],
+            indices: obj["indices"],
+            texCoords: obj["texCoords"]
+        });
+        // new MB.Capsule(5.0, 2.5, 12, 12);
         this.Floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {

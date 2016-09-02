@@ -9,7 +9,7 @@ namespace VRDevice {
         } else if (navigator["mozGetVRDevices"]) {
             return navigator["mozGetVRDevices"](next);
         } else {
-            return done(new Error('Your browser is not VR Ready'), []);
+            return done(new Error("Your browser is not VR Ready"), []);
         }
 
         function next (devices) {
@@ -25,11 +25,11 @@ namespace VRDevice {
         });
     };
     export function getPositionSensors (done) {
-        var typ = window["VRDisplay"] || window["PositionSensorVRDevice"];
+        const typ = window["VRDisplay"] || window["PositionSensorVRDevice"];
         return getType(typ, done);
     };
     export function getHmds (done) {
-        var typ = window["VRDisplay"] || window["HMDVRDevice"];
+        const typ = window["VRDisplay"] || window["HMDVRDevice"];
         return getType(typ, done);
     };
 };

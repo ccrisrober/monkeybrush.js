@@ -26,79 +26,15 @@ namespace ObjLoader {
         let req = new XMLHttpRequest();
         req.open("GET", filename, false);
         if (req.overrideMimeType) {
-          req.overrideMimeType("text/plain");
+            req.overrideMimeType("text/plain");
         }
         try {
-          req.send(null);
+            req.send(null);
         } catch (e) {
-          console.log(`Error reading file ${filename}`);
+            console.log(`Error reading file ${filename}`);
         }
         return req.responseText;
     }
-    export function loadObj(filename: string): Object {
-        let verts = [];
-        let norms = [];
-        let tcs = [];
-
-        let ret = {
-            vertices: [],
-            normals: [],
-            texCoords: [],
-            indices: [],
-        };
-
-        let text = loadFile(filename);
-        // console.log(text);
-
-        let objFile = text.split("\n");
-
-        objFile.forEach((line: string) => {
-            line = line.trim();
-
-            let type = line.substr(0, 2).trim();
-            // Comments
-            if (type === "#") {
-                return; // stop processing this iteration
-            }
-            // Vertices
-            if (type === "v") {
-                let values = splitLineToFloats(line);
-                verts.push(values);
-            }
-            // Normals
-            if (type === "vn") {
-                let values = splitLineToFloats(line);
-                norms.push(values);
-            }
-            // Tex Coords
-            if (type === "vt") {
-                let values = splitLineToFloats(line);
-                tcs.push(values);
-            }
-            if (type === "f") {
-                let values = splitFace(line);
-                values.forEach((value: number) => {
-                    ret.indices.push(value - 1);
-                });
-            }
-        });
-
-        // Unindex
-        for (let i = 0, size = ret.indices.length / 3; i < size; ++i) {
-            for (let j = 0; j < verts[ret.indices[i * 3]].length; ++j) {
-                ret.vertices.push(verts[ret.indices[i * 3]][j]);
-            }
-            for (let j = 0; j < norms[ret.indices[i * 3 + 2]].length; ++j) {
-                ret.normals.push(norms[ret.indices[i * 3 + 2]][j]);
-            }
-            for (let j = 0; j < tcs[ret.indices[i * 3 + 1]].length; ++j) {
-                ret.texCoords.push(tcs[ret.indices[i * 3 + 1]][j]);
-            }
-        }
-
-        return ret;
-    }
-
     function splitLineToFloats(line: string): Array<number> {
         let values = new Array();
 
@@ -111,11 +47,10 @@ namespace ObjLoader {
 
         return values;
     }
-
     function splitFace(line: string): Array<number> {
         let values = [];
         let split = line.split(" ");
-        for (let i = 1; i < split.length; ++i) {
+        for (let i = 0; i < split.length; ++i) {
             let splitFace = split[i].split("/");
             splitFace.forEach((value: any) => {
                 if (!isNaN(value)) {
@@ -124,6 +59,91 @@ namespace ObjLoader {
             });
         }
         return values;
+    }
+    export function loadObj(filename: string): Object {
+        let verts = [],
+            normals = [],
+            textures = [],
+            idxCache = {},
+            idx = 0;
+
+        let model = {
+            vertices: [],
+            normals: [],
+            indices: [],
+            texCoords: []
+        };
+
+        let lines = loadFile(filename).split("\n");
+
+        lines.forEach((line: string) => {
+            let elems = line.split(/\s+/);
+            elems.shift();
+
+            let type: string = line.substr(0, 2).trim();
+
+            // if (/^v\s/.test(line)) {
+            if (type === "v") {
+                let values = splitLineToFloats(line);
+                verts.push(values[0], values[1], values[2]);
+            // } else if (/^vn\s/.test(line)) {
+            } else if (type === "vn") {
+                let values = splitLineToFloats(line);
+                normals.push(values[0], values[1], values[2]);
+            // } else if (/^vt\s/.test(line)) {
+            } else if (type === "vt") {
+                let values = splitLineToFloats(line);
+                textures.push(values[0], values[1]);
+            // } else if (/^f\s/.test(line)) {
+            } else if (type === "f") {
+                let quad: boolean = false;
+                for (let j = 0, size = elems.length; j < size; ++j) {
+                    // Triangulating quads
+                    if (j === 3 && !quad) {
+                        // add v2/t2/vn2 in again before continuing to 3
+                        j = 2;
+                        quad = true;
+                    }
+                    if (elems[j] in idxCache) {
+                        model.indices.push(idxCache[elems[j]]);
+                    } else {
+                        let vertex: Array<number> = splitFace(elems[j]);
+                        // position
+                        const v = (vertex[0] - 1) * 3;
+                        model.vertices.push(verts[v]);
+                        model.vertices.push(verts[v + 1]);
+                        model.vertices.push(verts[v + 2]);
+                        // textures
+                        if (textures.length) {
+                            const tc = (vertex[1] - 1) * 2;
+                            model.texCoords.push(textures[tc]);
+                            model.texCoords.push(textures[tc + 1]);
+                        }
+                        // normals
+                        const n = (vertex[2] - 1) * 3;
+                        model.normals.push(normals[n]);
+                        model.normals.push(normals[n + 1]);
+                        model.normals.push(normals[n + 2]);
+
+                        // Cache indice
+                        idxCache[elems[j]] = idx;
+                        model.indices.push(idx);
+                        // increment the counter
+                        ++idx;
+                    }
+                    if (j === 3 && quad) {
+                        // add v0/t0/vn0 onto the second triangle
+                        model.indices.push(idxCache[elems[0]]);
+                    }
+                }
+            }
+        });
+        return {
+            vertices: model.vertices,
+            normals: model.normals,
+            texCoords: model.texCoords,
+            indices: model.indices,
+        };
     }
 };
 

@@ -91,12 +91,12 @@ class Capsule extends Drawable {
                     (r * numSegm + (s + 1)),
                     (r * numSegm + (s + 0)),
                     ((r + 1) * numSegm + (s + 1))
-               );
+                );
                 cells.push(
                     ((r + 1) * numSegm + (s + 0)),
                     ((r + 1) * numSegm + (s + 1)),
                     (r * numSegm + s)
-               )
+                );
             }
         }
 

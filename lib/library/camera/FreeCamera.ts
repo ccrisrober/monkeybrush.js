@@ -32,6 +32,7 @@ class FreeCamera extends Camera {
      * Update view and projection matrix
      */
     public update() {
+        // TODO
     }
 
 };

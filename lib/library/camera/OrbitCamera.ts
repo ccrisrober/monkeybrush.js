@@ -32,10 +32,11 @@ class OrbitCamera extends Camera {
      * Update view and projection matrix
      */
     public update() {
+        // TODO
     }
 
     public lookAt(eye: Float32Array, center: Float32Array, up: Float32Array) {
-
+        // TODO
     }
 };
 

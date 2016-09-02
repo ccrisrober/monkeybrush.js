@@ -98,9 +98,9 @@ class Billboard {
         let width = opts.width || 1.0;
         let height = opts.height || 1.0;
 
-        let model = opts.model || mat4.identity(mat4.create())
-        let view = opts.view || mat4.identity(mat4.create())
-        let projection = opts.projection || mat4.identity(mat4.create())
+        let model = opts.model || mat4.identity(mat4.create());
+        let view = opts.view || mat4.identity(mat4.create());
+        let projection = opts.projection || mat4.identity(mat4.create());
 
         if (!Billboard.program) {
             Billboard.initialize();
