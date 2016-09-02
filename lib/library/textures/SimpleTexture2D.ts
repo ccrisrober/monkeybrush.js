@@ -41,6 +41,7 @@ class SimpleTexture2D extends Texture {
     public getHeight(): number {
         return this._size.y;
     }
+    protected _offsets_: Array<number>;
     /**
      * SimpleTexture2D constructor
      * @param {Vect2} size: Texture size
@@ -63,10 +64,63 @@ class SimpleTexture2D extends Texture {
         this._format_ = options.format || gl.RGBA;
         this._type_ = options.type || TextureFormat.UnsignedByte;
         this._level_ = options.level || 0;
+        this._compressed_ = Boolean(options.compressed || false);
+        this._offsets_ = options.offsets;
 
         this.bind();
 
-        gl.texImage2D(
+        if (this._offsets_ && this._offsets_.length === 2) {
+            if (this._compressed_) {
+                gl.compressedTexSubImage2D(
+                    this._target_,
+                    this._level_,
+                    this._offsets_[0],
+                    this._offsets_[1],
+                    this.getWidth(),
+                    this.getHeight(),
+                    this._format_, // Format
+                    null
+                );
+            } else {
+                gl.texSubImage2D(
+                    this._target_,
+                    this._level_,
+                    this._offsets_[0],
+                    this._offsets_[1],
+                    this.getWidth(),
+                    this.getHeight(),
+                    this._format_, // Format
+                    this._type_, // Size of each channel
+                    null
+                );
+            }
+        } else {
+            if (this._compressed_) {
+                gl.compressedTexImage2D(
+                    this._target_,
+                    this._level_,
+                    this._format_, // Format
+                    this.getWidth(),
+                    this.getHeight(),
+                    0,
+                    null
+                );
+            } else {
+                gl.texImage2D(
+                    this._target_,
+                    this._level_,
+                    this._internalformat_,
+                    this.getWidth(),
+                    this.getHeight(),
+                    0,
+                    this._format_, // Format
+                    this._type_, // Size of each channel
+                    null
+                );
+            }
+        }
+
+        /*gl.texImage2D(
             this._target_,
             this._level_, // Level of details
             this._internalformat_, // Internal format
@@ -76,7 +130,7 @@ class SimpleTexture2D extends Texture {
             this._format_, // Format
             this._type_, // Size of each channel
             null
-        );
+        );*/
 
         this.minFilter(options.minFilter || TextureType.Nearest);
         this.magFilter(options.minFilter || TextureType.Nearest);

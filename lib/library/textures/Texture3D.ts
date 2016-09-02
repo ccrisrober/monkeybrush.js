@@ -53,29 +53,19 @@ class Texture3D extends Texture {
 
         this.bind();
 
+
         if (this._compressed_) {
-            /*gl.compressedTexImage3D(
-                this._target,
-                0,  // level
-                format,
+            gl.compressedTexImage3D(
+                this._target_,
+                this._level_,
+                this._format_,
                 size.x,
                 size.y,
                 size.z,
                 0,
-                data);*/
-        } else {
-            /*gl.texSubImage3D(
-                this._target,
-                0,  // level
-                _internalformat,    // Internal format A GLenum specifying the format of the texel data
-                size.x,
-                size.y,
-                size.z,
-                0,
-                _format,    // Format2
-                _type,  // A GLenum specifying the data type of the texel data
                 data
-            );*/
+            );
+        } else {
             gl.texImage3D(
                 this._target_,
                 this._level_,
@@ -89,6 +79,7 @@ class Texture3D extends Texture {
                 data
             );
         }
+
 
         this.minFilter(options.minFilter || TextureType.Nearest);
         this.magFilter(options.minFilter || TextureType.Nearest);

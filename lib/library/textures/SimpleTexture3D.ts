@@ -33,6 +33,7 @@ import { TextureType, TextureTarget } from "../constants/TextureType";
 declare var WebGL2RenderingContext: any;
 
 class SimpleTexture3D extends Texture {
+    protected _offsets_: Array<number>;
     constructor (data, size: Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
         const gl = Core.getInstance().getGL();
         if (!(gl instanceof WebGL2RenderingContext)) {
@@ -49,6 +50,7 @@ class SimpleTexture3D extends Texture {
         this._level_ = options.level || 0;
 
         this._compressed_ = Boolean(options.compressed || false);
+        this._offsets_ = options.offsets;
         // TODO: WRAP
 
         this.bind();
@@ -89,41 +91,61 @@ class SimpleTexture3D extends Texture {
         gl.generateMipmap(gl.TEXTURE_3D);
         gl.bindTexture(gl.TEXTURE_3D, null);*/
 
-        if (this._compressed_) {
-            /*gl.compressedTexImage3D(
-                this._target,
-                0,  // level
-                format,
-                size.x,
-                size.y,
-                size.z,
-                0,
-                data);*/
+        if (this._offsets_ && this._offsets_.length === 3) {
+            if (this._compressed_) {
+                gl.compressedTexSubImage3D(
+                    this._target_,
+                    this._level_,
+                    this._offsets_[0],
+                    this._offsets_[1],
+                    this._offsets_[2],
+                    size.x,
+                    size.y,
+                    size.z,
+                    this._format_,
+                    data
+                );
+            } else {
+                gl.texSubImage3D(
+                    this._target_,
+                    this._level_,
+                    this._offsets_[0],
+                    this._offsets_[1],
+                    this._offsets_[2],
+                    size.x,
+                    size.y,
+                    size.z,
+                    this._format_,
+                    this._type_,
+                    data
+                );
+            }
         } else {
-            /*gl.texSubImage3D(
-                this._target,
-                0,  // level
-                _internalformat,    // Internal format A GLenum specifying the format of the texel data
-                size.x,
-                size.y,
-                size.z,
-                0,
-                _format,    // Format2
-                _type,  // A GLenum specifying the data type of the texel data
-                data
-            );*/
-            gl.texImage3D(
-                this._target_,
-                this._level_,
-                this._internalformat_,
-                size.x,
-                size.y,
-                size.z,
-                0,
-                this._format_,
-                this._type_,
-                data
-            );
+            if (this._compressed_) {
+                gl.compressedTexImage3D(
+                    this._target_,
+                    this._level_,
+                    this._format_,
+                    size.x,
+                    size.y,
+                    size.z,
+                    0,
+                    data
+                );
+            } else {
+                gl.texImage3D(
+                    this._target_,
+                    this._level_,
+                    this._internalformat_,
+                    size.x,
+                    size.y,
+                    size.z,
+                    0,
+                    this._format_,
+                    this._type_,
+                    data
+                );
+            }
         }
 
         this.minFilter(options.minFilter || TextureType.Nearest);

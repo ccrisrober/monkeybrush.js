@@ -48,6 +48,8 @@ interface TexOptions {
     format?: TextureFormat;
     border?: number;
     compressed?: boolean;
+
+    offsets?: Array<number>;
 };
 
 declare var WebGL2RenderingContext: any;
