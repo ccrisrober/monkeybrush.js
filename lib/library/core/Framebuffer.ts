@@ -41,6 +41,8 @@ class Framebuffer {
     public _renderBuffer: RenderBufferTexture;
     public _depth: SimpleTexture2D;
 
+    protected _valid: boolean = false;
+
     // TODO: Stencil unused
     constructor(textures: Array<Texture>, size: Vect2, depth: boolean = false,
         stencil: boolean = false, options = {}) {
@@ -134,7 +136,16 @@ class Framebuffer {
             this.destroy();
             this.checkStatus(status);
         }
+        this._valid = true;
         this.unbind();
+    }
+
+    public isValid(): boolean {
+        const gl = Core.getInstance().getGL();
+        this.bind();
+        this._valid = ( gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE );
+        this.unbind();
+        return this._valid;
     }
 
     private checkStatus(status: number) {
