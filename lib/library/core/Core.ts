@@ -26,6 +26,7 @@ import { Context } from "./Context";
 import { PostProcess } from "./PostProcess";
 import { Input } from "./Input";
 import { Log } from "./Log";
+import { Extensions } from "../extras/Extensions";
 
 import { DepthState } from "./DepthState";
 import { CullingState } from "./CullingState";
@@ -34,6 +35,9 @@ import { BlendingState } from "./BlendingState";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
 
 "use strict";
+
+declare var WebGL2RenderingContext: any;
+
 /**
 * This class get WebGL2 context and animationFrame for your navigator.
 *
@@ -56,6 +60,31 @@ class Core {
 
     public initialize(color: Array<number>) {
         const gl = this._gl;
+
+        // Load all extensions if WebGLRenderingContext === 1
+        if (!(this._gl instanceof WebGL2RenderingContext)) {
+            [
+                'OES_element_index_uint',
+                'EXT_sRGB',
+                'EXT_blend_minmax',
+                'EXT_frag_depth',
+                'WEBGL_depth_texture',
+                'WEBKIT_WEBGL_depth_texture',
+                'EXT_shader_texture_lod',
+                'OES_standard_derivatives',
+                'OES_texture_float',
+                'OES_texture_half_float',
+                'OES_texture_half_float_linear',
+                'OES_vertex_array_object',
+                'WEBGL_draw_buffers',
+                'OES_fbo_render_mipmap',
+                'ANGLE_instanced_arrays'
+            ].forEach((ext: string) => {
+                Extensions.get(ext);
+            });
+            console.log("All WebGL1 extensions enabled");
+        }
+
         this.init();
         // ToneMap.init(gl);
         gl.clearColor(color[0], color[1], color[2], color[3]);

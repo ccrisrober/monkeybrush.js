@@ -1,6 +1,9 @@
 import "./polyfills";
 export * from "./constants/constants";
 
+
+export { BillboardOpts, Billboard } from "./extras/Billboard";
+
 // export { Decorators } from "./Decorators";
 
 // __root__
@@ -65,6 +68,7 @@ export { Vector3 } from "./maths/Vector3"
 export { Vector4 } from "./maths/Vector4"
 
 // Models
+export { Capsule } from "./models/Capsule";
 export { Cone } from "./models/Cone";
 export { Cube } from "./models/Cube";
 export { CustomModel } from "./models/CustomModel";

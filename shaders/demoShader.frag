@@ -13,6 +13,12 @@ uniform sampler2D tex2;
 
 uniform vec3 viewPos;
 
+vec3 normals(vec3 pos) {
+    vec3 fdx = dFdx(pos);
+    vec3 fdy = dFdy(pos);
+    return normalize(cross(fdx, fdy));
+}
+
 void main() {
     //fragColor = vec4(outUV, 0.0, 1.0);
 
@@ -46,5 +52,7 @@ void main() {
     diffuse  *= attenuation;
     specular *= attenuation;
 
-    fragColor = vec4(color, 1.0);
+    fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
+
+    //fragColor.rgb = normals(outPosition);
 }

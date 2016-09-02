@@ -24,7 +24,7 @@ void main() {
 
 	vec3 pos = position;
 
-    float heightFactor = 3.5;
+    float heightFactor = 7.5;
 
     const vec2 size = vec2(0.5,0.0);
     const ivec3 off = ivec3(-1,0,1);
@@ -38,7 +38,7 @@ void main() {
     vec3 vb = normalize(vec3(size.yx,s12-s10));
     vec4 bump = vec4( cross(va,vb), s11 );
 
-    pos.y += heightFactor * bump.w; // * sin(time + bump.w);
+    //pos.y += heightFactor * bump.w; // * sin(time + bump.w);
     outNormal = bump.xyz;
 
 
@@ -51,7 +51,7 @@ void main() {
 	pp = view * pp;
 	outPosition = pp.xyz;
 	outUV = uv;
-	outNormal = normalize(normalMatrix * outNormal);
+	outNormal = normalize(normalMatrix * normal);
 	gl_Position = projection * pp;
 
     gl_PointSize = 5.0;

@@ -15,7 +15,7 @@ class MyScene extends MB.Scene {
     protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
     protected camera = new MB.Camera2(this.homePoint);
 
-    protected cubito: MB.Cube;
+    protected cubito: MB.Capsule;
     protected Floor: MB.Floor;
     protected skybox: MB.Skybox;
     protected view: MB.Mat4;
@@ -45,16 +45,27 @@ class MyScene extends MB.Scene {
         MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
 
         MB.Loaders.loadImage("_images/descarga (1).png", "descarga");
-        // MB.Loaders.loadImage("assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
-        MB.Loaders.loadImage("assets/images/heightmap.png", "heightmap");
-        // MB.Loaders.loadImage("assets/images/3_no_ice_clouds_8k.jpg", "earth");
-        MB.Loaders.loadImage("_images/descarga (1).png", "earth");
+        MB.Loaders.loadImage("assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
+        // MB.Loaders.loadImage("assets/images/heightmap.png", "heightmap");
+        MB.Loaders.loadImage("assets/images/3_no_ice_clouds_8k.jpg", "earth");
+        // MB.Loaders.loadImage("_images/descarga (1).png", "earth");
         MB.Loaders.loadImage("assets/images/55ac38bc604ce.jpg", "55ac38bc604ce");
     }
     protected tex2d: MB.Texture2D;
     protected tex2d2: MB.Texture2D;
+    protected tex2d3: MB.Texture2D;
     initialize() {
         this.skybox = new MB.Skybox("assets/images/hw_mystic", this._webglVersion === 2);
+
+        let neoGeoImage = MB.ResourceMap.retrieveAsset("monkey");
+        // const gl = MB.Core.getInstance().getGL();
+        this.tex2d3 = new MB.Texture2D(neoGeoImage, {
+            flipY: true,
+            minFilter: MB.TextureType.Nearest,
+            magFilter: MB.TextureType.Nearest,
+            wrapS: MB.TextureType.Clamp2Edge,
+            wrapT: MB.TextureType.Clamp2Edge
+        });
 
         let grassImage = MB.ResourceMap.retrieveAsset("earth");
         this.tex2d = new MB.Texture2D(grassImage, {
@@ -74,7 +85,7 @@ class MyScene extends MB.Scene {
             wrapS: MB.TextureType.Clamp2Edge,
             wrapT: MB.TextureType.Clamp2Edge
         });
-        this.cubito = new MB.Cube(25.0);
+        this.cubito = new MB.Capsule(5.0, 2.5, 12, 12);
         this.Floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
