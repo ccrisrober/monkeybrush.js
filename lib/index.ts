@@ -15,7 +15,7 @@ class MyScene extends MB.Scene {
     protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
     protected camera = new MB.Camera2(this.homePoint);
 
-    protected cubito: MB.Plane;
+    protected cubito: MB.Cube;
     protected Floor: MB.Floor;
     protected skybox: MB.Skybox;
     protected view: MB.Mat4;
@@ -74,7 +74,7 @@ class MyScene extends MB.Scene {
             wrapS: MB.TextureType.Clamp2Edge,
             wrapT: MB.TextureType.Clamp2Edge
         });
-        this.cubito = new MB.Plane(50.0, 30.0, 200.0, 200.0);
+        this.cubito = new MB.Cube(25.0);
         this.Floor = new MB.Floor(82.0);
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
