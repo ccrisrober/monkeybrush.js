@@ -51,7 +51,7 @@ void main() {
 	pp = view * pp;
 	outPosition = pp.xyz;
 	outUV = uv;
-	outNormal = normalize(normalMatrix * outNormal);
+	outNormal = normalize(normalMatrix * normal);
 	gl_Position = projection * pp;
 
     gl_PointSize = 5.0;

@@ -57,7 +57,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Phong shading
 - [x] Blinn-Phong shading
 - [x] Gaussian shading
-- [ ] Benckmann shading
+- [x] Oren-Nayar shading
+- [x] Benckmann shading
 - [ ] Ward shading
 - [ ] Cook-Torrance shading
 
@@ -90,6 +91,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Box2D
 - [x] Box3D
 - [x] DoubleLinkedList (List)
+- [x] Transpose matrix GLSL (WebGL1)
+- [x] Inverse matrix GLSL (WebGL1)
 - [ ] SIMD instructions
 
 ### Resources
@@ -110,7 +113,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Easing functions
 - [x] VertexArray class
 - [x] Instancing
-- [x] Clock
+- [ ] GlobalState
 - [ ] Sprites (HUD)
 - [ ] Picking
 - [ ] Multi context
@@ -124,13 +127,22 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [ ] Array remove by index
 
 ### Others
+- [x] Skybox
+- [x] Easing functions
+- [x] Noise generator
+- [x] Clock
 - [x] Billboard
+- [x] WebVR supporting
+- [x] Enconding
+
 
 ### Development
 - [x] Grunt integration
 - [x] Webpack integration
 - [x] Typescript definition file for WebGL2RenderingContext
 - [x] Shader uniforms and attributes extraction
+- [x] Clean project generator (Simple project gen.) (https://github.com/maldicion069/monkeybrush-generator)
+- [ ] MonkeyBrush-frags (Two triangles rendering!) (https://github.com/maldicion069/monkeybrush-frags)
 
 ### Demos
 - [x] Rim Lighting

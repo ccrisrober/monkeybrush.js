@@ -54,5 +54,5 @@ void main() {
 
     fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
 
-    fragColor.rgb = normals(outPosition);
+    //fragColor.rgb = normals(outPosition);
 }
