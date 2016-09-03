@@ -76,61 +76,61 @@ class Camera2 {
 
         let speed = 1.0;
 
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.Left_Shift)) {
+        if (Input.isKeyPressed(Input.keys.Left_Shift)) {
             speed = 2.5;
         }
 
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.Z)) {
+        if (Input.isKeyPressed(Input.keys.Z)) {
             if (this.fov > 30.0) {
                 this.fov -= 0.5;
                 this._updateCamera = true;
             }
         }
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.X)) {
+        if (Input.isKeyPressed(Input.keys.X)) {
             if (this.fov < 90.0) {
                 this.fov += 0.5;
                 this._updateCamera = true;
             }
         }
 
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.W)) {
+        if (Input.isKeyPressed(Input.keys.W)) {
             this.processKeyboard(4, speed);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.S)) {
+        if (Input.isKeyPressed(Input.keys.S)) {
             this.processKeyboard(5, speed);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.A)) {
+        if (Input.isKeyPressed(Input.keys.A)) {
             this.processKeyboard(2, speed);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.D)) {
+        if (Input.isKeyPressed(Input.keys.D)) {
             this.processKeyboard(3, speed);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.E)) {
+        if (Input.isKeyPressed(Input.keys.E)) {
             this.processKeyboard(0, speed);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(Input.getInstance().keys.Q)) {
+        if (Input.isKeyPressed(Input.keys.Q)) {
             this.processKeyboard(1, speed);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(38)) {
+        if (Input.isKeyPressed(38)) {
             this.processMouseMovement(0.0, 2.5);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(40)) {
+        if (Input.isKeyPressed(40)) {
             this.processMouseMovement(0.0, -2.5);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(37)) {
+        if (Input.isKeyPressed(37)) {
             // this.processMouseMovement(2.5, 0.0);
             this.processMouseMovement(-2.5, 0.0);
             this._updateCamera = true;
         }
-        if (Input.getInstance().isKeyPressed(39)) {
+        if (Input.isKeyPressed(39)) {
             // this.processMouseMovement(-2.5, 0.0);
             this.processMouseMovement(2.5, 0.0);
             this._updateCamera = true;

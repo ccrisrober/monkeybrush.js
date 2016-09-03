@@ -32,7 +32,11 @@ class FreeCamera extends Camera {
      * Update view and projection matrix
      */
     public update() {
-        // TODO
+        this._view._value = mat4.create();
+        // mat4.rotateX(this._view._value, this._view._value, this._rotation[0]);
+        // mat4.rotateY(this._view._value, this._view._value, this._rotation[1]);
+        // mat4.rotateZ(this._view._value, this._view._value, this._rotation[2] - Math.PI);
+        // mat4.translate(this._view._value, this._view._value, [-this._position])
     }
 
 };

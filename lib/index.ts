@@ -122,13 +122,8 @@ class MyScene extends MB.Scene {
         this.cameraUpdate();
     }
     update(dt: number) {
-        if (MB.Input.getInstance().isButtonClicked(MB.Input.mouseButton.Left)) {
+        if (MB.Input.isButtonClicked(MB.Input.mouseButton.Left)) {
             console.log("Mouse left clicked");
-        }
-
-        if (MB.Input.getInstance().isKeyClicked(MB.Input.getInstance().keys.Y)) {
-            console.log("Key Y clicked");
-            this.camera.setHome(this.homePoint);
         }
 
         this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;

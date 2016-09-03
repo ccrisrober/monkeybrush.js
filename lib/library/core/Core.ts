@@ -100,7 +100,7 @@ class Core {
         return this._gl.canvas;
     }
     protected init() {
-        Input.getInstance();
+        Input.initialize();
         PostProcess.initialize();
 
         DepthState.enable();

@@ -20,8 +20,6 @@
 
 "use strict";
 
-// TODO ("WEBGL_draw_buffers");
-
 enum DrawBuffer {
     MaxDrawBuffers = 0x8824,
     DrawBuffer0  = 0x8825,

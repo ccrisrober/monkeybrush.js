@@ -112,7 +112,7 @@ abstract class Scene {
                 (function __render__(dt?: number) {
                     requestAnimationFrame(__render__);
                     // console.log(dt);
-                    Input.getInstance().update();
+                    Input.update();
 
                     self.stats.begin();
                     dt *= 0.001; // convert to seconds
