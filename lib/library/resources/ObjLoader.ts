@@ -41,7 +41,7 @@ namespace ObjLoader {
         let split = line.split(" ");
         split.forEach((value: any) => {
             if (!isNaN(value)) {
-                values.push(value);
+                values.push(parseFloat(value));
             }
         });
 

@@ -8,6 +8,29 @@ import { ProgramCte } from "../constants/ProgramCte";
 import { ProgramManager } from "../resources/ProgramManager";
 import { Drawable } from "../models/Drawable";
 
+
+/*
+gl.drawArrays(...)
+var vertices = new Float32Array([
+    0.0, 0.0, 0.0,
+    dim, 0.0, 0.0,
+    0.0, 0.0, 0.0,
+    0.0, dim, 0.0,
+    0.0, 0.0, 0.0,
+    0.0, 0.0, dim
+]);
+
+var colors = new Float32Array([
+    1.0, 0.0, 0.0,
+    1.0, 0.6, 0.0,
+    0.0, 1.0, 0.0,
+    0.6, 1.0, 0.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.6, 1.0
+]);
+
+ */
+
 class Axis extends Drawable {
     public indices = [0, 1, 2, 3, 4, 5];
     public colors = [
@@ -44,9 +67,9 @@ class Axis extends Drawable {
                 layout(location = 0) in vec3 position;
                 layout(location = 1) in vec3 color;
 
-                uniform Mat4 projection;
-                uniform Mat4 view;
-                uniform Mat4 model;
+                uniform mat4 projection;
+                uniform mat4 view;
+                uniform mat4 model;
 
                 void main() {
                     gl_Position = projection * view * model * vec4(position, 1.0);
