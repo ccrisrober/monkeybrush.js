@@ -5,6 +5,7 @@ export * from "./constants/constants";
 export { BillboardOpts, Billboard } from "./extras/Billboard";
 export { RandomGenerator } from "./extras/RandomGenerator";
 export { ParametricGeom } from "./models/ParametricGeom";
+export { PostProcess2 } from "./postprocess/PostProcess2";
 
 // export { Decorators } from "./Decorators";
 
@@ -41,6 +42,7 @@ export { VertexUBO } from "./core/VertexUBO";
 
 export { Axis } from "./extras/Axis";
 export { Color3 } from "./extras/Color3";
+export { Color4 } from "./extras/Color4";
 export { Easing } from "./extras/Easing";
 export { Extensions } from "./extras/Extensions";
 export { Noise } from "./extras/Noise";

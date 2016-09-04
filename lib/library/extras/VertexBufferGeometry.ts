@@ -69,11 +69,11 @@ class VertexBufferGeometry {
             }
         }
     };
-    public toNotIndexed(): BufferGeometry {
+    public toNotIndexed(): VertexBufferGeometry {
         if (!this._indices) {
             return;
         }
-        let geom2 = new BufferGeometry();
+        let geom2 = new VertexBufferGeometry();
 
         for (let attrName in this._attrs) {
             let attribute = this._attrs[attrName];
@@ -93,7 +93,7 @@ class VertexBufferGeometry {
         }
         return geom2;
     };
-    public merge(geom2: BufferGeometry, offset: number = 0): BufferGeometry {
+    public merge(geom2: VertexBufferGeometry, offset: number = 0): VertexBufferGeometry {
         for (let name in this._attrs) {
             // Only merging exists attributes
             if (!geom2._attrs[name]) continue;

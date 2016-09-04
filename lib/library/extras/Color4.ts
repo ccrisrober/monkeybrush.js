@@ -22,22 +22,24 @@
 
 "use strict";
 
-class Color3 {
+class Color4 {
     /**
      * [Array description]
      * @param {[type]} 3 [description]
      */
-    protected _color = new Array(3);
+    protected _color = new Float32Array(4);
     /**
      * [constructor description]
      * @param {number} r [description]
      * @param {number} g [description]
      * @param {number} b [description]
+     * @param {number} a [description]
      */
-    constructor(r: number, g: number, b: number) {
+    constructor(r: number, g: number, b: number, a: number) {
         this.r = r;
         this.g = g;
         this.b = b;
+        this.a = a;
     }
     /**
      * @return {number}
@@ -52,6 +54,10 @@ class Color3 {
      */
     get b(): number { return this._color[2]; }
     /**
+     * @return {number}
+     */
+    get a(): number { return this._color[3]; }
+    /**
      * @param {number}
      */
     set r(r: number) { this._color[0] = r; }
@@ -64,25 +70,31 @@ class Color3 {
      */
     set b(b: number) { this._color[2] = b; }
     /**
-     * [setRGB description]
+     * @param {number}
+     */
+    set a(a: number) { this._color[3] = a; }
+    /**
+     * [setRGBA description]
      * @param  {number} r [description]
      * @param  {number} g [description]
      * @param  {number} b [description]
-     * @return {Color3}    [description]
+     * @return {Color4}    [description]
      */
-    public setRGB(r: number, g: number, b: number): Color3 {
+    public setRGBA(r: number, g: number, b: number, a: number): Color4 {
         this.r = r;
         this.g = g;
         this.b = b;
+        this.a = a;
 
         return this;
     }
     /**
      * [toHSL description]
-     * @return {Color3} [description]
+     * @return {Color4} [description]
      */
-    public toHSL(): Color3 {
-        const max = Math.max(this.r, this.g, this.b),
+    public toHSL(): Color4 {
+        const
+            max = Math.max(this.r, this.g, this.b),
             min = Math.min(this.r, this.g, this.b);
 
         let h, s, l = (max + min) / 2;
@@ -100,8 +112,8 @@ class Color3 {
             }
             h /= 6;
         }
-        return new Color3(h, s, l);
+        return new Color4(h, s, l, this.a);
     }
 };
 
-export { Color3 };
+export { Color4 };
