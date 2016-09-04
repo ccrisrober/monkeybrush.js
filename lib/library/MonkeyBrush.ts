@@ -3,6 +3,8 @@ export * from "./constants/constants";
 
 
 export { BillboardOpts, Billboard } from "./extras/Billboard";
+export { RandomGenerator } from "./extras/RandomGenerator";
+export { ParametricGeom } from "./models/ParametricGeom";
 
 // export { Decorators } from "./Decorators";
 
@@ -51,6 +53,7 @@ export { Skybox } from "./extras/Skybox";
 
 // Lights
 export { Light } from "./lights/Light";
+export { HemisphericLight } from "./lights/HemisphericLight";
 export { DirectionalLight } from "./lights/DirectionalLight";
 export { PointLight } from "./lights/PointLight";
 export { SpotLight } from "./lights/SpotLight";
@@ -66,6 +69,7 @@ export { Vect4 } from "./maths/Vect4"
 export { Vector2 } from "./maths/Vector2"
 export { Vector3 } from "./maths/Vector3"
 export { Vector4 } from "./maths/Vector4"
+export { Spline2D, Spline3D } from "./maths/Spline"
 
 // Models
 export { Capsule } from "./models/Capsule";

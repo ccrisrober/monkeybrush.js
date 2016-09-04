@@ -30,7 +30,6 @@ import {Mat3} from "./Mat3";
  * @class Mat4
  */
 class Mat4 {
-    protected _pepe: string;
 
     public _value: Float32Array = new Float32Array(16);
     /**

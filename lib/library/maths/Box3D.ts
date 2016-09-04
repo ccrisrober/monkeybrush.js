@@ -74,6 +74,37 @@ class Box3D {
         }
         return true;
     };
+
+
+    public static createFromArray (array: ArrayLike<number>): Box3D {
+        let minX = +Infinity;
+        let minY = +Infinity;
+        let minZ = +Infinity;
+
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        let maxZ = -Infinity;
+
+        for (let i = 0, size = array.length; i < size; i += 3) {
+            const
+                x = array[i],
+                y = array[i + 1],
+                z = array[i + 2];
+
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (z < minZ) minZ = z;
+
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+            if (z > maxZ) maxZ = z;
+        }
+
+        return new Box3D(
+            new Vect3(minX, minY, minZ),
+            new Vect3(maxX, maxY, maxZ)
+        );
+    };
 };
 
 export { Box3D };

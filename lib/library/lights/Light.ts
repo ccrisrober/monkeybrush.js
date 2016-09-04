@@ -41,6 +41,7 @@ abstract class Light {
      * @type {Color3}
      */
     protected _color: Color3;
+    protected _specColor: Color3;
     protected _enable: boolean;
     /**
      * [Attenuation light value]
@@ -53,6 +54,7 @@ abstract class Light {
     constructor() {
         this._intensity = 1.0;
         this._color = new Color3(1.0, 1.0, 1.0);
+        this._specColor = new Color3(1.0, 1.0, 1.0);
         this._enable = true;
         this._attenuation = new Vect3(
             1.0,        // Constant
@@ -100,15 +102,25 @@ abstract class Light {
     set intensity(intensity: number) { this._intensity = intensity; }
 
     /**
-     * Get light color.
+     * Get light diffuse color.
      * @return {Color3}
      */
     get color(): Color3 { return this._color; }
     /**
-     * Set light color
+     * Set light diffuse color
      * @param {Color3} color: Color value
      */
     set color(color: Color3) { this._color = color; }
+    /**
+     * Get light specular color.
+     * @return {Color3}
+     */
+    get specularColor(): Color3 { return this._specColor; }
+    /**
+     * Set light specular color
+     * @param {Color3} color: Color value
+     */
+    set specularColor(color: Color3) { this._specColor = color; }
 };
 
 export { Light };

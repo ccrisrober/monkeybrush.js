@@ -18,9 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Object3D.ts" />
-/// <reference path="../lights/Light.ts" />
-
+import { Camera } from "../camera/Camera";
 import { Object3D } from "./Object3D";
 import { Light } from "./../lights/Light";
 
@@ -28,6 +26,7 @@ import { Light } from "./../lights/Light";
 
 class SceneGraph {
     protected _root: Object3D;
+    protected _camera: Camera;
     protected _lights: Array<Light>;
     constructor() {
         this._lights = [];

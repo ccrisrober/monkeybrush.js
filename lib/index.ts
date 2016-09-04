@@ -25,10 +25,61 @@ class MyScene extends MB.Scene {
     protected model;
     protected angle = 0;
 
+    protected spline: MB.Spline3D;
+    protected function: MB.ParametricGeom;
+
     constructor() {
         super(SimpleConfig(), "App", 2);
         this.identityMatrix = new MB.Mat4().identity;
         this.model = new MB.Mat4();
+
+        this.spline = new MB.Spline3D("catmullRom", [
+            new MB.Vect3(-100, 20, 100),
+            new MB.Vect3(-40, 20, 20),
+            new MB.Vect3(0, 20, -100),
+            new MB.Vect3(20, 20, -100),
+            new MB.Vect3(40, 20, 100),
+            new MB.Vect3(70, 20, 10),
+            new MB.Vect3(100, 20, 30),
+            new MB.Vect3(-100, 20, 100)
+        ]);
+
+        this.function = new MB.ParametricGeom(function(u: number, v: number): MB.Vect3 {
+            /*var r = 50;
+            var x = Math.sin(u) * r;
+            var z = Math.sin(v / 2) * 2 * r;
+            var y = (Math.sin(u * 4 * Math.PI) + Math.cos(v * 2 * Math.PI)) * 2.8;
+            return new MB.Vect3(x, y, z);*/
+
+            /*u *= Math.PI;
+            v *= 2 * Math.PI;
+            u = u * 2;
+            var x, y, z;
+            if (u < Math.PI) {
+                x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(u) * Math.cos(v);
+                z = -8 * Math.sin(u) - 2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v);
+            } else {
+                x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(v + Math.PI);
+                z = -8 * Math.sin(u);
+            }
+            y = -2 * (1 - Math.cos(u) / 2) * Math.sin(v);
+            return new MB.Vect3(x, y, z);*/
+
+            /*var u = (u * 2 * Math.PI) - Math.PI;
+            var v = (v * 2 * Math.PI) - Math.PI;
+            var x = Math.sin(u) * Math.sin(v) + 0.05 * Math.cos(20 * v);
+            var y = Math.cos(u) * Math.sin(v) + 0.05 * Math.cos(20 * u);
+            var z = Math.cos(v);
+            return new MB.Vect3(x, y, z);*/
+
+            var u = u * Math.PI * 2;
+            var v = v * 8 * Math.PI;
+            var x = Math.pow(1.2, v) * Math.pow((Math.sin(u)), 0.5) * Math.sin(v);
+            var y = v * Math.sin(u) * Math.cos(u);
+            var z = Math.pow(1.2, v) * Math.pow((Math.sin(u)), 0.3) * Math.cos(v);
+            return new MB.Vect3(x, y, z);
+        }, 120, 120);
+        console.log(this.function);
     }
 
     protected mainShader: string = "prog";
@@ -88,10 +139,10 @@ class MyScene extends MB.Scene {
 
         const obj = MB.ObjLoader.loadObj("assets/objects/example.obj");
         this.cubito = new MB.CustomModel({
-            vertices: obj["vertices"],
-            normals: obj["normals"],
-            indices: obj["indices"],
-            texCoords: obj["texCoords"]
+            vertices: this.function.verts,// obj["vertices"],
+            normals: this.function.normals,// obj["normals"],
+            indices: this.function.indices // obj["indices"],
+            // texCoords: obj["texCoords"]
         });
         // new MB.Capsule(5.0, 2.5, 12, 12);
         this.Floor = new MB.Floor(82.0);
@@ -162,6 +213,7 @@ class MyScene extends MB.Scene {
                 mode = "render3";
                 break;
         }
+        /**
         for (i = -varvar; i < varvar; i += 10.0) {
             for (j = -varvar; j < varvar; j += 10.0) {
                 for (k = -varvar; k < varvar; k += 10.0) {
@@ -178,8 +230,30 @@ class MyScene extends MB.Scene {
                 }
             }
         }
+        /**/
+        /*if (this.pos <= 1) {
+            let position = this.spline.evaluate(this.pos);
+            i = position.x;
+            j = position.y;
+            k = position.z;
+
+            this.pos += 0.001;
+        } else {
+            this.pos = 0;
+        }*/
+
+        /*this.model =
+            this.model
+                .reset()
+                .translate(new MB.Vect3(i * 1.0, j * 1.0, k * 1.0))
+                .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                // .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
+                .scale(new MB.Vect3(0.25, 0.25, 0.25));
+        prog.sendUniformMat4("model", this.model);
+        this.cubito[mode]();*/
         this.skybox.render(this.view, this.projection);
     }
+    public pos = 0;
     cameraUpdate() {
         let canvas = MB.Core.getInstance().canvas();
         this.view = this.camera.GetViewMatrix();

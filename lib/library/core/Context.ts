@@ -35,7 +35,7 @@ import { Log } from "./Log";
  * failIfMajorPerformanceCaveat: Boolean that indicates if a context will be created if the system
  *         performance is low.
  */
-
+// TODO: WebGL isn't supported alert
 class Context {
     static _gl: WebGL2RenderingContext = null;
     static _canvas: HTMLCanvasElement = null;

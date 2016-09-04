@@ -27,7 +27,7 @@ void main() {
     //fragColor = vec4(outNormal, 1.0);
 
     vec3 color = vec3(0.0, 0.0, 1.0);
-    color = texture(tex2, outUV).xyz;
+    //color = texture(tex2, outUV).xyz;
 
     // Ambient
     vec3 ambient = vec3(0.2);
@@ -48,11 +48,11 @@ void main() {
     float dst    = length(lp - outPosition);
     float attenuation = 1.0f / (1.0 + 0.09 * dst + 0.032 * (dst * dst));
 
-    ambient  *= attenuation;
-    diffuse  *= attenuation;
-    specular *= attenuation;
+    //ambient  *= attenuation;
+    //diffuse  *= attenuation;
+    //specular *= attenuation;
 
     fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
 
-    //fragColor.rgb = normals(outPosition);
+    fragColor.rgb = norm;
 }
