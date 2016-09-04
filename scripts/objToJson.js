@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 function loadObj(filename, outputFile) {
     var verts = [],
         normals = [],
