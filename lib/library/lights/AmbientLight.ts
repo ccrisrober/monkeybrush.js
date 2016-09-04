@@ -33,45 +33,16 @@ import { Color3 } from "../extras/Color3";
  *     the sky) and one for the specular.
  */
 /**
- * Hemispheric light class
- * @class HemisphericLight
+ * Ambient light class
+ * @class AmbientLight
  */
-class HemisphericLight extends Light {
+class AmbientLight extends Light {
     /**
-     * [Light direction]
-     * @type {Vect3}
+     * Ambient light constructor
      */
-    protected _direction: Vect3;
-    protected _groundColor: Color3;
-    /**
-     * Hemispheric light constructor
-     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction [description]
-     */
-    constructor(direction: Vect3 = new Vect3(0.0, 0.0, 0.0)) {
+    constructor() {
         super();
-        this._direction = direction;
-        this._groundColor = new Color3(0.0, 0.0, 0.0);
     }
-    /**
-     * Get light direction
-     * @return {Vect3}
-     */
-    get direction(): Vect3 { return this._direction; }
-    /**
-     * Set light direction
-     * @param {Vect3} direction
-     */
-    set direction(direction: Vect3) { this._direction = direction; }
-    /**
-     * Get light ground color
-     * @return {Color3}
-     */
-    get groundColor(): Color3 { return this._groundColor; }
-    /**
-     * Set light ground color
-     * @param {Color3} color
-     */
-    set groundColor(color: Color3) { this._groundColor = color; }
 };
 
-export { HemisphericLight };
+export { AmbientLight };

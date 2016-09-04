@@ -55,6 +55,7 @@ export { Skybox } from "./extras/Skybox";
 
 // Lights
 export { Light } from "./lights/Light";
+export { AmbientLight } from "./lights/AmbientLight";
 export { HemisphericLight } from "./lights/HemisphericLight";
 export { DirectionalLight } from "./lights/DirectionalLight";
 export { PointLight } from "./lights/PointLight";
