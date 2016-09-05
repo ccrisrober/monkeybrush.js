@@ -71,6 +71,19 @@ namespace Loaders {
     function _getAlias(src: string, alias: string = ""): string {
         return (alias.length < 1) ? src : alias;
     };
+    export function xhrLoader(url: string, sync: boolean = true,
+        responseType: string = "arraybuffer", onLoad, onError = () => { /**/ }) {
+        let request = new XMLHttpRequest();
+
+        request.open("GET", url, sync);
+
+        request.responseType = responseType;
+
+        request.onload = onLoad;
+        request.onerror = onError;
+
+        request.send();
+    };
     export function loadVideo(videoSrc: string, alias: string = "") {
         alias = _getAlias(videoSrc, alias);
         if (!ResourceMap.isAssetLoaded(alias)) {
@@ -78,7 +91,7 @@ namespace Loaders {
             ResourceMap.asyncLoadRequested(alias);
 
             // Async request the data from server
-            let request = new XMLHttpRequest();
+            /*let request = new XMLHttpRequest();
             request.open("GET", videoSrc, true);
 
             request.responseType = "arraybuffer";
@@ -93,7 +106,16 @@ namespace Loaders {
                 }, false);
             }.bind(this);
 
-            request.send();
+            request.send();*/
+            xhrLoader(videoSrc, true, "arraybuffer", function(ev: ProgressEvent) {
+                // Asynchronously decode, then call the function in parameter.
+                let video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
+                video.src = videoSrc;
+                video.addEventListener("loadeddata", function() {
+                    // Video is loaded and can be played
+                    ResourceMap.asyncLoadCompleted(alias, video);
+                }, false);
+            }.bind(this));
         }
         /*// Create HTML Video Element to play the video
         var video = document.createElement('video');
@@ -497,19 +519,6 @@ namespace Loaders {
      */
     export function unloadHDRImage(imageSrc: string) {
         ResourceMap.unloadAsset(imageSrc);
-    };
-    export function xhrLoader(url: string, sync: boolean = true,
-        responseType: string = "arraybuffer", onLoad, onError = () => { /**/ }) {
-        let request = new XMLHttpRequest();
-
-        request.open("GET", url, sync);
-
-        request.responseType = responseType;
-
-        request.onload = onLoad;
-        request.onerror = onError;
-
-        request.send();
     };
 };
 

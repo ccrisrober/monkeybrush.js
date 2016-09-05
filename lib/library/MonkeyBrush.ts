@@ -6,6 +6,15 @@ export { BillboardOpts, Billboard } from "./extras/Billboard";
 export { RandomGenerator } from "./extras/RandomGenerator";
 export { ParametricGeom } from "./models/ParametricGeom";
 export { PostProcess2 } from "./postprocess/PostProcess2";
+export { PointCloud } from "./extras/PointCloud";
+
+
+export { BufferAttribute }
+    from "./extras/VertexBufferGeometry";
+export { VertexBufferGeometry }
+    from "./extras/VertexBufferGeometry";
+
+
 
 // export { Decorators } from "./Decorators";
 

@@ -17,7 +17,8 @@ class BufferAttribute {
         return this._arr.length / this._size;
     }
 };
-class InstancedBufferAttribute extends BufferAttribute {
+
+/*class InstancedBufferAttribute extends BufferAttribute {
     protected _meshPerAttr: number;
     constructor(arr: ArrayLike<number>, size: number, meshPerAttr: number = 1) {
         super(arr, size);
@@ -25,6 +26,7 @@ class InstancedBufferAttribute extends BufferAttribute {
     }
     get meshPerAttr(): number { return this._meshPerAttr; };
 };
+
 class InstancedInterleavedBuffer extends BufferAttribute {
     protected _meshPerAttr: number;
     constructor(arr: ArrayLike<number>, stride: number, meshPerAttr: number = 1) {
@@ -32,7 +34,8 @@ class InstancedInterleavedBuffer extends BufferAttribute {
         this._meshPerAttr = meshPerAttr;
     }
     get meshPerAttr(): number { return this._meshPerAttr; };
-};
+};*/
+
 class VertexBufferGeometry {
     protected _indices: Uint16Array = null;
     protected _attrs: { [ key: string ]: BufferAttribute; } = {};
@@ -48,6 +51,7 @@ class VertexBufferGeometry {
     public setIndex(indices) {
         this._indices = indices;
     };
+    get indices(): Uint16Array { return this._indices; };
     public normalizeNormals() {
         if (this._attrs["normals"]) {
             let normals: ArrayLike<number> = this._attrs["normals"].array;
@@ -121,4 +125,4 @@ class VertexBufferGeometry {
     }
 };
 
-export { VertexBufferGeometry };
+export { BufferAttribute, VertexBufferGeometry };

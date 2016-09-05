@@ -20,10 +20,10 @@ uniform float time;
 uniform sampler2D tex;
 
 void main() {
-	mat3 normalMatrix = mat3(inverse(transpose(model)));
 
 	vec3 pos = position;
 
+    /*mat3 normalMatrix = mat3(inverse(transpose(model)));
     float heightFactor = 7.5;
 
     const vec2 size = vec2(0.5,0.0);
@@ -42,6 +42,7 @@ void main() {
     outNormal = bump.xyz;
 
 
+    lp = (view * model * vec4(lightPosition, 1.0)).rgb;
 
 
 
@@ -51,9 +52,8 @@ void main() {
 	pp = view * pp;
 	outPosition = pp.xyz;
 	outUV = uv;
-	outNormal = normalize(normalMatrix * normal);
-	gl_Position = projection * pp;
+	outNormal = normalize(normalMatrix * normal);*/
+	gl_Position = projection * view * model * vec4(pos, 1.0);
 
-    gl_PointSize = 5.0;
-	lp = (view * model * vec4(lightPosition, 1.0)).rgb;
+    gl_PointSize = 25.0;
 }

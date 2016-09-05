@@ -1,7 +1,7 @@
 import { PostProcess2 } from "./PostProcess2";
 
 class BlackAndWhitePostProcess extends PostProcess2 {
-    protected _kernel: number;
+    protected _kernel: Array<number>;
     constructor(kernel: Array<number>) {
         super();
         this._kernel = kernel;
@@ -9,8 +9,8 @@ class BlackAndWhitePostProcess extends PostProcess2 {
 
     // Kernel examples
     public static EmbossKernel = [
-        -2, -1, 0
-        -1,  1, 1
+        -2, -1, 0,
+        -1,  1, 1,
          0,  1, 2
     ];
     public static SharpenKernel = [

@@ -93,6 +93,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] DoubleLinkedList (List)
 - [x] Transpose matrix GLSL (WebGL1)
 - [x] Inverse matrix GLSL (WebGL1)
+- [x] Spline2D
+- [x] Spline3D
 - [ ] SIMD instructions
 
 ### Resources
@@ -105,6 +107,13 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Webcam loader
 - [ ] Fonts
 - [ ] Generate video capture
+
+### Lights
+- [x] Directional Light
+- [x] Point Light
+- [x] Spot Light
+- [x] Ambient Light
+- [x] Hemispheric Light
 
 ### Core
 - [x] App class
