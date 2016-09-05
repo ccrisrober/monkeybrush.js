@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/Core.ts" />
-/// <reference path="../constants/SyncParam.ts" />
-
 import { Core } from "../core/Core";
 import { SyncParam } from "../constants/SyncParam";
 

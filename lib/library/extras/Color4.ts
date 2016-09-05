@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-// TODO: Change _color to Vector3
+// TODO: Change _color to Vector4
 
 "use strict";
 

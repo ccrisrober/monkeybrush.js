@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Light.ts" />
-
 import { Light } from "./Light";
 import { Vect3 } from "../maths/Vect3";
 

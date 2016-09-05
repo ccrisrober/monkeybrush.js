@@ -5,7 +5,8 @@ var WebpackNotifierPlugin = require('webpack-notifier');
 
 module.exports = {
     devtool: 'eval',
-	entry: "./lib/index.ts",
+    context: __dirname + "/lib",
+	entry: "./index.ts",
 	output: {
         publicPath: "/build",
         filename: "bundle.js",

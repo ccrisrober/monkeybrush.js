@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Core.ts" />
-/// <reference path="../constants/ProgramCte.ts" />
-
 import { Core } from "./Core";
 import { ProgramCte } from "../constants/ProgramCte";
 import { Vect2 } from "../maths/Vect2";

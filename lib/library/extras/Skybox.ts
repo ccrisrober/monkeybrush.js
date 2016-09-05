@@ -18,16 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/Core.ts" />
-/// <reference path="../core/Program.ts" />
-/// <reference path="../resources/ResourceMap.ts" />
-/// <reference path="../textures/CubemapTexture.ts" />
-/// <reference path="../core/DepthState.ts" />
-/// <reference path="../constants/ProgramCte.ts" />
-/// <reference path="../constants/ComparisonFunc.ts" />
-/// <reference path="../core/VertexBuffer.ts" />
-/// <reference path="../core/VertexArray.ts" />
-
 import { Core } from "../core/Core";
 import { Program } from "../core/Program";
 import { ResourceMap } from "../resources/ResourceMap";

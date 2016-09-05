@@ -4,7 +4,6 @@ export * from "./constants/constants";
 
 export { BillboardOpts, Billboard } from "./extras/Billboard";
 export { RandomGenerator } from "./extras/RandomGenerator";
-export { ParametricGeom } from "./models/ParametricGeom";
 export { PostProcess2 } from "./postprocess/PostProcess2";
 export { PointCloud } from "./extras/PointCloud";
 
@@ -94,6 +93,7 @@ export { Drawable } from "./models/Drawable";
 export { Floor } from "./models/Floor";
 export { Icosphere } from "./models/Icosphere";
 export { Mesh } from "./models/Mesh";
+export { ParametricGeom } from "./models/ParametricGeom";
 export { Octahedron } from "./models/Octahedron";
 export { Plane } from "./models/Plane";
 export { Prism } from "./models/Prism";
@@ -106,14 +106,13 @@ export { Loaders } from "./resources/Loaders";
 export { ObjLoader } from "./resources/ObjLoader";
 export { ProgramManager } from "./resources/ProgramManager";
 export { ResourceMap } from "./resources/ResourceMap";
-export { VideoSource } from "./resources/VideoSource";
 export { Cache } from "./resources/Cache";
 
 // Scenes
-//// export { Object3D } from "./scene/object3d";
+export { Object3D } from "./scene/Object3D";
 //// export { Pick } from "./scene/pick";
-//// export { Scene } from "./scene/scene";
-//// export { SceneGraph } from "./scene/scenegraph";
+/// export { Scene } from "./scene/Scene";
+export { SceneGraph } from "./scene/SceneGraph";
 
 // Textures
 export { CubeMapTexture } from "./textures/CubemapTexture";

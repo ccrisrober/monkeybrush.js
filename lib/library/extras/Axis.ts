@@ -1,7 +1,5 @@
 // TODO!!!
 
-/// <reference path="../models/Drawable.ts" />
-
 import { Core } from "../core/Core";
 import { Program } from "../core/Program";
 import { ProgramCte } from "../constants/ProgramCte";

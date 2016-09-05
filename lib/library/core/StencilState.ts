@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Core.ts" />
-/// <reference path="../constants/_constants.ts" />
-
 import { Core } from "./Core";
 import { ComparisonFunc } from "../constants/ComparisonFunc";
 import { StencilOp } from "../constants/StencilOp";

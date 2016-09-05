@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../maths/Vector3.ts" />
-
 import { Vect3 } from "../maths/Vect3";
 
 class Ray {

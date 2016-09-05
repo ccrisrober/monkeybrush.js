@@ -19,7 +19,6 @@
 
 // Code based on https://github.com/mikolalysenko/orbit-camera/blob/master/orbit.js
 
-/// <reference path="Camera.ts" />
 import { Camera } from "./Camera";
 
 "use strict";

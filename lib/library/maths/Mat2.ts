@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Vect2.ts" />
-
 import {Vect2} from "./Vect2";
 
 "use strict";

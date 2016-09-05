@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../constants/_constants.ts" />
-/// <reference path="context.ts" />
-
 import { Core } from "./Core";
 
 import { BlendingEq } from "../constants/BlendingEq";

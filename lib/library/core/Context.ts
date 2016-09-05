@@ -19,7 +19,6 @@
 
 
 /// <reference path="../../typings/webgl2.d.ts" />
-/// <reference path="./Log.ts" />
 
 import { Log } from "./Log";
 // TODO: in getContext, check antialias or anothers params

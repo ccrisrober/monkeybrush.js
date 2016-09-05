@@ -95,7 +95,7 @@ class MyScene extends MB.Scene {
         MB.Loaders.loadImage("assets/images/hw_mystic/top.jpg");
 
         MB.Loaders.loadImage("assets/images/matcap_058.png", "monkey");
-        MB.Loaders.loadVideo("assets/video/Possum vs Cat.mp4", "video");
+        // MB.Loaders.loadVideo("assets/video/Possum vs Cat.mp4", "video");
 
         MB.Loaders.loadImage("_images/descarga (1).png", "descarga");
         MB.Loaders.loadImage("assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");

@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/Program.ts" />
-/// <reference path="../constants/ProgramCte.ts" />
-
 import { Program } from "../core/Program.ts";
 import { ProgramCte } from "../constants/ProgramCte";
 

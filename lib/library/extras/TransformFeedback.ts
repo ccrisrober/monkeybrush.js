@@ -18,10 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/Core.ts" />
-/// <reference path="../core/Program.ts" />
-/// <reference path="../constants/TransfFeedCte.ts" />
-
 import { Core } from "../core/Core";
 import { Program } from "../core/Program";
 import { TransfFeedCte } from "../constants/TransfFeedCte";

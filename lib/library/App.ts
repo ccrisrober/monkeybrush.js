@@ -18,11 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="./Decorators.ts" />
-/// <reference path="core/Core.ts" />
-/// <reference path="core/Input.ts" />
-/// <reference path="resources/ResourceMap.ts" />
-/// <reference path="extras/Timer.ts" />
 /// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 
 import { Decorators } from "./Decorators";

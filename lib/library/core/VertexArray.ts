@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../core/Core.ts" />
-/// <reference path="../extras/Extensions.ts" />
-
 import { Core } from "../core/Core";
 import { Extensions } from "../extras/Extensions";
 

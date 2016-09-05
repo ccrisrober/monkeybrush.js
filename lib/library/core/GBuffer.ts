@@ -18,11 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../maths/Vector2.ts" />
-/// <reference path="../textures/simpleTexture2D.ts" />
-/// <reference path="Core.ts" />
-/// <reference path="Framebuffer.ts" />
-
 import { Core } from "./Core";
 import { Vect2 } from "../maths/Vect2";
 import { TextureType } from "../constants/TextureType";

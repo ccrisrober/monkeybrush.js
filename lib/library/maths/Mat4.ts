@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Vect3.ts" />
-
 import {Vect3} from "./Vect3";
 import {Mat3} from "./Mat3";
 

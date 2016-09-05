@@ -18,7 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Camera.ts" />
 import { Camera } from "./Camera";
 
 "use strict";

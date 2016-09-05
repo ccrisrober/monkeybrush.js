@@ -18,12 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Core.ts" />
-/// <reference path="../textures/Texture.ts" />
-/// <reference path="../textures/SimpleTexture2D.ts" />
-/// <reference path="../textures/RenderBufferTexture.ts" />
-/// <reference path="..//maths/Vector2.ts" />
-///
 import { Core } from "./Core";
 import { DrawBuffer } from "../constants/DrawBuffer";
 import { Texture } from "../textures/Texture";

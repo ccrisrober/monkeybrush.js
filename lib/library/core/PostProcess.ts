@@ -18,11 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Core.ts" />
-/// <reference path="./VertexBuffer.ts" />
-/// <reference path="./VertexArray.ts" />
-/// <reference path="../constants/_constants.ts" />
-
 import { Core } from "./Core.ts";
 import { VertexArray } from "./VertexArray.ts";
 import { VertexBuffer } from "./VertexBuffer.ts";

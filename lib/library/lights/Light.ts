@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../extras/Color3.ts" />
-/// <reference path="../maths/Vector3.ts" />
-
 import { Color3 } from "../extras/Color3";
 import { Vect3 } from "../maths/Vect3";
 

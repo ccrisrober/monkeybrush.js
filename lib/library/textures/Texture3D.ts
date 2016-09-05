@@ -18,9 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="../maths/Vect3.ts" />
-/// <reference path="Texture.ts" />
-
 import { Core } from "../core/Core";
 import { Vect3 } from "../maths/Vect3";
 

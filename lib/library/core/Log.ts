@@ -20,6 +20,10 @@
 
 /// <reference path="../../typings/log4javascript.d.ts" />
 
+
+"use strict";
+
+
 // Log.setLevel(Log4javascript.Level.INFO);
 
 let Log = function _log(logName: string): log4javascript.Logger {

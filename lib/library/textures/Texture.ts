@@ -17,10 +17,6 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-/// <reference path="../core/Core.ts" />
-/// <reference path="../maths/Vector2.ts" />
-
 // TODO: hacer unbind al crear textura!!
 
 import { Core } from "../core/Core";
