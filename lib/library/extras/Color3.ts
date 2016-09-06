@@ -102,6 +102,44 @@ class Color3 {
         }
         return new Color3(h, s, l);
     }
+
+    public static lerp(minColor: Color3, maxColor: Color3, alpha: number): Color3 {
+        var r = minColor.r + (maxColor.r - minColor.r) * alpha;
+        var g = minColor.g + (maxColor.g - minColor.g) * alpha;
+        var b = minColor.b + (maxColor.b - minColor.b) * alpha;
+        return new Color3(r, g, b);
+    }
+
+
+    static createFromHex(hex: number): Color3 {
+        return new Color3(
+            (hex >> 16 & 255) / 255,
+            (hex >> 8 & 255) / 255,
+            (hex & 255) / 255
+        );
+    }
+
+    public static Aqua: Color3 = Color3.createFromHex(0x00FFFF);
+    public static Beige: Color3 = Color3.createFromHex(0xF5F5DC);
+    public static Black: Color3 = Color3.createFromHex(0x000000);
+    public static Blue: Color3 = Color3.createFromHex(0x0000FF);
+    public static Brown: Color3 = Color3.createFromHex(0xA52A2A);
+    public static Cyan: Color3 = Color3.createFromHex(0x00FFFF);
+    public static Gold: Color3 = Color3.createFromHex(0xFFD700);
+    public static Gray: Color3 = Color3.createFromHex(0x808080);
+    public static Green: Color3 = Color3.createFromHex(0x008000);
+    public static Grey: Color3 = Color3.createFromHex(0x808080);
+    public static Indigo: Color3 = Color3.createFromHex(0x4B0082);
+    public static Lavender: Color3 = Color3.createFromHex(0xE6E6FA);
+    public static Lime: Color3 = Color3.createFromHex(0x00FF00);
+    public static Magenta: Color3 = Color3.createFromHex(0xFF00FF);
+    public static Olive: Color3 = Color3.createFromHex(0x808000);
+    public static Orange: Color3 = Color3.createFromHex(0xFFA500);
+    public static Pink: Color3 = Color3.createFromHex(0xFFC0CB);
+    public static Purple: Color3 = Color3.createFromHex(0x800080);
+    public static Red: Color3 = Color3.createFromHex(0xFF0000);
+    public static Salmon: Color3 = Color3.createFromHex(0xFA8072);
+    public static Yellow: Color3 = Color3.createFromHex(0xFFFF00);
 };
 
 export { Color3 };

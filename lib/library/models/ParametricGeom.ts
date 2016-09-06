@@ -78,10 +78,116 @@ class ParametricGeom {
         }
 
         // TODO: NORMALS
+        this.normals = function(indices, vertices) {
+          function hypot(x, y, z) {
+            return Math.sqrt(Math.pow(x,2) + Math.pow(y,2) + Math.pow(z,2))
+          }
+
+          function weight(s, r, a) {
+            return Math.atan2(r, (s - a))
+          }
+
+          function mulAdd(dest, s, x, y, z) {
+            dest[0] += s * x
+            dest[1] += s * y
+            dest[2] += s * z
+          }
+
+          function angleNormals(cells, positions) {
+            var numVerts = positions.length / 3;
+            var numCells = cells.length;
+
+            //Allocate normal array
+            var normals = new Array(numVerts);
+            for(var i=0; i<numVerts; i++) {
+              normals[i] = [0,0,0]
+            }
+
+            //Scan cells, and
+            for(var i=0; i<numCells; i+=3) {
+              var cell = [cells[i], cells[i+1], cells[i+2]]
+              var a = [
+                positions[cell[0] * 3],
+                positions[cell[0] * 3 + 1],
+                positions[cell[0] * 3 + 2]];
+              var b = [
+                positions[cell[1] * 3],
+                positions[cell[1] * 3 + 1],
+                positions[cell[1] * 3 + 2]];
+              var c = [
+                positions[cell[2] * 3],
+                positions[cell[2] * 3 + 1],
+                positions[cell[2] * 3 + 2]];
+
+              var abx = a[0] - b[0]
+              var aby = a[1] - b[1]
+              var abz = a[2] - b[2]
+              var ab = hypot(abx, aby, abz)
+
+              var bcx = b[0] - c[0]
+              var bcy = b[1] - c[1]
+              var bcz = b[2] - c[2]
+              var bc = hypot(bcx, bcy, bcz)
+
+              var cax = c[0] - a[0]
+              var cay = c[1] - a[1]
+              var caz = c[2] - a[2]
+              var ca = hypot(cax, cay, caz)
+
+              if(Math.min(ab, bc, ca) < 1e-6) {
+                continue
+              }
+
+              var s = 0.5 * (ab + bc + ca)
+              var r = Math.sqrt((s - ab)*(s - bc)*(s - ca)/s)
+
+              var nx = aby * bcz - abz * bcy
+              var ny = abz * bcx - abx * bcz
+              var nz = abx * bcy - aby * bcx
+              var nl = hypot(nx, ny, nz)
+              nx /= nl
+              ny /= nl
+              nz /= nl
+
+              mulAdd(normals[cell[0]], weight(s, r, bc), nx, ny, nz)
+              mulAdd(normals[cell[1]], weight(s, r, ca), nx, ny, nz)
+              mulAdd(normals[cell[2]], weight(s, r, ab), nx, ny, nz)
+            }
+
+            var nn = [];
+            //Normalize all the normals
+            for(var i=0; i<numVerts; ++i) {
+              var n = normals[i]
+              var l = Math.sqrt(
+                Math.pow(n[0], 2) +
+                Math.pow(n[1], 2) +
+                Math.pow(n[2], 2))
+              if(l < 1e-8) {
+                n[0] = 1
+                n[1] = 0
+                n[2] = 0
+                continue
+              }
+              n[0] /= l;
+              n[1] /= l;
+              n[2] /= l;
+            }
+
+            for(var i = 0; i < normals.length; i++) {
+              nn.push(normals[i][0], normals[i][1], normals[i][2]);
+            }
+
+            return nn;
+          }
+
+          return angleNormals(indices, vertices);
+        }(this.indices, this.verts);
+
 
         console.log({
             vertices: this.verts,
             indices: this.indices,
+            normals: this.normals,
             uvs: this.uvs
         });
     }

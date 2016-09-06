@@ -192,10 +192,10 @@ class MyScene extends MB.Scene {
 
 
         this.cubito = new MB.CustomModel({
-            vertices: Array.from(vbg.getAttr("position").array), //vertices: this.function.verts,// obj["vertices"],
-            //normals: this.function.normals,// obj["normals"],
-            indices: Array.from(vbg.indices) //indices: this.function.indices // obj["indices"],
-            // texCoords: obj["texCoords"]
+            vertices: /*Array.from(vbg.getAttr("position").array), //vertices:*/ this.function.verts,// obj["vertices"],
+            normals: this.function.normals,// obj["normals"],
+            indices: /*Array.from(vbg.indices) //indices:*/ this.function.indices, // obj["indices"],
+            texCoords: this.function.uvs // obj["texCoords"]
         });
         // new MB.Capsule(5.0, 2.5, 12, 12);
         this.Floor = new MB.Floor(82.0);

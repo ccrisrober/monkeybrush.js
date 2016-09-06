@@ -47,6 +47,13 @@ class Box2D {
         this._min = min;
         this._max = max;
     };
+    public containtsPoint(p: Vect2): boolean {
+        if (p.x > this._min.x || p.x < this._max.x ||
+                p.y > this._min.y || p.y < this._max.y) {
+            return true;
+        }
+        return false;
+    }
     /**
      * Check if owner box contains another box
      * @param  {Box2D} b: Another box

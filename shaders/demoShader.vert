@@ -46,14 +46,17 @@ void main() {
 
 
 
-	//outPosition = (view * model * vec4(pos, 1.0)).xyz;
-	vec4 pp = model * vec4(pos, 1.0);
-	pp.xyz += offset;
-	pp = view * pp;
-	outPosition = pp.xyz;
-	outUV = uv;
-	outNormal = normalize(normalMatrix * normal);*/
-	gl_Position = projection * view * model * vec4(pos, 1.0);
+		//outPosition = (view * model * vec4(pos, 1.0)).xyz;
+		vec4 pp = model * vec4(pos, 1.0);
+		pp.xyz += offset;
+		pp = view * pp;
+		outPosition = pp.xyz;
+		outUV = uv;
+		outNormal = normalize(normalMatrix * normal);*/
+		gl_Position = projection * view * model * vec4(pos, 1.0);
 
     gl_PointSize = 25.0;
+		mat3 normalMatrix = mat3(inverse(transpose(model)));
+		outNormal = normal; normalize(normalMatrix * normal);
+		outUV = uv;
 }

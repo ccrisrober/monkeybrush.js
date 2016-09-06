@@ -134,6 +134,15 @@ class Framebuffer {
         this.unbind();
     }
 
+    public setTexture(tex: Texture, attach: number) {
+      if (attach > this._attachments.length) {
+        throw new Error("Attachment undefined");
+      }
+      // TODO
+      // gl.framebufferTexture2D(gl.TEXTURE_2D, gl.COLOR_ATTACHMENT0 + attach,
+      //  gl.TEXTURE_2D, tex.)
+    }
+
     public isValid(): boolean {
         const gl = Core.getInstance().getGL();
         this.bind();

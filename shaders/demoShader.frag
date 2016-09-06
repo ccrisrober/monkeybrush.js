@@ -20,7 +20,7 @@ vec3 normals(vec3 pos) {
 }
 
 void main() {
-    /*//fragColor = vec4(outUV, 0.0, 1.0);
+    //fragColor = vec4(outUV, 0.0, 1.0);
 
     //fragColor = texture(tex, outUV);
 
@@ -52,8 +52,9 @@ void main() {
     //diffuse  *= attenuation;
     //specular *= attenuation;
 
-    fragColor = vec4((ambient + diffuse + specular) * color, 1.0);*/
+    fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
 
+    fragColor.rgb = outNormal;
     //fragColor.rgb = normals(outPosition);
-    fragColor = texture(tex, vec2(gl_PointCoord.x, gl_PointCoord.y));
+    //fragColor = texture(tex, vec2(gl_PointCoord.x, gl_PointCoord.y));
 }
