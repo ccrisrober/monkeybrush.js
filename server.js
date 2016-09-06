@@ -6,7 +6,7 @@ var port = parseInt(process.argv[2]) || 3000;
 
 new WebpackDevServer(webpack(config), {
     publicPath: config.output.publicPath,
-    //hot: true,
+    hot: true,
     //historyApiFallback: true,
     stats: { colors: true }
 }).listen(port, 'localhost', function (err, result) {

@@ -22,7 +22,7 @@ import { Core } from "../core/Core";
 import { Texture, TexOptions } from "./Texture";
 
 import { TextureFormat } from "../constants/TextureFormat";
-import { TextureType, TextureTarget } from "../constants/TextureType";
+import { WrapMode, TextureType, TextureTarget } from "../constants/TextureType";
 
 "use strict";
 
@@ -63,8 +63,8 @@ class Texture2D extends Texture {
         this.magFilter(options.minFilter || TextureType.Nearest);
 
         this.wrap([
-            options.wrapS || TextureType.Clamp2Edge,
-            options.wrapT || TextureType.Clamp2Edge
+            options.wrapS || WrapMode.Clamp2Edge,
+            options.wrapT || WrapMode.Clamp2Edge
         ]);
 
         if (this._flipY_) {

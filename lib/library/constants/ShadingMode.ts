@@ -18,40 +18,12 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Polyhedron } from "./Polyhedron";
-
 "use strict";
 
-/**
- * Octahedron class
- * @class Octahedron
- */
-class Octahedron extends Polyhedron {
-    /**
-     * Octahedron constructor
-     */
-    constructor(radius: number, subdivisions: number) {
-        let verts = [
-             1,  0,  0,
-            -1,  0,  0,
-             0,  1,  0,
-             0, -1,  0,
-             0,  0,  1,
-             0,  0, -1];
-        let el = [
-            0, 2, 4,
-            0, 4, 3,
-            0, 3, 5,
-            0, 5, 2,
-            1, 2, 5,
-            1, 5, 3,
-            1, 3, 4,
-            1, 4, 2
-        ];
-
-
-        super(verts, el, radius, subdivisions);
-    };
+enum ShadingMode {
+    None,
+    Smooth,
+    Flat
 };
 
-export { Octahedron };
+export { ShadingMode };

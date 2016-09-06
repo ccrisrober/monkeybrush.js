@@ -21,7 +21,7 @@
 
 import { Core } from "../core/Core";
 import { Vect2 } from "../maths/Vect2";
-import { TextureType, TextureTarget } from "../constants/TextureType";
+import { WrapMode, TextureType, TextureTarget } from "../constants/TextureType";
 import { TextureFormat } from "../constants/TextureFormat";
 import { Extensions } from "../extras/Extensions";
 
@@ -34,10 +34,10 @@ interface TexOptions {
     minFilter?: TextureType;
     magFilter?: TextureType;
     flipY?: boolean;
-    wrap?: TextureType;
-    wrapS?: TextureType;
-    wrapT?: TextureType;
-    wrapR?: TextureType;
+    wrap?: WrapMode;
+    wrapS?: WrapMode;
+    wrapT?: WrapMode;
+    wrapR?: WrapMode;
     minLOD?: number;
     maxLOD?: number;
     autoMipMap?: boolean;
@@ -56,9 +56,9 @@ abstract class Texture {
     protected _internalformat_: TextureFormat = TextureFormat.RGBA;
     protected _format_: TextureFormat = TextureFormat.RGBA;
 
-    protected _wrapS_: TextureType = TextureType.Nearest;
-    protected _wrapT_: TextureType = TextureType.Nearest;
-    protected _wrapR_: TextureType = TextureType.Nearest;
+    protected _wrapS_: WrapMode = WrapMode.Clamp2Edge;
+    protected _wrapT_: WrapMode = WrapMode.Clamp2Edge;
+    protected _wrapR_: WrapMode = WrapMode.Clamp2Edge;
 
     protected _minFilter_: TextureType = TextureType.Linear;
     protected _magFilter_: TextureType = TextureType.Linear;
@@ -155,14 +155,14 @@ abstract class Texture {
         this._handle_ = null;
     }
     public preventNPOT() {
-        this.wrap([
+        /*this.wrap([
             // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
             TextureType.Linear,
             // Prevents s-coordinate wrapping (repeating).
-            TextureType.Clamp2Edge,
+            WrapMode.Clamp2Edge,
             // Prevents t-coordinate wrapping (repeating).
-            TextureType.Clamp2Edge
-        ]);
+            WrapMode.Clamp2Edge
+        ]);*/
     }
 
 

@@ -87,8 +87,8 @@ class Plane extends Drawable {
             }
         }
 
-        /*
-        WIREFRAME!!
+        /**
+        // WIREFRAME!!
         var newcells = []
 
         for (var i = 0; i < el.length; i+=3) {
@@ -100,7 +100,8 @@ class Plane extends Drawable {
             if (a !== null && c !== null) newcells.push(c, a);
         }
 
-        el = newcells;*/
+        el = newcells;
+        /**/
 
         this._handle = [];
 

@@ -20,8 +20,8 @@
 
 "use strict";
 
-// Data type
-enum DataType {
+// Pixel type
+enum PixelType {
     Byte = 0x1400,
     UByte = 0x1401,
     Short = 0x1402,
@@ -31,4 +31,4 @@ enum DataType {
     Float = 0x1406
 };
 
-export { DataType };
+export { PixelType };

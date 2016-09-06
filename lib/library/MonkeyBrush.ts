@@ -93,11 +93,13 @@ export { Drawable } from "./models/Drawable";
 export { Floor } from "./models/Floor";
 export { Icosphere } from "./models/Icosphere";
 export { Mesh } from "./models/Mesh";
+export { Polyhedron } from "./models/Polyhedron";
 export { ParametricGeom } from "./models/ParametricGeom";
 export { Octahedron } from "./models/Octahedron";
 export { Plane } from "./models/Plane";
 export { Prism } from "./models/Prism";
 export { Sphere } from "./models/Sphere";
+export { Tetraedron } from "./models/Tetraedron";
 export { Torus } from "./models/Torus";
 
 // Resources

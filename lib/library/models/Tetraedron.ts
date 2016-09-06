@@ -23,35 +23,29 @@ import { Polyhedron } from "./Polyhedron";
 "use strict";
 
 /**
- * Octahedron class
- * @class Octahedron
+ * Tetraedron class
+ * @class Tetraedron
  */
-class Octahedron extends Polyhedron {
+class Tetraedron extends Polyhedron {
     /**
-     * Octahedron constructor
+     * Tetraedron constructor
      */
     constructor(radius: number, subdivisions: number) {
         let verts = [
-             1,  0,  0,
-            -1,  0,  0,
-             0,  1,  0,
-             0, -1,  0,
-             0,  0,  1,
-             0,  0, -1];
+             1, 1, 1,
+            -1,-1, 1,
+            -1, 1,-1,
+             1,-1,-1
+         ];
         let el = [
-            0, 2, 4,
-            0, 4, 3,
-            0, 3, 5,
-            0, 5, 2,
-            1, 2, 5,
-            1, 5, 3,
-            1, 3, 4,
-            1, 4, 2
+            2, 1, 0,
+            0, 3, 2,
+            1, 3, 0,
+            2, 3, 1
         ];
-
 
         super(verts, el, radius, subdivisions);
     };
 };
 
-export { Octahedron };
+export { Tetraedron };
