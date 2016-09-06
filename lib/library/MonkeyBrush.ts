@@ -90,6 +90,7 @@ export { CustomModel } from "./models/CustomModel";
 export { Cylinder } from "./models/Cylinder";
 export { Disc } from "./models/Disc";
 export { Drawable } from "./models/Drawable";
+export { Dodecahedron } from "./models/Dodecahedron";
 export { Floor } from "./models/Floor";
 export { Icosphere } from "./models/Icosphere";
 export { Mesh } from "./models/Mesh";

@@ -91,7 +91,7 @@ class MyScene extends MB.Scene {
             wrapT: MB.WrapMode.Clamp2Edge
         });
 
-        this.cubito = new MB.Tetraedron(5.0, 3);
+        this.cubito = new MB.Dodecahedron(5.0, 1);
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
             let prog: MB.Program = new MB.Program();

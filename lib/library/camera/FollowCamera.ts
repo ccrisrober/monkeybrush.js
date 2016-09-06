@@ -1,0 +1,5 @@
+class FollowCamera {
+
+}
+
+export { FollowCamera };
