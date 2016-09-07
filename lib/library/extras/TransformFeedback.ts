@@ -20,31 +20,59 @@
 
 import { Core } from "../core/Core";
 import { Program } from "../core/Program";
-import { TransfFeedCte } from "../constants/TransfFeedCte";
 
 "use strict";
+
+enum TFkMode {
+    Interleaved = 0x8C8C,
+    Separate = 0x8C8D
+};
+
+enum TFPrimitiveType {
+    Points = 0x0000,
+    Lines = 0x0001,
+    Triangles = 0x0004
+};
+
+enum TFTarget {
+    TransformFeedback = 0x8E22
+}
 
 class TransformFeedback {
     protected _handle: WebGLTransformFeedback;
     constructor() {
         const gl = Core.getInstance().getGL();
         this._handle = gl.createTransformFeedback();
-    };
+    }
     public destroy() {
         const gl = Core.getInstance().getGL();
         gl.deleteTransformFeedback(this._handle);
-    };
+        this._handle = null;
+    }
     public bind() {
         const gl = Core.getInstance().getGL();
-        gl.bindTransformFeedback(TransfFeedCte.Normal, this._handle);
+        gl.bindTransformFeedback(TFTarget.TransformFeedback, this._handle);
     };
     public unbind() {
         const gl = Core.getInstance().getGL();
-        gl.bindTransformFeedback(TransfFeedCte.Normal, null);
+        gl.bindTransformFeedback(TFTarget.TransformFeedback, null);
     };
-    public begin(primitiveMode: number) {
+    public begin(mode: TFPrimitiveType) {
         const gl = Core.getInstance().getGL();
-        gl.beginTransformFeedback(primitiveMode);
+        gl.beginTransformFeedback(mode);
+    };
+    public beginPoints() {
+        this.begin(TFPrimitiveType.Points);
+    };
+    public beginLines() {
+        this.begin(TFPrimitiveType.Lines);
+    };
+    public beginTriangles() {
+        this.begin(TFPrimitiveType.Triangles);
+    };
+    public end() {
+        const gl = Core.getInstance().getGL();
+        gl.endTransformFeedback();
     };
     public pause() {
         const gl = Core.getInstance().getGL();
@@ -54,15 +82,11 @@ class TransformFeedback {
         const gl = Core.getInstance().getGL();
         gl.resumeTransformFeedback();
     };
-    public end() {
-        const gl = Core.getInstance().getGL();
-        gl.endTransformFeedback();
-    };
     public varyings(Program: Program, varyings: Array<string>, bufferMode: number) {
         const gl = Core.getInstance().getGL();
-        return gl.transformFeedbackVaryings(Program.id(), varyings, bufferMode);
+        gl.transformFeedbackVaryings(Program.id(), varyings, bufferMode);
     };
-    public getVarying(Program: Program, idx: number) {
+    public getVarying(Program: Program, idx: number): WebGLActiveInfo {
         const gl = Core.getInstance().getGL();
         return gl.getTransformFeedbackVarying(Program.id(), idx);
     };
