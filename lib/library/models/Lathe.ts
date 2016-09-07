@@ -90,6 +90,27 @@ class Lathe {
         }
 
 
+        let vertices: Array<number> = [];
+        for(i = 0; i < this.vertices.length; ++i) {
+            vertices.push(this.vertices[i].x, this.vertices[i].y, this.vertices[i].z);
+        }
+        this.vertices = vertices;
+        let normals: Array<number> = [];
+        for(i = 0; i < this.normals.length; ++i) {
+            normals.push(this.normals[i].x, this.normals[i].y, this.normals[i].z);
+        }
+        this.normals = normals;
+        let uvs: Array<number> = [];
+        for(i = 0; i < this.uvs.length; ++i) {
+            uvs.push(this.uvs[i].x, this.uvs[i].y);
+        }
+        this.uvs = uvs;
+        let indices: Array<number> = [];
+        for(i = 0; i < this.indices.length; ++i) {
+            indices.push(this.indices[i].x, this.indices[i].y, this.indices[i].z);
+        }
+        this.indices = indices;
+
         // if geometry closed, check average along the seam
         if (phiRadius === Math.PI * 2) {
             let n1 = new Vect3();
@@ -118,27 +139,6 @@ class Lathe {
 
             }
         }
-
-        let vertices: Array<number> = [];
-        for(i = 0; i < this.vertices.length; ++i) {
-            vertices.push(this.vertices[i].x, this.vertices[i].y, this.vertices[i].z);
-        }
-        this.vertices = vertices;
-        let normals: Array<number> = [];
-        for(i = 0; i < this.normals.length; ++i) {
-            normals.push(this.normals[i].x, this.normals[i].y, this.normals[i].z);
-        }
-        this.normals = normals;
-        let uvs: Array<number> = [];
-        for(i = 0; i < this.uvs.length; ++i) {
-            uvs.push(this.uvs[i].x, this.uvs[i].y);
-        }
-        this.uvs = uvs;
-        let indices: Array<number> = [];
-        for(i = 0; i < this.indices.length; ++i) {
-            indices.push(this.indices[i].x, this.indices[i].y, this.indices[i].z);
-        }
-        this.indices = indices;
     }
 }
 
