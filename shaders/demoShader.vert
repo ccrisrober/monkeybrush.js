@@ -53,10 +53,12 @@ void main() {
 		outPosition = pp.xyz;
 		outUV = uv;
 		outNormal = normalize(normalMatrix * normal);*/
-		gl_Position = projection * view * model * vec4(pos, 1.0);
+	gl_Position = projection * view * model * vec4(pos, 1.0);
+
+    outPosition = vec3(view * model * vec4(pos, 1.0));
 
     gl_PointSize = 25.0;
-		mat3 normalMatrix = mat3(inverse(transpose(model)));
-		outNormal = normal; normalize(normalMatrix * normal);
-		outUV = uv;
+	mat3 normalMatrix = mat3(inverse(transpose(model)));
+	outNormal = normalize(normalMatrix * normal);
+	outUV = uv;
 }

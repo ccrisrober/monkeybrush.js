@@ -37,7 +37,6 @@ class Icosphere extends Polyhedron {
     constructor(radius: number = 1.0, subdivisions: number = 1) {
         alert(subdivisions);
         subdivisions = Math.trunc(subdivisions);
-        console.log("HOLA");
         if (subdivisions > 10) {
             Log.warn("Please, don´t use more than 8 subdivisions");
             return;

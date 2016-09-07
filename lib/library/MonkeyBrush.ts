@@ -86,6 +86,7 @@ export { Spline2D, Spline3D } from "./maths/Spline"
 export { Capsule } from "./models/Capsule";
 export { Cone } from "./models/Cone";
 export { Cube } from "./models/Cube";
+export { CustomHedron } from "./models/CustomHedron";
 export { CustomModel } from "./models/CustomModel";
 export { Cylinder } from "./models/Cylinder";
 export { Disc } from "./models/Disc";
@@ -93,6 +94,7 @@ export { Drawable } from "./models/Drawable";
 export { Dodecahedron } from "./models/Dodecahedron";
 export { Floor } from "./models/Floor";
 export { Icosphere } from "./models/Icosphere";
+export { Lathe } from "./models/Lathe";
 export { Mesh } from "./models/Mesh";
 export { Polyhedron } from "./models/Polyhedron";
 export { ParametricGeom } from "./models/ParametricGeom";

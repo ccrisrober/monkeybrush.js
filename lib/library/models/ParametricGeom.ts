@@ -42,7 +42,7 @@ class ParametricGeom {
                 u = j / slices;
 
                 evalVect3 = func(u, v);
-                this.verts.push(evalVect3.x, evalVect3.y, evalVect3.z);
+                this.verts.push(new Vect3(evalVect3.x, evalVect3.y, evalVect3.z));
             }
         }
 
@@ -61,153 +61,59 @@ class ParametricGeom {
                 uvc = new Array([(j + 1) / slices, (i + 1) / stacks]);
                 uvd = new Array([j / slices, (i + 1) / stacks]);
 
-                this.indices.push(pA, pB, pD);
-                this.uvs.push(
+                this.indices.push(new Vect3(pA, pB, pD));
+                /*this.uvs.push(
                     uva[0], uva[1],
                     uvb[0], uvb[1],
                     uvd[0], uvd[1]
-                );
+                );*/
 
-                this.indices.push(pB, pC, pD);
-                this.uvs.push(
+                this.indices.push(new Vect3(pB, pC, pD));
+                /*this.uvs.push(
                     uvb[0], uvb[1],
                     uvc[0], uvc[1],
                     uvd[0], uvd[1]
-                );
+                );*/
             }
         }
 
-        // TODO: NORMALS
-        /*this.normals = function(indices, vertices) {
-          function hypot(x, y, z) {
-            return Math.sqrt(Math.pow(x,2) + Math.pow(y,2) + Math.pow(z,2))
-          }
-
-          function weight(s, r, a) {
-            return Math.atan2(r, (s - a))
-          }
-
-          function mulAdd(dest, s, x, y, z) {
-            dest[0] += s * x
-            dest[1] += s * y
-            dest[2] += s * z
-          }
-
-          function angleNormals(cells, positions) {
-            var numVerts = positions.length / 3;
-            var numCells = cells.length;
-
-            //Allocate normal array
-            var normals = new Array(numVerts);
-            for(var i=0; i<numVerts; i++) {
-              normals[i] = [0,0,0]
-            }
-
-            //Scan cells, and
-            for(var i=0; i<numCells; i+=3) {
-              var cell = [cells[i], cells[i+1], cells[i+2]]
-              var a = [
-                positions[cell[0] * 3],
-                positions[cell[0] * 3 + 1],
-                positions[cell[0] * 3 + 2]];
-              var b = [
-                positions[cell[1] * 3],
-                positions[cell[1] * 3 + 1],
-                positions[cell[1] * 3 + 2]];
-              var c = [
-                positions[cell[2] * 3],
-                positions[cell[2] * 3 + 1],
-                positions[cell[2] * 3 + 2]];
-
-              var abx = a[0] - b[0]
-              var aby = a[1] - b[1]
-              var abz = a[2] - b[2]
-              var ab = hypot(abx, aby, abz)
-
-              var bcx = b[0] - c[0]
-              var bcy = b[1] - c[1]
-              var bcz = b[2] - c[2]
-              var bc = hypot(bcx, bcy, bcz)
-
-              var cax = c[0] - a[0]
-              var cay = c[1] - a[1]
-              var caz = c[2] - a[2]
-              var ca = hypot(cax, cay, caz)
-
-              if(Math.min(ab, bc, ca) < 1e-6) {
-                continue
-              }
-
-              var s = 0.5 * (ab + bc + ca)
-              var r = Math.sqrt((s - ab)*(s - bc)*(s - ca)/s)
-
-              var nx = aby * bcz - abz * bcy
-              var ny = abz * bcx - abx * bcz
-              var nz = abx * bcy - aby * bcx
-              var nl = hypot(nx, ny, nz)
-              nx /= nl
-              ny /= nl
-              nz /= nl
-
-              mulAdd(normals[cell[0]], weight(s, r, bc), nx, ny, nz)
-              mulAdd(normals[cell[1]], weight(s, r, ca), nx, ny, nz)
-              mulAdd(normals[cell[2]], weight(s, r, ab), nx, ny, nz)
-            }
-
-            var nn = [];
-            //Normalize all the normals
-            for(var i=0; i<numVerts; ++i) {
-              var n = normals[i]
-              var l = Math.sqrt(
-                Math.pow(n[0], 2) +
-                Math.pow(n[1], 2) +
-                Math.pow(n[2], 2))
-              if(l < 1e-8) {
-                n[0] = 1
-                n[1] = 0
-                n[2] = 0
-                continue
-              }
-              n[0] /= l;
-              n[1] /= l;
-              n[2] /= l;
-            }
-
-            for(var i = 0; i < normals.length; i++) {
-              nn.push(normals[i][0], normals[i][1], normals[i][2]);
-            }
-
-            return nn;
-          }
-
-          return angleNormals(indices, vertices);
-        }(this.indices, this.verts);*/
-
-        /*
-        void Mesh_normalize( Mesh *myself ) {
-            Vert     *vert = myself->vert;
-            Triangle *face = myself->face;
-
-            for( int i=0; i < myself->mNumVerts; i++ ) vert[i].normal = vec3(0.0f);
-
-            for( int i=0; i < myself->mNumFaces; i++ )
-            {
-                const int ia = face[i].v[0];
-                const int ib = face[i].v[1];
-                const int ic = face[i].v[2];
-
-                const vec3 e1 = vert[ia].pos - vert[ib].pos;
-                const vec3 e2 = vert[ic].pos - vert[ib].pos;
-                const vec3 no = cross( e1, e2 );
-
-                vert[ia].normal += no;
-                vert[ib].normal += no;
-                vert[ic].normal += no;
-            }
-
-            for( i=0; i < myself->mNumVerts; i++ ) verts[i].normal = normalize( verts[i].normal );
+        for(let i = 0; i < this.verts.length; ++i) {
+            this.normals.push(new Vect3());
         }
-         */
+
+        for(let i = 0; i < this.indices.length; ++i) {
+            const ia: Vect3 = this.verts[this.indices[i].x];
+            const ib: Vect3 = this.verts[this.indices[i].y];
+            const ic: Vect3 = this.verts[this.indices[i].z];
+
+            const e1: Vect3 = Vect3.rem(ia, ib);
+            const e2: Vect3 = Vect3.rem(ic, ib);;
+            const no: Vect3 = Vect3.cross(e1, e2);
+
+            this.normals[this.indices[i].x] = this.normals[this.indices[i].x].add(no);
+            this.normals[this.indices[i].y] = this.normals[this.indices[i].y].add(no);
+            this.normals[this.indices[i].z] = this.normals[this.indices[i].z].add(no);
+        }
+
+        for(let i = 0; i < this.normals.length; ++i) {
+            this.normals[i] = this.normals[i].normalize();
+        }
+
+        let verts: Array<number> = [];
+        for(let i = 0; i < this.verts.length; ++i) {
+            verts.push(this.verts[i].x, this.verts[i].y, this.verts[i].z);
+        }
+        this.verts = verts;
+        let normals: Array<number> = [];
+        for(let i = 0; i < this.normals.length; ++i) {
+            normals.push(this.normals[i].x, this.normals[i].y, this.normals[i].z);
+        }
+        this.normals = normals;
+        let indices: Array<number> = [];
+        for(let i = 0; i < this.indices.length; ++i) {
+            indices.push(this.indices[i].x, this.indices[i].y, this.indices[i].z);
+        }
+        this.indices = indices;
 
         console.log({
             vertices: this.verts,

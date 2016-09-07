@@ -87,6 +87,7 @@ abstract class Polyhedron extends Drawable {
             el = new_el;
         }
 
+        /**
         var newcells = [];
 
         for (var i = 0; i < el.length; i+=3) {
@@ -99,6 +100,7 @@ abstract class Polyhedron extends Drawable {
         }
 
         el = newcells;
+        /**/
 
         this._handle = [];
         this._vao.bind();
