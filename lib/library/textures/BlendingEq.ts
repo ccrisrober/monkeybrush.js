@@ -18,16 +18,16 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+// ext("WEBdraw_buffers");
+
 "use strict";
 
-enum TextureFormat {
-    RGB = 0x1907,
-    RGBA = 0x1908,
-    RED = 0x1903,
-    LUMINANCE = 0x1909,
-    LUMINANCEALPHA = 0x190A,
-    ALPHA = 0x1906,
-    //UnsignedByte = 0x1401
+enum BlendingEq {
+    Add = 0x8006,
+    Substract = 0x800A,
+    RevSubstract = 0x800B,
+    Min = 0x8007,
+    Max = 0x8008
 };
 
-export { TextureFormat };
+export { BlendingEq };

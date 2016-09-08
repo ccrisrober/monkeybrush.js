@@ -18,16 +18,21 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+// ext("WEBdraw_buffers");
+
 "use strict";
 
-enum TextureFormat {
-    RGB = 0x1907,
-    RGBA = 0x1908,
-    RED = 0x1903,
-    LUMINANCE = 0x1909,
-    LUMINANCEALPHA = 0x190A,
-    ALPHA = 0x1906,
-    //UnsignedByte = 0x1401
+enum CompressedTex {
+    R11EAC = 0x9270,
+    SignedR11EAC = 0x9271,
+    RG11EAC = 0x9272,
+    SignedRG11EAC = 0x9273,
+    RGB8ETC2 = 0x9274,
+    SRGB8ETC2 = 0x9275,
+    RGB8PunchAlphaETC2 = 0x9276,
+    SRGB8PunchAlphaETC = 0x9277,
+    RGBA8ETC2EAC = 0x9278,
+    SRGBA8ETC2EAC = 0x9279,
 };
 
-export { TextureFormat };
+export { CompressedTex };
