@@ -26,7 +26,8 @@ import { Vect4 } from "../maths/Vect4";
 import { Mat2 } from "../maths/Mat2";
 import { Mat3 } from "../maths/Mat3";
 import { Mat4 } from "../maths/Mat4";
-import { TFMode, TransformFeedback } from "../extras/TransformFeedback";
+import { TransformFeedback } from "../extras/TransformFeedback";
+import { TFMode } from "../constants/TFMode";
 
 "use strict";
 
@@ -42,9 +43,11 @@ class Program {
      */
     constructor() {
         this._shaders = [];
+        this._isLinked = false;
     }
     private _compiledShader: WebGLProgram;
     private _shaders: Array<WebGLShader>;
+    private _isLinked: boolean;
 
     public _vertexSource: string;
     public _fragmentSource: string;
@@ -151,6 +154,7 @@ class Program {
             });
             throw "SHADER ERROR";
         }
+        this._isLinked = true;
         return true;
     }
 
@@ -177,6 +181,7 @@ class Program {
             });
             throw "SHADER ERROR";
         }
+        this._isLinked = true;
         return true;
     }
     /**
@@ -623,9 +628,20 @@ class Program {
         }
         console.log(result);
     };
+    public isLinked(): boolean {
+        return this._isLinked;
+    }
     // Only call this before linking program
     public feedbackVarying(varyings: Array<string>, mode: TFMode) {
-        // TODO: Check only webgl2
+        if (this._isLinked === true) {
+            alert("ONLY EXEC THIS BEFORE LINK");
+            return;
+        }
+        const gl = Core.getInstance().getGL();
+        if (!(gl instanceof WebGL2RenderingContext)) {
+            alert("NEED WEBGL2 CONTEXT");
+            return;
+        }
         TransformFeedback.varyings(this, varyings, mode);
     };
     public setFooFragment() {

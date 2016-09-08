@@ -1,6 +1,6 @@
 
 
-class AudioContext_ {
+class AudioContext2 {
     private static _audioContext: AudioContext;
     public static getContext(): AudioContext {
         if (!this._audioContext) {
@@ -10,4 +10,4 @@ class AudioContext_ {
     }
 };
 
-export { AudioContext_ };
+export { AudioContext2 };

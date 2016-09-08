@@ -20,11 +20,16 @@
 
 import { Core } from "../core/Core";
 
+import { SyncStatus } from "../constants/SyncStatus";
+import { SyncCondition } from "../constants/SyncCondition";
+import { SyncType } from "../constants/SyncType";
+import { SyncWaitResult } from "../constants/SyncWaitResult";
+
 "use strict";
 
 class Sync {
     protected _handle: WebGLSync;
-    
+
     constructor(condition: SyncCondition = SyncCondition.GPUCommandsComplete) {
         const gl = Core.getInstance().getGL();
         this._handle = gl.fenceSync(condition, 0);
@@ -64,7 +69,7 @@ class Sync {
     }
     public isSignaled(): boolean {
         const gl = Core.getInstance().getGL();
-        return gl.getParameter(gl.SYNC_STATUS) == SyncStatus.Signaled;
+        return gl.getParameter(gl.SYNC_STATUS) === SyncStatus.Signaled;
     }
     get signaled(): SyncStatus {
         const gl = Core.getInstance().getGL();
@@ -72,24 +77,4 @@ class Sync {
     }
 };
 
-enum SyncWaitResult {
-    ConditionSatisfied = 0x911C,
-    AlreadySignaled = 0x911A,
-    TimeoutExpired = 0x911B,
-    WaitFailed = 0x911D
-};
-
-enum SyncType {
-    Fence = 0x9116
-};
-
-enum SyncCondition {
-    GPUCommandsComplete = 0x9117
-};
-
-enum SyncStatus {
-    Signaled = 0x9119,
-    Unsignaled = 0x9118
-}
-
-export { SyncWaitResult, Sync };
+export { Sync };

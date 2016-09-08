@@ -43,18 +43,18 @@ namespace Geometry {
 
         function sub(tmp: Float32Array, a: Float32Array, b: Float32Array): Float32Array {
             for (let i = 0; i < tmp.length; ++i) {
-                tmp[i] = a[i] - b[i]
+                tmp[i] = a[i] - b[i];
             }
             return tmp;
-        }
+        };
 
         function length(vec: Float32Array): number {
             let res = 0;
             for (let n = 0; n < vec.length; ++n) {
-                res += vec[n] * vec[n]
+                res += vec[n] * vec[n];
             }
             return Math.sqrt(res);
-        }
+        };
 
         let tmp = new Float32Array(dim);
         const d1 = length(sub(tmp, v3, v2));

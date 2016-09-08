@@ -31,9 +31,6 @@ class Cuboctahedron extends Polyhedron {
      * Cuboctahedron constructor
      */
     constructor(radius: number, subdivisions: number) {
-        const t: number = ( 1 + Math.sqrt( 5 ) ) / 2;
-        const r: number = 1 / t;
-
         let verts = [
             -2.0,  0.0,    0.0,
             -1.0, -1.0, -1.414,

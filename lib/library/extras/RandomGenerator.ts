@@ -51,7 +51,7 @@ namespace RandomGenerator {
     const LOWER_MASK = 0x7fffffff; // least significant r bits
 
     let mt = new Array(N); // the array for the state vector
-    let mti= N + 1; // mti==N+1 means mt[N] is not initialized
+    let mti = N + 1; // mti==N+1 means mt[N] is not initialized
 
     init_seed(seed);
 
@@ -62,7 +62,7 @@ namespace RandomGenerator {
     function init_seed(seed: number) {
         mt[0] = seed >>> 0;
         for (mti = 1; mti < N; ++mti) {
-            const s = mt[mti-1] ^ (mt[mti - 1] >>> 30);
+            const s = mt[mti - 1] ^ (mt[mti - 1] >>> 30);
             mt[mti] = (((((s & 0xffff0000) >>> 16) * 1812433253) << 16) +
                 (s & 0x0000ffff) * 1812433253) + mti;
             // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
@@ -85,14 +85,14 @@ namespace RandomGenerator {
         if (mti >= N) { // generate N words at one time
             let kk;
 
-            if (mti == N + 1)  // if init_seed() has not been called,
+            if (mti === N + 1)  // if init_seed() has not been called,
                 this.init_seed(5489);  // a default initial seed is used
 
-            for (kk = 0; kk< N-M; ++kk) {
+            for (kk = 0; kk < N - M; ++kk) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
                 mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
             }
-            for ( ; kk < N-1; ++kk) {
+            for ( ; kk < N - 1; ++kk) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
                 mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
             }

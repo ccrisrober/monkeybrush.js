@@ -91,14 +91,14 @@ class MyScene extends MB.Scene {
             wrapT: MB.WrapMode.Clamp2Edge
         });
 
-        var lathe = new MB.Lathe();
+        const lathe = new MB.Lathe();
         console.log(lathe);
 
         this.function = new MB.ParametricGeom(function(u: number, v: number): MB.Vect3 {
-            var r = 50;
-            var x = Math.sin(u) * r;
-            var z = Math.sin(v / 2) * 2 * r;
-            var y = (Math.sin(u * 4 * Math.PI) + Math.cos(v * 2 * Math.PI)) * 2.8;
+            const r = 50;
+            const x = Math.sin(u) * r;
+            const z = Math.sin(v / 2) * 2 * r;
+            const y = (Math.sin(u * 4 * Math.PI) + Math.cos(v * 2 * Math.PI)) * 2.8;
             return new MB.Vect3(x, y, z);
         }, 60, 40);
 
@@ -109,13 +109,13 @@ class MyScene extends MB.Scene {
                 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1
             ]
         , 10.0, 5);*/
-        //new MB.Dodecahedron(5.0, 1);
+        // new MB.Dodecahedron(5.0, 1);
         new MB.CustomModel({
             indices: this.function.indices,
             vertices: this.function.verts,
             normals: this.function.normals,
-            //texCoords: this.function.uvs
-        })
+            // texCoords: this.function.uvs
+        });
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
             let prog: MB.Program = new MB.Program();
@@ -160,9 +160,9 @@ class MyScene extends MB.Scene {
         let prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
 
-        let varvar = this.text.max;
-        let i = 0, j = 0, k = 0;
-        let dd = -1;
+        // let varvar = this.text.max;
+        // let i = 0, j = 0, k = 0;
+        // let dd = -1;
 
         // this.skybox.texture.bind(0);
         this.tex2d.bind(0);

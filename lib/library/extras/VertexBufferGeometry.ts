@@ -69,7 +69,11 @@ class BufferAttribute {
     }
     public getXYZ(index: number): Array<number> {
         index *= this._size;
-        return [this.array[index], this.array[index + 1], this.array[index +21]];
+        return [
+            this.array[index],
+            this.array[index + 1],
+            this.array[index + 2]
+        ];
     }
     public setXYZ(index: number, xValue: number, yValue: number, zValue: number) {
         this.array[index] = xValue;
@@ -78,7 +82,7 @@ class BufferAttribute {
     }
 };
 
-/*class InstancedBufferAttribute extends BufferAttribute {
+class InstancedBufferAttribute extends BufferAttribute {
     protected _meshPerAttr: number;
     constructor(arr: ArrayLike<number>, size: number, meshPerAttr: number = 1) {
         super(arr, size);
@@ -94,14 +98,14 @@ class InstancedInterleavedBuffer extends BufferAttribute {
         this._meshPerAttr = meshPerAttr;
     }
     get meshPerAttr(): number { return this._meshPerAttr; };
-};*/
+};
 
 class VertexBufferGeometry {
     protected _indices: Uint16Array = null;
     protected _attrs: { [ key: string ]: BufferAttribute; } = {};
-	public addAttr(type: string, attribute: BufferAttribute) {
+    public addAttr(type: string, attribute: BufferAttribute) {
         this._attrs[type] = attribute;
-	};
+    };
     public getAttr(name: string) {
         return this._attrs[name];
     };

@@ -62,7 +62,7 @@ namespace Interpolation {
 class Spline2D {
     protected controlPoints: Array<Vect2> = [];
     protected intpMode: InterpolationMode;
-    constructor(intpMode: InterpolationMode ="catmullRom", points: Array<Vect2> = []) {
+    constructor(intpMode: InterpolationMode = "catmullRom", points: Array<Vect2> = []) {
         this.intpMode = intpMode;
         this.controlPoints = points;
     }
@@ -94,7 +94,7 @@ class Spline3D {
     protected intpMode: InterpolationMode;
     protected _oldDT: number = 0;
     protected _currentDT: number = 0;
-    constructor(intpMode: InterpolationMode ="catmullRom", points: Array<Vect3> = []) {
+    constructor(intpMode: InterpolationMode = "catmullRom", points: Array<Vect3> = []) {
         this.intpMode = intpMode;
         this.controlPoints = points;
     }

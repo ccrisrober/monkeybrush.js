@@ -1,5 +1,5 @@
 
-module SourceFrags {
+namespace SourceFrags {
 
 };
 

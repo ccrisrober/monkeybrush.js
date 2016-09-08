@@ -6,7 +6,7 @@ class Lathe {
     public vertices = [];
     public normals = [];
     public uvs = [];
-    public indices = [];n
+    public indices = [];
     constructor(points: Array<Vect3> = [], segments: number = 55, phiInit = 0, phiRadius = 2 * Math.PI) {
 
         points = [];
@@ -67,17 +67,17 @@ class Lathe {
             }
         }
 
-        for(i = 0; i < this.vertices.length; ++i) {
+        for (i = 0; i < this.vertices.length; ++i) {
             this.normals.push(new Vect3());
         }
 
-        for(i = 0; i < this.indices.length; ++i) {
+        for (i = 0; i < this.indices.length; ++i) {
             const ia: Vect3 = this.vertices[this.indices[i].x];
             const ib: Vect3 = this.vertices[this.indices[i].y];
             const ic: Vect3 = this.vertices[this.indices[i].z];
 
             const e1: Vect3 = Vect3.rem(ia, ib);
-            const e2: Vect3 = Vect3.rem(ic, ib);;
+            const e2: Vect3 = Vect3.rem(ic, ib);
             const no: Vect3 = Vect3.cross(e1, e2);
 
             this.normals[this.indices[i].x] = this.normals[this.indices[i].x].add(no);
@@ -85,28 +85,28 @@ class Lathe {
             this.normals[this.indices[i].z] = this.normals[this.indices[i].z].add(no);
         }
 
-        for(i = 0; i < this.normals.length; ++i) {
+        for (i = 0; i < this.normals.length; ++i) {
             this.normals[i] = this.normals[i].normalize();
         }
 
 
         let vertices: Array<number> = [];
-        for(i = 0; i < this.vertices.length; ++i) {
+        for (i = 0; i < this.vertices.length; ++i) {
             vertices.push(this.vertices[i].x, this.vertices[i].y, this.vertices[i].z);
         }
         this.vertices = vertices;
         let normals: Array<number> = [];
-        for(i = 0; i < this.normals.length; ++i) {
+        for (i = 0; i < this.normals.length; ++i) {
             normals.push(this.normals[i].x, this.normals[i].y, this.normals[i].z);
         }
         this.normals = normals;
         let uvs: Array<number> = [];
-        for(i = 0; i < this.uvs.length; ++i) {
+        for (i = 0; i < this.uvs.length; ++i) {
             uvs.push(this.uvs[i].x, this.uvs[i].y);
         }
         this.uvs = uvs;
         let indices: Array<number> = [];
-        for(i = 0; i < this.indices.length; ++i) {
+        for (i = 0; i < this.indices.length; ++i) {
             indices.push(this.indices[i].x, this.indices[i].y, this.indices[i].z);
         }
         this.indices = indices;
@@ -115,11 +115,11 @@ class Lathe {
         if (phiRadius === Math.PI * 2) {
             let n1 = new Vect3();
             let n2 = new Vect3();
-            let n3 = new Vect3();
+            // let n3 = new Vect3();
             let n = new Vect3();
 
             base = segments * points.length * 3;
-            for(i = 0, j = 0, size = points.length; i < size; ++i, j += 3) {
+            for (i = 0, j = 0, size = points.length; i < size; ++i, j += 3) {
 
                 // select normal int the first line
                 n1.x = this.normals[j];

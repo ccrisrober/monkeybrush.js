@@ -49,7 +49,7 @@ class PointCloud {
                 Math.random() * range - range / 2,
                 Math.random() * range - range / 2
             );
-            //console.log(particle._value);
+            // console.log(particle._value);
             this._points.push(particle.x, particle.y, particle.z);
         }
         this._size = 500;
@@ -63,14 +63,14 @@ class PointCloud {
         return vb;
     };
     public addPoint(point: Vect3) {
-        //this._points.push(point.x, point.y, point.z);
-        //++this._size;
+        // this._points.push(point.x, point.y, point.z);
+        // ++this._size;
     }
     public render() {
         if (!this._vb) {
             this._vb = this.addBufferArray(0, new Float32Array(this._points), 3);
         }
-        var buffer = this._vb.getBuffer();
+        let buffer = this._vb.getBuffer();
         const gl = Core.getInstance().getGL();
         gl.enableVertexAttribArray(0);
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);

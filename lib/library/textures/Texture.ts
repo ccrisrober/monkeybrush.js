@@ -21,7 +21,9 @@
 
 import { Core } from "../core/Core";
 import { Vect2 } from "../maths/Vect2";
-import { WrapMode, TextureType, TextureTarget } from "../constants/TextureType";
+import { WrapMode } from "../constants/WrapMode";
+import { TextureType } from "../constants/TextureType";
+import { TextureTarget } from "../constants/TextureTarget";
 import { TextureFormat } from "../constants/TextureFormat";
 import { Extensions } from "../extras/Extensions";
 
@@ -63,7 +65,7 @@ abstract class Texture {
     protected _minFilter_: TextureType = TextureType.Linear;
     protected _magFilter_: TextureType = TextureType.Linear;
 
-    protected _type_: TextureFormat;// TODO = gl.UNSIGNED_BYTE;
+    protected _type_: TextureFormat; // TODO = gl.UNSIGNED_BYTE;
     protected _flipY_: boolean = true;
     protected _generateMipMaps_: boolean = false;
     protected _premultiplyAlpha_: boolean = false;

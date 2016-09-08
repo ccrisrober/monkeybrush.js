@@ -19,7 +19,7 @@
 
 // Code based on https://github.com/mikolalysenko/orbit-camera/blob/master/orbit.js
 
-import { Camera } from "./Camera";
+// TODO: import { Camera } from "./Camera";
 
 "use strict";
 
@@ -32,8 +32,8 @@ class OrbitCamera { // extends Camera {
     protected _center: Float32Array;
     protected _distance: number;
     constructor(eye: Float32Array = new Float32Array([0, 0, -1]),
-        center: Float32Array = new Float32Array([0,0,0]),
-        up: Float32Array = new Float32Array([0,1,0])) {
+        center: Float32Array = new Float32Array([0, 0, 0]),
+        up: Float32Array = new Float32Array([0, 1, 0])) {
 
         this._rotation = quat.create();
         this._center = vec3.create();
@@ -61,7 +61,7 @@ class OrbitCamera { // extends Camera {
             quat.conjugate(this._scratch0, this._rotation),
             this._scratch1);
         mat4.translate(this._view, this._view, vec3.negate(this._scratch0, this._center));
-        mat4.perspective(this._projection, Math.PI/4.0, /*shell.width/shell.height*/1.0, 0.1, 1000.0);
+        mat4.perspective(this._projection, Math.PI / 4.0, /*shell.width/shell.height*/1.0, 0.1, 1000.0);
     }
 
     public lookAt(eye: Float32Array, center: Float32Array, up: Float32Array) {
@@ -73,7 +73,7 @@ class OrbitCamera { // extends Camera {
     }
 
     public pan(translation) {
-        var d = this._distance
+        const d = this._distance;
         this._scratch0[0] = -d * (translation[0] || 0);
         this._scratch0[1] =  d * (translation[1] || 0);
         this._scratch0[2] =  d * (translation[2] || 0);
@@ -86,7 +86,7 @@ class OrbitCamera { // extends Camera {
         function quatFromVec(out, da) {
             const x = da[0];
             const y = da[1];
-            const z = da[2];
+            // const z = da[2];
             let s = x * x + y * y;
             if (s > 1.0) {
                s = 1.0;
@@ -102,7 +102,7 @@ class OrbitCamera { // extends Camera {
         quat.invert(this._scratch1, this._scratch1);
         quat.multiply(this._scratch0, this._scratch0, this._scratch1);
         if (quat.length(this._scratch0) < 1e-6) {
-            return
+            return;
         }
         quat.multiply(this._rotation, this._rotation, this._scratch0);
         quat.normalize(this._rotation, this._rotation);
@@ -110,7 +110,7 @@ class OrbitCamera { // extends Camera {
 
     public zoom(delta) {
         this._distance += delta;
-        if(this._distance < 0.0) {
+        if (this._distance < 0.0) {
             this._distance = 0.0;
         }
     }

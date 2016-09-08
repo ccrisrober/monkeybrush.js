@@ -7,10 +7,10 @@ class DOMElement {
     constructor(domElem: HTMLElement = document.createElement("div")) {
         this._domElem = domElem;
         this._domElem.style.overflow = "hidden";
-        this._domElem.style["WebkitTransformStyle"] = 'preserve-3d';
-        this._domElem.style["MozTransformStyle"] = 'preserve-3d';
-        this._domElem.style["oTransformStyle"] = 'preserve-3d';
-        this._domElem.style.transformStyle = 'preserve-3d';
+        this._domElem.style["WebkitTransformStyle"] = "preserve-3d";
+        this._domElem.style["MozTransformStyle"] = "preserve-3d";
+        this._domElem.style["oTransformStyle"] = "preserve-3d";
+        this._domElem.style.transformStyle = "preserve-3d";
     }
 
     public render(camera: Camera2) {

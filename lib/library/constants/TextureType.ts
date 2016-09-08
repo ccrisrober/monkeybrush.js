@@ -29,18 +29,5 @@ enum TextureType {
     LinearMMLinear = 0x2703,
 };
 
-enum WrapMode {
-    Clamp2Edge = 0x812F,
-    Repeat = 0x2901,
-    MirroredRepeat = 0x8370
-};
-
-enum TextureTarget {
-    Texture2D = 0x0DE1,
-    Texture3D = 0x806F,
-    Texture2DArray = 0x8C1A,
-    TextureCubeMap = 0x8513
-};
-
-export { WrapMode, TextureType, TextureTarget };
+export { TextureType };
 

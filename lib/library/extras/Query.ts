@@ -19,19 +19,11 @@
 
 
 import { Core } from "../core/Core";
+import { QueryTarget } from "../constants/QueryTarget";
+import { QueryParams } from "../constants/QueryParams";
 
 "use strict";
 
-enum QueryParams {
-    QueryResult = 0x8866,
-    QueryResultAvailable = 0x8867
-};
-
-enum QueryTarget {
-    AnySamplesPassed = 0x8C2F,
-    AnySamplesPassedConservative = 0x8D6A,
-    TransformFeedbackPrimitivesWritten = 0x8C88
-};
 
 class Query {
     protected _handle: WebGLQuery;
@@ -77,4 +69,4 @@ class Query {
     }
 };
 
-export { QueryParams, QueryTarget, Query };
+export { Query };

@@ -108,7 +108,7 @@ namespace Loaders {
             // Update resources in load counter
             ResourceMap.asyncLoadRequested(alias);
 
-            //xhrLoader(videoSrc, true, "arraybuffer", function(ev: ProgressEvent) {
+            // xhrLoader(videoSrc, true, "arraybuffer", function(ev: ProgressEvent) {
                 // Asynchronously decode, then call the function in parameter.
                 let video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
                 video.src = videoSrc;
@@ -116,7 +116,7 @@ namespace Loaders {
                     // Video is loaded and can be played
                     ResourceMap.asyncLoadCompleted(alias, video);
                 }, false);
-            //}.bind(this));
+            // }.bind(this));
         }
         /*// Create HTML Video Element to play the video
         var video = document.createElement('video');

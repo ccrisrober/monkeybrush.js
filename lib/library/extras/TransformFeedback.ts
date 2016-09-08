@@ -20,23 +20,11 @@
 
 import { Core } from "../core/Core";
 import { Program } from "../core/Program";
+import { TFMode } from "../constants/TFMode";
+import { TFPrimitive } from "../constants/TFPrimitive";
+import { TFTarget } from "../constants/TFTarget";
 
 "use strict";
-
-enum TFMode {
-    Interleaved = 0x8C8C,
-    Separate = 0x8C8D
-};
-
-enum TFPrimitiveType {
-    Points = 0x0000,
-    Lines = 0x0001,
-    Triangles = 0x0004
-};
-
-enum TFTarget {
-    TransformFeedback = 0x8E22
-}
 
 class TransformFeedback {
     protected _handle: WebGLTransformFeedback;
@@ -57,18 +45,18 @@ class TransformFeedback {
         const gl = Core.getInstance().getGL();
         gl.bindTransformFeedback(TFTarget.TransformFeedback, null);
     };
-    public begin(mode: TFPrimitiveType) {
+    public begin(mode: TFPrimitive) {
         const gl = Core.getInstance().getGL();
         gl.beginTransformFeedback(mode);
     };
     public beginPoints() {
-        this.begin(TFPrimitiveType.Points);
+        this.begin(TFPrimitive.Points);
     };
     public beginLines() {
-        this.begin(TFPrimitiveType.Lines);
+        this.begin(TFPrimitive.Lines);
     };
     public beginTriangles() {
-        this.begin(TFPrimitiveType.Triangles);
+        this.begin(TFPrimitive.Triangles);
     };
     public end() {
         const gl = Core.getInstance().getGL();
@@ -96,4 +84,4 @@ class TransformFeedback {
     };
 }
 
-export { TFMode, TFPrimitiveType, TFTarget, TransformFeedback };
+export { TransformFeedback };

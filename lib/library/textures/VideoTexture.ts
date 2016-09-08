@@ -2,7 +2,8 @@ import { Core } from "../core/Core";
 
 import { Texture } from "./Texture";
 import { TextureFormat } from "../constants/TextureFormat";
-import { TextureType, TextureTarget } from "../constants/TextureType";
+import { TextureType } from "../constants/TextureType";
+import { TextureTarget } from "../constants/TextureTarget";
 
 class VideoTexture extends Texture {
     protected _video: HTMLVideoElement;

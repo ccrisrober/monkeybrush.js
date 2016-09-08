@@ -32,11 +32,11 @@ class Tetraedron extends Polyhedron {
      */
     constructor(radius: number, subdivisions: number) {
         let verts = [
-             1, 1, 1,
-            -1,-1, 1,
-            -1, 1,-1,
-             1,-1,-1
-         ];
+             1,  1,  1,
+            -1, -1,  1,
+            -1,  1, -1,
+             1, -1, -1
+        ];
         let el = [
             2, 1, 0,
             0, 3, 2,

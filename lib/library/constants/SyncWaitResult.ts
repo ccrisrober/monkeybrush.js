@@ -18,16 +18,13 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-// ext("WEBdraw_buffers");
-
 "use strict";
 
-enum BlendingEq {
-    Add = 0x8006,
-    Substract = 0x800A,
-    RevSubstract = 0x800B,
-    Min = 0x8007,
-    Max = 0x8008
+enum SyncWaitResult {
+    ConditionSatisfied = 0x911C,
+    AlreadySignaled = 0x911A,
+    TimeoutExpired = 0x911B,
+    WaitFailed = 0x911D
 };
 
-export { BlendingEq };
+export { SyncWaitResult };

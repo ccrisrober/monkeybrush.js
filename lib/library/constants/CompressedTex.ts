@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-// ext("WEBdraw_buffers");
-
 "use strict";
 
 enum CompressedTex {

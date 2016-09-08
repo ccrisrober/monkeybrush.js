@@ -28,7 +28,9 @@ import { Texture, TexOptions } from "./Texture";
 import { Vect2 } from "../maths/Vect2";
 
 import { TextureFormat } from "../constants/TextureFormat";
-import { WrapMode, TextureType, TextureTarget } from "../constants/TextureType";
+import { WrapMode } from "../constants/WrapMode";
+import { TextureType } from "../constants/TextureType";
+import { TextureTarget } from "../constants/TextureTarget";
 
 "use strict";
 

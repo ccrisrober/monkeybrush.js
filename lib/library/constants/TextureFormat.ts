@@ -27,7 +27,7 @@ enum TextureFormat {
     LUMINANCE = 0x1909,
     LUMINANCEALPHA = 0x190A,
     ALPHA = 0x1906,
-    //UnsignedByte = 0x1401
+    // UnsignedByte = 0x1401
 };
 
 export { TextureFormat };

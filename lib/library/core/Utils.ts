@@ -42,10 +42,8 @@ namespace Utils {
         public next(): number {
             return this._next(0, 1);
         };
-    }
-
+    };
     export let random: RNG = new RNG(new Date().getTime());
-
     export function Uint8Concat(first: Uint8Array, second: Uint8Array): Uint8Array {
         let firstLength = first.length,
             result = new Uint8Array(firstLength + second.length);
@@ -73,8 +71,6 @@ namespace Utils {
 
         return result;
     };
-
-
     export function Int8Concat(first: Int8Array, second: Int8Array): Int8Array {
         let firstLength = first.length,
             result = new Int8Array(firstLength + second.length);
@@ -184,7 +180,7 @@ namespace Utils {
         return Math.pow(x, 3) * (x * (x * 6 - 15) + 10);
     };
     export function downloadCanvasImage(canvas: HTMLCanvasElement) {
-
+        // TODO
     }
 };
 

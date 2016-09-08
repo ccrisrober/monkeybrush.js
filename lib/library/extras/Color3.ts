@@ -104,9 +104,9 @@ class Color3 {
     }
 
     public static lerp(minColor: Color3, maxColor: Color3, alpha: number): Color3 {
-        var r = minColor.r + (maxColor.r - minColor.r) * alpha;
-        var g = minColor.g + (maxColor.g - minColor.g) * alpha;
-        var b = minColor.b + (maxColor.b - minColor.b) * alpha;
+        const r = minColor.r + (maxColor.r - minColor.r) * alpha;
+        const g = minColor.g + (maxColor.g - minColor.g) * alpha;
+        const b = minColor.b + (maxColor.b - minColor.b) * alpha;
         return new Color3(r, g, b);
     }
 

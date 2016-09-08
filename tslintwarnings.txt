@@ -1,5 +1,0 @@
-lib/library/extras/ArrayBuffer.ts[20, 26]: file should end with a newline
-lib/library/extras/BufferGeometry.ts[10, 30]: file should end with a newline
-lib/library/extras/IndexBuffer.ts[15, 26]: file should end with a newline
-lib/library/models/Capsule.ts[99, 17]: Missing semicolon
-lib/library/resources/audio/AudioContext_.ts[3, 7]: Class name must be in pascal case

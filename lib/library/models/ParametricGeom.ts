@@ -77,17 +77,17 @@ class ParametricGeom {
             }
         }
 
-        for(let i = 0; i < this.verts.length; ++i) {
+        for (let i = 0; i < this.verts.length; ++i) {
             this.normals.push(new Vect3());
         }
 
-        for(let i = 0; i < this.indices.length; ++i) {
+        for (let i = 0; i < this.indices.length; ++i) {
             const ia: Vect3 = this.verts[this.indices[i].x];
             const ib: Vect3 = this.verts[this.indices[i].y];
             const ic: Vect3 = this.verts[this.indices[i].z];
 
             const e1: Vect3 = Vect3.rem(ia, ib);
-            const e2: Vect3 = Vect3.rem(ic, ib);;
+            const e2: Vect3 = Vect3.rem(ic, ib);
             const no: Vect3 = Vect3.cross(e1, e2);
 
             this.normals[this.indices[i].x] = this.normals[this.indices[i].x].add(no);
@@ -95,22 +95,22 @@ class ParametricGeom {
             this.normals[this.indices[i].z] = this.normals[this.indices[i].z].add(no);
         }
 
-        for(let i = 0; i < this.normals.length; ++i) {
+        for (let i = 0; i < this.normals.length; ++i) {
             this.normals[i] = this.normals[i].normalize();
         }
 
         let verts: Array<number> = [];
-        for(let i = 0; i < this.verts.length; ++i) {
+        for (let i = 0; i < this.verts.length; ++i) {
             verts.push(this.verts[i].x, this.verts[i].y, this.verts[i].z);
         }
         this.verts = verts;
         let normals: Array<number> = [];
-        for(let i = 0; i < this.normals.length; ++i) {
+        for (let i = 0; i < this.normals.length; ++i) {
             normals.push(this.normals[i].x, this.normals[i].y, this.normals[i].z);
         }
         this.normals = normals;
         let indices: Array<number> = [];
-        for(let i = 0; i < this.indices.length; ++i) {
+        for (let i = 0; i < this.indices.length; ++i) {
             indices.push(this.indices[i].x, this.indices[i].y, this.indices[i].z);
         }
         this.indices = indices;

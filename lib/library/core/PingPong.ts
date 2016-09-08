@@ -7,7 +7,7 @@ class PingPong {
   protected _flag: boolean;
   constructor(size: Vect2) {
     this._flag = true;
-    //this._fbo = new Framebuffer(textures: Texture[], size);
+    // this._fbo = new Framebuffer(textures: Texture[], size);
   }
   public pingpong() {
     if (this._flag) {
