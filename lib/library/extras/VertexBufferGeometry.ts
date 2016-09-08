@@ -63,6 +63,14 @@ class BufferAttribute {
         this.array[index] = xValue;
         this.array[index + 1] = yValue;
     }
+    public getXY(index: number): Array<number> {
+        index *= this._size;
+        return [this.array[index], this.array[index + 1]];
+    }
+    public getXYZ(index: number): Array<number> {
+        index *= this._size;
+        return [this.array[index], this.array[index + 1], this.array[index +21]];
+    }
     public setXYZ(index: number, xValue: number, yValue: number, zValue: number) {
         this.array[index] = xValue;
         this.array[index + 1] = yValue;
