@@ -92,6 +92,8 @@ class Spline2D {
 class Spline3D {
     protected controlPoints: Array<Vect3> = [];
     protected intpMode: InterpolationMode;
+    protected _oldDT: number = 0;
+    protected _currentDT: number = 0;
     constructor(intpMode: InterpolationMode ="catmullRom", points: Array<Vect3> = []) {
         this.intpMode = intpMode;
         this.controlPoints = points;
@@ -119,6 +121,22 @@ class Spline3D {
                 p0.z, p1.z, p2.z, p3.z, w
             )
         );
+    }
+    public getTangent(oldDT: number = this._oldDT,
+        currentDT: number = this._currentDT): Vect3 {
+
+        const p0: Vect3 = this.evaluate(oldDT);
+        const p1: Vect3 = this.evaluate(currentDT);
+
+        return Vect3.rem(p1, p0).normalize();
+    }
+    public angleBetweenPoints(oldDT: number = this._oldDT,
+        currentDT: number = this._currentDT): number {
+        const p0: Vect3 = this.evaluate(oldDT);
+        const p1: Vect3 = this.evaluate(currentDT);
+
+        const angle = Math.atan2(p1.z - p0.z, p1.x - p0.x);
+        return angle * Math.PI / 180.0;
     }
 };
 

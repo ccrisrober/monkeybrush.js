@@ -21,7 +21,7 @@
 import { Polyhedron } from "./Polyhedron";
 
 "use strict";
-
+// TODO: NO FUNCIONA
 /**
  * Cuboctahedron class
  * @class Cuboctahedron

@@ -46,7 +46,7 @@ class SimpleTexture3D extends Texture {
 
         this._internalformat_ = options.internalFormat || TextureFormat.RGBA;
         this._format_ = options.format || TextureFormat.RGBA;
-        this._type_ = options.type || TextureFormat.UnsignedByte;
+        this._type_ = options.type || gl.UNSIGNED_BYTE;
         this._level_ = options.level || 0;
 
         this._compressed_ = Boolean(options.compressed || false);

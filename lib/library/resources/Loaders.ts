@@ -82,19 +82,33 @@ namespace Loaders {
 
         request.send();
     };
+    export function loadFont(fontSrc: string, alias: string = "") {
+        alias = _getAlias(fontSrc, alias);
+        if (!(ResourceMap.isAssetLoaded(alias))) {
+            // Update resources in load counter
+            ResourceMap.asyncLoadRequested(alias);
+
+            // Async request the data from server
+            let request = new XMLHttpRequest();
+            request.open("GET", fontSrc, true);
+
+            // Specify that the request retrieves binary data.
+            request.responseType = "arraybuffer";
+
+            request.onload = function () {
+                // Asynchronously decode, then call the function in parameter.
+                ResourceMap.asyncLoadCompleted(alias, JSON.parse(request.response));
+            }.bind(this);
+            request.send();
+        }
+    };
     export function loadVideo(videoSrc: string, alias: string = "") {
         alias = _getAlias(videoSrc, alias);
         if (!ResourceMap.isAssetLoaded(alias)) {
             // Update resources in load counter
             ResourceMap.asyncLoadRequested(alias);
 
-            // Async request the data from server
-            /*let request = new XMLHttpRequest();
-            request.open("GET", videoSrc, true);
-
-            request.responseType = "arraybuffer";
-
-            request.onload = function () {
+            //xhrLoader(videoSrc, true, "arraybuffer", function(ev: ProgressEvent) {
                 // Asynchronously decode, then call the function in parameter.
                 let video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
                 video.src = videoSrc;
@@ -102,18 +116,7 @@ namespace Loaders {
                     // Video is loaded and can be played
                     ResourceMap.asyncLoadCompleted(alias, video);
                 }, false);
-            }.bind(this);
-
-            request.send();*/
-            xhrLoader(videoSrc, true, "arraybuffer", function(ev: ProgressEvent) {
-                // Asynchronously decode, then call the function in parameter.
-                let video: HTMLVideoElement = <HTMLVideoElement> document.createElement(alias);
-                video.src = videoSrc;
-                video.addEventListener("loadeddata", function() {
-                    // Video is loaded and can be played
-                    ResourceMap.asyncLoadCompleted(alias, video);
-                }, false);
-            }.bind(this));
+            //}.bind(this));
         }
         /*// Create HTML Video Element to play the video
         var video = document.createElement('video');

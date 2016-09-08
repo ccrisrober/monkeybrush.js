@@ -27,7 +27,7 @@ void main() {
     //fragColor = vec4(outNormal, 1.0);
 
     vec3 color = vec3(0.0, 0.0, 1.0);
-    //color = texture(tex2, outUV).xyz;
+    color = texture(tex, outUV).xyz;
 
     // Ambient
     vec3 ambient = vec3(0.2);
@@ -54,7 +54,7 @@ void main() {
 
     fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
 
-    fragColor.rgb = outNormal;
+    fragColor.rgb = norm;
     //fragColor.rgb = normals(outPosition);
     //fragColor = texture(tex, vec2(gl_PointCoord.x, gl_PointCoord.y));
 }

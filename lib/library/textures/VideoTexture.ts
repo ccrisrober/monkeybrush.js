@@ -22,7 +22,7 @@ class VideoTexture extends Texture {
 
         this._internalformat_ = TextureFormat.RGBA;
         this._format_ = TextureFormat.RGBA;
-        this._type_ = TextureFormat.UnsignedByte;
+        this._type_ = gl.UNSIGNED_BYTE;
         this._level_ = 0;
 
         this.bind();

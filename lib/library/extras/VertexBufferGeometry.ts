@@ -40,6 +40,34 @@ class BufferAttribute {
     get count(): number {
         return this._arr.length / this._size;
     }
+    public getX(index: number): number {
+        return this.array[index * this._size];
+    }
+    public setX(index: number, value: number) {
+        this.array[index * this._size] = value;
+    }
+    public getY(index: number): number {
+        return this.array[index * this._size + 1];
+    }
+    public setY(index: number, value: number) {
+        this.array[index * this._size + 1] = value;
+    }
+    public getZ(index: number): number {
+        return this.array[index * this._size + 2];
+    }
+    public setZ(index: number, value: number) {
+        this.array[index * this._size + 2] = value;
+    }
+    public setXY(index: number, xValue: number, yValue: number) {
+        index *= this._size;
+        this.array[index] = xValue;
+        this.array[index + 1] = yValue;
+    }
+    public setXYZ(index: number, xValue: number, yValue: number, zValue: number) {
+        this.array[index] = xValue;
+        this.array[index + 1] = yValue;
+        this.array[index + 2] = zValue;
+    }
 };
 
 /*class InstancedBufferAttribute extends BufferAttribute {

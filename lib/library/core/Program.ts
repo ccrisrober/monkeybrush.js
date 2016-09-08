@@ -26,8 +26,11 @@ import { Vect4 } from "../maths/Vect4";
 import { Mat2 } from "../maths/Mat2";
 import { Mat3 } from "../maths/Mat3";
 import { Mat4 } from "../maths/Mat4";
+import { TFMode, TransformFeedback } from "../extras/TransformFeedback";
 
 "use strict";
+
+declare var WebGL2RenderingContext: any;
 
 /**
  * Program class
@@ -620,6 +623,29 @@ class Program {
         }
         console.log(result);
     };
+    // Only call this before linking program
+    public feedbackVarying(varyings: Array<string>, mode: TFMode) {
+        // TODO: Check only webgl2
+        TransformFeedback.varyings(this, varyings, mode);
+    };
+    public setFooFragment() {
+        const gl = Core.getInstance().getGL();
+        if (gl instanceof WebGL2RenderingContext) {
+            this.addShader(
+                `#version 300 es
+                out vec4 fragColor;
+                void main() {
+                    fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                }`, ProgramCte.shader_type.fragment,
+                ProgramCte.mode.read_text);
+        } else {
+            this.addShader(
+                `void main() {
+                    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                }`, ProgramCte.shader_type.fragment,
+                ProgramCte.mode.read_text);
+        }
+    }
 };
 
 export { Program };

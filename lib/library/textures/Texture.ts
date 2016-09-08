@@ -63,7 +63,7 @@ abstract class Texture {
     protected _minFilter_: TextureType = TextureType.Linear;
     protected _magFilter_: TextureType = TextureType.Linear;
 
-    protected _type_: TextureFormat = TextureFormat.UnsignedByte;
+    protected _type_: TextureFormat;// TODO = gl.UNSIGNED_BYTE;
     protected _flipY_: boolean = true;
     protected _generateMipMaps_: boolean = false;
     protected _premultiplyAlpha_: boolean = false;

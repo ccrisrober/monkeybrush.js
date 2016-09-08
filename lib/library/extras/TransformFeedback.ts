@@ -23,7 +23,7 @@ import { Program } from "../core/Program";
 
 "use strict";
 
-enum TFkMode {
+enum TFMode {
     Interleaved = 0x8C8C,
     Separate = 0x8C8D
 };
@@ -82,7 +82,7 @@ class TransformFeedback {
         const gl = Core.getInstance().getGL();
         gl.resumeTransformFeedback();
     };
-    public varyings(Program: Program, varyings: Array<string>, bufferMode: number) {
+    public static varyings(Program: Program, varyings: Array<string>, bufferMode: TFMode) {
         const gl = Core.getInstance().getGL();
         gl.transformFeedbackVaryings(Program.id(), varyings, bufferMode);
     };
@@ -96,4 +96,4 @@ class TransformFeedback {
     };
 }
 
-export default TransformFeedback;
+export { TFMode, TFPrimitiveType, TFTarget, TransformFeedback };
