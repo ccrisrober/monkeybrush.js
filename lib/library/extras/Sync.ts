@@ -19,77 +19,77 @@
 
 
 import { Core } from "../core/Core";
-import { SyncParam } from "../constants/SyncParam";
 
 "use strict";
 
-enum SyncCte {
-    AlreadySignaled = 0x911A,
-    TimeoutExpired = 0x911B,
-    ConditionSatisfied = 0x911C,
-    WaitFailed = 0x911D
-};
-
 class Sync {
     protected _handle: WebGLSync;
-    constructor(condition: number, flags: number) {
+    
+    constructor(condition: SyncCondition = SyncCondition.GPUCommandsComplete) {
         const gl = Core.getInstance().getGL();
-        condition = condition || gl.SYNC_GPU_COMMANDS_COMPLETE;
-
-        this._handle = gl.fenceSync(condition, flags);
+        this._handle = gl.fenceSync(condition, 0);
     };
-    public wait(flags, timeout: number) {
-        const gl = Core.getInstance().getGL();
-        gl.waitSync(this._handle, flags, timeout);
-    };
-    /**
+    /*
      * [clientWait description]
-     * @param {number} flags: Bitwise combination of flags controlling the flushing behavior.
-     *                        May be gl.SYNC_FLUSH_COMMANDS_BIT.
-     * @param {number} timeout: Timeout (in nanoseconds) for which to wait for the sync obj to become signaled.
+     * @param {number} timeout: Timeout (in nanoseconds) for which to wait
+     *      for the sync obj to become signaled.
      */
-    public clientWait(flags: number, timeout: number) {
+    public clientWait(timeout: number): SyncWaitResult {
         const gl = Core.getInstance().getGL();
-        return gl.clientWaitSync(this._handle, flags, timeout);
-    };
-    public getParameter(name: SyncParam) {
-        const gl = Core.getInstance().getGL();
-        return gl.getSyncParameter(this._handle, name);
-    };
+        return gl.clientWaitSync(this._handle, 0, timeout);
+    }
     public destroy() {
-        const gl = Core.getInstance().getGL();
+       const gl = Core.getInstance().getGL();
         gl.deleteSync(this._handle);
     };
     public isValid(): boolean {
         const gl = Core.getInstance().getGL();
         return gl.isSync(this._handle);
     };
+    public wait(timeout: number = -1) {
+        const gl = Core.getInstance().getGL();
+        gl.waitSync(this._handle, 0, timeout);
+    }
+    public status(): SyncStatus {
+        const gl = Core.getInstance().getGL();
+        return gl.getParameter(gl.SYNC_STATUS);
+    }
+    public condition(): SyncCondition {
+        const gl = Core.getInstance().getGL();
+        return gl.getParameter(gl.SYNC_CONDITION);
+    }
+    public type(): SyncType {
+        const gl = Core.getInstance().getGL();
+        return gl.getParameter(gl.OBJECT_TYPE);
+    }
+    public isSignaled(): boolean {
+        const gl = Core.getInstance().getGL();
+        return gl.getParameter(gl.SYNC_STATUS) == SyncStatus.Signaled;
+    }
+    get signaled(): SyncStatus {
+        const gl = Core.getInstance().getGL();
+        return gl.getParameter(gl.SYNC_STATUS);
+    }
 };
 
-export { SyncCte, Sync };
+enum SyncWaitResult {
+    ConditionSatisfied = 0x911C,
+    AlreadySignaled = 0x911A,
+    TimeoutExpired = 0x911B,
+    WaitFailed = 0x911D
+};
 
-/**
- * constructor(SyncCondition = GPUCommandsComplete)
- * Type(): SyncType
- * Signaleed(): bool // return true if in signaled status
- * Condition(): SyncCondition // return sync condition
- * Status(): SyncStatus // return sync status
- * ClientWait(dt: number): SyncWaitResult // wait for condition satified
- * Wait(timeout=TIMEOUT_IGNORED) // Wait fro condition be satisfied
- */
-/**
- * SyncWaitResult::ConditionSatisfied,
- * SyncWaitResult::AlreadySignaled,
- * SyncWaitResult::TimeoutExpired,
- * SyncWaitResult::WaitFailed
- *
- *
- * SyncType::Fence
- *
- *
- * SyncCondition::GPUCommandsComplete
- *
- *
- * SyncStatus::Signaled,
- * SyncStatus::Unsignaled
- */
+enum SyncType {
+    Fence = 0x9116
+};
+
+enum SyncCondition {
+    GPUCommandsComplete = 0x9117
+};
+
+enum SyncStatus {
+    Signaled = 0x9119,
+    Unsignaled = 0x9118
+}
+
+export { SyncWaitResult, Sync };

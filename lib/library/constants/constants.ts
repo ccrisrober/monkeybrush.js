@@ -11,8 +11,6 @@ export { ProgramCte } from "./ProgramCte";
 export { RenderType } from "./RenderType";
 export { StencilOp } from "./StencilOp";
 export { ShadingMode } from "./ShadingMode";
-export { SyncParam } from "./SyncParam";
 export { TextureFormat } from "./TextureFormat";
 export { WrapMode, TextureType } from "./TextureType";
-export { TransfFeedCte } from "./TransfFeedCte";
 export { UsageType } from "./UsageType";
