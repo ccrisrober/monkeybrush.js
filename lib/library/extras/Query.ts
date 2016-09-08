@@ -22,6 +22,17 @@ import { Core } from "../core/Core";
 
 "use strict";
 
+enum QueryParams {
+    QueryResult = 0x8866,
+    QueryResultAvailable = 0x8867
+};
+
+enum QueryTarget {
+    AnySamplesPassed = 0x8C2F,
+    AnySamplesPassedConservative = 0x8D6A,
+    TransformFeedbackPrimitivesWritten = 0x8C88
+};
+
 class Query {
     protected _handle: WebGLQuery;
     constructor() {
@@ -32,43 +43,38 @@ class Query {
         const gl = Core.getInstance().getGL();
         gl.deleteQuery(this._handle);
     }
-    public begin(target) {
+    public begin(target: QueryTarget) {
         const gl = Core.getInstance().getGL();
         gl.beginQuery(target, this._handle);
     }
-    public end(target) {
+    public end(target: QueryTarget) {
         const gl = Core.getInstance().getGL();
         gl.endQuery(target);
     };
     public useAnySamples(cb: Function) {
-        const gl = Core.getInstance().getGL();
-        this.oneUse(gl.ANY_SAMPLES_PASSED, cb);
+        this.oneUse(QueryTarget.AnySamplesPassed, cb);
     };
     public useAnySamplesConservative(cb: Function) {
-        const gl = Core.getInstance().getGL();
-        this.oneUse(gl.ANY_SAMPLES_PASSED_CONSERVATIVE, cb);
+        this.oneUse(QueryTarget.AnySamplesPassedConservative, cb);
     };
     public useTransfFeedbackPrimWritten(cb: Function) {
-        const gl = Core.getInstance().getGL();
-        this.oneUse(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, cb);
+        this.oneUse(QueryTarget.TransformFeedbackPrimitivesWritten, cb);
     };
-    public oneUse(target, cb: Function) {
+    public oneUse(target: QueryTarget, cb: Function) {
         this.begin(target);
         cb();
         this.end(target);
     }
-    public getParameter(param: number) {
+    public getParameter(param: QueryParams) {
         const gl = Core.getInstance().getGL();
         return gl.getQueryParameter(this._handle, param);
     }
-    public isResultAvailable() {
-        const gl = Core.getInstance().getGL();
-        return this.getParameter(gl.QUERY_RESULT_AVAILABLE);
+    public isResultAvailable(): boolean {
+        return this.getParameter(QueryParams.QueryResultAvailable);
     }
-    public getResult() {
-        const gl = Core.getInstance().getGL();
-        return this.getParameter(gl.QUERY_RESULT);
+    public getResult(): number {
+        return this.getParameter(QueryParams.QueryResult);
     }
 };
 
-export { Query };
+export { QueryParams, QueryTarget, Query };
