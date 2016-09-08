@@ -67,3 +67,29 @@ class Sync {
 };
 
 export { SyncCte, Sync };
+
+/**
+ * constructor(SyncCondition = GPUCommandsComplete)
+ * Type(): SyncType
+ * Signaleed(): bool // return true if in signaled status
+ * Condition(): SyncCondition // return sync condition
+ * Status(): SyncStatus // return sync status
+ * ClientWait(dt: number): SyncWaitResult // wait for condition satified
+ * Wait(timeout=TIMEOUT_IGNORED) // Wait fro condition be satisfied
+ */
+/**
+ * SyncWaitResult::ConditionSatisfied,
+ * SyncWaitResult::AlreadySignaled,
+ * SyncWaitResult::TimeoutExpired,
+ * SyncWaitResult::WaitFailed
+ *
+ *
+ * SyncType::Fence
+ *
+ *
+ * SyncCondition::GPUCommandsComplete
+ *
+ *
+ * SyncStatus::Signaled,
+ * SyncStatus::Unsignaled
+ */
