@@ -39,7 +39,7 @@ class Prism extends Cone {
     constructor(radius: number, height: number, sides: number,
         heightSubDiv: number = 1.0, topCap: boolean = true, bottomCap: boolean = true) {
         super(radius, radius, height, sides, heightSubDiv, topCap, bottomCap);
-    }
+    };
 };
 
 export { Prism };

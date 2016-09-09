@@ -106,17 +106,7 @@ class Torus extends Drawable {
         this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;
-    }
-    // public render() {
-        // offset the filled object to avoid the stitching that can arise when the wireframe lines are drawn
-        // gl.enable(gl.POLYGON_OFFSET_FILL);
-        // gl.polygonOffset(2.0, 2.0);
-        // gl.drawElements(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-        // gl.disable(gl.POLYGON_OFFSET_FILL);
-
-        // Then disable the vertex colors and draw the wire frame with one constant color
-        // gl.lineWidth(1.0);
-        // gl.drawElements(gl.LINE_LOOP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    };
 };
 
 export { Torus };

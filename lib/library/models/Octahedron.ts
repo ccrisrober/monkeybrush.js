@@ -29,6 +29,8 @@ import { Polyhedron } from "./Polyhedron";
 class Octahedron extends Polyhedron {
     /**
      * Octahedron constructor
+     * @param {number} radius: Octahedron radius
+     * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
      */
     constructor(radius: number, subdivisions: number) {
         let verts = [

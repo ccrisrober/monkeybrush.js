@@ -19,18 +19,28 @@
 
 
 import { Vect3 } from "../maths/Vect3";
-
+import { Drawable } from "./Drawable";
 
 "use strict";
 
-
-class ParametricGeom {
-    public verts = [];
-    public normals = [];
-    public indices = [];
-    public uvs = [];
+/**
+ * ParametricGeom class
+ * @class ParametricGeom
+ */
+class ParametricGeom extends Drawable {
+    /**
+     * ParametricGeom
+     * @param {number) => Vect3} func Function generator (u, v) => Vect3
+     * @param {number} slices Number of slices
+     * @param {number} stacks Number of stacks
+     */
     constructor(func: (u: number, v: number) => Vect3, slices: number, stacks: number) {
+        let vertices = [];
+        let normals = [];
+        let indices = [];
+        let uvs = [];
 
+        super();
         let evalVect3;
         let u, v;
 
@@ -42,7 +52,7 @@ class ParametricGeom {
                 u = j / slices;
 
                 evalVect3 = func(u, v);
-                this.verts.push(new Vect3(evalVect3.x, evalVect3.y, evalVect3.z));
+                vertices.push(new Vect3(evalVect3.x, evalVect3.y, evalVect3.z));
             }
         }
 
@@ -61,67 +71,73 @@ class ParametricGeom {
                 uvc = new Array([(j + 1) / slices, (i + 1) / stacks]);
                 uvd = new Array([j / slices, (i + 1) / stacks]);
 
-                this.indices.push(new Vect3(pA, pB, pD));
-                /*this.uvs.push(
-                    uva[0], uva[1],
-                    uvb[0], uvb[1],
-                    uvd[0], uvd[1]
-                );*/
+                indices.push(new Vect3(pA, pB, pD));
+                uvs.push(uva[0], uva[1]);
+                uvs.push(uvb[0], uvb[1]);
+                uvs.push(uvd[0], uvd[1]);
 
-                this.indices.push(new Vect3(pB, pC, pD));
-                /*this.uvs.push(
-                    uvb[0], uvb[1],
-                    uvc[0], uvc[1],
-                    uvd[0], uvd[1]
-                );*/
+                indices.push(new Vect3(pB, pC, pD));
+                uvs.push(uvb[0], uvb[1]);
+                uvs.push(uvc[0], uvc[1]);
+                uvs.push(uvd[0], uvd[1]);
             }
         }
 
-        for (let i = 0; i < this.verts.length; ++i) {
-            this.normals.push(new Vect3());
+        for (let i = 0; i < vertices.length; ++i) {
+            normals.push(new Vect3());
         }
 
-        for (let i = 0; i < this.indices.length; ++i) {
-            const ia: Vect3 = this.verts[this.indices[i].x];
-            const ib: Vect3 = this.verts[this.indices[i].y];
-            const ic: Vect3 = this.verts[this.indices[i].z];
+        for (let i = 0; i < indices.length; ++i) {
+            const ia: Vect3 = vertices[indices[i].x];
+            const ib: Vect3 = vertices[indices[i].y];
+            const ic: Vect3 = vertices[indices[i].z];
 
             const e1: Vect3 = Vect3.sub(ia, ib);
             const e2: Vect3 = Vect3.sub(ic, ib);
             const no: Vect3 = Vect3.cross(e1, e2);
 
-            this.normals[this.indices[i].x] = this.normals[this.indices[i].x].add(no);
-            this.normals[this.indices[i].y] = this.normals[this.indices[i].y].add(no);
-            this.normals[this.indices[i].z] = this.normals[this.indices[i].z].add(no);
+            normals[indices[i].x] = normals[indices[i].x].add(no);
+            normals[indices[i].y] = normals[indices[i].y].add(no);
+            normals[indices[i].z] = normals[indices[i].z].add(no);
         }
 
-        for (let i = 0; i < this.normals.length; ++i) {
-            this.normals[i] = this.normals[i].normalize();
+        for (let i = 0; i < normals.length; ++i) {
+            normals[i] = normals[i].normalize();
         }
 
-        let verts: Array<number> = [];
-        for (let i = 0; i < this.verts.length; ++i) {
-            verts.push(this.verts[i].x, this.verts[i].y, this.verts[i].z);
+        let vertices2: Array<number> = [];
+        for (let i = 0; i < vertices.length; ++i) {
+            vertices2.push(vertices[i].x, vertices[i].y, vertices[i].z);
         }
-        this.verts = verts;
-        let normals: Array<number> = [];
-        for (let i = 0; i < this.normals.length; ++i) {
-            normals.push(this.normals[i].x, this.normals[i].y, this.normals[i].z);
+        vertices = vertices2;
+        let normals2: Array<number> = [];
+        for (let i = 0; i < normals.length; ++i) {
+            normals2.push(normals[i].x, normals[i].y, normals[i].z);
         }
-        this.normals = normals;
-        let indices: Array<number> = [];
-        for (let i = 0; i < this.indices.length; ++i) {
-            indices.push(this.indices[i].x, this.indices[i].y, this.indices[i].z);
+        normals = normals2;
+        let indices2: Array<number> = [];
+        for (let i = 0; i < indices.length; ++i) {
+            indices2.push(indices[i].x, indices[i].y, indices[i].z);
         }
-        this.indices = indices;
+        indices = indices2;
+        let uvs2: Array<number> = [];
+        for (let i = 0; i < uvs.length; ++i) {
+            uvs2.push(uvs[i].x, uvs[i].y);
+        }
+        uvs = uvs2;
 
-        console.log({
-            vertices: this.verts,
-            indices: this.indices,
-            normals: this.normals,
-            uvs: this.uvs
-        });
-    }
+
+        this._handle = [];
+        this._vao.bind();
+
+        this.addElementArray(new Uint16Array(indices));
+
+        this.addBufferArray(0, new Float32Array(vertices), 3);
+        this.addBufferArray(1, new Float32Array(normals), 3);
+        this.addBufferArray(2, new Float32Array(uvs), 2);
+
+        this._indicesLen = indices.length;
+    };
 };
 
 export { ParametricGeom };

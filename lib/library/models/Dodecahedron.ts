@@ -29,6 +29,8 @@ import { Polyhedron } from "./Polyhedron";
 class Dodecahedron extends Polyhedron {
     /**
      * Dodecahedron constructor
+     * @param {number} radius: Dodecahedron radius
+     * @param {number} subdivisions: Dodecahedron subdivisions from base dodecahedron.
      */
     constructor(radius: number, subdivisions: number) {
         const t: number = ( 1 + Math.sqrt( 5 ) ) / 2;

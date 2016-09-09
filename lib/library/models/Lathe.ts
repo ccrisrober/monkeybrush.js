@@ -174,7 +174,7 @@ class Lathe extends Drawable {
         this.addBufferArray(2, new Float32Array(uvs), 2);
 
         this._indicesLen = indices.length;
-    }
-}
+    };
+};
 
 export { Lathe };

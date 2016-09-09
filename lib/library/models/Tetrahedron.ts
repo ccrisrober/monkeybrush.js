@@ -21,53 +21,33 @@
 import { Polyhedron } from "./Polyhedron";
 
 "use strict";
-// TODO: NO FUNCIONA
+
 /**
- * Cuboctahedron class
- * @class Cuboctahedron
+ * Tetrahedron class
+ * @class Tetrahedron
  */
-class Cuboctahedron extends Polyhedron {
+class Tetrahedron extends Polyhedron {
     /**
-     * Cuboctahedron constructor
+     * Tetrahedron constructor
+     * @param {number} radius: Tetrahedron radius
+     * @param {number} subdivisions: Tetrahedron subdivisions from base tetrahedron.
      */
     constructor(radius: number, subdivisions: number) {
         let verts = [
-            -2.0,  0.0,    0.0,
-            -1.0, -1.0, -1.414,
-            -1.0, -1.0,  1.414,
-            -1.0,  1.0, -1.414,
-            -1.0,  1.0,  1.414,
-             0.0, -2.0,    0.0,
-             0.0,  2.0,    0.0,
-             1.0, -1.0, -1.414,
-             1.0, -1.0,  1.414,
-             1.0,  1.0, -1.414,
-             1.0,  1.0,  1.414,
-             2.0,  0.0,    0.0
+             1,  1,  1,
+            -1, -1,  1,
+            -1,  1, -1,
+             1, -1, -1
         ];
-
         let el = [
-             3,  9,  7,
-             1,  2,  8,
-            10,  4,  8,
-             5,  7, 11,
-             2,  0,  1,
-             5,  4,  6,
-             3,  0, 10,
-            11,  9,  6,
-            11, 10,  8,
-             2,  4,  0,
-             5,  8,  2,
-             4, 10,  6,
-             7,  9, 11,
-             0,  3,  1,
-             1,  7,  5,
-             6,  9,  3
+            2, 1, 0,
+            0, 3, 2,
+            1, 3, 0,
+            2, 3, 1
         ];
-
 
         super(verts, el, radius, subdivisions);
     };
 };
 
-export { Cuboctahedron };
+export { Tetrahedron };

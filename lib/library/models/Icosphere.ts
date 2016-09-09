@@ -84,7 +84,7 @@ class Icosphere extends Polyhedron {
         ];
         console.log(subdivisions);
         super(verts, el, radius, subdivisions);
-    }
+    };
 };
 
 export { Icosphere };

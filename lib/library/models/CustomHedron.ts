@@ -28,7 +28,11 @@ import { Polyhedron } from "./Polyhedron";
  */
 class CustomHedron extends Polyhedron {
     /**
-     * CustomHedron constructor
+     * CustomHedron abstract constructor
+     * @param {Array<number>} verts List of vertices
+     * @param {Array<number>} el List of indices
+     * @param {number} radius CustomHedron radius
+     * @param {number} subdivisions CustomHedron subdivisions
      */
     constructor(vertices: Array<number>, indices: Array<number>, radius: number, subdivisions: number) {
         super(vertices, indices, radius, subdivisions);

@@ -111,11 +111,7 @@ class Sphere extends Drawable {
         this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;
-    }
-    // public render() {
-        // gl.lineWidth(1.0);
-        // Puts vertices to buffer and links it to attribute letiable 'ppos'
-        // gl.drawElements(gl.LINE_STRIP, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+    };
 };
 
 export { Sphere };

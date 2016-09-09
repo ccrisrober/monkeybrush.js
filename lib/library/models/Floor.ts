@@ -23,7 +23,16 @@ import { Drawable } from "./Drawable";
 
 "use strict";
 
+/**
+ * Floor class
+ * @class Floor
+ */
 class Floor extends Drawable {
+    /**
+     * Floor constructor
+     * @param {number = 80} dim [description]
+     * @param {number = 2}  e   [description]
+     */
     constructor(dim: number = 80, e: number = 2) {
         super();
         const lines = 2 * dim / e;
@@ -64,12 +73,14 @@ class Floor extends Drawable {
 
         this._indicesLen = el.length;
     };
+    /*
     public render() {
         const gl = Core.getInstance().getGL();
         this._vao.bind();
         gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
         this._vao.unbind();
     };
+    */
 };
 
 export { Floor };

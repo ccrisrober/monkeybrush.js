@@ -22,9 +22,21 @@ import { Drawable } from "./Drawable";
 
 "use strict";
 
-
+/**
+ * Polyhedron class
+ * @class Polyhedron
+ */
 abstract class Polyhedron extends Drawable {
-    constructor(verts: Array<number>, el: Array<number>, radius: number, subdivisions: number) {
+    /**
+     * Polyhedron abstract constructor
+     * @param {Array<number>} verts List of vertices
+     * @param {Array<number>} el List of indices
+     * @param {number} radius Polyhedron radius
+     * @param {number} subdivisions Polyhedron subdivisions
+     */
+    constructor(verts: Array<number>, el: Array<number>,
+        radius: number, subdivisions: number) {
+
         super();
         let norms = new Array();
         let tex = new Array();
@@ -87,21 +99,6 @@ abstract class Polyhedron extends Drawable {
             el = new_el;
         }
 
-        /**
-        var newcells = [];
-
-        for (var i = 0; i < el.length; i+=3) {
-            var a = el[i + 0];
-            var b = el[i + 1];
-            var c = el[i + 2];
-            if (a !== null && b !== null) newcells.push(a, b);
-            if (b !== null && c !== null) newcells.push(b, c);
-            if (a !== null && c !== null) newcells.push(c, a);
-        }
-
-        el = newcells;
-        /**/
-
         this._handle = [];
         this._vao.bind();
 
@@ -112,7 +109,7 @@ abstract class Polyhedron extends Drawable {
         this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;
-    }
+    };
 };
 
 export { Polyhedron };

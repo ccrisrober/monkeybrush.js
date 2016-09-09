@@ -23,8 +23,8 @@ import { Drawable } from "./Drawable";
 "use strict";
 
 /**
- * Quad class
- * @class Quad
+ * Plane class
+ * @class Plane
  */
 class Plane extends Drawable {
     /**
@@ -114,7 +114,7 @@ class Plane extends Drawable {
         this.addBufferArray(2, new Float32Array(tex), 2);
 
         this._indicesLen = el.length;
-    }
+    };
 };
 
 export { Plane };
