@@ -332,6 +332,31 @@ class Vect2 {
 
         return dest;
     };
+
+    public static min(v0: Vect2, v2: Vect2): Vect2 {
+        const x = (v0.x < v2.x) ? v0.x : v2.x;
+        const y = (v0.y < v2.y) ? v0.y : v2.y;
+
+        return new Vect2(x, y);
+    };
+    public static max(v0: Vect2, v2: Vect2): Vect2 {
+        const x = (v0.x > v2.x) ? v0.x : v2.x;
+        const y = (v0.y > v2.y) ? v0.y : v2.y;
+
+        return new Vect2(x, y);
+    };
+    public static lerp(init: Vect2, end: Vect2, t: number): Vect2 {
+        const x = init.x + ((end.x - init.x) * t);
+        const y = init.y + ((end.y - init.y) * t);
+
+        return new Vect2(x, y);
+    };
+    public static clamp(value: Vect2, min: Vect2, max: Vect2): Vect2 {
+        const x = (value.x > max.x) ? max.x : (value.x < min.x) ? min.x : value.x;
+        const y = (value.y > max.y) ? max.y : (value.y < min.y) ? min.y : value.y;
+
+        return new Vect2(x, y);
+    };
 };
 
 export { Vect2 };

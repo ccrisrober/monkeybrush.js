@@ -133,7 +133,10 @@ class Framebuffer {
         this._valid = true;
         this.unbind();
     }
-
+    public static RestoreDefaultFBO() {
+        const gl = Core.getInstance().getGL();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
     public setTexture(tex: Texture, attach: number) {
       if (attach > this._attachments.length) {
         throw new Error("Attachment undefined");

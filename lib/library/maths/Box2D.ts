@@ -37,6 +37,7 @@ class Box2D {
      * @type {Vect2}
      */
     protected _max: Vect2;
+    protected _center: Vect2;
 
     /**
      * Box2D constructor
@@ -46,6 +47,7 @@ class Box2D {
     constructor(min: Vect2 = new Vect2(Infinity, Infinity), max: Vect2 = new Vect2(-Infinity, -Infinity)) {
         this._min = min;
         this._max = max;
+        this._center = Vect2.add(this._min, this._max).scale(0.5);
     };
     public containtsPoint(p: Vect2): boolean {
         if (p.x > this._min.x || p.x < this._max.x ||
@@ -80,8 +82,7 @@ class Box2D {
     };
 
     public center(): Vect2 {
-        let v: Vect2 = new Vect2();
-        return Vect2.add(this._min, this._max).scale(0.5);
+        return this._center;
     };
 };
 

@@ -70,7 +70,7 @@ class GlobalState {
         return this._currentDepthMask === true;
     };
     static setDepthMask(mask: boolean) {
-        if(this._currentDepthMask !== mask) {
+        if (this._currentDepthMask !== mask) {
             const gl = Core.getInstance().getGL();
             gl.depthMask(mask);
             this._currentDepthMask = mask;
@@ -131,10 +131,10 @@ class GlobalState {
         }
     };
     static setStencilFunc(stencilFunc, stencilRef, stencilMask) {
-
+        // TODO
     };
     static setStencilOp(stencilFail, stencilZFail, stencilZPass) {
-
+        // TODO
     };
     static setStencilClear(s: number) {
         if (this._currentStencilClear !== s) {
@@ -144,6 +144,7 @@ class GlobalState {
         }
     };
     static resetStencil() {
+        // TODO
     };
 
     // =================================================================
@@ -234,6 +235,8 @@ class GlobalState {
             this._currentLineWidth = width;
         }
     }
+
+    // Polygon offset
 };
 
 export { GlobalState };

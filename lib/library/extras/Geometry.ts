@@ -19,7 +19,7 @@
 
 
 
-import { Vect3 } from "../maths/Vect3";
+// import { Vect3 } from "../maths/Vect3";
 
 "use strict";
 
@@ -102,7 +102,6 @@ namespace Geometry {
         lower.pop();
         return lower.concat(upper);
     };
-
     export function convexHull1D(points: ArrayLike<number>): Array<number> {
         let lo: number = 0;
         let hi: number = 0;
@@ -114,9 +113,9 @@ namespace Geometry {
                 hi = i;
             }
         }
-        if(lo < hi) {
+        if (lo < hi) {
             return [lo, hi];
-        } else if(lo > hi) {
+        } else if (lo > hi) {
             return [hi, lo];
         } else {
             return [lo];
@@ -139,8 +138,8 @@ namespace Geometry {
         return {
             indices: newIndices,
             positions: newPositions
-        }
-    }
+        };
+    };
 };
 
 export { Geometry };

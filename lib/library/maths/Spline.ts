@@ -137,6 +137,7 @@ class Spline3D {
 
         const angle = Math.atan2(p1.z - p0.z, p1.x - p0.x);
         return angle * Math.PI / 180.0;
+        // TODO: Use Mathf
     }
 };
 

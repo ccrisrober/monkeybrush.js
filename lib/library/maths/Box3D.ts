@@ -37,6 +37,7 @@ class Box3D {
      * @type {Vect3}
      */
     protected _max: Vect3;
+    protected _center: Vect3;
 
     /**
      * Box3D constructor
@@ -47,6 +48,7 @@ class Box3D {
         max: Vect3 = new Vect3(-Infinity, -Infinity, -Infinity)) {
         this._min = min;
         this._max = max;
+        this._center = Vect3.add(this._min, this._max).scale(0.5);
     };
     public containtsPoint(p: Vect3): boolean {
         if (p.x > this._min.x || p.x < this._max.x ||
@@ -115,8 +117,7 @@ class Box3D {
     };
 
     public center(): Vect3 {
-        let v: Vect3 = new Vect3();
-        return Vect3.add(this._min, this._max).scale(0.5);
+        return this._center;
     };
 };
 

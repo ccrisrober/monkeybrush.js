@@ -30,6 +30,7 @@ class Vect3 {
     static xAxis = new Vect3(1.0, 0.0, 0.0);
     static yAxis = new Vect3(0.0, 1.0, 0.0);
     static zAxis = new Vect3(0.0, 0.0, 1.0);
+    static up    = new Vect3(0.0, 1.0, 1.0);
 
     /**
      * Vect3 constructor
@@ -435,6 +436,34 @@ class Vect3 {
 
 
 
+    public static min(v0: Vect3, v2: Vect3): Vect3 {
+        const x = (v0.x < v2.x) ? v0.x : v2.x;
+        const y = (v0.y < v2.y) ? v0.y : v2.y;
+        const z = (v0.z > v2.z) ? v0.z : v2.z;
+
+        return new Vect3(x, y, z);
+    };
+    public static max(v0: Vect3, v2: Vect3): Vect3 {
+        const x = (v0.x > v2.x) ? v0.x : v2.x;
+        const y = (v0.y > v2.y) ? v0.y : v2.y;
+        const z = (v0.z > v2.z) ? v0.z : v2.z;
+
+        return new Vect3(x, y, z);
+    };
+    public static lerp(init: Vect3, end: Vect3, t: number): Vect3 {
+        const x = init.x + ((end.x - init.x) * t);
+        const y = init.y + ((end.y - init.y) * t);
+        const z = init.z + ((end.z - init.z) * t);
+
+        return new Vect3(x, y, z);
+    };
+    public static clamp(value: Vect3, min: Vect3, max: Vect3): Vect3 {
+        const x = (value.x > max.x) ? max.x : (value.x < min.x) ? min.x : value.x;
+        const y = (value.y > max.y) ? max.y : (value.y < min.y) ? min.y : value.y;
+        const z = (value.z > max.z) ? max.z : (value.z < min.z) ? min.z : value.z;
+
+        return new Vect3(x, y, z);
+    };
 
 
 

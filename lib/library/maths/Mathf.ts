@@ -1,3 +1,7 @@
+
+import { Vect2 } from "./Vect2";
+import { Vect3 } from "./Vect3";
+
 namespace Mathf {
     export function lerp(x: number, x1: number, x2: number,
         q00: number, q01: number): number {
@@ -46,9 +50,20 @@ namespace Mathf {
         return Math.pow(2, Math.round(Math.log(v) / Math.LN2));
     };
     export function clamp(v: number, min: number, max: number): number {
-        return Math.max(min, Math.min(max, v));
+        return Math.min(max, Math.max(min, v));
     };
-    export function smoothstep(x: number, min: number, max: number): number {
+    /**
+     * Return 1 when is a positive number. -1 otherwise.
+     * @param  {number} v [description]
+     * @return {number}   [description]
+     */
+    export function sign(v: number): number {
+        if (v === 0 || isNaN(v)) {
+            return v;
+        }
+        return (v > 0) ? 1: -1;
+    }
+    export function smoothstep(x: number, min: number = 0, max: number = 1): number {
         if (x <= min) return 0;
         if (x >= max) return 1;
 
@@ -68,7 +83,17 @@ namespace Mathf {
             return ("0" + str).toUpperCase();
         }
         return str.toUpperCase();
-    }
+    };
+    // return: radians angle!
+    export function angleBetween2DPoints(p0: Vect2, p1: Vect2): number {
+        const delta = Vect2.sub(p1, p0);
+        return Math.atan2(delta.y, delta.x);
+    };
+    // return: radians angle!
+    export function angleBetween3DPoints(p0: Vect3, p1: Vect3): number {
+        const delta = Vect3.sub(p1, p0);
+        return Math.atan2(delta.z, delta.x);
+    };
 };
 
 export { Mathf };

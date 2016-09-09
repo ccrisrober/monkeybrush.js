@@ -55,6 +55,9 @@ class PostProcess2 {
     public destroy() {
         // TODO
     }
+    public apply() {
+        // TODO
+    }
 };
 
 export { PostProcess2 };
