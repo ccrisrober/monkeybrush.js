@@ -76,6 +76,47 @@ class Color3 {
         this.b = b;
 
         return this;
+    };
+    public static lerp(minColor: Color3, maxColor: Color3, alpha: number): Color3 {
+        const r = minColor.r + (maxColor.r - minColor.r) * alpha;
+        const g = minColor.g + (maxColor.g - minColor.g) * alpha;
+        const b = minColor.b + (maxColor.b - minColor.b) * alpha;
+        return new Color3(r, g, b);
+    }
+    static createFromHex(hex: number): Color3 {
+        return new Color3(
+            (hex >> 16 & 255) / 255,
+            (hex >> 8 & 255) / 255,
+            (hex & 255) / 255
+        );
+    };
+
+
+    // TODO: https://github.com/bgrins/TinyColor/blob/master/tinycolor.js
+    // TODO: https://github.com/davidmerfield/randomColor
+
+
+
+    public gammaToLinear(color: Color3, gammaFactor: number = 2.2): Color3 {
+        this.r = Math.pow(color.r, gammaFactor);
+        this.g = Math.pow(color.g, gammaFactor);
+        this.b = Math.pow(color.b, gammaFactor);
+
+        return this;
+    };
+    public linearToGamma(color: Color3, gammaFactor: number = 2.2): Color3 {
+        const invGamma: number = (gammaFactor > 0) ? (1.0 / gammaFactor) : 1.0;
+
+        this.r = Math.pow(color.r, invGamma);
+        this.g = Math.pow(color.g, invGamma);
+        this.b = Math.pow(color.b, invGamma);
+
+        return this;
+    };
+    public getHexadecimal(): number {
+        return (this.r * 255) << 16
+             ^ (this.g * 255) << 8
+             ^ (this.b * 255) << 0;
     }
     /**
      * [toHSL description]
@@ -101,23 +142,9 @@ class Color3 {
             h /= 6;
         }
         return new Color3(h, s, l);
-    }
-
-    public static lerp(minColor: Color3, maxColor: Color3, alpha: number): Color3 {
-        const r = minColor.r + (maxColor.r - minColor.r) * alpha;
-        const g = minColor.g + (maxColor.g - minColor.g) * alpha;
-        const b = minColor.b + (maxColor.b - minColor.b) * alpha;
-        return new Color3(r, g, b);
-    }
+    };
 
 
-    static createFromHex(hex: number): Color3 {
-        return new Color3(
-            (hex >> 16 & 255) / 255,
-            (hex >> 8 & 255) / 255,
-            (hex & 255) / 255
-        );
-    }
 
     public static Aqua: Color3 = Color3.createFromHex(0x00FFFF);
     public static Beige: Color3 = Color3.createFromHex(0xF5F5DC);
@@ -139,7 +166,10 @@ class Color3 {
     public static Purple: Color3 = Color3.createFromHex(0x800080);
     public static Red: Color3 = Color3.createFromHex(0xFF0000);
     public static Salmon: Color3 = Color3.createFromHex(0xFA8072);
+    public static Silver: Color3 = Color3.createFromHex(0xC0C0C0);
     public static Yellow: Color3 = Color3.createFromHex(0xFFFF00);
+    public static White: Color3 = Color3.createFromHex(0xFFFFFF);
+    public static WhiteSmoke: Color3 = Color3.createFromHex(0xF5F5F5);
 };
 
 export { Color3 };

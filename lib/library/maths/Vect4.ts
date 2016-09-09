@@ -332,6 +332,74 @@ class Vect4 {
 
         return true;
     };
+    /**
+     * Adds two Vect4´s
+     * @param  {Vect4}    v  First Vect4 operand
+     * @param  {Vect4}    v2 Second Vect4 operand
+     * @param  {Vect4 = null} dest Destiny Vect4 (optional)
+     * @return {number} a new Vect4
+     */
+    static add(v: Vect4, v2: Vect4, dest: Vect4 = null): Vect4 {
+        if (!dest) dest = new Vect4();
+
+        dest.x = v.x + v2.x;
+        dest.y = v.y + v2.y;
+        dest.z = v.z + v2.z;
+        dest.w = v.w + v2.w;
+
+        return dest;
+    };
+    /**
+     * Subtracts two Vect4´s
+     * @param  {Vect4}    v  First Vect4 operand
+     * @param  {Vect4}    v2 Second Vect4 operand
+     * @param  {Vect4 = null} dest Destiny Vect4 (optional)
+     * @return {number} a new Vect4
+     */
+    static sub(v: Vect4, v2: Vect4, dest: Vect4 = null): Vect4 {
+        if (!dest) dest = new Vect4();
+
+        dest.x = v.x - v2.x;
+        dest.y = v.y - v2.y;
+        dest.z = v.z - v2.z;
+        dest.w = v.w - v2.w;
+
+        return dest;
+    };
+    /**
+     * Multiplies two Vect4´s
+     * @param  {Vect4}    v  First Vect4 operand
+     * @param  {Vect4}    v2 Second Vect4 operand
+     * @param  {Vect4 = null} dest Destiny Vect4 (optional)
+     * @return {number} a new Vect4
+     */
+    static mult(v: Vect4, v2: Vect4, dest: Vect4 = null): Vect4 {
+        if (!dest) dest = new Vect4();
+
+        dest.x = v.x * v2.x;
+        dest.y = v.y * v2.y;
+        dest.z = v.z * v2.z;
+        dest.w = v.w * v2.w;
+
+        return dest;
+    };
+    /**
+     * Divides two Vect4´s
+     * @param  {Vect4}    v  First Vect4 operand
+     * @param  {Vect4}    v2 Second Vect4 operand
+     * @param  {Vect4 = null} dest Destiny Vect4 (optional)
+     * @return {number} a new Vect4
+     */
+    static div(v: Vect4, v2: Vect4, dest: Vect4 = null): Vect4 {
+        if (!dest) dest = new Vect4();
+
+        dest.x = v.x / v2.x;
+        dest.y = v.y / v2.y;
+        dest.z = v.z / v2.z;
+        dest.w = v.w / v2.w;
+
+        return dest;
+    };
 };
 
 export { Vect4 };

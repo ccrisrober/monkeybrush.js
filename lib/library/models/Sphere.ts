@@ -59,7 +59,7 @@ class Sphere extends Drawable {
                     s = i / slices;
             for ( let j = 0; j <= stacks; ++j ) {
                 phi = j * phiFac;
-                            t = j / stacks;
+                t = j / stacks;
                 nx = Math.sin(phi) * Math.cos(theta);
                 ny = Math.sin(phi) * Math.sin(theta);
                 nz = Math.cos(phi);
@@ -67,9 +67,9 @@ class Sphere extends Drawable {
                 norms[idx] = nx; norms[idx + 1] = ny; norms[idx + 2] = nz;
                 idx += 3;
 
-                            tex[tIdx] = s;
-                            tex[tIdx + 1] = t;
-                            tIdx += 2;
+                tex[tIdx] = s;
+                tex[tIdx + 1] = t;
+                tIdx += 2;
             }
         }
 

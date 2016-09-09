@@ -113,6 +113,11 @@ class Box3D {
             new Vect3(maxX, maxY, maxZ)
         );
     };
+
+    public center(): Vect3 {
+        let v: Vect3 = new Vect3();
+        return Vect3.add(this._min, this._max).scale(0.5);
+    };
 };
 
 export { Box3D };

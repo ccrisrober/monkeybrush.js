@@ -272,6 +272,66 @@ class Vect2 {
 
         return true;
     };
+    /**
+     * Adds two Vect2´s
+     * @param  {Vect2}    v  First Vect2 operand
+     * @param  {Vect2}    v2 Second Vect2 operand
+     * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+     * @return {number} a new Vect2
+     */
+    static add(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+        if (!dest) dest = new Vect2();
+
+        dest.x = v.x + v2.x;
+        dest.y = v.y + v2.y;
+
+        return dest;
+    };
+    /**
+     * Subtracts two Vect2´s
+     * @param  {Vect2}    v  First Vect2 operand
+     * @param  {Vect2}    v2 Second Vect2 operand
+     * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+     * @return {number} a new Vect2
+     */
+    static sub(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+        if (!dest) dest = new Vect2();
+
+        dest.x = v.x - v2.x;
+        dest.y = v.y - v2.y;
+
+        return dest;
+    };
+    /**
+     * Multiplies two Vect2´s
+     * @param  {Vect2}    v  First Vect2 operand
+     * @param  {Vect2}    v2 Second Vect2 operand
+     * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+     * @return {number} a new Vect2
+     */
+    static mult(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+        if (!dest) dest = new Vect2();
+
+        dest.x = v.x * v2.x;
+        dest.y = v.y * v2.y;
+
+        return dest;
+    };
+    /**
+     * Divides two Vect2´s
+     * @param  {Vect2}    v  First Vect2 operand
+     * @param  {Vect2}    v2 Second Vect2 operand
+     * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+     * @return {number} a new Vect2
+     */
+    static div(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+        if (!dest) dest = new Vect2();
+
+        dest.x = v.x / v2.x;
+        dest.y = v.y / v2.y;
+
+        return dest;
+    };
 };
 
 export { Vect2 };

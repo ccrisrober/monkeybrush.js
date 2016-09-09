@@ -78,6 +78,11 @@ class Box2D {
         }
         return true;
     };
+
+    public center(): Vect2 {
+        let v: Vect2 = new Vect2();
+        return Vect2.add(this._min, this._max).scale(0.5);
+    };
 };
 
 export { Box2D };

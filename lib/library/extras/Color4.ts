@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-// TODO: Change _color to Vector4
+import { Vect4 } from "../maths/Vect4";
 
 "use strict";
 
@@ -27,7 +27,7 @@ class Color4 {
      * [Array description]
      * @param {[type]} 3 [description]
      */
-    protected _color = new Float32Array(4);
+    protected _color = new Vect4(0.0, 0.0, 0.0, 1.0);
     /**
      * [constructor description]
      * @param {number} r [description]
@@ -41,38 +41,52 @@ class Color4 {
         this.b = b;
         this.a = a;
     }
+    public isEquals(c: Color4): boolean {
+        return this._color.exactEquals(c._color);
+    }
+    public clone(): Color4 {
+        return new Color4(this.r, this.g, this.b, this.a);
+    }
+    public copy(c: Color4): Color4 {
+        this.r = c.r;
+        this.g = c.g;
+        this.b = c.b;
+        this.a = c.a;
+
+        return this;
+    }
     /**
      * @return {number}
      */
-    get r(): number { return this._color[0]; }
+    get r(): number { return this._color.x; }
     /**
      * @return {number}
      */
-    get g(): number { return this._color[1]; }
+    get g(): number { return this._color.y; }
     /**
      * @return {number}
      */
-    get b(): number { return this._color[2]; }
+    get b(): number { return this._color.z; }
     /**
      * @return {number}
      */
-    get a(): number { return this._color[3]; }
+    get a(): number { return this._color.w; }
     /**
      * @param {number}
      */
-    set r(r: number) { this._color[0] = r; }
+    set r(r: number) { this._color.x = r; }
     /**
      * @param {number}
      */
-    set g(g: number) { this._color[1] = g; }
+    set g(g: number) { this._color.y = g; }
     /**
      * @param {number}
      */
-    set b(b: number) { this._color[2] = b; }
+    set b(b: number) { this._color.z = b; }
     /**
      * @param {number}
      */
-    set a(a: number) { this._color[3] = a; }
+    set a(a: number) { this._color.w = a; }
     /**
      * [setRGBA description]
      * @param  {number} r [description]

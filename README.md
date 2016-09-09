@@ -70,7 +70,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Inmutable textures
 - [x] Video texture
 - [x] Webcam texture
-- [ ] Compressed texture
+- [x] Compressed texture
+- [x] Canvas texture
 
 ### WebGL2
 - [x] Transform feedback
