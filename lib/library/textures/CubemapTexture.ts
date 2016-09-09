@@ -18,8 +18,6 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Texture.ts" />
-
 import { Texture, TexOptions } from "./Texture";
 import { Core } from "../core/Core";
 import { WrapMode } from "../constants/WrapMode";

@@ -25,6 +25,9 @@
 
 
 /**
+ * RandomGenerator namespace
+ * @namespace RandomGenerator
+ *
  * Examples:
  *     // Real random [0, 1) (Same interval as Math.random)
  *     - RandomGenerator.random();
@@ -39,27 +42,26 @@
  *     // [0, 2147483647]
  *     - RandomGenerator.randomInt31();
  */
-
 namespace RandomGenerator {
     const seed = new Date().getTime();
 
     // Period parameters
-    const N = 624;
-    const M = 397;
-    const MATRIX_A = 0x9908b0df;   // constant vector a
-    const UPPER_MASK = 0x80000000; // most significant w-r bits
-    const LOWER_MASK = 0x7fffffff; // least significant r bits
+    const N: number = 624;
+    const M: number = 397;
+    const MATRIX_A: number = 0x9908b0df;   // constant vector a
+    const UPPER_MASK: number = 0x80000000; // most significant w-r bits
+    const LOWER_MASK: number = 0x7fffffff; // least significant r bits
 
-    let mt = new Array(N); // the array for the state vector
-    let mti = N + 1; // mti==N+1 means mt[N] is not initialized
+    let mt: Array<number> = new Array(N); // the array for the state vector
+    let mti: number = N + 1; // mti==N+1 means mt[N] is not initialized
 
-    init_seed(seed);
+    setSeed(seed);
 
+    /**
+     * Init RandomGenerator with custom seed
+     * @param {number} seed New seed number generator
+     */
     export function setSeed(seed: number) {
-        init_seed(seed);
-    }
-
-    function init_seed(seed: number) {
         mt[0] = seed >>> 0;
         for (mti = 1; mti < N; ++mti) {
             const s = mt[mti - 1] ^ (mt[mti - 1] >>> 30);
@@ -73,11 +75,11 @@ namespace RandomGenerator {
             // for >32 bit machines
         }
     };
-
-
-    // generates a random number on [0,0xffffffff]-interval
-    // origin name genrand_int32
-    export function randomInt() {
+    /**
+     * Generates a random number on [0, 0xffffffff]-interval
+     * @return {number}
+     */
+    export function randomInt(): number {
         let y;
         let mag01 = new Array(0x0, MATRIX_A);
         // mag01[x] = x * MATRIX_A  for x=0,1
@@ -111,41 +113,45 @@ namespace RandomGenerator {
         y ^= (y >>> 18);
 
         return y >>> 0;
-    }
-
-    // generates a random number on [0,0x7fffffff]-interval
-    // origin name genrand_int31
-    export function randomInt31() {
+    };
+    /**
+     * Generates a random number on [0, 0x7fffffff]-interval
+     * @return {number}
+     */
+    export function randomInt31(): number {
         return (randomInt() >>> 1);
-    }
-
-    // generates a random number on [0,1]-real-interval
-    // origin name genrand_real1
-    export function randomIncl() {
+    };
+    /**
+     * Generates a random number on [0, 1]-real-interval
+     * @return {number}
+     */
+    export function randomIncl(): number {
         return randomInt() * (1.0 / 4294967295.0);
         // divided by 2^32-1
     }
 
     // generates a random number on [0,1)-real-interval
-    export function random() {
+    export function random(): number {
         return randomInt() * (1.0 / 4294967296.0);
         // divided by 2^32
-    }
-
-    // generates a random number on (0,1)-real-interval
-    // origin name genrand_real3
-    export function randomExcl() {
+    };
+    /**
+     * Generates a random number on (0,1)-real-interval
+     * @return {number}
+     */
+    export function randomExcl(): number {
         return (randomInt() + 0.5) * (1.0 / 4294967296.0);
         // divided by 2^32
-    }
-
-    // generates a random number on [0,1) with 53-bit resolution*/
-    // origin name genrand_res53
-    export function randomLong() {
+    };
+    /**
+     * Generates a random number on [0,1) with 53-bit resolution
+     * @return {number}
+     */
+    export function randomLong(): number {
         const a = randomInt() >>> 5,
               b = randomInt() >>> 6;
         return (a * 67108864.0 + b) * (1.0 / 9007199254740992.0);
-    }
+    };
 };
 
 export { RandomGenerator };

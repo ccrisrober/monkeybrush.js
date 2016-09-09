@@ -83,7 +83,7 @@ namespace Geometry {
         }
 
         let lower = [];
-        for (let i = 0; i < points.length; i++) {
+        for (let i = 0; i < points.length; ++i) {
             while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0) {
                 lower.pop();
             }
@@ -91,7 +91,7 @@ namespace Geometry {
         }
 
         let upper = [];
-        for (let i = points.length - 1; i >= 0; i--) {
+        for (let i = points.length - 1; i >= 0; --i) {
             while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0) {
                 upper.pop();
             }

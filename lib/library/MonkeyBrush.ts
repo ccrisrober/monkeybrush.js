@@ -5,6 +5,7 @@ export * from "./constants/constants";
 export { BillboardOpts, Billboard } from "./extras/Billboard";
 export { RandomGenerator } from "./extras/RandomGenerator";
 export { PostProcess2 } from "./postprocess/PostProcess2";
+export { PostProcessManager } from "./postprocess/PostProcessManager";
 export { PointCloud } from "./extras/PointCloud";
 
 

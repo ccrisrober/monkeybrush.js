@@ -27,6 +27,11 @@ import { SyncWaitResult } from "../constants/SyncWaitResult";
 
 "use strict";
 
+
+/**
+ * Sync class
+ * @class Sync
+ */
 class Sync {
     protected _handle: WebGLSync;
 
@@ -35,46 +40,78 @@ class Sync {
         this._handle = gl.fenceSync(condition, 0);
     };
     /*
-     * [clientWait description]
+     * Block and wait for a sync object to become signaled
      * @param {number} timeout: Timeout (in nanoseconds) for which to wait
      *      for the sync obj to become signaled.
      */
     public clientWait(timeout: number): SyncWaitResult {
         const gl = Core.getInstance().getGL();
         return gl.clientWaitSync(this._handle, 0, timeout);
-    }
+    };
+    /**
+     * Destroy sync object
+     */
     public destroy() {
        const gl = Core.getInstance().getGL();
         gl.deleteSync(this._handle);
     };
+    /**
+     * Return if sync object is a valid sync
+     * @return {boolean} True if sync object is valid
+     */
     public isValid(): boolean {
         const gl = Core.getInstance().getGL();
         return gl.isSync(this._handle);
     };
+    /**
+     * Instruct the server to block until the sync object becomes signaled.
+     * @param {number = -1} timeout Specifies the timeout that the server
+     *                  should wait before continuing.
+     */
     public wait(timeout: number = -1) {
         const gl = Core.getInstance().getGL();
         gl.waitSync(this._handle, 0, timeout);
-    }
+    };
+    /**
+     * Return current sync status.
+     * @return {SyncStatus} Current sync status.
+     */
     public status(): SyncStatus {
         const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.SYNC_STATUS);
-    }
+    };
+    /**
+     * Return current sync condition.
+     * @return {SyncStatus} Current sync condition.
+     */
     public condition(): SyncCondition {
         const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.SYNC_CONDITION);
-    }
+    };
+    /**
+     * Return current sync type.
+     * @return {SyncStatus} Current sync type.
+     */
     public type(): SyncType {
         const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.OBJECT_TYPE);
-    }
+    };
+    /**
+     * Check if sync is signaled.
+     * @return {boolean}
+     */
     public isSignaled(): boolean {
         const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.SYNC_STATUS) === SyncStatus.Signaled;
-    }
+    };
+    /**
+     * Return sync status.
+     * @return {SyncStatus}
+     */
     get signaled(): SyncStatus {
         const gl = Core.getInstance().getGL();
         return gl.getParameter(gl.SYNC_STATUS);
-    }
+    };
 };
 
 export { Sync };

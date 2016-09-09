@@ -30,24 +30,28 @@ namespace Interpolation {
     export function linear(p0: number, p1: number, t: number): number {
         return (p1 - p0) * t + p0;
     };
-    export function bezier(n: number, i: number): number {
-        return Factorial(n) / Factorial(i) / Factorial(n - i);
-    };
-    function Factorial(n: number) {
-        let a = [1];
-        return function (n: number) {
-            let s = 1;
-            if (a[n]) {
-                return a[n];
-            }
+    export function bezier(x1: number, y1: number, x2: number, y2: number, t: number): number {
+        const f0 = 1 - 3 * x2 + 3 * x1;
+        const f1 = 3 * x2 - 6 * x1;
+        const f2 = 3 * x1;
 
-            for (let i = n; i > 1; --i) {
-                s *= i;
-            }
+        let rt = t;
+        for (let i = 0; i < 5; ++i) {
+            const rt2 = rt * rt;
+            const rt3 = rt2 * rt;
 
-            a[n] = s;
-            return s;
-        }(n);
+            const x = f0 * rt3 + f1 * rt2 + f2 * rt;
+            const slope = 1.0 / (3.0 * f0 * rt2 + 2.0 * f1 * rt + f2);
+            rt -= (x - t) * slope;
+            rt = Math.min(1, Math.max(0, rt));
+
+        }
+
+        // Resolve cubic bezier
+        return 3 * Math.pow(1 - rt, 2) * rt * y1 +
+            3 * (1 - rt) * Math.pow(rt, 2) * y2 +
+            Math.pow(rt, 3);
+
     };
     export function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number {
         const

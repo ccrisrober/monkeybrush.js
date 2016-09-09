@@ -91,9 +91,6 @@ class MyScene extends MB.Scene {
             wrapT: MB.WrapMode.Clamp2Edge
         });
 
-        const lathe = new MB.Lathe();
-        console.log(lathe);
-
         this.function = new MB.ParametricGeom(function(u: number, v: number): MB.Vect3 {
             const r = 50;
             const x = Math.sin(u) * r;
@@ -102,7 +99,16 @@ class MyScene extends MB.Scene {
             return new MB.Vect3(x, y, z);
         }, 60, 40);
 
-        this.cubito = /*new MB.CustomHedron(
+        let points = [];
+        const height = 5;
+        const count = 30;
+        for (let p = 0; p < count; p++) {
+            points.push(
+                new MB.Vect3((Math.sin(p * 0.2) + Math.cos(p * 0.3)) * height + 12,
+                    p + height,
+                    (p - count) + count / 2));
+        }
+        this.cubito = new MB.Lathe(points, 275); /*new MB.CustomHedron(
             [
                 1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1
             ], [
@@ -110,12 +116,12 @@ class MyScene extends MB.Scene {
             ]
         , 10.0, 5);*/
         // new MB.Dodecahedron(5.0, 1);
-        new MB.CustomModel({
+        /*new MB.CustomModel({
             indices: this.function.indices,
             vertices: this.function.verts,
             normals: this.function.normals,
             // texCoords: this.function.uvs
-        });
+        });*/
 
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
             let prog: MB.Program = new MB.Program();

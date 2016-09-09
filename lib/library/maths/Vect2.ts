@@ -332,25 +332,50 @@ class Vect2 {
 
         return dest;
     };
-
+    /**
+     * Return minimum Vect2 between two Vect2's
+     * @param  {Vect2} v0   First Vect2 operand
+     * @param  {Vect2} v2   Second Vect2 operand
+     * @return {Vect2} a new Vect2 equals to minimum Vect2 entries
+     */
     public static min(v0: Vect2, v2: Vect2): Vect2 {
         const x = (v0.x < v2.x) ? v0.x : v2.x;
         const y = (v0.y < v2.y) ? v0.y : v2.y;
 
         return new Vect2(x, y);
     };
+    /**
+     * Return maximum Vect2 between two Vect2's
+     * @param  {Vect2} v0   First Vect2 operand
+     * @param  {Vect2} v2   Second Vect2 operand
+     * @return {Vect2} a new Vect2 equals to maximum Vect2 entries
+     */
     public static max(v0: Vect2, v2: Vect2): Vect2 {
         const x = (v0.x > v2.x) ? v0.x : v2.x;
         const y = (v0.y > v2.y) ? v0.y : v2.y;
 
         return new Vect2(x, y);
     };
+    /**
+     * Perform a linear interpolation between two Vect2's
+     * @param  {Vect2}  init First Vec2 operand
+     * @param  {Vect2}  end  Second Vec2 operand
+     * @param  {number} t    Interpolation amount between the two inputs
+     * @return {Vect2}  Interpolant Vect2
+     */
     public static lerp(init: Vect2, end: Vect2, t: number): Vect2 {
         const x = init.x + ((end.x - init.x) * t);
         const y = init.y + ((end.y - init.y) * t);
 
         return new Vect2(x, y);
     };
+    /**
+     * Limiting Vect2 between min and max value
+     * @param  {Vect2} value Entry vector
+     * @param  {Vect2} min   Minimum Vect2 vector
+     * @param  {Vect2} max   Maximum Vect2 vector
+     * @return {Vect2}       a new Vect2
+     */
     public static clamp(value: Vect2, min: Vect2, max: Vect2): Vect2 {
         const x = (value.x > max.x) ? max.x : (value.x < min.x) ? min.x : value.x;
         const y = (value.y > max.y) ? max.y : (value.y < min.y) ? min.y : value.y;

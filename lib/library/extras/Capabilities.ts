@@ -26,6 +26,10 @@ import { Extensions } from "./Extensions";
 namespace Capabilites {
     let _capabilities = {};
 
+    /**
+     * Return the maximum anisotropy value from current WebGL implementation
+     * @return {number} Maximum anisotropy value
+     */
     export function getMaxAnisotropy(): number {
         if (!_capabilities["anisotropy"]) {
             const gl = Core.getInstance().getGL();
@@ -34,6 +38,10 @@ namespace Capabilites {
         }
         return _capabilities["anisotropy"];
     };
+    /**
+     * Returns the maximum number of textures permitted
+     * @return {number} Maximum textures permitted
+     */
     export function getMaxTextures(): number {
         if (!_capabilities["maxTextures"]) {
             const gl = Core.getInstance().getGL();

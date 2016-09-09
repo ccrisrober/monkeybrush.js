@@ -25,20 +25,39 @@ import { QueryParams } from "../constants/QueryParams";
 "use strict";
 
 
+/**
+ * Query class.
+ * Provideways to asynchronously query for information.
+ * @class Query
+ */
 class Query {
     protected _handle: WebGLQuery;
+    /**
+     * Query constructor
+     */
     constructor() {
         const gl = Core.getInstance().getGL();
         this._handle = gl.createQuery();
-    }
+    };
+    /**
+     * Delete query object
+     */
     public destroy() {
         const gl = Core.getInstance().getGL();
         gl.deleteQuery(this._handle);
-    }
+    };
+    /**
+     * Start the asynchronous query.
+     * @param {QueryTarget} target Indicate which kind of query to begin.
+     */
     public begin(target: QueryTarget) {
         const gl = Core.getInstance().getGL();
         gl.beginQuery(target, this._handle);
-    }
+    };
+    /**
+     * Marks the end of a given query target.
+     * @param {QueryTarget} target Specifying the target of the query.
+     */
     public end(target: QueryTarget) {
         const gl = Core.getInstance().getGL();
         gl.endQuery(target);
@@ -56,17 +75,31 @@ class Query {
         this.begin(target);
         cb();
         this.end(target);
-    }
-    public getParameter(param: QueryParams) {
+    };
+    /**
+     * Return query param
+     * @param  {QueryParams} param [description]
+     * @return {any}               [description]
+     */
+    public getParameter(param: QueryParams): any {
         const gl = Core.getInstance().getGL();
         return gl.getQueryParameter(this._handle, param);
-    }
+    };
+    /**
+     * Return a boolean indicating whether or not a query
+     *     result is available.
+     * @return {boolean} Query has result now.
+     */
     public isResultAvailable(): boolean {
         return this.getParameter(QueryParams.QueryResultAvailable);
-    }
+    };
+    /**
+     * Return a number containing the query result.
+     * @return {number} Query result (0 or 1)
+     */
     public getResult(): number {
         return this.getParameter(QueryParams.QueryResult);
-    }
+    };
 };
 
 export { Query };

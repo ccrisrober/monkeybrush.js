@@ -28,56 +28,109 @@ import { TFTarget } from "../constants/TFTarget";
 
 class TransformFeedback {
     protected _handle: WebGLTransformFeedback;
+    /**
+     * Create and initializes a TransformFeedback object
+     */
     constructor() {
         const gl = Core.getInstance().getGL();
         this._handle = gl.createTransformFeedback();
-    }
+    };
+    /**
+     * Delete TransformFeedback object.
+     */
     public destroy() {
         const gl = Core.getInstance().getGL();
         gl.deleteTransformFeedback(this._handle);
         this._handle = null;
-    }
+    };
+    /**
+     * Bind this TransformFeedback object to current GL state.
+     */
     public bind() {
         const gl = Core.getInstance().getGL();
         gl.bindTransformFeedback(TFTarget.TransformFeedback, this._handle);
     };
+    /**
+     * Unbind this TransformFeedback object to current GL state.
+     */
     public unbind() {
         const gl = Core.getInstance().getGL();
         gl.bindTransformFeedback(TFTarget.TransformFeedback, null);
     };
+    /**
+     * Start TransformFeedback operation using given mode.
+     * @param {TFPrimitive} mode TransformFeedback mode.
+     */
     public begin(mode: TFPrimitive) {
         const gl = Core.getInstance().getGL();
         gl.beginTransformFeedback(mode);
     };
+    /**
+     * Start TransformFeedback operation using point mode.
+     */
     public beginPoints() {
         this.begin(TFPrimitive.Points);
     };
+    /**
+     * Start TransformFeedback operation using line mode.
+     */
     public beginLines() {
         this.begin(TFPrimitive.Lines);
     };
+    /**
+     * Start TransformFeedback operation using triangle mode.
+     */
     public beginTriangles() {
         this.begin(TFPrimitive.Triangles);
     };
+    /**
+     * End TransformFeedback operation.
+     */
     public end() {
         const gl = Core.getInstance().getGL();
         gl.endTransformFeedback();
     };
+    /**
+     * Pause TransformFeedback operation.
+     */
     public pause() {
         const gl = Core.getInstance().getGL();
         gl.pauseTransformFeedback();
     };
+    /**
+     * Resume TransformFeedback operation.
+     */
     public resume() {
         const gl = Core.getInstance().getGL();
         gl.resumeTransformFeedback();
     };
-    public static varyings(Program: Program, varyings: Array<string>, bufferMode: TFMode) {
+    /**
+     * Specifies values to record in TransformFeedback buffers.
+     * @param {Program}       Program    [description]
+     * @param {Array<string>} varyings   [description]
+     * @param {TFMode}        bufferMode [description]
+     */
+    public static varyings(Program: Program, varyings: Array<string>,
+        bufferMode: TFMode) {
+
         const gl = Core.getInstance().getGL();
         gl.transformFeedbackVaryings(Program.id(), varyings, bufferMode);
     };
+    /**
+     * Return information about varying variables specifies in the previous
+     *     call to "varyings" method.
+     * @param  {Program}         Program [description]
+     * @param  {number}          idx     [description]
+     * @return {WebGLActiveInfo}         [description]
+     */
     public getVarying(Program: Program, idx: number): WebGLActiveInfo {
         const gl = Core.getInstance().getGL();
         return gl.getTransformFeedbackVarying(Program.id(), idx);
     };
+    /**
+     * Return true if this object is a valid TransformFeedback object.
+     * @return {boolean} [description]
+     */
     public isValid(): boolean {
         const gl = Core.getInstance().getGL();
         return gl.isTransformFeedback(this._handle);

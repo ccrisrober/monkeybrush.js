@@ -74,7 +74,7 @@ if (!Array.prototype.findIndex) {
         var thisArg = arguments[1];
         var value;
 
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < length; ++i) {
             value = list[i];
             if (predicate.call(thisArg, value, i, list)) {
                 return i;

@@ -24,64 +24,206 @@ import { Box3D } from "../maths/Box3D";
 "use strict";
 
 
+/**
+ * BufferAttribute class
+ * @class BufferAttribute
+ */
 class BufferAttribute {
     protected _arr: ArrayLike<number>;
     protected _size: number;
+    /**
+     * BufferAttribute constructor
+     * @param {ArrayLike<number>} arr  [description]
+     * @param {number}            size [description]
+     */
     constructor(arr: ArrayLike<number>, size: number) {
         this._arr = arr;
         this._size = size;
     }
+    /**
+     * Return buffer attribute inner array
+     * @return {ArrayLike<number>} [description]
+     */
     get array(): ArrayLike<number> {
         return this._arr;
-    }
+    };
+    /**
+     * Return how many items of the inner array are
+     *     associated with a particular vect[size].
+     * @return {number} [description]
+     */
     get size(): number {
         return this._size;
-    }
+    };
+    /**
+     * Return total buffer number of elements in the inner array.
+     * @return {number} [description]
+     */
     get count(): number {
         return this._arr.length / this._size;
-    }
+    };
+    /**
+     * Return x value from specifies vect[size] index
+     * @param  {number} index [description]
+     * @return {number}       [description]
+     */
     public getX(index: number): number {
+        if (this.size < 1) throw new Error("X value is not defined");
         return this.array[index * this._size];
-    }
-    public setX(index: number, value: number) {
-        this.array[index * this._size] = value;
-    }
+    };
+    /**
+     * Return y value from specifies vect[size] index
+     * @param  {number} index [description]
+     * @return {number}       [description]
+     */
     public getY(index: number): number {
+        if (this.size < 2) throw new Error("Y value is not defined");
         return this.array[index * this._size + 1];
-    }
-    public setY(index: number, value: number) {
-        this.array[index * this._size + 1] = value;
-    }
+    };
+    /**
+     * Return z value from specifies vect[size] index
+     * @param  {number} index [description]
+     * @return {number}       [description]
+     */
     public getZ(index: number): number {
+        if (this.size < 3) throw new Error("Z value is not defined");
         return this.array[index * this._size + 2];
-    }
-    public setZ(index: number, value: number) {
-        this.array[index * this._size + 2] = value;
-    }
-    public setXY(index: number, xValue: number, yValue: number) {
+    };
+    /**
+     * Return w value from specifies vect[size] index
+     * @param  {number} index [description]
+     * @return {number}       [description]
+     */
+    public getW(index: number): number {
+        if (this.size < 4) throw new Error("W value is not defined");
+        return this.array[index * this._size + 3];
+    };
+    /**
+     * Return [x, y] values from specifies vect[size] index
+     * @param  {number}        index [description]
+     * @return {ArrayLike<number>}       [description]
+     */
+    public getXY(index: number): ArrayLike<number> {
+        if (this.size < 2) throw new Error("Y value is not defined");
         index *= this._size;
-        this.array[index] = xValue;
-        this.array[index + 1] = yValue;
-    }
-    public getXY(index: number): Array<number> {
-        index *= this._size;
-        return [this.array[index], this.array[index + 1]];
-    }
-    public getXYZ(index: number): Array<number> {
+        return [
+            this.array[index],
+            this.array[index + 1]
+        ];
+    };
+    /**
+     * Return [x, y, z] values from specifies vect[size] index
+     * @param  {number}        index [description]
+     * @return {ArrayLike<number>}       [description]
+     */
+    public getXYZ(index: number): ArrayLike<number> {
+        if (this.size < 3) throw new Error("Z value is not defined");
         index *= this._size;
         return [
             this.array[index],
             this.array[index + 1],
             this.array[index + 2]
         ];
-    }
+    };
+    /**
+     * Return [x, y, z, w] values from specifies vect[size] index
+     * @param  {number}        index [description]
+     * @return {ArrayLike<number>}       [description]
+     */
+    public getXYZW(index: number): ArrayLike<number> {
+        if (this.size < 3) throw new Error("Z value is not defined");
+        index *= this._size;
+        return [
+            this.array[index],
+            this.array[index + 1],
+            this.array[index + 2],
+            this.array[index + 3]
+        ];
+    };
+
+
+
+    /**
+     * Sets the x value from specifies vect[size] index
+     * @param {number} index [description]
+     * @param {number} value [description]
+     */
+    public setX(index: number, value: number) {
+        if (this.size < 1) throw new Error("X value is not defined");
+        this.array[index * this._size] = value;
+    };
+    /**
+     * Sets the y value from specifies vect[size] index
+     * @param {number} index [description]
+     * @param {number} value [description]
+     */
+    public setY(index: number, value: number) {
+        if (this.size < 2) throw new Error("Y value is not defined");
+        this.array[index * this._size + 1] = value;
+    };
+    /**
+     * Sets the z value from specifies vect[size] index
+     * @param {number} index [description]
+     * @param {number} value [description]
+     */
+    public setZ(index: number, value: number) {
+        if (this.size < 3) throw new Error("Z value is not defined");
+        this.array[index * this._size + 2] = value;
+    };
+    /**
+     * Sets the w value from specifies vect[size] index
+     * @param {number} index [description]
+     * @param {number} value [description]
+     */
+    public setW(index: number, value: number) {
+        if (this.size < 4) throw new Error("W value is not defined");
+        this.array[index * this._size + 3] = value;
+    };
+    /**
+     * Sets the x and y values from specifies vect[size] index
+     * @param {number} index  [description]
+     * @param {number} xValue [description]
+     * @param {number} yValue [description]
+     */
+    public setXY(index: number, xValue: number, yValue: number) {
+        if (this.size < 2) throw new Error("Y value is not defined");
+        index *= this._size;
+        this.array[index] = xValue;
+        this.array[index + 1] = yValue;
+    };
+    /**
+     * Sets the x, y and z values from specifies vect[size] index
+     * @param {number} index  [description]
+     * @param {number} xValue [description]
+     * @param {number} yValue [description]
+     * @param {number} zValue [description]
+     */
     public setXYZ(index: number, xValue: number, yValue: number, zValue: number) {
+        if (this.size < 3) throw new Error("Z value is not defined");
         this.array[index] = xValue;
         this.array[index + 1] = yValue;
         this.array[index + 2] = zValue;
-    }
+    };
+    /**
+     * Sets the x, y, z and w values from specifies vect[size] index
+     * @param {number} index  [description]
+     * @param {number} xValue [description]
+     * @param {number} yValue [description]
+     * @param {number} zValue [description]
+     * @param {number} wValue [description]
+     */
+    public setXYZW(index: number, xValue: number, yValue: number, zValue: number, wValue: number) {
+        if (this.size < 4) throw new Error("W value is not defined");
+        this.array[index] = xValue;
+        this.array[index + 1] = yValue;
+        this.array[index + 2] = zValue;
+        this.array[index + 3] = wValue;
+    };
 };
-
+/**
+ * InstancedBufferAttribute class
+ * @class InstancedBufferAttribute
+ */
 class InstancedBufferAttribute extends BufferAttribute {
     protected _meshPerAttr: number;
     constructor(arr: ArrayLike<number>, size: number, meshPerAttr: number = 1) {
@@ -90,7 +232,10 @@ class InstancedBufferAttribute extends BufferAttribute {
     }
     get meshPerAttr(): number { return this._meshPerAttr; };
 };
-
+/**
+ * InstancedInterleavedBuffer class
+ * @class InstancedInterleavedBuffer
+ */
 class InstancedInterleavedBuffer extends BufferAttribute {
     protected _meshPerAttr: number;
     constructor(arr: ArrayLike<number>, stride: number, meshPerAttr: number = 1) {
@@ -99,20 +244,41 @@ class InstancedInterleavedBuffer extends BufferAttribute {
     }
     get meshPerAttr(): number { return this._meshPerAttr; };
 };
-
+// type VBAttribute = "vertices" | "normals" | "texCoords"; // | "colors" | "tangents" | "bitangents" | "offset";
+/**
+ * VertexBufferGeometry class
+ * @class VertexBufferGeometry
+ */
 class VertexBufferGeometry {
     protected _indices: Uint16Array = null;
+    /**
+     * Hashmap with key as attribute ID and value a BufferGeometry instance
+     * @type {string[BufferAttribute]}
+     */
     protected _attrs: { [ key: string ]: BufferAttribute; } = {};
+    /**
+     * Add an attribute to this VertexBufferGeometry.
+     * @param {string}          type      [description]
+     * @param {BufferAttribute} attribute [description]
+     */
     public addAttr(type: string, attribute: BufferAttribute) {
         this._attrs[type] = attribute;
     };
+    /**
+     * Return attribute with given specified name
+     * @param {string} name Attribute name
+     */
     public getAttr(name: string) {
         return this._attrs[name];
     };
+    /**
+     * Remove attribute with given specified name
+     * @param {string} type [description]
+     */
     public removeAttr(type: string) {
         delete this._attrs[type];
     };
-    public setIndex(indices) {
+    public setIndex(indices: Uint16Array) {
         this._indices = indices;
     };
     get indices(): Uint16Array { return this._indices; };
@@ -178,6 +344,10 @@ class VertexBufferGeometry {
         }
         return this;
     };
+    /**
+     * Compute the bounding box of the geometry
+     * @return {Box3D} BoundingBox
+     */
     public computingBoundingBox(): Box3D {
         let box: Box3D;
         if (!this._attrs["positions"]) {
@@ -189,4 +359,9 @@ class VertexBufferGeometry {
     }
 };
 
-export { BufferAttribute, VertexBufferGeometry };
+export {
+    BufferAttribute,
+    InstancedBufferAttribute,
+    InstancedInterleavedBuffer,
+    VertexBufferGeometry
+};

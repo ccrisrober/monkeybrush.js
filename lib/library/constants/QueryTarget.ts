@@ -21,8 +21,19 @@
 "use strict";
 
 enum QueryTarget {
+    /**
+     * Specifies an occlusion query: these queries detect whether
+     * an object is visible (whether the scoped drawing commands pass
+     * the depth test and if so, how many samples pass).
+     */
     AnySamplesPassed = 0x8C2F,
+    /**
+     * Same as AnySamplesPassed, but less accurate and faster version.
+     */
     AnySamplesPassedConservative = 0x8D6A,
+    /**
+     * Number of primitives that are written to transform feedback buffers.
+     */
     TransformFeedbackPrimitivesWritten = 0x8C88
 };
 

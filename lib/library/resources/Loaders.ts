@@ -392,7 +392,7 @@ namespace Loaders {
                     if (isEncodedRun) {
                         // a (encoded) run of the same value
                         byteValue = buffer[pos++];
-                        for (i = 0; i < count; i++) {
+                        for (i = 0; i < count; ++i) {
                             scanline_buffer[ptr++] = byteValue;
                         }
                         // ptr += count;

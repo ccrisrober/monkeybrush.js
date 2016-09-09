@@ -1,23 +1,47 @@
+/// Copyright (C) 2016 [MonkeyBrush.js]
+///
+/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+/// software and associated documentation files (the "Software"), to deal in the Software
+/// without restriction, including without limitation the rights to use, copy, modify,
+/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+/// permit persons to whom the Software is furnished to do so, subject to the following
+/// conditions:
+///
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+///
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 import { Vect2 } from "../maths/Vect2";
 import { Vect3 } from "../maths/Vect3";
+import { Drawable } from "./Drawable";
 
-class Lathe {
-    public vertices = [];
-    public normals = [];
-    public uvs = [];
-    public indices = [];
-    constructor(points: Array<Vect3> = [], segments: number = 55, phiInit = 0, phiRadius = 2 * Math.PI) {
+"use strict";
 
-        points = [];
-        const height = 5;
-        const count = 30;
-        for (let p = 0; p < count; p++) {
-            points.push(
-                new Vect3((Math.sin(p * 0.2) + Math.cos(p * 0.3)) * height + 12,
-                    p + height,
-                    (p - count) + count / 2));
-        }
+/**
+ * Lathe class
+ * @class Lathe
+ */
+class Lathe extends Drawable {
+    /**
+     * Lathe constructor
+     * @param {ArrayLike<Vect3>} points List of points that define the lathe model.
+     * @param {number} segments [description] Num. of segments.
+     * @param {number = 0} phiInit [description]
+     * @param {number = 2 * Math.PI} phiRadius [description]
+     */
+    constructor(points: ArrayLike<Vect3>, segments: number, phiInit: number = 0, phiRadius: number = 2 * Math.PI) {
+        super();
+        let vertices = [];
+        let normals = [];
+        let uvs = [];
+        let indices = [];
 
         segments = Math.floor(segments);
 
@@ -36,13 +60,13 @@ class Lathe {
             const cos = Math.cos(phi);
 
             for (j = 0, size = points.length - 1; j <= size; ++j) {
-                this.vertices.push(new Vect3(
+                vertices.push(new Vect3(
                     points[j].x * sin,
                     points[j].y,
                     points[j].x * cos
                 ));
 
-                this.uvs.push(new Vect2(
+                uvs.push(new Vect2(
                     i / segments,
                     j / (points.length - 1)
                 ));
@@ -60,56 +84,56 @@ class Lathe {
                 d = base + 1;
 
                 // face one
-                this.indices.push(new Vect3(a, b, d));
+                indices.push(new Vect3(a, b, d));
 
                 // face two
-                this.indices.push(new Vect3(b, c, d));
+                indices.push(new Vect3(b, c, d));
             }
         }
 
-        for (i = 0; i < this.vertices.length; ++i) {
-            this.normals.push(new Vect3());
+        for (i = 0; i < vertices.length; ++i) {
+            normals.push(new Vect3());
         }
 
-        for (i = 0; i < this.indices.length; ++i) {
-            const ia: Vect3 = this.vertices[this.indices[i].x];
-            const ib: Vect3 = this.vertices[this.indices[i].y];
-            const ic: Vect3 = this.vertices[this.indices[i].z];
+        for (i = 0; i < indices.length; ++i) {
+            const ia: Vect3 = vertices[indices[i].x];
+            const ib: Vect3 = vertices[indices[i].y];
+            const ic: Vect3 = vertices[indices[i].z];
 
             const e1: Vect3 = Vect3.sub(ia, ib);
             const e2: Vect3 = Vect3.sub(ic, ib);
             const no: Vect3 = Vect3.cross(e1, e2);
 
-            this.normals[this.indices[i].x] = this.normals[this.indices[i].x].add(no);
-            this.normals[this.indices[i].y] = this.normals[this.indices[i].y].add(no);
-            this.normals[this.indices[i].z] = this.normals[this.indices[i].z].add(no);
+            normals[indices[i].x] = normals[indices[i].x].add(no);
+            normals[indices[i].y] = normals[indices[i].y].add(no);
+            normals[indices[i].z] = normals[indices[i].z].add(no);
         }
 
-        for (i = 0; i < this.normals.length; ++i) {
-            this.normals[i] = this.normals[i].normalize();
+        for (i = 0; i < normals.length; ++i) {
+            normals[i] = normals[i].normalize();
         }
 
 
-        let vertices: Array<number> = [];
-        for (i = 0; i < this.vertices.length; ++i) {
-            vertices.push(this.vertices[i].x, this.vertices[i].y, this.vertices[i].z);
+        let vertices2: Array<number> = [];
+        for (i = 0; i < vertices.length; ++i) {
+            vertices2.push(vertices[i].x, vertices[i].y, vertices[i].z);
         }
-        this.vertices = vertices;
-        let normals: Array<number> = [];
-        for (i = 0; i < this.normals.length; ++i) {
-            normals.push(this.normals[i].x, this.normals[i].y, this.normals[i].z);
+        vertices = vertices2;
+        let normals2: Array<number> = [];
+        for (i = 0; i < normals.length; ++i) {
+            normals2.push(normals[i].x, normals[i].y, normals[i].z);
         }
-        this.normals = normals;
-        let uvs: Array<number> = [];
-        for (i = 0; i < this.uvs.length; ++i) {
-            uvs.push(this.uvs[i].x, this.uvs[i].y);
+        normals = normals2;
+        let uvs2: Array<number> = [];
+        for (i = 0; i < uvs.length; ++i) {
+            uvs2.push(uvs[i].x, uvs[i].y);
         }
-        this.uvs = uvs;
-        let indices: Array<number> = [];
-        for (i = 0; i < this.indices.length; ++i) {
-            indices.push(this.indices[i].x, this.indices[i].y, this.indices[i].z);
+        uvs = uvs2;
+        let indices2: Array<number> = [];
+        for (i = 0; i < indices.length; ++i) {
+            indices2.push(indices[i].x, indices[i].y, indices[i].z);
         }
-        this.indices = indices;
+        indices = indices2;
 
         // if geometry closed, check average along the seam
         if (phiRadius === Math.PI * 2) {
@@ -122,23 +146,34 @@ class Lathe {
             for (i = 0, j = 0, size = points.length; i < size; ++i, j += 3) {
 
                 // select normal int the first line
-                n1.x = this.normals[j];
-                n1.y = this.normals[j + 1];
-                n1.z = this.normals[j + 2];
+                n1.x = normals[j];
+                n1.y = normals[j + 1];
+                n1.z = normals[j + 2];
 
                 // select normal of last line
-                n2.x = this.normals[base + j];
-                n2.y = this.normals[base + j + 1];
-                n2.z = this.normals[base + j + 2];
+                n2.x = normals[base + j];
+                n2.y = normals[base + j + 1];
+                n2.z = normals[base + j + 2];
 
                 n = Vect3.add(n, Vect3.add(n1, n2)).normalize();
 
-                this.normals[j] = this.normals[base + j] = n.x;
-                this.normals[j + 1] = this.normals[base + j + 1] = n.y;
-                this.normals[j + 2] = this.normals[base + j + 2] = n.z;
+                normals[j] = normals[base + j] = n.x;
+                normals[j + 1] = normals[base + j + 1] = n.y;
+                normals[j + 2] = normals[base + j + 2] = n.z;
 
             }
         }
+
+        this._handle = [];
+        this._vao.bind();
+
+        this.addElementArray(new Uint16Array(indices));
+
+        this.addBufferArray(0, new Float32Array(vertices), 3);
+        this.addBufferArray(1, new Float32Array(normals), 3);
+        this.addBufferArray(2, new Float32Array(uvs), 2);
+
+        this._indicesLen = indices.length;
     }
 }
 

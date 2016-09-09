@@ -159,11 +159,11 @@ namespace Easing {
     // Elastic functions
     export namespace elastic {
         export function easeIn(t: number): number {
-            let t2: number = t * t;
+            const t2: number = t * t;
             return t2 * t2 * Math.sin( t * Math.PI * 4.5 );
         };
         export function easeOut(t: number): number {
-            let t2: number = (t - 1.0) * (t - 1.0);
+            const t2: number = (t - 1.0) * (t - 1.0);
             return 1.0 - t2 * t2 * Math.cos( t * Math.PI * 4.5 );
         };
         export function easeInOut(t: number): number {

@@ -146,19 +146,19 @@ class Vect3 {
         return dest;
     };
     /**
-     * Calculate the euclidian distance between two Vect2s
+     * Calculate the euclidian distance between two Vect3s
      * @param  {Vect3}  v First Vect3 operand
      * @param  {Vect3}  v2 Second Vect3 operand
-     * @return {number} Distance between Vect2s
+     * @return {number} Distance between Vect3s
      */
     static distance(v: Vect3, v2: Vect3): number {
         return Math.sqrt(this.squaredDistance(v, v2));
     };
     /**
-     * Calculate the squared euclidian distance between two Vect2s
+     * Calculate the squared euclidian distance between two Vect3s
      * @param  {Vect3}  v First Vect3 operand
      * @param  {Vect3}  v2 Second Vect3 operand
-     * @return {number} Distance between Vect2s
+     * @return {number} Distance between Vect3s
      */
     static squaredDistance(v: Vect3, v2: Vect3): number {
         const
@@ -433,9 +433,12 @@ class Vect3 {
 
         return (x * x + y * y + z * z);
     };
-
-
-
+    /**
+     * Return minimum Vect3 between two Vect3's
+     * @param  {Vect3} v0   First Vect3 operand
+     * @param  {Vect3} v2   Second Vect3 operand
+     * @return {Vect3} a new Vect3 equals to minimum Vect3 entries
+     */
     public static min(v0: Vect3, v2: Vect3): Vect3 {
         const x = (v0.x < v2.x) ? v0.x : v2.x;
         const y = (v0.y < v2.y) ? v0.y : v2.y;
@@ -443,6 +446,12 @@ class Vect3 {
 
         return new Vect3(x, y, z);
     };
+    /**
+     * Return maximum Vect3 between two Vect3's
+     * @param  {Vect3} v0   First Vect3 operand
+     * @param  {Vect3} v2   Second Vect3 operand
+     * @return {Vect3} a new Vect3 equals to maximum Vect3 entries
+     */
     public static max(v0: Vect3, v2: Vect3): Vect3 {
         const x = (v0.x > v2.x) ? v0.x : v2.x;
         const y = (v0.y > v2.y) ? v0.y : v2.y;
@@ -450,6 +459,13 @@ class Vect3 {
 
         return new Vect3(x, y, z);
     };
+    /**
+     * Perform a linear interpolation between two Vect3's
+     * @param  {Vect3}  init First Vec2 operand
+     * @param  {Vect3}  end  Second Vec2 operand
+     * @param  {number} t    Interpolation amount between the two inputs
+     * @return {Vect3}  Interpolant Vect3
+     */
     public static lerp(init: Vect3, end: Vect3, t: number): Vect3 {
         const x = init.x + ((end.x - init.x) * t);
         const y = init.y + ((end.y - init.y) * t);
@@ -457,6 +473,13 @@ class Vect3 {
 
         return new Vect3(x, y, z);
     };
+    /**
+     * Limiting Vect3 between min and max value
+     * @param  {Vect3} value Entry vector
+     * @param  {Vect3} min   Minimum Vect3 vector
+     * @param  {Vect3} max   Maximum Vect3 vector
+     * @return {Vect3}       a new Vect3
+     */
     public static clamp(value: Vect3, min: Vect3, max: Vect3): Vect3 {
         const x = (value.x > max.x) ? max.x : (value.x < min.x) ? min.x : value.x;
         const y = (value.y > max.y) ? max.y : (value.y < min.y) ? min.y : value.y;

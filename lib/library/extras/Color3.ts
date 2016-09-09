@@ -18,16 +18,20 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-// TODO: Change _color to Vector3
+import { Vect3 } from "../maths/Vect3";
 
 "use strict";
 
+/**
+ * Color3 class
+ * @class Color3
+ */
 class Color3 {
     /**
      * [Array description]
      * @param {[type]} 3 [description]
      */
-    protected _color = new Array(3);
+    protected _color = new Vect3();
     /**
      * [constructor description]
      * @param {number} r [description]
@@ -42,27 +46,27 @@ class Color3 {
     /**
      * @return {number}
      */
-    get r(): number { return this._color[0]; }
+    get r(): number { return this._color.x; }
     /**
      * @return {number}
      */
-    get g(): number { return this._color[1]; }
+    get g(): number { return this._color.y; }
     /**
      * @return {number}
      */
-    get b(): number { return this._color[2]; }
+    get b(): number { return this._color.z; }
     /**
      * @param {number}
      */
-    set r(r: number) { this._color[0] = r; }
+    set r(r: number) { this._color.x = r; }
     /**
      * @param {number}
      */
-    set g(g: number) { this._color[1] = g; }
+    set g(g: number) { this._color.y = g; }
     /**
      * @param {number}
      */
-    set b(b: number) { this._color[2] = b; }
+    set b(b: number) { this._color.z = b; }
     /**
      * [setRGB description]
      * @param  {number} r [description]
@@ -143,8 +147,6 @@ class Color3 {
         }
         return new Color3(h, s, l);
     };
-
-
 
     public static Aqua: Color3 = Color3.createFromHex(0x00FFFF);
     public static Beige: Color3 = Color3.createFromHex(0xF5F5DC);

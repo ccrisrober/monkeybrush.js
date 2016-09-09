@@ -94,6 +94,71 @@ namespace Mathf {
         const delta = Vect3.sub(p1, p0);
         return Math.atan2(delta.z, delta.x);
     };
+
+    export function CatmullRom2D(p0: Vect2, p1: Vect2, p2: Vect2, p3: Vect2, t: number): Vect2 {
+        const t2 = t * t;
+        const t3 = t * t2;
+
+        const x = 0.5 * ((((2.0 * p1.x) + ((-p0.x + p2.x) * t)) +
+            (((((2.0 * p0.x) - (5.0 * p1.x)) + (4.0 * p2.x)) - p3.x) * t2)) +
+            ((((-p0.x + (3.0 * p1.x)) - (3.0 * p2.x)) + p3.x) * t3));
+
+        const y = 0.5 * ((((2.0 * p1.y) + ((-p0.y + p2.y) * t)) +
+            (((((2.0 * p0.y) - (5.0 * p1.y)) + (4.0 * p2.y)) - p3.y) * t2)) +
+            ((((-p0.y + (3.0 * p1.y)) - (3.0 * p2.y)) + p3.y) * t3));
+
+        return new Vect2(x, y);
+    };
+
+    export function Hermite2D(p0: Vect2, t0: Vect2, p1: Vect2, t1: Vect2, t: number): Vect2 {
+        const t2 = t * t;
+        const t3 = t * t2;
+
+        const part1 = ((2.0 * t3) - (3.0 * t2)) + 1.0;
+        const part2 = (-2.0 * t3) + (3.0 * t2);
+        const part3 = (t3 - (2.0 * t2)) + t;
+        const part4 = t3 - t2;
+
+        const x = (((p0.x * part1) + (p1.x * part2)) + (t0.x * part3)) + (t1.x * part4);
+        const y = (((p0.y * part1) + (p1.y * part2)) + (t0.y * part3)) + (t1.y * part4);
+
+        return new Vect2(x, y);
+    };
+
+    export function CatmullRom3D(p0: Vect3, p1: Vect3, p2: Vect3, p3: Vect3, t: number): Vect3 {
+        const t2 = t * t;
+        const t3 = t * t2;
+
+        const x = 0.5 * ((((2.0 * p1.x) + ((-p0.x + p2.x) * t)) +
+            (((((2.0 * p0.x) - (5.0 * p1.x)) + (4.0 * p2.x)) - p3.x) * t2)) +
+            ((((-p0.x + (3.0 * p1.x)) - (3.0 * p2.x)) + p3.x) * t3));
+
+        const y = 0.5 * ((((2.0 * p1.y) + ((-p0.y + p2.y) * t)) +
+            (((((2.0 * p0.y) - (5.0 * p1.y)) + (4.0 * p2.y)) - p3.y) * t2)) +
+            ((((-p0.y + (3.0 * p1.y)) - (3.0 * p2.y)) + p3.y) * t3));
+
+        const z = 0.5 * ((((2.0 * p1.z) + ((-p0.z + p2.z) * t)) +
+            (((((2.0 * p0.z) - (5.0 * p1.z)) + (4.0 * p2.z)) - p3.z) * t2)) +
+            ((((-p0.z + (3.0 * p1.z)) - (3.0 * p2.z)) + p3.z) * t3));
+
+        return new Vect3(x, y, z);
+    };
+
+    export function Hermite3D(p0: Vect3, t0: Vect3, p1: Vect3, t1: Vect3, t: number): Vect3 {
+        const t2 = t * t;
+        const t3 = t * t2;
+
+        const part1 = ((2.0 * t3) - (3.0 * t2)) + 1.0;
+        const part2 = (-2.0 * t3) + (3.0 * t2);
+        const part3 = (t3 - (2.0 * t2)) + t;
+        const part4 = t3 - t2;
+
+        const x = (((p0.x * part1) + (p1.x * part2)) + (t0.x * part3)) + (t1.x * part4);
+        const y = (((p0.y * part1) + (p1.y * part2)) + (t0.y * part3)) + (t1.y * part4);
+        const z = (((p0.z * part1) + (p1.z * part2)) + (t0.z * part3)) + (t1.z * part4);
+
+        return new Vect3(x, y, z);
+    };
 };
 
 export { Mathf };
