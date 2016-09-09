@@ -446,7 +446,7 @@ class Program {
         const gl = Core.getInstance().getGL();
         let val: Float32Array;
         if (value instanceof Vect2) {
-            val = (<Vect2>value)._value;
+            val = (<Vect2>value).value;
         } else {
             val = <Float32Array>value;
         }
@@ -461,7 +461,7 @@ class Program {
         const gl = Core.getInstance().getGL();
         let val: Float32Array;
         if (value instanceof Vect3) {
-            val = (<Vect3>value)._value;
+            val = (<Vect3>value).value;
         } else {
             val = <Float32Array>value;
         }
@@ -476,7 +476,7 @@ class Program {
         const gl = Core.getInstance().getGL();
         let val: Float32Array;
         if (value instanceof Vect4) {
-            val = (<Vect4>value)._value;
+            val = (<Vect4>value).value;
         } else {
             val = <Float32Array>value;
         }

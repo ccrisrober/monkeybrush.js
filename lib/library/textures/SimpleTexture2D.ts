@@ -161,7 +161,7 @@ class SimpleTexture2D extends Texture {
     }
 
     public resize(size: Vect2) {
-        if (!size.isEqual(this._size)) {
+        if (!size.exactEquals(this._size)) {
             const gl = Core.getInstance().getGL();
             gl.bindTexture(this.target, this._handle_);
             gl.texImage2D(

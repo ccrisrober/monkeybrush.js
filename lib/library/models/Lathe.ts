@@ -76,8 +76,8 @@ class Lathe {
             const ib: Vect3 = this.vertices[this.indices[i].y];
             const ic: Vect3 = this.vertices[this.indices[i].z];
 
-            const e1: Vect3 = Vect3.rem(ia, ib);
-            const e2: Vect3 = Vect3.rem(ic, ib);
+            const e1: Vect3 = Vect3.sub(ia, ib);
+            const e2: Vect3 = Vect3.sub(ic, ib);
             const no: Vect3 = Vect3.cross(e1, e2);
 
             this.normals[this.indices[i].x] = this.normals[this.indices[i].x].add(no);
@@ -131,7 +131,7 @@ class Lathe {
                 n2.y = this.normals[base + j + 1];
                 n2.z = this.normals[base + j + 2];
 
-                n = Vect3.sum(n, Vect3.sum(n1, n2)).normalize();
+                n = Vect3.add(n, Vect3.add(n1, n2)).normalize();
 
                 this.normals[j] = this.normals[base + j] = n.x;
                 this.normals[j + 1] = this.normals[base + j + 1] = n.y;

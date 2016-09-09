@@ -161,7 +161,7 @@ class MyScene extends MB.Scene {
         prog.use();
 
         // let varvar = this.text.max;
-        // let i = 0, j = 0, k = 0;
+        let i = 0, j = 0, k = 0;
         // let dd = -1;
 
         // this.skybox.texture.bind(0);

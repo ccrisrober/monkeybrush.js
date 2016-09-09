@@ -353,7 +353,7 @@ class Mat4 {
             return this.identity;
         }
 
-        const z = Vect3.diff(pos, target).normalize();
+        const z = Vect3.sub(pos, target).normalize();
 
         const x = Vect3.cross(up, z).normalize();
         const y = Vect3.cross(z, x).normalize();

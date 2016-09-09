@@ -18,6 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+
+import { Vect3 } from "../maths/Vect3";
+
 "use strict";
 
 
@@ -98,6 +101,45 @@ namespace Geometry {
         upper.pop();
         lower.pop();
         return lower.concat(upper);
+    };
+
+    export function convexHull1D(points: ArrayLike<number>): Array<number> {
+        let lo: number = 0;
+        let hi: number = 0;
+        for (let i = 0; i < points.length; ++i) {
+            if (points[i] < points[lo]) {
+                lo = i;
+            }
+            if (points[i] > points[hi]) {
+                hi = i;
+            }
+        }
+        if(lo < hi) {
+            return [lo, hi];
+        } else if(lo > hi) {
+            return [hi, lo];
+        } else {
+            return [lo];
+        }
+    };
+    export function removeOrphanVertices(positions: Array<Array<number>>, indices: Array<Array<number>>) {
+        let newPositions = [];
+        let indexLookUp = {};
+
+        let newIndices = indices.map((indice) => {
+            return indice.map((function(index) {
+                if (indexLookUp[index] === undefined) {
+                    indexLookUp[index] = newPositions.length;
+                    newPositions.push(positions[index]);
+                }
+                return indexLookUp[index];
+            }));
+        });
+
+        return {
+            indices: newIndices,
+            positions: newPositions
+        }
     }
 };
 

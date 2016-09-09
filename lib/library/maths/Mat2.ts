@@ -143,8 +143,8 @@ class Mat2 {
             a21 = this._value[2],
             a22 = this._value[3];
 
-        const x = v.value()[0],
-            y = v.value()[1];
+        const x = v.x,
+            y = v.y;
 
         this._value[0] = a11 * x;
         this._value[1] = a12 * y;

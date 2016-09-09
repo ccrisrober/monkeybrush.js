@@ -184,7 +184,7 @@ class Framebuffer {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     };
     public rebuild(size: Vect2) {
-        if (!size.isEqual(this._size)) {
+        if (!size.exactEquals(this._size)) {
             // TODO
             this._attachments.forEach((tex: Texture) => {
                 tex.resize(size);

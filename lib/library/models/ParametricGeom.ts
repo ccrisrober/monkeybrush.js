@@ -86,8 +86,8 @@ class ParametricGeom {
             const ib: Vect3 = this.verts[this.indices[i].y];
             const ic: Vect3 = this.verts[this.indices[i].z];
 
-            const e1: Vect3 = Vect3.rem(ia, ib);
-            const e2: Vect3 = Vect3.rem(ic, ib);
+            const e1: Vect3 = Vect3.sub(ia, ib);
+            const e2: Vect3 = Vect3.sub(ic, ib);
             const no: Vect3 = Vect3.cross(e1, e2);
 
             this.normals[this.indices[i].x] = this.normals[this.indices[i].x].add(no);

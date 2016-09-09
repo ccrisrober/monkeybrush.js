@@ -186,7 +186,7 @@ class Camera2 {
     public GetViewMatrix(): Mat4 {
         return Mat4.lookAt(
             this.position,
-            Vect3.sum(
+            Vect3.add(
                 this.position,
                 this.front
             ),

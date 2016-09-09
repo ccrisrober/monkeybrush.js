@@ -53,7 +53,7 @@ class RenderBufferTexture {
         gl.deleteTexture(this._handle);
     };
     public resize(size: Vect2) {
-        if (!size.isEqual(this._size)) {
+        if (!size.exactEquals(this._size)) {
             const gl = Core.getInstance().getGL();
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
             gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);

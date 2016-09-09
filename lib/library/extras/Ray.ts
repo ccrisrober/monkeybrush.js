@@ -69,7 +69,7 @@ class Ray {
      * @param {Vect3} v [description]
      */
     public lookAt(v: Vect3) {
-        this._direction = Vect3.rem(v, this._origin).normalize();
+        this._direction = Vect3.sub(v, this._origin).normalize();
     };
 };
 

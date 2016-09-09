@@ -128,7 +128,7 @@ class Spline3D {
         const p0: Vect3 = this.evaluate(oldDT);
         const p1: Vect3 = this.evaluate(currentDT);
 
-        return Vect3.rem(p1, p0).normalize();
+        return Vect3.sub(p1, p0).normalize();
     }
     public angleBetweenPoints(oldDT: number = this._oldDT,
         currentDT: number = this._currentDT): number {

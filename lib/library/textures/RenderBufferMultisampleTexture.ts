@@ -55,7 +55,7 @@ class RenderBufferMultisampleTexture {
         gl.deleteTexture(this._handle);
     };
     public resize(size: Vect2) {
-        if (!size.isEqual(this._size)) {
+        if (!size.exactEquals(this._size)) {
             const gl = Core.getInstance().getGL();
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
             gl.renderbufferStorageMultisample(gl.RENDERBUFFER, this._format, size.x, size.y, this._samples);
