@@ -18,9 +18,9 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Core } from "./Core.ts";
-import { VertexArray } from "./VertexArray.ts";
-import { VertexBuffer } from "./VertexBuffer.ts";
+import { Core } from "../core/Core.ts";
+import { VertexArray } from "../core/VertexArray.ts";
+import { VertexBuffer } from "../core/VertexBuffer.ts";
 import { UsageType } from "../constants/UsageType.ts";
 import { BufferType } from "../constants/BufferType.ts";
 

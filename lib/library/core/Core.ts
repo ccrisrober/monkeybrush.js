@@ -19,7 +19,7 @@
 
 
 import { Context } from "./Context";
-import { PostProcess } from "./PostProcess";
+import { PostProcess } from "../extras/PostProcess";
 import { Input } from "./Input";
 import { Log } from "./Log";
 import { Extensions } from "../extras/Extensions";

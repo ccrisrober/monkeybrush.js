@@ -18,8 +18,8 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Core } from "../core/Core";
-import { Program } from "../core/Program";
+import { Core } from "./Core";
+import { Program } from "./Program";
 import { TFMode } from "../constants/TFMode";
 import { TFPrimitive } from "../constants/TFPrimitive";
 import { TFTarget } from "../constants/TFTarget";

@@ -21,29 +21,12 @@
 "use strict";
 
 namespace Utils {
-    export class RNG {
-        private _seed: number;
-
-        constructor(seed: number) {
-            this._seed = seed;
-        };
-        private _next(min: number, max: number): number {
-            max = max || 0;
-            min = min || 0;
-
-            this._seed = (this._seed * 9301 + 49297) % 233280;
-            let rnd = this._seed / 233281;
-
-            return min + rnd * (max - min);
-        };
-        public nextInt(min: number, max: number): number {
-            return Math.floor(this._next(min, max));
-        };
-        public next(): number {
-            return this._next(0, 1);
-        };
-    };
-    export let random: RNG = new RNG(new Date().getTime());
+    /**
+     * Concat two Uint8Array's.
+     * @param  {Uint8Array} first  First operand.
+     * @param  {Uint8Array} second Second operand.
+     * @return {Uint8Array}        New Uint8Array with both operands concatenated.
+     */
     export function Uint8Concat(first: Uint8Array, second: Uint8Array): Uint8Array {
         let firstLength = first.length,
             result = new Uint8Array(firstLength + second.length);
@@ -53,6 +36,12 @@ namespace Utils {
 
         return result;
     };
+    /**
+     * Concat two Uint16Array's.
+     * @param  {Uint16Array} first  First operand.
+     * @param  {Uint16Array} second Second operand.
+     * @return {Uint16Array}        New Uint16Array with both operands concatenated.
+     */
     export function Uint16Concat(first: Uint16Array, second: Uint16Array): Uint16Array {
         let firstLength = first.length,
             result = new Uint16Array(firstLength + second.length);
@@ -62,6 +51,12 @@ namespace Utils {
 
         return result;
     };
+    /**
+     * Concat two Uint32Array's.
+     * @param  {Uint32Array} first  First operand.
+     * @param  {Uint32Array} second Second operand.
+     * @return {Uint32Array}        New Uint32Array with both operands concatenated.
+     */
     export function Uint32Concat(first: Uint32Array, second: Uint32Array): Uint32Array {
         let firstLength = first.length,
             result = new Uint32Array(firstLength + second.length);
@@ -71,6 +66,12 @@ namespace Utils {
 
         return result;
     };
+    /**
+     * Concat two Int8Array's.
+     * @param  {Int8Array} first  First operand.
+     * @param  {Int8Array} second Second operand.
+     * @return {Int8Array}        New Int8Array with both operands concatenated.
+     */
     export function Int8Concat(first: Int8Array, second: Int8Array): Int8Array {
         let firstLength = first.length,
             result = new Int8Array(firstLength + second.length);
@@ -80,6 +81,12 @@ namespace Utils {
 
         return result;
     };
+    /**
+     * Concat two Int16Array's.
+     * @param  {Int16Array} first  First operand.
+     * @param  {Int16Array} second Second operand.
+     * @return {Int16Array}        New Int16Array with both operands concatenated.
+     */
     export function Int16Concat(first: Int16Array, second: Int16Array): Int16Array {
         let firstLength = first.length,
             result = new Int16Array(firstLength + second.length);
@@ -89,6 +96,12 @@ namespace Utils {
 
         return result;
     };
+    /**
+     * Concat two Int32Array's.
+     * @param  {Int32Array} first  First operand.
+     * @param  {Int32Array} second Second operand.
+     * @return {Int32Array}        New Int32Array with both operands concatenated.
+     */
     export function Int32Concat(first: Int32Array, second: Int32Array): Int32Array {
         let firstLength = first.length,
             result = new Int32Array(firstLength + second.length);
@@ -98,7 +111,12 @@ namespace Utils {
 
         return result;
     };
-
+    /**
+     * Concat two Float32Array's.
+     * @param  {Float32Array} first  First operand.
+     * @param  {Float32Array} second Second operand.
+     * @return {Float32Array}        New Float32Array with both operands concatenated.
+     */
     export function Float32Concat(first: Float32Array, second: Float32Array): Float32Array {
         let firstLength = first.length,
             result = new Float32Array(firstLength + second.length);
@@ -108,6 +126,12 @@ namespace Utils {
 
         return result;
     };
+    /**
+     * Concat two Float64Array's.
+     * @param  {Float64Array} first  First operand.
+     * @param  {Float64Array} second Second operand.
+     * @return {Float64Array}        New Float64Array with both operands concatenated.
+     */
     export function Float64Concat(first: Float64Array, second: Float64Array): Float64Array {
         let firstLength = first.length,
             result = new Float64Array(firstLength + second.length);
@@ -117,10 +141,17 @@ namespace Utils {
 
         return result;
     };
-
-    export function downloadCanvasImage(canvas: HTMLCanvasElement) {
-        // TODO
-    }
+    /**
+     * Download canvas image.
+     * @param {HTMLCanvasElement} canvas Canvas to download image.
+     * @param {string = "file.png"}  name Image name (with extension).
+     */
+    export function downloadCanvasImage(canvas: HTMLCanvasElement, name: string = "file.png") {
+        let a: HTMLAnchorElement = <HTMLAnchorElement> document.createElement("a");
+        a.href = canvas.toDataURL();
+        a["download"] = name;
+        a.click();
+    };
 };
 
 export { Utils };

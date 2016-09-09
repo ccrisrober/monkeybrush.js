@@ -11,6 +11,8 @@ let SimpleConfig = function() {
     };
 };
 
+// MB.mod.MyModel
+
 class MyScene extends MB.Scene {
     protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
     protected camera = new MB.Camera2(this.homePoint);

@@ -23,13 +23,15 @@
 
 "use strict";
 
-
-// Log.setLevel(Log4javascript.Level.INFO);
-
+/**
+* This class wrap Logger
+* @class core.Logger
+*/
 let Log = function _log(logName: string): log4javascript.Logger {
     let Log: log4javascript.Logger = log4javascript.getLogger(logName);
     let consoleAppender = new log4javascript.BrowserConsoleAppender();
     Log.addAppender(consoleAppender);
+    Log.setLevel(log4javascript.Level.INFO);
     return Log;
 }("my_logger");
 

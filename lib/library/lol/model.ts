@@ -1,0 +1,5 @@
+class MyModel {
+
+}
+
+export { MyModel };

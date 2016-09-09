@@ -18,13 +18,13 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Core } from "./Core";
+import { Core } from "../core/Core";
 import { Vect2 } from "../maths/Vect2";
 import { TextureType } from "../constants/TextureType";
 import { TextureFormat } from "../constants/TextureFormat";
 import { SimpleTexture2D } from "../textures/SimpleTexture2D";
 import { TexOptions } from "../textures/Texture";
-import { Framebuffer } from "./Framebuffer";
+import { Framebuffer } from "../core/Framebuffer";
 
 "use strict";
 

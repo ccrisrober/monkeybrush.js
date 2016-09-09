@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Core } from "./Core";
+import { Core } from "../core/Core";
 import { Vect2 } from "../maths/Vect2";
 import { Vect3 } from "../maths/Vect3";
 import { SimpleTexture2D } from "../textures/SimpleTexture2D";

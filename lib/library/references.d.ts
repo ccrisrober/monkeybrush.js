@@ -21,10 +21,12 @@
 /// <reference path="./MonkeyBrush.ts" />
 /// <reference path="./App.ts" />
 
+/// <reference path="./lol/model.ts" />
+/// <reference path="./lol/model2.ts" />
+
 /// <reference path="./core/Core.ts" />
 /// <reference path="./core/Input.ts" />
 /// <reference path="./core/Program.ts" />
-/// <reference path="./core/PostProcess.ts" />
 /// <reference path="./core/VertexUBO.ts" />
 /// <reference path="./core/Utils.ts" />
 
@@ -50,9 +52,9 @@
 
 /// <reference path="./extras/Axis.ts" />
 
-/// <reference path="./extras/Query.ts" />
-/// <reference path="./extras/Sync.ts" />
-/// <reference path="./extras/Sampler.ts" />
+/// <reference path="./core/Query.ts" />
+/// <reference path="./core/Sync.ts" />
+/// <reference path="./core/Sampler.ts" />
 /// <reference path="./extras/Timer.ts" />
 /// <reference path="./extras/Skybox.ts" />
 

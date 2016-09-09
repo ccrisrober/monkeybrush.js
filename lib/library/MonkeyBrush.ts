@@ -1,18 +1,19 @@
 import "./polyfills";
 export * from "./constants/constants";
 
-
 export { BillboardOpts, Billboard } from "./extras/Billboard";
 export { RandomGenerator } from "./extras/RandomGenerator";
 export { PostProcess2 } from "./postprocess/PostProcess2";
 export { PostProcessManager } from "./postprocess/PostProcessManager";
 export { PointCloud } from "./extras/PointCloud";
 
-
 export { BufferAttribute }
     from "./extras/VertexBufferGeometry";
 export { VertexBufferGeometry }
     from "./extras/VertexBufferGeometry";
+
+
+// export { mod } from "./lol/m";
 
 
 
@@ -36,12 +37,9 @@ export { Context } from "./core/Context";
 export { Core } from "./core/Core";
 export { DepthState } from "./core/DepthState";
 export { Log } from "./core/Log";
-export { GBuffer } from "./core/GBuffer";
-export { GBufferSSAO } from "./core/GBufferSSAO";
 export { Input } from "./core/Input";
 export { Framebuffer } from "./core/Framebuffer";
 export { Program } from "./core/Program";
-export { PostProcess } from "./core/PostProcess";
 export { ScissorsState } from "./core/ScissorsState";
 export { StencilState } from "./core/StencilState";
 export { Utils } from "./core/Utils";
@@ -55,11 +53,15 @@ export { Color4 } from "./extras/Color4";
 export { Easing } from "./extras/Easing";
 export { Extensions } from "./extras/Extensions";
 export { Noise } from "./extras/Noise";
-export { Query } from "./extras/Query";
+export { Query } from "./core/Query";
 export { Ray } from "./extras/Ray";
 export { Timer } from "./extras/Timer";
 export { ToneMap } from "./extras/ToneMap";
 export { Skybox } from "./extras/Skybox";
+
+export { GBuffer } from "./extras/GBuffer";
+export { GBufferSSAO } from "./extras/GBufferSSAO";
+export { PostProcess } from "./extras/PostProcess";
 
 
 // Lights
@@ -87,7 +89,6 @@ export { Spline2D, Spline3D } from "./maths/Spline"
 export { Capsule } from "./models/Capsule";
 export { Cone } from "./models/Cone";
 export { Cube } from "./models/Cube";
-export { Cuboctahedron } from "./models/Cuboctahedron";
 export { CustomHedron } from "./models/CustomHedron";
 export { CustomModel } from "./models/CustomModel";
 export { Cylinder } from "./models/Cylinder";
@@ -104,7 +105,7 @@ export { Octahedron } from "./models/Octahedron";
 export { Plane } from "./models/Plane";
 export { Prism } from "./models/Prism";
 export { Sphere } from "./models/Sphere";
-export { Tetraedron } from "./models/Tetraedron";
+export { Tetrahedron } from "./models/Tetrahedron";
 export { Torus } from "./models/Torus";
 
 // Resources

@@ -21,6 +21,12 @@
 import { Core } from "./Core";
 
 "use strict";
+
+
+/**
+* This class wrap Input
+* @class core.Input
+*/
 class Input {
     // Mouse states
     public static mouseButton = {
@@ -112,6 +118,7 @@ class Input {
         F12: 123,
         LastKeyCode: 222
     };
+
     constructor() {
         if (Input._instance) {
             throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
@@ -154,10 +161,16 @@ class Input {
         });
 
         Input._instance = this;
-    }
+    };
+    /**
+     * Initialize input
+     */
     public static initialize() {
         Input._instance = new Input();
-    }
+    };
+    /**
+     * Update event
+     */
     public static update() {
         for (let i = 0; i < Input.keys["LastKeyCode"]; ++i) {
             this._isKeyClicked[i] = (!this._keyPreviusState[i]) && this._isKeyPressed[i];
@@ -167,35 +180,74 @@ class Input {
             this._isButtonClicked[i] = (!this._buttonPreviousState[i]) && this._isButtonPressed[i];
             this._buttonPreviousState[i] = this._isButtonPressed[i];
         }
-    }
-
-    public static isKeyPressed(keycode: number) {
+    };
+    /**
+     * Return if given input key is pressed.
+     * @param {number} keycode Key code.
+     * @return {boolean}
+     */
+    public static isKeyPressed(keycode: number): boolean {
         return this._isKeyPressed[keycode];
-    }
-
-    public static isKeyClicked(keycode: number) {
+    };
+    /**
+     * Return if given input key is clicked.
+     * @param {number} keycode Key code.
+     * @return {boolean}
+     */
+    public static isKeyClicked(keycode: number): boolean {
         return this._isKeyClicked[keycode];
-    }
+    };
+    /**
+     * Return if given input button is pressed.
+     * @param  {number}  button Button code.
+     * @return {boolean}
+     */
+    public static isButtonPressed(button: number): boolean {
+        return this._isButtonPressed[button];
+    };
+    /**
+     * Return if given input button is clicked.
+     * @param  {number}  button Button code.
+     * @return {boolean}
+     */
+    public static isButtonClicked(button: number): boolean {
+        return this._isButtonClicked[button];
+    };
+    /**
+     * Return current mouse X position.
+     * @return {number} Mouse X position.
+     */
+    public static getMousePosX(): number {
+        return this._mousePosX;
+    };
+    /**
+     * Return current mouse Y position
+     * @return {number} Mouse Y position.
+     */
+    public static getMousePosY(): number {
+        return this._mousePosY;
+    };
 
+    protected static _buttonPreviousState: Array<boolean> = [];
+    protected static _isButtonPressed: Array<boolean> = [];
+    protected static _isButtonClicked: Array<boolean> = [];
+    protected static _mousePosX = -1;
+    protected static _mousePosY = -1;
     // Previous key state
     protected static _keyPreviusState: Array<boolean> = [];
     // Pressed keys
     protected static _isKeyPressed: Array<boolean> = [];
     // Click events: once an event is set, it will remain there until polled
     protected static _isKeyClicked: Array<boolean> = [];
+    private static _instance: Input;
+
 
     protected static _onKeyDown(ev: KeyboardEvent) {
         this._isKeyPressed[ev.keyCode] = true;
-    }
-
+    };
     protected static _onKeyUp(ev: KeyboardEvent) {
         this._isKeyPressed[ev.keyCode] = false;
-    }
-    public static _buttonPreviousState: Array<boolean> = [];
-    public static _isButtonPressed: Array<boolean> = [];
-    public static _isButtonClicked: Array<boolean> = [];
-    public static _mousePosX = -1;
-    public static _mousePosY = -1;
+    };
     protected static _onMouseMove(ev: MouseEvent): boolean {
         let inside = false;
 
@@ -215,8 +267,7 @@ class Input {
             inside = true;
         }
         return inside;
-    }
-
+    };
     protected static _onMouseDown(ev: MouseEvent) {
         if (this._onMouseMove(ev)) {
             this._isButtonPressed[ev.button] = true;
@@ -226,19 +277,6 @@ class Input {
         this._onMouseMove(ev);
         this._isButtonPressed[ev.button] = false;
     };
-    public static isButtonPressed(button): boolean {
-        return this._isButtonPressed[button];
-    }
-    public static isButtonClicked(button): boolean {
-        return this._isButtonClicked[button];
-    }
-    public static getMousePosX(): number {
-        return this._mousePosX;
-    }
-    public static getMousePosY(): number {
-        return this._mousePosY;
-    }
-    private static _instance: Input; // TODO (Same as initialize) = new Input();
 };
 
 export { Input };

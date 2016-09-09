@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Framebuffer } from "./Framebuffer";
+import { Framebuffer } from "../core/Framebuffer";
 import { Vect2 } from "../maths/Vect2";
 
 class PingPong {

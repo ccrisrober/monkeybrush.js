@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Core } from "../core/Core";
+import { Core } from "./Core";
 import { QueryTarget } from "../constants/QueryTarget";
 import { QueryParams } from "../constants/QueryParams";
 
