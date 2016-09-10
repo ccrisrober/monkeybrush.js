@@ -4,6 +4,7 @@ export { BlendingType } from "./BlendingType";
 export { BufferType } from "./BufferType";
 export { ComparisonFunc } from "./ComparisonFunc";
 export { CompressedTex } from "./CompressedTex";
+export { DataType } from "./DataType";
 export { DrawBuffer } from "./DrawBuffer";
 export { FaceDir } from "./FaceDir";
 export { FaceSide } from "./FaceSide";

@@ -20,13 +20,15 @@
 
 "use strict";
 
-enum TextureFormat {
-    RGB = 0x1907,
-    RGBA = 0x1908,
-    RED = 0x1903,
-    LUMINANCE = 0x1909,
-    LUMINANCEALPHA = 0x190A,
-    ALPHA = 0x1906
+enum DataType {
+    UnsignedByte = 0x1401,
+    Byte = 0x1400,
+    Short = 0x1402,
+    UnsignedShort = 0x1403,
+    Int = 0x1404,
+    UnsignedInt = 0x1405,
+    Float = 0x1406,
+    HalfFloat = 0x140B
 };
 
-export { TextureFormat };
+export { DataType };
