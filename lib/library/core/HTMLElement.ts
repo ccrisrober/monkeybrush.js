@@ -20,6 +20,10 @@
 
 import { Camera2 } from "../Camera2";
 
+
+"use strict";
+
+
 class DOMElement {
     protected _domElem: HTMLElement;
     protected _matrix: Float32Array;

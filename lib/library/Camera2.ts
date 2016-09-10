@@ -18,7 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { Input } from "./core/Input";
+import { Input, KeyState } from "./core/Input";
 import { Mat4 } from "./maths/Mat4";
 import { Vect3 } from "./maths/Vect3";
 
@@ -69,44 +69,44 @@ class Camera2 {
 
         let speed = 1.0;
 
-        if (Input.isKeyPressed(Input.keys.Left_Shift)) {
+        if (Input.isKeyPressed(KeyState.Left_Shift)) {
             speed = 2.5;
         }
 
-        if (Input.isKeyPressed(Input.keys.Z)) {
+        if (Input.isKeyPressed(KeyState.Z)) {
             if (this.fov > 30.0) {
                 this.fov -= 0.5;
                 this._updateCamera = true;
             }
         }
-        if (Input.isKeyPressed(Input.keys.X)) {
+        if (Input.isKeyPressed(KeyState.X)) {
             if (this.fov < 90.0) {
                 this.fov += 0.5;
                 this._updateCamera = true;
             }
         }
 
-        if (Input.isKeyPressed(Input.keys.W)) {
+        if (Input.isKeyPressed(KeyState.W)) {
             this.processKeyboard(4, speed);
             this._updateCamera = true;
         }
-        if (Input.isKeyPressed(Input.keys.S)) {
+        if (Input.isKeyPressed(KeyState.S)) {
             this.processKeyboard(5, speed);
             this._updateCamera = true;
         }
-        if (Input.isKeyPressed(Input.keys.A)) {
+        if (Input.isKeyPressed(KeyState.A)) {
             this.processKeyboard(2, speed);
             this._updateCamera = true;
         }
-        if (Input.isKeyPressed(Input.keys.D)) {
+        if (Input.isKeyPressed(KeyState.D)) {
             this.processKeyboard(3, speed);
             this._updateCamera = true;
         }
-        if (Input.isKeyPressed(Input.keys.E)) {
+        if (Input.isKeyPressed(KeyState.E)) {
             this.processKeyboard(0, speed);
             this._updateCamera = true;
         }
-        if (Input.isKeyPressed(Input.keys.Q)) {
+        if (Input.isKeyPressed(KeyState.Q)) {
             this.processKeyboard(1, speed);
             this._updateCamera = true;
         }

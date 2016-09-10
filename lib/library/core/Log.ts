@@ -24,7 +24,7 @@
 "use strict";
 
 /**
-* This class wrap Logger
+* This class wraps a logger
 * @class core.Logger
 */
 let Log = function _log(logName: string): log4javascript.Logger {

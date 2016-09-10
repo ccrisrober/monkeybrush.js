@@ -1,0 +1,3 @@
+lib/index.ts[111, 49]: missing whitespace
+lib/library/extras/VertexBufferGeometry.ts[247, 3]: comment must start with a space
+lib/library/maths/Mathf.ts[64, 27]: missing whitespace

@@ -37,7 +37,7 @@ export { Context } from "./core/Context";
 export { Core } from "./core/Core";
 export { DepthState } from "./core/DepthState";
 export { Log } from "./core/Log";
-export { Input } from "./core/Input";
+export { Input, MouseButton, KeyState } from "./core/Input";
 export { Framebuffer } from "./core/Framebuffer";
 export { Program } from "./core/Program";
 export { ScissorsState } from "./core/ScissorsState";

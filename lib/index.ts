@@ -151,7 +151,7 @@ class MyScene extends MB.Scene {
         this.cameraUpdate();
     }
     update(dt: number) {
-        if (MB.Input.isButtonClicked(MB.Input.mouseButton.Left)) {
+        if (MB.Input.isButtonClicked(MB.MouseButton.Left)) {
             console.log("Mouse left clicked");
         }
 

@@ -137,13 +137,14 @@ class Framebuffer {
         const gl = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
-    public setTexture(tex: Texture, attach: number) {
+    public replaceTexture(tex: Texture, attach: number) {
       if (attach > this._attachments.length) {
         throw new Error("Attachment undefined");
       }
-      // TODO
-      // gl.framebufferTexture2D(gl.TEXTURE_2D, gl.COLOR_ATTACHMENT0 + attach,
-      //  gl.TEXTURE_2D, tex.)
+      const gl = Core.getInstance().getGL();
+      //gl.bindTexture(gl.TEXTURE_2D, texture2);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D, tex.handle, 0);
     }
 
     public isValid(): boolean {
