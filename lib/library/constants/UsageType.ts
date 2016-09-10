@@ -20,7 +20,6 @@
 
 "use strict";
 
-// Usage type
 enum UsageType {
     StaticDraw = 0x88E4,
     DynamicDraw = 0x88E8,

@@ -20,7 +20,6 @@
 
 "use strict";
 
-// Render Primitive type
 enum RenderType {
     Points = 0x0000,
     Lines = 0x0001,

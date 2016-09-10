@@ -20,8 +20,7 @@
 
 "use strict";
 
-// Blending type
-enum BlendingType {
+enum BlendingMode {
     // gl.disable(gl.BLEND);
     None,
     // gl.enable(BLEND)
@@ -44,4 +43,4 @@ enum BlendingType {
     Custom
 };
 
-export { BlendingType };
+export { BlendingMode };

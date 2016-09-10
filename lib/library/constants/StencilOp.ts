@@ -22,14 +22,38 @@
 
 // Stencil operation
 enum StencilOp {
-    Keep = 0x1E00,                          ///< Keep the stencil value
-    Zero = 0,                               ///< Set the stencil value to zero
-    Replace = 0x1E01,                       ///< Replace the stencil value with the reference value
-    Increase = 0x1E02,                      ///< Increase the stencil value by one, wrap if necessary
-    IncreaseSaturate = 0x8507,              ///< Increase the stencil value by one, clamp if necessary
-    Decrease = 0x1E03,                      ///< Decrease the stencil value by one, wrap if necessary
-    DecreaseSaturate = 0x8508,              ///< Decrease the stencil value by one, clamp if necessary
-    Invert = 0x150A                         ///< Invert the stencil data (bitwise not)
+    /**
+     * Keep the stencil value.
+     */
+    Keep = 0x1E00,
+    /**
+     * Set the stencil value to zero.
+     */
+    Zero = 0,
+    /**
+     * Replace the stencil value with the reference value.
+     */
+    Replace = 0x1E01,
+    /**
+     * Increase the stencil value by one, wrap if necessary.
+     */
+    Increase = 0x1E02,
+    /**
+     * Increase the stencil value by one, clamp if necessary.
+     */
+    IncreaseSaturate = 0x8507,
+    /**
+     * Decrease the stencil value by one, wrap if necessary.
+     */
+    Decrease = 0x1E03,
+    /**
+     * Decrease the stencil value by one, clamp if necessary.
+     */
+    DecreaseSaturate = 0x8508,
+    /**
+     * Invert the stencil data (bitwise not).
+     */
+    Invert = 0x150A
 };
 
 export { StencilOp };

@@ -20,7 +20,6 @@
 
 "use strict";
 
-// Pixel type
 enum PixelType {
     Byte = 0x1400,
     UByte = 0x1401,

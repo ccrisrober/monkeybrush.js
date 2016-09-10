@@ -31,9 +31,6 @@ import { Color3 } from "../extras/Color3";
  *     sky and by 3 colors: one for the diffuse (the sky color),
  *     one for the ground (the color when the pixel is not towards
  *     the sky) and one for the specular.
- */
-/**
- * Hemispheric light class
  * @class HemisphericLight
  */
 class HemisphericLight extends Light {

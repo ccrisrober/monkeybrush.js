@@ -13,7 +13,7 @@ export { VertexBufferGeometry }
     from "./extras/VertexBufferGeometry";
 
 
-// export { mod } from "./lol/m";
+export { mod } from "./lol/m";
 
 
 

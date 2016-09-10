@@ -24,6 +24,10 @@
 "use strict";
 
 
+/**
+ * Geometry namespace
+ * @namespace Geometry
+ */
 namespace Geometry {
     export function triangleCentroid(
         v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array {

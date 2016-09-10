@@ -24,10 +24,12 @@ import { BufferType } from "../constants/BufferType";
 import { VertexBuffer } from "../core/VertexBuffer";
 import { Vect3 } from "../maths/Vect3";
 
-
 "use strict";
 
-
+/**
+ * PointCloud class
+ * @class PointCloud
+ */
 class PointCloud {
     protected _points: Array<number>;
     protected _size: number;
@@ -54,7 +56,7 @@ class PointCloud {
             this._points.push(particle.x, particle.y, particle.z);
         }
         this._size = 500;
-    }
+    };
     protected addBufferArray(attribLocation: number,
         data: Float32Array, numElems: number, type: UsageType = UsageType.StaticDraw): VertexBuffer {
         const gl = Core.getInstance().getGL();
@@ -66,7 +68,7 @@ class PointCloud {
     public addPoint(point: Vect3) {
         // this._points.push(point.x, point.y, point.z);
         // ++this._size;
-    }
+    };
     public render() {
         if (!this._vb) {
             this._vb = this.addBufferArray(0, new Float32Array(this._points), 3);
@@ -78,7 +80,7 @@ class PointCloud {
 
         gl.drawArrays(gl.POINTS, 0, this._size);
         this._vb.unbind();
-    }
+    };
 };
 
 export { PointCloud };

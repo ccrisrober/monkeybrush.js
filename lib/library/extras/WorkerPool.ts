@@ -22,6 +22,10 @@
 "use strict";
 
 
+/**
+ * WorkerPool class
+ * @class WorkerPool
+ */
 class WorkerPool {
     constructor() {
         this._doneCB = function () {

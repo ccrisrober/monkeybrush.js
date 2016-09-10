@@ -23,6 +23,11 @@ import { Extensions } from "./Extensions";
 
 "use strict";
 
+
+/**
+ * Capabilites namespace
+ * @namespace Capabilites
+ */
 namespace Capabilites {
     let _capabilities = {};
 

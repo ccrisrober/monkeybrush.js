@@ -19,29 +19,29 @@
 
 "use strict";
 
+// TODO: Reorganize using Clock!
+/**
+ * Timer namespace
+ * @namespace Timer
+ */
 namespace Timer {
     let _lastTime = Date.now();
-    let _deltaTime = 0.0;
-
-    let _currentTime, _timeElapsed;
+    let _currentTime, _deltaTime;
     /**
-     *
+     * Update timer
      */
     export function update() {
         _currentTime = Date.now();
-        _timeElapsed = _currentTime - _lastTime;
-        _deltaTime = _timeElapsed;
+        _deltaTime = _currentTime - _lastTime;
         _lastTime = _currentTime;
-    }
+    };
     /**
-     * @return {number}
+     * Return the seconds passed since the last update
+     * @return {number} Delta time
      */
     export function deltaTime(): number {
         return _deltaTime;
-    }
-    export function timeElapsed(): number {
-        return _timeElapsed;
-    }
+    };
 }
 
 export { Timer };

@@ -20,7 +20,6 @@
 
 "use strict";
 
-// Blending type
 enum BlendingType {
     Zero = 0,
     One = 1,

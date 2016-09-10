@@ -17,47 +17,60 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"use strict";
 
 import { Vect3 } from "../maths/Vect3";
 
+/**
+ * Ray class
+ * @class Ray
+ */
 class Ray {
     protected _origin: Vect3;
     protected _direction: Vect3;
     /**
-     * Ray constructor
-     * @param {Vect3 = new Vect3()} origin: Ray origin point
-     * @param {Vect3 = new Vect3()} direction: Ray direction
+     * Ray constructor.
+     * @param {Vect3 = new Vect3()} origin: Ray origin point.
+     * @param {Vect3 = new Vect3()} direction: Ray direction.
      */
-    constructor(origin: Vect3 = new Vect3(),
-        direction: Vect3 = new Vect3()) {
+    constructor(origin: Vect3 = new Vect3(), direction: Vect3 = new Vect3()) {
         this._origin = origin;
         this._direction = direction;
-    }
+    };
     /**
-     * Get origin point
+     * Get ray origin point.
      * @return {Vect3}
      */
-    get origin(): Vect3 { return this._origin; }
+    get origin(): Vect3 {
+        return this._origin;
+    };
     /**
-     * Set origin point
-     * @param {Vect3} origin New origin point
+     * Set ray origin point.
+     * @param {Vect3} origin New origin point.
      */
-    set origin(origin: Vect3) { this._origin = origin; }
+    set origin(origin: Vect3) {
+        this._origin = origin;
+    };
     /**
-     * Get direction point
+     * Get ray direction.
      * @return {Vect3}
      */
-    get direction(): Vect3 { return this._direction; }
+    get direction(): Vect3 {
+        return this._direction;
+    };
     /**
-     * Set direction point
-     * @param {Vect3} origin New direction point
+     * Set ray direction.
+     * @param {Vect3} origin New direction point.
      */
-    set direction(direction: Vect3) { this._direction = direction; }
+    set direction(direction: Vect3) {
+        this._direction = direction;
+    };
     /**
-     * [at description]
-     * @param {number} t [description]
+     * Evaluate ray at t position.
+     * @param  {number} t Position to evaluate.
+     * @return {Vect3}    New position at t.
      */
-    public at(t: number) {
+    public at(t: number): Vect3 {
         return new Vect3(
             this._origin.x + t * this._direction.x,
             this._origin.y + t * this._direction.y,
@@ -65,8 +78,8 @@ class Ray {
         );
     };
     /**
-     * [lookAt description]
-     * @param {Vect3} v [description]
+     * Change the viewing direction of the ray.
+     * @param {Vect3} v Object to look.
      */
     public lookAt(v: Vect3) {
         this._direction = Vect3.sub(v, this._origin).normalize();

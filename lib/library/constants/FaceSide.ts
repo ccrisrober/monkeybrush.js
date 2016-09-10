@@ -20,11 +20,19 @@
 
 "use strict";
 
-// Cull mode
 enum FaceSide {
-    Front = 0x0404,                        ///< Cull front-facing primitives
-    Back = 0x0405,                         ///< Cull back-facing primitives
-    FrontAndBack = 0x0408                  ///< Cull Front and back-facing primitives
+    /**
+     * Cull front-facing primitives.
+     */
+    Front = 0x0404,
+    /**
+     * Cull back-facing primitives.
+     */
+    Back = 0x0405,
+    /**
+     * Cull Front and back-facing primitives.
+     */
+    FrontAndBack = 0x0408
 };
 
 export { FaceSide };

@@ -19,9 +19,12 @@
 
 
 import { Vect3 } from "../maths/Vect3";
-import { BufferAttribute, VertexBufferGeometry }
-    from "../extras/VertexBufferGeometry";
+import { BufferAttribute, VertexBufferGeometry } from "../extras/VertexBufferGeometry";
 
+/**
+ * Sprite class
+ * @class Sprite
+ */
 class Sprite {
     protected _geometry: VertexBufferGeometry;
 

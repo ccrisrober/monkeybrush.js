@@ -20,16 +20,39 @@
 
 "use strict";
 
-// Comparison function
 enum ComparisonFunc {
-    Never = 0x0200,                  ///< Comparison always fails
-    Less = 0x0201,                   ///< Passes if source is less than the destination
-    Equal = 0x0202,                  ///< Passes if source is equal to the destination
-    LessEqual = 0x0203,              ///< Passes if source is less than or equal to the destination
-    Greater = 0x0204,                ///< Passes if source is greater than to the destination
-    NotEqual = 0x0205,               ///< Passes if source is not equal to the destination
-    GreaterEqual = 0x0206,           ///< Passes if source is greater than or equal to the destination
-    Always = 0x0207                  ///< Comparison always succeeds
+    /**
+     * Comparison always fails.
+     */
+    Never = 0x0200,
+    /**
+     * Passes if source is less than the destination.
+     */
+    Less = 0x0201,
+    /**
+     * Passes if source is equal to the destination.
+     */
+    Equal = 0x0202,
+    /**
+     * Passes if source is less than or equal to the destination.
+     */
+    LessEqual = 0x0203,
+    /**
+     * Passes if source is greater than to the destination.
+     */
+    Greater = 0x0204,
+    /**
+     * Passes if source is not equal to the destination.
+     */
+    NotEqual = 0x0205,
+    /**
+     * Passes if source is greater than or equal to the destination.
+     */
+    GreaterEqual = 0x0206,
+    /**
+     * Comparison always succeeds.
+     */
+    Always = 0x0207
 };
 
 export { ComparisonFunc };

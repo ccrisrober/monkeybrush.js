@@ -24,6 +24,10 @@
 "use strict";
 
 
+/**
+ * Noise namespace
+ * @namespace Noise
+ */
 namespace Noise {
     export namespace fractal {
         export function noise(x, y, z, octaves, noiseCallback) {

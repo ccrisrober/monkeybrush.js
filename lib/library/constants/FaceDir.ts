@@ -20,7 +20,6 @@
 
 "use strict";
 
-// Front face directions
 enum FaceDir {
     Clockwise = 0x0900,
     InvClockwise = 0x0901

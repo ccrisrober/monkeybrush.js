@@ -21,6 +21,10 @@
 "use strict";
 
 
+/**
+ * Encodings namespace
+ * @namespace Encodings
+ */
 namespace Encodings {
     export function RGBByte2Float(srcArr, srcOff, dstArr, dstOff) {
         const e = srcArr[srcOff + 3];

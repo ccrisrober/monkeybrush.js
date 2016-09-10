@@ -23,14 +23,6 @@ import { Light } from "./Light";
 "use strict";
 
 /**
- * Hemispheric light represents a simple and easy way to
- *     simulate realistic ambient light.
- * An hemispheric light is defined by a direction to the
- *     sky and by 3 colors: one for the diffuse (the sky color),
- *     one for the ground (the color when the pixel is not towards
- *     the sky) and one for the specular.
- */
-/**
  * Ambient light class
  * @class AmbientLight
  */

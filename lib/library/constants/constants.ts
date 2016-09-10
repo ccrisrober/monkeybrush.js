@@ -1,4 +1,5 @@
 export { BlendingEq } from "./BlendingEq";
+export { BlendingMode } from "./BlendingMode";
 export { BlendingType } from "./BlendingType";
 export { BufferType } from "./BufferType";
 export { ComparisonFunc } from "./ComparisonFunc";

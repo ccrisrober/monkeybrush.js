@@ -35,6 +35,10 @@ import { BufferType } from "../constants/BufferType";
 
 "use strict";
 
+/**
+ * Skybox class
+ * @class Skybox
+ */
 class Skybox {
     /**
      * [_VertexArray description]
