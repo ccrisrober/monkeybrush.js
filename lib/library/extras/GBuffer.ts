@@ -20,11 +20,11 @@
 
 import { Core } from "../core/Core";
 import { Vect2 } from "../maths/Vect2";
-import { TextureType } from "../constants/TextureType";
-import { TextureFormat } from "../constants/TextureFormat";
 import { SimpleTexture2D } from "../textures/SimpleTexture2D";
 import { TexOptions } from "../textures/Texture";
 import { Framebuffer } from "../core/Framebuffer";
+
+import { TextureFormat, TextureType } from "../constants/Constants";
 
 "use strict";
 

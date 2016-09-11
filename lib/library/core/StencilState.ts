@@ -19,9 +19,8 @@
 
 
 import { Core } from "./Core";
-import { ComparisonFunc } from "../constants/ComparisonFunc";
-import { StencilOp } from "../constants/StencilOp";
-import { FaceSide } from "../constants/FaceSide";
+import { ComparisonFunc, FaceSide, StencilOp }
+    from "../constants/Constants";
 
 "use strict";
 

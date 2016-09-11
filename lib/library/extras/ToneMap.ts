@@ -19,7 +19,7 @@
 
 
 import { Program } from "../core/Program.ts";
-import { ProgramCte } from "../constants/ProgramCte";
+import { ProgramCte } from "../constants/Constants";
 
 "use strict";
 

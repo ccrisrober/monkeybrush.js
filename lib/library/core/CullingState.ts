@@ -19,7 +19,7 @@
 
 
 import { Core } from "./Core";
-import { FaceSide } from "../constants/FaceSide";
+import { FaceSide } from "../constants/Constants";
 
 "use strict";
 

@@ -21,8 +21,8 @@
 import { Core } from "../core/Core.ts";
 import { VertexArray } from "../core/VertexArray.ts";
 import { VertexBuffer } from "../core/VertexBuffer.ts";
-import { UsageType } from "../constants/UsageType.ts";
-import { BufferType } from "../constants/BufferType.ts";
+
+import { UsageType, BufferType } from "../constants/Constants.ts";
 
 "use strict";
 

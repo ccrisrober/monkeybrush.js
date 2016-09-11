@@ -20,10 +20,8 @@
 
 import { Core } from "./Core";
 
-import { SyncStatus } from "../constants/SyncStatus";
-import { SyncCondition } from "../constants/SyncCondition";
-import { SyncType } from "../constants/SyncType";
-import { SyncWaitResult } from "../constants/SyncWaitResult";
+import { SyncCondition, SyncStatus, SyncType, SyncWaitResult }
+    from "../constants/Constants";
 
 "use strict";
 

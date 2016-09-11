@@ -18,19 +18,12 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="Texture.ts" />
-
-/// <reference path="../constants/TextureFormat.ts" />
-/// <reference path="../constants/TextureType.ts" />
-
 import { Core } from "../core/Core";
 import { Texture, TexOptions } from "./Texture";
 import { Vect2 } from "../maths/Vect2";
 
-import { TextureFormat } from "../constants/TextureFormat";
-import { WrapMode } from "../constants/WrapMode";
-import { TextureType } from "../constants/TextureType";
-import { TextureTarget } from "../constants/TextureTarget";
+import { TextureFormat, WrapMode, TextureType, TextureTarget }
+    from "../constants/Constants";
 
 "use strict";
 

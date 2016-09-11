@@ -19,7 +19,7 @@
 
 
 import { Core } from "./Core";
-import { ComparisonFunc } from "../constants/ComparisonFunc";
+import { ComparisonFunc } from "../constants/Constants";
 
 "use strict";
 

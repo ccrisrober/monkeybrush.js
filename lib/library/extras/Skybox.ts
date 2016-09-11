@@ -24,14 +24,11 @@ import { ResourceMap } from "../resources/ResourceMap";
 import { CubeMapTexture } from "../textures/CubemapTexture";
 import { DepthState } from "../core/DepthState";
 
-import { ProgramCte } from "../constants/ProgramCte";
-import { ComparisonFunc } from "../constants/ComparisonFunc";
-
 import { VertexBuffer } from "../core/VertexBuffer";
 import { VertexArray } from "../core/VertexArray";
 
-import { UsageType } from "../constants/UsageType";
-import { BufferType } from "../constants/BufferType";
+import { ProgramCte, ComparisonFunc, UsageType, BufferType }
+    from "../constants/Constants";
 
 "use strict";
 

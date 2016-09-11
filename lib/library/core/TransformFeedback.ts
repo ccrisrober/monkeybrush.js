@@ -20,9 +20,8 @@
 
 import { Core } from "./Core";
 import { Program } from "./Program";
-import { TFMode } from "../constants/TFMode";
-import { TFPrimitive } from "../constants/TFPrimitive";
-import { TFTarget } from "../constants/TFTarget";
+import { TFMode, TFPrimitive, TFTarget }
+    from "../constants/Constants";
 
 "use strict";
 

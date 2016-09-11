@@ -21,9 +21,10 @@
 
 import { Core } from "../core/Core";
 import { Program } from "../core/Program";
-import { ProgramCte } from "../constants/ProgramCte";
 import { ProgramManager } from "../resources/ProgramManager";
 import { Drawable } from "../models/Drawable";
+
+import { ProgramCte } from "../constants/Constants";
 
 "use strict";
 

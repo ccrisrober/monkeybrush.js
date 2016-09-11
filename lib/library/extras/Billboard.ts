@@ -18,12 +18,13 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+/// <reference path="../../typings/gl-matrix.d.ts" />
 
 import { CustomModel } from "../models/CustomModel.ts";
 import { Program } from "../core/Program.ts";
-import { ProgramCte } from "../constants/ProgramCte";
 import { Texture2D } from "../textures/Texture2D";
 
+import { ProgramCte } from "../constants/Constants";
 
 
 "use strict";

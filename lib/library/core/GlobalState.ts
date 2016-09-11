@@ -21,9 +21,8 @@
 import { Core } from "./Core";
 import { Color4 } from "../extras/Color4";
 import { Vector4 } from "../maths/Vector4";
-import { BlendingEq } from "../constants/BlendingEq";
-import { ComparisonFunc } from "../constants/ComparisonFunc";
-import { FaceSide } from "../constants/FaceSide";
+import { BlendingEq, ComparisonFunc, FaceSide }
+    from "../constants/Constants";
 
 class GlobalState {
     static _bgColor: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);

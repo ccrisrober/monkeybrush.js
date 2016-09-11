@@ -20,9 +20,8 @@
 
 import { Texture, TexOptions } from "./Texture";
 import { Core } from "../core/Core";
-import { WrapMode } from "../constants/WrapMode";
-import { TextureType } from "../constants/TextureType";
-import { TextureTarget } from "../constants/TextureTarget";
+import { WrapMode, TextureType, TextureTarget }
+    from "../constants/Constants";
 
 "use strict";
 

@@ -18,10 +18,8 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import { BlendingEq } from "../../constants/BlendingEq";
-import { BlendingType } from "../../constants/BlendingType";
-import { ComparisonFunc } from "../../constants/ComparisonFunc";
-import { FaceSide } from "../../constants/FaceSide";
+import { BlendingEq , BlendingType, ComparisonFunc, FaceSide }
+    from "../../constants/Constants";
 
 abstract class Material {
     public _blending;

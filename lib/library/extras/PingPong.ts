@@ -21,9 +21,9 @@
 import { Core } from "../core/Core";
 import { Framebuffer } from "../core/Framebuffer";
 import { SimpleTexture2D } from "../textures/SimpleTexture2D";
-import { TextureType } from "../constants/TextureType";
-import { TextureFormat } from "../constants/TextureFormat";
 import { Vect2 } from "../maths/Vect2";
+
+import { TextureFormat, TextureType } from "../constants/Constants";
 
 "use strict";
 

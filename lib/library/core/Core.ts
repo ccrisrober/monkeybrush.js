@@ -28,7 +28,7 @@ import { DepthState } from "./DepthState";
 import { CullingState } from "./CullingState";
 import { BlendingState } from "./BlendingState";
 
-import { ComparisonFunc } from "../constants/ComparisonFunc";
+import { ComparisonFunc } from "../constants/Constants";
 
 "use strict";
 

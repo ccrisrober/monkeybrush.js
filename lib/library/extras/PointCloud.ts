@@ -19,10 +19,10 @@
 
 
 import { Core } from "../core/Core";
-import { UsageType } from "../constants/UsageType";
-import { BufferType } from "../constants/BufferType";
 import { VertexBuffer } from "../core/VertexBuffer";
 import { Vect3 } from "../maths/Vect3";
+
+import { UsageType, BufferType } from "../constants/Constants";
 
 "use strict";
 

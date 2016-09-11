@@ -19,6 +19,7 @@
 
 
 import { Camera } from "./Camera";
+/// <reference path="../../typings/gl-matrix.d.ts" />
 
 "use strict";
 

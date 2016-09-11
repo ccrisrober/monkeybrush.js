@@ -21,10 +21,9 @@
 import { Core } from "../core/Core";
 import { VertexArray } from "../core/VertexArray";
 import { VertexBuffer } from "../core/VertexBuffer";
-import { UsageType } from "../constants/UsageType";
-import { RenderType } from "../constants/RenderType";
-import { BufferType } from "../constants/BufferType";
 import { Extensions } from "../extras/Extensions";
+
+import { UsageType, RenderType, BufferType } from "../constants/Constants";
 
 "use strict";
 

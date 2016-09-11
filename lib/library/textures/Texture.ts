@@ -21,11 +21,9 @@
 
 import { Core } from "../core/Core";
 import { Vect2 } from "../maths/Vect2";
-import { WrapMode } from "../constants/WrapMode";
-import { TextureType } from "../constants/TextureType";
-import { TextureTarget } from "../constants/TextureTarget";
-import { TextureFormat } from "../constants/TextureFormat";
 import { Extensions } from "../extras/Extensions";
+import { TextureFormat, WrapMode, TextureType, TextureTarget }
+    from "../constants/Constants";
 
 "use strict";
 

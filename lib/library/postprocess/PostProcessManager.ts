@@ -23,8 +23,8 @@ import { Core} from "../core/Core";
 import { Framebuffer} from "../core/Framebuffer";
 import { VertexArray } from "../core/VertexArray.ts";
 import { VertexBuffer } from "../core/VertexBuffer.ts";
-import { BufferType } from "../constants/BufferType.ts";
-import { UsageType } from "../constants/UsageType.ts";
+
+import { BufferType, UsageType } from "../constants/Constants.ts";
 
 class PostProcessManager {
     protected static _planeVAO: VertexArray = null;

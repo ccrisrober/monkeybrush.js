@@ -19,8 +19,8 @@
 
 
 import { Core } from "./Core";
-import { QueryTarget } from "../constants/QueryTarget";
-import { QueryParams } from "../constants/QueryParams";
+
+import { QueryTarget , QueryParams } from "../constants/Constants";
 
 "use strict";
 

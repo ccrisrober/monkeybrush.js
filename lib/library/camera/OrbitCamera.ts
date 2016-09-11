@@ -20,6 +20,7 @@
 // Code based on https://github.com/mikolalysenko/orbit-camera/blob/master/orbit.js
 
 // TODO: import { Camera } from "./Camera";
+/// <reference path="../../typings/gl-matrix.d.ts" />
 
 "use strict";
 

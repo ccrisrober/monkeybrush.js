@@ -25,7 +25,7 @@
 /// <reference path="./Scene.ts" />
 
 /// <reference path="./camera/__camera__.ts" />
-/// <reference path="./constants/__constants__.ts" />
+/// <reference path="./constants/Constants.ts" />
 /// <reference path="./core/__core__.ts" />
 /// <reference path="./extras/__extras__.ts" />
 /// <reference path="./lights/__lights__.ts" />

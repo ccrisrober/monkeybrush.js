@@ -20,8 +20,7 @@
 
 import { Core } from "./Core";
 
-import { BlendingEq } from "../constants/BlendingEq";
-import { BlendingType } from "../constants/BlendingType";
+import { BlendingEq, BlendingType } from "../constants/Constants";
 
 "use strict";
 

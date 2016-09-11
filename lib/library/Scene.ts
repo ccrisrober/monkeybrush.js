@@ -17,6 +17,11 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+/// <reference path="../typings/dat-gui.d.ts" />
+/// <reference path="../typings/stats.d.ts" />
+/// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
+
 import { Decorators } from "./Decorators";
 import { Core } from "./core/Core";
 import { Context } from "./core/Context";
@@ -24,10 +29,6 @@ import { Input } from "./core/Input";
 import { ResourceMap } from "./resources/ResourceMap";
 import { Timer } from "./extras/Timer";
 import { Log } from "./core/Log";
-
-/// <reference path="../typings/stats.d.ts" />
-/// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
-
 
 "use strict";
 

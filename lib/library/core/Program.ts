@@ -19,7 +19,6 @@
 
 
 import { Core } from "./Core";
-import { ProgramCte } from "../constants/ProgramCte";
 import { Vect2 } from "../maths/Vect2";
 import { Vect3 } from "../maths/Vect3";
 import { Vect4 } from "../maths/Vect4";
@@ -27,7 +26,8 @@ import { Mat2 } from "../maths/Mat2";
 import { Mat3 } from "../maths/Mat3";
 import { Mat4 } from "../maths/Mat4";
 import { TransformFeedback } from "./TransformFeedback";
-import { TFMode } from "../constants/TFMode";
+
+import { ProgramCte, TFMode } from "../constants/Constants";
 
 "use strict";
 

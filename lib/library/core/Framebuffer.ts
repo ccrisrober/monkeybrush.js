@@ -19,11 +19,12 @@
 
 
 import { Core } from "./Core";
-import { DrawBuffer } from "../constants/DrawBuffer";
 import { Texture } from "../textures/Texture";
 import { SimpleTexture2D } from "../textures/SimpleTexture2D";
 import { RenderBufferTexture } from "../textures/RenderBufferTexture";
 import { Vect2 } from "../maths/Vect2";
+
+import { DrawBuffer } from "../constants/Constants";
 
 "use strict";
 

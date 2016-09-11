@@ -10,7 +10,7 @@ import * as camera from "./camera/__camera__";
 export { camera };
 
 // Constants
-import * as constants from "./constants/__constants__";
+import * as constants from "./constants/Constants";
 export { constants };
 
 // Core

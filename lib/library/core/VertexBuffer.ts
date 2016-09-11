@@ -19,8 +19,8 @@
 
 
 import { Core } from "../core/Core";
-import { BufferType } from "../constants/BufferType";
-import { UsageType } from "../constants/UsageType";
+
+import { BufferType, UsageType } from "../constants/Constants";
 
 "use strict";
 
