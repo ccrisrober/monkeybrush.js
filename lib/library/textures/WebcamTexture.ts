@@ -19,15 +19,25 @@
 
 
 import { VideoTexture } from "./VideoTexture";
+import { Vect2 } from "../maths/Vect2";
 import { ResourceMap } from "../resources/ResourceMap";
 
+/**
+ * WebcamTexture class
+ * @class WebcamTexture
+ */
 class WebcamTexture extends VideoTexture {
-    constructor(onSuccess: () => void = null) {
+    /**
+     * WebcamTexture constructor.
+     * @param {Vect2 = [320, 320]} size Webcam viewport size.
+     * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
+     */
+    constructor(size: Vect2 = Vect2.createFromScalar(320), onSuccess: () => void = null) {
         super(ResourceMap.retrieveAsset("webcam"));
 
-        this._video.width = 320;
-        this._video.height = 320;
-    }
+        this._video.width = size.x;
+        this._video.height = size.y;
+    };
 };
 
 export { WebcamTexture };

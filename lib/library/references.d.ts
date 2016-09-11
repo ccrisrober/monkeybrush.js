@@ -24,14 +24,14 @@
 /// <reference path="./polyfills.ts" />
 /// <reference path="./Scene.ts" />
 
-/// <reference path="./camera/__camera__.ts" />
+// /// <reference path="./cameras/__camera__.ts" />
 /// <reference path="./constants/Constants.ts" />
 /// <reference path="./core/__core__.ts" />
 /// <reference path="./extras/__extras__.ts" />
 /// <reference path="./lights/__lights__.ts" />
 /// <reference path="./maths/__maths__.ts" />
 /// <reference path="./models/__models__.ts" />
-/// <reference path="./postprocess/__postprocess__.ts" />
+// /// <reference path="./postprocess/__postprocess__.ts" />
 /// <reference path="./resources/__resources__.ts" />
 /// <reference path="./textures/__textures__.ts" />
 

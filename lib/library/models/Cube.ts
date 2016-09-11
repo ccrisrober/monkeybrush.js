@@ -19,6 +19,7 @@
 
 
 import { Drawable } from "./Drawable";
+import { BufferAttribute } from "../extras/VertexBufferGeometry";
 
 "use strict";
 
@@ -35,7 +36,7 @@ class Cube extends Drawable {
         super();
         const side2 = side / 2.0;
 
-        let verts = [
+        this._geometry.addAttr("vertices", new BufferAttribute(new Float32Array([
             // Front
            -side2, -side2, side2,
             side2, -side2, side2,
@@ -66,9 +67,9 @@ class Cube extends Drawable {
             side2,  side2, side2,
             side2,  side2, -side2,
            -side2,  side2, -side2
-        ];
+        ]), 3));
 
-        let norms = [
+        this._geometry.addAttr("normals", new BufferAttribute(new Float32Array([
             // Front
             0.0, 0.0, 1.0,
             0.0, 0.0, 1.0,
@@ -99,9 +100,9 @@ class Cube extends Drawable {
             0.0, 1.0, 0.0,
             0.0, 1.0, 0.0,
             0.0, 1.0, 0.0
-        ];
+        ]), 3));
 
-        let tex = [
+        this._geometry.addAttr("texCoords", new BufferAttribute(new Float32Array([
             // Front
             0.0, 0.0,
             1.0, 0.0,
@@ -132,27 +133,29 @@ class Cube extends Drawable {
             1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0
-        ];
+        ]), 2));
 
-        let el = [
+        this._geometry.setIndex(new Uint16Array([
             0, 1, 2, 0, 2, 3,
             4, 5, 6, 4, 6, 7,
             8, 9, 10, 8, 10, 11,
             12, 13, 14, 12, 14, 15,
             16, 17, 18, 16, 18, 19,
             20, 21, 22, 20, 22, 23
-        ];
+        ]));
+
+        this.createWireframe();
 
         this._handle = [];
         this._vao.bind();
 
-        this.addElementArray(new Uint16Array(el));
+        this.addElementArray(this._geometry.indices);
 
-        this.addBufferArray(0, new Float32Array(verts), 3);
-        this.addBufferArray(1, new Float32Array(norms), 3);
-        this.addBufferArray(2, new Float32Array(tex), 2);
+        this.addBufferArray(0, <Float32Array>this._geometry.getAttr("vertices").array, 3);
+        this.addBufferArray(1, <Float32Array>this._geometry.getAttr("normals").array, 3);
+        this.addBufferArray(2, <Float32Array>this._geometry.getAttr("texCoords").array, 2);
 
-        this._indicesLen = el.length;
+        this._indicesLen = this._geometry.indices.length;
     }
 };
 

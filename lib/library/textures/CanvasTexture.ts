@@ -27,32 +27,29 @@ import { TextureFormat, WrapMode, TextureType, TextureTarget }
 
 "use strict";
 
+/**
+ * CanvasTexture class
+ * @class CanvasTexture
+ *
+ * This class uses an image of a canvas like texture
+ */
 class CanvasTexture extends Texture {
-    protected _size: Vect2;
-
-    public getWidth(): number {
-        return this._size.x;
-    }
-    public getHeight(): number {
-        return this._size.y;
-    }
-    protected _offsets_: Array<number>;
-    protected _domCanvas;
+    /**
+     * Canvas that contains the image texture
+     * @type {HTMLCanvasElement}
+     */
+    protected _domCanvas: HTMLCanvasElement;
     /**
      * CanvasTexture constructor
      * @param {Vect2} size: Texture size
      * @param {TexOptions = {}} options: Texture options
-     * @param {() => void = null} onSuccess: Optional callback is called at the end.
+     * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
      */
     constructor(domCanvas: HTMLCanvasElement, options: TexOptions = {}, onSuccess: () => void = null) {
         super(TextureTarget.Texture2D);
 
         const gl = Core.getInstance().getGL();
         this._handle_ = gl.createTexture();
-
-        this._size = Vect2.create([domCanvas.width, domCanvas.height]);
-
-        // TODO: Support compression
 
         this._flipY_ = options.flipY === true;
 
@@ -61,10 +58,8 @@ class CanvasTexture extends Texture {
         this._type_ = options.type || gl.UNSIGNED_BYTE;
         this._level_ = options.level || 0;
         this._compressed_ = Boolean(options.compressed || false);
-        this._offsets_ = options.offsets;
 
         this.bind();
-
 
         gl.texImage2D(
             this._target_,
@@ -92,8 +87,11 @@ class CanvasTexture extends Texture {
         if (onSuccess) {
             onSuccess();
         }
-    }
-
+    };
+    /**
+     * Updates the texture based on the current image of the canvas
+     * that was referenced in the class constructor
+     */
     public update() {
         this.bind();
         const gl = Core.getInstance().getGL();
@@ -101,12 +99,12 @@ class CanvasTexture extends Texture {
             this._target_,
             this._level_,
             this._internalformat_,
-            this._format_, // Format
-            this._type_, // Size of each channel
+            this._format_,
+            this._type_,
             this._domCanvas
         );
         this.unbind();
-    }
+    };
 };
 
 export { CanvasTexture };

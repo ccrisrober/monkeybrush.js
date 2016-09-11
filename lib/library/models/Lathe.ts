@@ -22,6 +22,8 @@ import { Vect2 } from "../maths/Vect2";
 import { Vect3 } from "../maths/Vect3";
 import { Drawable } from "./Drawable";
 
+import { BufferAttribute } from "../extras/VertexBufferGeometry";
+
 "use strict";
 
 /**
@@ -40,7 +42,6 @@ class Lathe extends Drawable {
         super();
         let vertices = [];
         let normals = [];
-        let uvs = [];
         let indices = [];
 
         segments = Math.floor(segments);
@@ -51,6 +52,9 @@ class Lathe extends Drawable {
         // indexSize (in floats) =  segments * points.length * 2 * 3;
 
         const inverseSegments = 1.0 / segments;
+
+        let UV = 0;
+        let buffUV = new BufferAttribute(new Float32Array((segments + 1) * points.length * 2), 2);
 
         let i, j, base, a, b, c, d, size;
         for ( i = 0; i <= segments; ++i) {
@@ -66,10 +70,13 @@ class Lathe extends Drawable {
                     points[j].x * cos
                 ));
 
-                uvs.push(new Vect2(
+                buffUV.setXY(UV++,
+                    i / segments,
+                    j / (points.length - 1));
+                /*uvs.push(new Vect2(
                     i / segments,
                     j / (points.length - 1)
-                ));
+                ));*/
             }
         }
 
@@ -124,11 +131,11 @@ class Lathe extends Drawable {
             normals2.push(normals[i].x, normals[i].y, normals[i].z);
         }
         normals = normals2;
-        let uvs2: Array<number> = [];
+        /*let uvs2: Array<number> = [];
         for (i = 0; i < uvs.length; ++i) {
             uvs2.push(uvs[i].x, uvs[i].y);
         }
-        uvs = uvs2;
+        uvs = uvs2;*/
         let indices2: Array<number> = [];
         for (i = 0; i < indices.length; ++i) {
             indices2.push(indices[i].x, indices[i].y, indices[i].z);
@@ -171,7 +178,7 @@ class Lathe extends Drawable {
 
         this.addBufferArray(0, new Float32Array(vertices), 3);
         this.addBufferArray(1, new Float32Array(normals), 3);
-        this.addBufferArray(2, new Float32Array(uvs), 2);
+        this.addBufferArray(2, <Float32Array>buffUV.array, 2);
 
         this._indicesLen = indices.length;
     };

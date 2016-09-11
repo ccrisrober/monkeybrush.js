@@ -31,7 +31,7 @@ class Texture2D extends Texture {
      * Texture2D constructor
      * @param {HTMLImageElement} data: Image data
      * @param {TexOptions = {}} options: Texture options
-     * @param {() => void = null} onSuccess: Optional callback is called at the end.
+     * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
      */
     constructor(data: any, options: TexOptions = {}, onSuccess: () => void = null) {
         super(TextureTarget.Texture2D);

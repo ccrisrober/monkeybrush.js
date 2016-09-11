@@ -100,7 +100,7 @@ class Core {
         GlobalState.setDepthStatus(true);
         GlobalState.setDepthComparisonFunc(ComparisonFunc.Less);
 
-        GlobalState.setCullingStatus(false);
+        GlobalState.setCullingStatus(true);
         GlobalState.setBlendingStatus(false);
     }
 

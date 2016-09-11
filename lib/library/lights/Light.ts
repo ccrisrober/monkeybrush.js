@@ -29,19 +29,23 @@ import { Vect3 } from "../maths/Vect3";
  */
 abstract class Light {
     /**
-     * [Intensity value]
+     * Light source intensity [0, 1]
      * @type {number}
      */
     protected _intensity: number;
     /**
-     * [Light color]
+     * Light diffuse color.
      * @type {Color3}
      */
     protected _color: Color3;
+    /**
+     * Light specular color.
+     * @type {Color3}
+     */
     protected _specColor: Color3;
     protected _enable: boolean;
     /**
-     * [Attenuation light value]
+     * Attenuations light constants
      * @type {Vect3}
      */
     protected _attenuation: Vect3;
@@ -69,20 +73,20 @@ abstract class Light {
     }
     /**
      * Set linear attenuation value.
-     * @param {number} v: Linear attenuation value.
+     * @param {number} v Linear attenuation value.
      */
     public setLinearAtt(value: number) {
         this._attenuation.y = value;
     }
     /**
      * Set quadratic attenuation value.
-     * @param {number} v: Quadratic attenuation value.
+     * @param {number} v Quadratic attenuation value.
      */
     public setQuadraticAtt(value: number) {
         this._attenuation.z = value;
     }
     /**
-     * Get light attenuation value.
+     * Return light attenuation value.
      * @return {Vect3}
      */
     get attenuation(): Vect3 { return this._attenuation; }
@@ -94,28 +98,28 @@ abstract class Light {
     get intensity(): number { return this._intensity; }
     /**
      * Set light intensity.
-     * @param {number} intensity: Light intensity.
+     * @param {number} intensity Light intensity.
      */
     set intensity(intensity: number) { this._intensity = intensity; }
 
     /**
-     * Get light diffuse color.
+     * Return light diffuse color.
      * @return {Color3}
      */
     get color(): Color3 { return this._color; }
     /**
      * Set light diffuse color
-     * @param {Color3} color: Color value
+     * @param {Color3} color Color value
      */
     set color(color: Color3) { this._color = color; }
     /**
-     * Get light specular color.
+     * Return light specular color.
      * @return {Color3}
      */
     get specularColor(): Color3 { return this._specColor; }
     /**
      * Set light specular color
-     * @param {Color3} color: Color value
+     * @param {Color3} color Color value
      */
     set specularColor(color: Color3) { this._specColor = color; }
 };

@@ -40,6 +40,12 @@ declare var WebGL2RenderingContext: any;
 class Texture2DArray extends Texture {
     protected _layer_: number;
     protected _numTex_: number;
+    /**
+     * [constructor description]
+     * @param {Array<any>}    images [description]
+     * @param {TexOptions =      {}}        options [description]
+     * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2DArray.
+     */
     constructor(images: Array<any>, options: TexOptions = {}, onSuccess: () => void = null) {
         const gl = Core.getInstance().getGL();
         if (!(gl instanceof WebGL2RenderingContext)) {

@@ -41,7 +41,7 @@ class SimpleTexture2D extends Texture {
      * SimpleTexture2D constructor
      * @param {Vect2} size: Texture size
      * @param {TexOptions = {}} options: Texture options
-     * @param {() => void = null} onSuccess: Optional callback is called at the end.
+     * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
      */
     constructor(size: Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
         super(TextureTarget.Texture2D);

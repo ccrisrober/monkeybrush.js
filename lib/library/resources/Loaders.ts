@@ -23,9 +23,16 @@ import { ResourceMap } from "./ResourceMap";
 "use strict";
 
 namespace Loaders {
-    /*export function VertexBufferGeometryLoader(src: string) {
-
-    }*/
+    /**
+     * [VertexBufferGeometryLoader description]
+     * @param {string} src [description]
+     */
+    export function VertexBufferGeometryLoader(src: string) {
+        // TODO
+    };
+    /**
+     * [loadWebCam description]
+     */
     export function loadWebCam() {
         const alias: string = "webcam";
         if (!ResourceMap.isAssetLoaded(alias)) {
@@ -62,7 +69,7 @@ namespace Loaders {
                 console.assert(false);
             }
         }
-    }
+    };
     /**
      * Get alias from src resource
      * @param  {string} src: Src name
@@ -72,6 +79,14 @@ namespace Loaders {
     function _getAlias(src: string, alias: string = ""): string {
         return (alias.length < 1) ? src : alias;
     };
+    /**
+     * [xhrLoader description]
+     * @param {string}     url     [description]
+     * @param {boolean =       true}          sync         [description]
+     * @param {string  =       "arraybuffer"} responseType [description]
+     * @param {[type]}     onLoad  [description]
+     * @param {[type]}     onError =               ()           =>            {  } [description]
+     */
     export function xhrLoader(url: string, sync: boolean = true,
         responseType: string = "arraybuffer", onLoad, onError = () => { /**/ }) {
         let request = new XMLHttpRequest();
@@ -85,6 +100,11 @@ namespace Loaders {
 
         request.send();
     };
+    /**
+     * [loadFont description]
+     * @param {string}    fontSrc [description]
+     * @param {string =       ""}          alias [description]
+     */
     export function loadFont(fontSrc: string, alias: string = "") {
         alias = _getAlias(fontSrc, alias);
         if (!(ResourceMap.isAssetLoaded(alias))) {
@@ -105,6 +125,18 @@ namespace Loaders {
             request.send();
         }
     };
+    /**
+     * [unloadFont description]
+     * @param {string} imageSrc [description]
+     */
+    export function unloadFont(fontSrc: string) {
+        ResourceMap.unloadAsset(fontSrc);
+    };
+    /**
+     * [loadVideo description]
+     * @param {string}    videoSrc [description]
+     * @param {string =        ""}          alias [description]
+     */
     export function loadVideo(videoSrc: string, alias: string = "") {
         alias = _getAlias(videoSrc, alias);
         if (!ResourceMap.isAssetLoaded(alias)) {
@@ -131,6 +163,17 @@ namespace Loaders {
         video.loop = true;
         video.play();*/
     };
+    /**
+     * [unloadVideo description]
+     * @param {string} imageSrc [description]
+     */
+    export function unloadVideo(videoSrc: string) {
+        ResourceMap.unloadAsset(videoSrc);
+    };
+    /**
+     * [loadCubeMap description]
+     * @param {string} directorySrc [description]
+     */
     export function loadCubeMap(directorySrc: string) {
         [
             "/back.jpg", "/bottom.jpg", "/front.jpg",
@@ -140,8 +183,9 @@ namespace Loaders {
         });
     };
     /**
-     * @param {string}
-     * @param {string = ""}
+     * [loadImage description]
+     * @param {string}    imageSrc [description]
+     * @param {string =        ""}          alias [description]
      */
     export function loadImage(imageSrc: string, alias: string = "") {
         alias = _getAlias(imageSrc, alias);
@@ -162,13 +206,16 @@ namespace Loaders {
         }
     };
     /**
-     * @param {string}
+     * [unloadImage description]
+     * @param {string} imageSrc [description]
      */
     export function unloadImage(imageSrc: string) {
         ResourceMap.unloadAsset(imageSrc);
     };
     /**
-     * @param {string}
+     * [loadAudio description]
+     * @param {string}    clipName [description]
+     * @param {string =        ""}          alias [description]
      */
     export function loadAudio(clipName: string, alias: string = "") {
         alias = _getAlias(clipName, alias);
@@ -195,14 +242,12 @@ namespace Loaders {
         }
     };
     /**
-     * @param {string}
+     * [unloadAudio description]
+     * @param {string} clipName [description]
      */
     export function unloadAudio(clipName: string) {
         ResourceMap.unloadAsset(clipName);
-    }
-
-
-
+    };
     // Code based on http://www.graphics.cornell.edu/~bjw/rgbe/rgbe.c
     function RGBEParser(buffer: ArrayBuffer) {
 
@@ -458,11 +503,10 @@ namespace Loaders {
         }
         return null;
     };
-
-
     /**
-     * @param {string}
-     * @param {string = ""}
+     * [loadHDRImage description]
+     * @param {string}    imageSrc [description]
+     * @param {string =        ""}          alias [description]
      */
     export function loadHDRImage(imageSrc: string, alias: string = "") {
         // TODO: https://github.com/vorg/parse-hdr
@@ -527,7 +571,8 @@ namespace Loaders {
         }
     }
     /**
-     * @param {string}
+     * [unloadHDRImage description]
+     * @param {string} imageSrc [description]
      */
     export function unloadHDRImage(imageSrc: string) {
         ResourceMap.unloadAsset(imageSrc);

@@ -5,9 +5,9 @@ export { Camera2 } from "./Camera2";
 // export { App, IApp } from "./App";
 export { Scene } from "./Scene";
 
-// Camera
-import * as camera from "./camera/__camera__";
-export { camera };
+// Cameras
+// import * as camera from "./cameras/__camera__";
+// export { camera };
 
 // Constants
 import * as constants from "./constants/Constants";
@@ -34,8 +34,8 @@ import * as models from "./models/__models__";
 export { models };
 
 // Postprocess
-import * as postProcess2 from "./postprocess/__postprocess__";
-export { postProcess2 };
+// import * as postProcess2 from "./postprocess/__postprocess__";
+// export { postProcess2 };
 
 // Resources
 import * as resources from "./resources/__resources__";

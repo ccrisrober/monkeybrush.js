@@ -26,29 +26,37 @@ import { Vect3 } from "../maths/Vect3";
 /**
  * Spot light class
  * @class SpotLight
+ *
+ * A spotlight is a light source that is located somewhere
+ * in the environment that, instead of shooting light rays
+ * in all directions, only shoots them in a specific direction.
+ * The result is that only the objects within a certain radius of
+ * the spotlight's direction are lit and everything else stays dark.
+ * A good example of a spotlight would be a street lamp or a flashlight.
  */
 class SpotLight extends Light {
     /**
-     * [Light position]
+     * Light source position.
      * @type {Vect3}
      */
     protected _position: Vect3;
     /**
-     * [Light direction]
+     * Vector pointing from the surface to the light source.
      * @type {Vect3}
      */
     protected _direction: Vect3;
     /**
-     * [CutOff flashlight]
+     * Specifies the spotlight´s radius. Everything outside
+     * this angle is not lit by the spotlight.
      * @type {number}
      */
     protected _cutOff: number;
 
     /**
-     * Spot light constructor
-     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} position  [description]
-     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction [description]
-     * @param {number = 1.0} cuttoff [description]
+     * SpotLight constructor
+     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} position  SpotLight position
+     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction Spotlight direction
+     * @param {number = 1.0} cuttoff Spotlight radius
      */
     constructor(position: Vect3 = new Vect3(0.0, 0.0, 0.0),
         direction: Vect3 = new Vect3(0.0, 0.0, 0.0), cuttoff: number = 1.0) {
@@ -58,34 +66,34 @@ class SpotLight extends Light {
         this._cutOff = cuttoff;
     }
     /**
-     * [cutoff description]
-     * @return {number} [description]
+     * Return spotlight´s radius.
+     * @return {number}
      */
     get cutoff(): number { return this._cutOff; }
     /**
-     * [cutoff description]
-     * @param {number} v [description]
+     * Edit spotlight´s radius.
+     * @param {number} v New spotlight radius
      */
     set cutoff(v: number) { this._cutOff = v; }
     /**
-     * Get light position
+     * Return light source position
      * @return {Vect3}
      */
     get position(): Vect3 { return this._position; }
     /**
-     * Set light position
-     * @param {Vect3} position
+     * Set light source position
+     * @param {Vect3} New light position
      */
     set position(position: Vect3) { this._position = position; }
 
     /**
-     * Get light direction
+     * Return light direction
      * @return {Vect3}
      */
     get direction(): Vect3 { return this._direction; }
     /**
      * Set light direction
-     * @param {Vect3} direction
+     * @param {Vect3} New light direciton
      */
     set direction(direction: Vect3) { this._direction = direction; }
 };

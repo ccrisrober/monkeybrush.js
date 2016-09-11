@@ -15,6 +15,5 @@ export { VertexArray } from "./VertexArray";
 export { VertexBuffer } from "./VertexBuffer";
 export { VertexUBO } from "./VertexUBO";
 
-
 // export { KeyState } from "./InputKeys";
 // export { MouseButton } from "./InputMouse";

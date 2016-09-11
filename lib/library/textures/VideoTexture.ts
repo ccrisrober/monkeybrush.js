@@ -26,7 +26,14 @@ import { TextureFormat, TextureType, TextureTarget }
 
 class VideoTexture extends Texture {
     protected _video: HTMLVideoElement;
-    constructor(video: HTMLVideoElement, loop: boolean = true, onSuccess: () => void = null) {
+    /**
+     * [constructor description]
+     * @param {HTMLVideoElement} video [description]
+     * @param {boolean = true} loop [description]
+     * @param {number = 15} frameTime [description]
+     * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
+     */
+    constructor(video: HTMLVideoElement, loop: boolean = true, frameTime: number = 15, onSuccess: () => void = null) {
         super(TextureTarget.Texture2D);
 
         const gl = Core.getInstance().getGL();
@@ -34,8 +41,6 @@ class VideoTexture extends Texture {
         this._video = video;
         this._video.muted = true;
         this._video.loop = loop;
-
-        // TODO: Support compression
 
         this._flipY_ = Boolean(true);
         this._handle_ = gl.createTexture();
@@ -69,7 +74,7 @@ class VideoTexture extends Texture {
 
         setInterval(function() {
             this.update();
-        }.bind(this), 15);
+        }.bind(this), frameTime);
     };
     public update() {
         if (this._video.readyState !== this._video.HAVE_ENOUGH_DATA) return;

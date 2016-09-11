@@ -25,6 +25,10 @@ import { Light } from "./Light";
 /**
  * Ambient light class
  * @class AmbientLight
+ *
+ * Ambient light is the light that permeates the scene;
+ * it's non-directional and affects every face in the scene
+ * equally, regardless of which direction it's facing.
  */
 class AmbientLight extends Light {
     /**

@@ -62,7 +62,7 @@ class Mat3 {
     };
     toMat4(result: Mat4 = null): Mat4 {
         if (result) {
-            result.init([
+            return Mat4.create([
                 this._value[0],
                 this._value[1],
                 this._value[2],
@@ -83,8 +83,6 @@ class Mat3 {
                 0,
                 1
             ]);
-
-            return result;
         }
         else {
             return new Mat4([

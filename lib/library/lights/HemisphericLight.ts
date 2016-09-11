@@ -25,24 +25,29 @@ import { Color3 } from "../extras/Color3";
 "use strict";
 
 /**
+ * Hemispheric light class
+ * @class HemisphericLight
  * Hemispheric light represents a simple and easy way to
  *     simulate realistic ambient light.
  * An hemispheric light is defined by a direction to the
  *     sky and by 3 colors: one for the diffuse (the sky color),
  *     one for the ground (the color when the pixel is not towards
  *     the sky) and one for the specular.
- * @class HemisphericLight
  */
 class HemisphericLight extends Light {
     /**
-     * [Light direction]
+     * Vector pointing from the surface to the light source.
      * @type {Vect3}
      */
     protected _direction: Vect3;
+    /**
+     * HemisphericLight ground color
+     * @type {Color3}
+     */
     protected _groundColor: Color3;
     /**
      * Hemispheric light constructor
-     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction [description]
+     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction Light direction
      */
     constructor(direction: Vect3 = new Vect3(0.0, 0.0, 0.0)) {
         super();
@@ -50,23 +55,23 @@ class HemisphericLight extends Light {
         this._groundColor = new Color3(0.0, 0.0, 0.0);
     }
     /**
-     * Get light direction
+     * Return light direction
      * @return {Vect3}
      */
     get direction(): Vect3 { return this._direction; }
     /**
      * Set light direction
-     * @param {Vect3} direction
+     * @param {Vect3} direction New light direction
      */
     set direction(direction: Vect3) { this._direction = direction; }
     /**
-     * Get light ground color
+     * Return light ground color
      * @return {Color3}
      */
     get groundColor(): Color3 { return this._groundColor; }
     /**
      * Set light ground color
-     * @param {Color3} color
+     * @param {Color3} color New ground color
      */
     set groundColor(color: Color3) { this._groundColor = color; }
 };

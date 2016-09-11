@@ -37,6 +37,10 @@ class Box3D {
      * @type {Vect3}
      */
     protected _max: Vect3;
+    /**
+     * Box center
+     * @type {Vect3}
+     */
     protected _center: Vect3;
 
     /**
@@ -85,7 +89,11 @@ class Box3D {
         return true;
     };
 
-
+    /**
+     * Create new Box3D based on vertices list
+     * @param  {ArrayLike<number>} array Vertices list
+     * @return {Box3D}                   New Box3D
+     */
     public static createFromArray (array: ArrayLike<number>): Box3D {
         let minX = +Infinity;
         let minY = +Infinity;
@@ -116,6 +124,10 @@ class Box3D {
         );
     };
 
+    /**
+     * Get Box3D center
+     * @return {Vect3} Box center
+     */
     public center(): Vect3 {
         return this._center;
     };

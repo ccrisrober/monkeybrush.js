@@ -34,6 +34,13 @@ declare var WebGL2RenderingContext: any;
 
 class SimpleTexture3D extends Texture {
     protected _offsets_: Array<number>;
+    /**
+     * [constructor description]
+     * @param {[type]}        data [description]
+     * @param {Vect3}         size [description]
+     * @param {TexOptions =    {}}        options [description]
+     * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture3D.
+     */
     constructor (data, size: Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
         const gl = Core.getInstance().getGL();
         if (!(gl instanceof WebGL2RenderingContext)) {

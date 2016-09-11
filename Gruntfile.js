@@ -44,7 +44,7 @@ module.exports = function (grunt) {
                     mode: "file",
                     readme: "./READMEDOC.md",
                     externalPattern: "node_modules",
-                    theme: "./node_modules/typedoc-dash-theme/bin"
+                    theme: "minimal"
                 },
                 src: ['./lib/**/*']
             }

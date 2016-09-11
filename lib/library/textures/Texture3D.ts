@@ -30,6 +30,13 @@ import { TextureFormat, WrapMode, TextureType, TextureTarget }
 declare var WebGL2RenderingContext: any;
 
 class Texture3D extends Texture {
+    /**
+     * [constructor description]
+     * @param {[type]}        data [description]
+     * @param {Vect3}         size [description]
+     * @param {TexOptions =    {}}        options [description]
+     * @param {() => void = null} onSuccess Optional callback that runs when creating Texture3D.
+     */
     constructor (data, size: Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
         const gl = Core.getInstance().getGL();
         if (!(gl instanceof WebGL2RenderingContext)) {

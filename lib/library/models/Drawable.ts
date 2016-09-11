@@ -23,6 +23,8 @@ import { VertexArray } from "../core/VertexArray";
 import { VertexBuffer } from "../core/VertexBuffer";
 import { Extensions } from "../extras/Extensions";
 
+import { BufferAttribute, VertexBufferGeometry } from "../extras/VertexBufferGeometry";
+
 import { UsageType, RenderType, BufferType } from "../constants/Constants";
 
 "use strict";
@@ -37,41 +39,32 @@ abstract class Drawable {
     protected _indicesLen: number;
     protected _handle: Array<VertexBuffer>;
     protected _vao: VertexArray;
+
+
+    protected _geometry: VertexBufferGeometry;
+
+
     /**
      * Drawable constructor
      */
     constructor() {
         this._vao = new VertexArray();
+        this._geometry = new VertexBufferGeometry();
     };
 
     createWireframe() {
-        /**
-        var index_buffer = this.indexBuffers["triangles"];
-
-        var vertices = this.VertexBuffers["vertices"].data;
-        var num_vertices = (vertices.length/3);
-
-        var data = index_buffer.data;
-
-        var indexer = new GL.Indexer();
-        for (var i = 0; i < data.length; i+=3) {
-          var t = data.subarray(i,i+3);
-          for (var j = 0; j < t.length; j++) {
-            var a = t[j], b = t[(j + 1) % t.length];
-            indexer.add([Math.min(a, b), Math.max(a, b)]);
-          }
+        var newcells = [];
+        var el0 = this._geometry.indices;
+        for (var i = 0; i < el0.length; i+=3) {
+            var a = el0[i + 0];
+            var b = el0[i + 1];
+            var c = el0[i + 2];
+            if (a !== null && b !== null) newcells.push(a, b);
+            if (b !== null && c !== null) newcells.push(b, c);
+            if (a !== null && c !== null) newcells.push(c, a);
         }
 
-        //linearize
-        var unique = indexer.unique;
-        var buffer = num_vertices > 256*256 ? new Uint32Array( unique.length * 2 )
-            : new Uint16Array( unique.length * 2 );
-        for (var i = 0, l = unique.length; i < l; ++i)
-            buffer.set(unique[i],i*2);
-
-        //create stream
-        this.createIndexBuffer('wireframe', buffer);
-        /**/
+        this._geometry.setIndex(new Uint16Array(newcells));
     }
 
     /**

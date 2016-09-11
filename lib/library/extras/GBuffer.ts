@@ -28,13 +28,6 @@ import { TextureFormat, TextureType } from "../constants/Constants";
 
 "use strict";
 
-enum GBufferType {
-    position,
-    normal,
-    diffuse,
-    num_textures
-};
-
 /**
  * GBuffer class
  * @class GBuffer
@@ -62,13 +55,7 @@ class GBuffer {
 
         this.Framebuffer = new Framebuffer([
             // Position color buffer
-            new SimpleTexture2D(size, {
-                internalFormat: TextureFormat.RGBA,
-                format: TextureFormat.RGBA,
-                type: gl.FLOAT,
-                minFilter: TextureType.Nearest,
-                magFilter: TextureType.Nearest
-            }),
+            new SimpleTexture2D(size, configTex),
             // Normal color buffer
             new SimpleTexture2D(size, configTex),
             // Color + Specular color buffer
