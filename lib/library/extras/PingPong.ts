@@ -77,7 +77,7 @@ class PingPong {
    * @param {Vect2} size New size
    */
   public resize(size: Vect2) {
-    if(!this._size.exactEquals(size)) {
+    if (!this._size.exactEquals(size)) {
       this._fbo.rebuild(size);
       if (this._flag) {
         this._tex2.resize(size);

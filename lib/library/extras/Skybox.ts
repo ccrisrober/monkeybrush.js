@@ -22,7 +22,7 @@ import { Core } from "../core/Core";
 import { Program } from "../core/Program";
 import { ResourceMap } from "../resources/ResourceMap";
 import { CubeMapTexture } from "../textures/CubemapTexture";
-import { DepthState } from "../core/DepthState";
+import { GlobalState } from "../core/GlobalState";
 
 import { VertexBuffer } from "../core/VertexBuffer";
 import { VertexArray } from "../core/VertexArray";
@@ -191,9 +191,9 @@ class Skybox {
     public render(view, projection) {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
-        let currDepthComp = DepthState.currentComparation();
+        let currDepthComp = GlobalState.getCurrentDepthComparisonFunc();
 
-        DepthState.comparison(ComparisonFunc.LessEqual);
+        GlobalState.setDepthComparisonFunc(ComparisonFunc.LessEqual);
         this._prog.use();
 
         // Remove any translation
@@ -208,7 +208,7 @@ class Skybox {
         gl.drawArrays(gl.TRIANGLES, 0, 36);
         this._VertexArray.unbind();
 
-        DepthState.comparison(currDepthComp);
+        GlobalState.setDepthComparisonFunc(currDepthComp);
     }
     /**
      *

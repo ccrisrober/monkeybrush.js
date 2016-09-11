@@ -143,7 +143,7 @@ class Framebuffer {
         throw new Error("Attachment undefined");
       }
       const gl = Core.getInstance().getGL();
-      //gl.bindTexture(gl.TEXTURE_2D, texture2);
+      // gl.bindTexture(gl.TEXTURE_2D, texture2);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
         gl.TEXTURE_2D, tex.handle, 0);
     }

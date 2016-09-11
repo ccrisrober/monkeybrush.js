@@ -4,17 +4,21 @@ import { Vect3 } from "./Vect3";
 
 namespace Curves {
     export abstract class Curve {
-
+        // TODO
     }
     export class CircleCurve {
-        constructor() {}
+        constructor() {
+            // TODO
+        }
     };
     export class EllipseCurve {
-        constructor() {}
+        constructor() {
+            // TODO
+        }
     };
     export class Line {
         constructor(x: Vect2, y: Vect2) {
-
+            // TODO
         };
     };
     // Separate in cubic and cuadratic bezier curve
@@ -47,12 +51,12 @@ namespace Curves {
             );
         };
         public getPoints(subdivisions: number) {
-
+            // TODO
         };
     };
     export class CatmullRomCurve {
         constructor(points: Array<Vect3>) {
-
+            // TODO
         };
     };
     export class QuadraticBezierCurve {

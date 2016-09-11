@@ -46,8 +46,8 @@ class GBuffer {
      */
     protected Framebuffer: Framebuffer;
     /**
-     * [constructor description]
-     * @param {Vect2} size [description]
+     * GBuffer constructor
+     * @param {Vect2} size GBuffer size
      */
     constructor(size: Vect2) {
         const gl = Core.getInstance().getGL();
@@ -76,30 +76,34 @@ class GBuffer {
         ], size, true, true, {});
 
         console.log("done");
-    }
+    };
     /**
-     * [bindForReading description]
+     * Bind GBuffer for reading (pospass)
      */
     public bindForReading() {
         this.Framebuffer.onlyBindTextures();
-    }
+    };
     /**
-     * [bindForWriting description]
+     * Bind GBuffer for writing (prepass)
      */
     public bindForWriting() {
         this.Framebuffer.bind();
-    }
+    };
     /**
-     * [destroy description]
+     * Destroy GBuffer
      */
     public destroy() {
         if (this.Framebuffer) {
             this.Framebuffer.destroy();
         }
-    }
+    };
+    /**
+     * Rebuild GBuffer
+     * @param {Vect2} size New GBuffer size
+     */
     public rebuild(size: Vect2) {
         this.Framebuffer.rebuild(size);
-    }
+    };
 };
 
 export { GBuffer };

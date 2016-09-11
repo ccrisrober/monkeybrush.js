@@ -3,7 +3,6 @@ var path = require('path');
 var CircularDependencyPlugin = require('circular-dependency-plugin');
 var WebpackNotifierPlugin = require('webpack-notifier');
 
-
 var libraryName = "MonkeyBrush";
 
 module.exports = {
@@ -23,6 +22,7 @@ module.exports = {
 	},
 	// Turn on sourcemaps
 	devtool: 'source-map',
+    watch: true,
 	// Add minification
 	plugins: [
 		//new webpack.optimize.UglifyJsPlugin(),

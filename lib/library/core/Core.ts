@@ -24,9 +24,7 @@ import { Input } from "./Input";
 import { Log } from "./Log";
 import { Extensions } from "../extras/Extensions";
 
-import { DepthState } from "./DepthState";
-import { CullingState } from "./CullingState";
-import { BlendingState } from "./BlendingState";
+import { GlobalState } from "./GlobalState";
 
 import { ComparisonFunc } from "../constants/Constants";
 
@@ -99,11 +97,11 @@ class Core {
         Input.initialize();
         PostProcess.initialize();
 
-        DepthState.enable();
-        DepthState.comparison(ComparisonFunc.Less);
+        GlobalState.setDepthStatus(true);
+        GlobalState.setDepthComparisonFunc(ComparisonFunc.Less);
 
-        CullingState.disable();
-        BlendingState.disable();
+        GlobalState.setCullingStatus(false);
+        GlobalState.setBlendingStatus(false);
     }
 
     public static getInstance(): Core {

@@ -29,6 +29,7 @@
  * @namespace RandomGenerator
  *
  * Examples:
+ *
  *     // Real random [0, 1) (Same interval as Math.random)
  *     - RandomGenerator.random();
  *     // [0, 4294967295]

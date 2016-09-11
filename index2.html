@@ -137,7 +137,7 @@
                 for (var p = count; p > 0; --p) {
                     points.push(new MonkeyBrush.maths.Vect3((Math.sin(p * 0.2) + Math.cos(p * 0.3)) * height + 12, p - height, (count - p) + count / 2));
                 }
-                this.cubito = new MonkeyBrush.models.Lathe(points, 275);
+                this.cubito = new MonkeyBrush.models.Lathe(points, 5);
                 MonkeyBrush.resources.ProgramManager.addWithFun("prog", function () {
                     var prog = new MonkeyBrush.core.Program();
                     if (_this._webglVersion === 2) {

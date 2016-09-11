@@ -150,7 +150,7 @@ class BufferAttribute {
      */
     public setX(index: number, value: number) {
         if (this.size < 1) throw new Error("X value is not defined");
-        this.array[index * this._size] = value;
+        (<any>this.array)[index * this._size] = value;
     };
     /**
      * Sets the y value from specifies vect[size] index
@@ -159,7 +159,7 @@ class BufferAttribute {
      */
     public setY(index: number, value: number) {
         if (this.size < 2) throw new Error("Y value is not defined");
-        this.array[index * this._size + 1] = value;
+        (<any>this.array)[index * this._size + 1] = value;
     };
     /**
      * Sets the z value from specifies vect[size] index
@@ -168,7 +168,7 @@ class BufferAttribute {
      */
     public setZ(index: number, value: number) {
         if (this.size < 3) throw new Error("Z value is not defined");
-        this.array[index * this._size + 2] = value;
+        (<any>this.array)[index * this._size + 2] = value;
     };
     /**
      * Sets the w value from specifies vect[size] index
@@ -177,7 +177,7 @@ class BufferAttribute {
      */
     public setW(index: number, value: number) {
         if (this.size < 4) throw new Error("W value is not defined");
-        this.array[index * this._size + 3] = value;
+        (<any>this.array)[index * this._size + 3] = value;
     };
     /**
      * Sets the x and y values from specifies vect[size] index
@@ -188,8 +188,8 @@ class BufferAttribute {
     public setXY(index: number, xValue: number, yValue: number) {
         if (this.size < 2) throw new Error("Y value is not defined");
         index *= this._size;
-        this.array[index] = xValue;
-        this.array[index + 1] = yValue;
+        (<any>this.array)[index] = xValue;
+        (<any>this.array)[index + 1] = yValue;
     };
     /**
      * Sets the x, y and z values from specifies vect[size] index
@@ -200,9 +200,9 @@ class BufferAttribute {
      */
     public setXYZ(index: number, xValue: number, yValue: number, zValue: number) {
         if (this.size < 3) throw new Error("Z value is not defined");
-        this.array[index] = xValue;
-        this.array[index + 1] = yValue;
-        this.array[index + 2] = zValue;
+        (<any>this.array)[index] = xValue;
+        (<any>this.array)[index + 1] = yValue;
+        (<any>this.array)[index + 2] = zValue;
     };
     /**
      * Sets the x, y, z and w values from specifies vect[size] index
@@ -214,10 +214,10 @@ class BufferAttribute {
      */
     public setXYZW(index: number, xValue: number, yValue: number, zValue: number, wValue: number) {
         if (this.size < 4) throw new Error("W value is not defined");
-        this.array[index] = xValue;
-        this.array[index + 1] = yValue;
-        this.array[index + 2] = zValue;
-        this.array[index + 3] = wValue;
+        (<any>this.array)[index] = xValue;
+        (<any>this.array)[index + 1] = yValue;
+        (<any>this.array)[index + 2] = zValue;
+        (<any>this.array)[index + 3] = wValue;
     };
 };
 /**
@@ -284,7 +284,7 @@ class VertexBufferGeometry {
     get indices(): Uint16Array { return this._indices; };
     public normalizeNormals() {
         if (this._attrs["normals"]) {
-            let normals: ArrayLike<number> = this._attrs["normals"].array;
+            let normals = this._attrs["normals"].array;
             let
                 x: number,
                 y: number,
@@ -297,9 +297,9 @@ class VertexBufferGeometry {
 
                 n = 1.0 / Math.sqrt(x * x + y * y + z * z);
 
-                normals[i] *= n;
-                normals[i + 1] *= n;
-                normals[i + 2] *= n;
+                (<any>normals)[i] *= n;
+                (<any>normals)[i + 1] *= n;
+                (<any>normals)[i + 2] *= n;
             }
         }
     };
@@ -339,7 +339,7 @@ class VertexBufferGeometry {
 
             for (let i = 0, j = attrSize * offset;
                 i < attr2.array.length; ++i, ++j) {
-                attr1.array[j] = attr2.array[i];
+                (<any>attr1).array[j] = (<any>attr2).array[i];
             }
         }
         return this;

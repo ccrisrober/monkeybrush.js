@@ -25,9 +25,9 @@ module.exports = function (grunt) {
                 dest: "index.js",
                 options: {
                     module: "amd",
-                    target: "es5",
+                    target: "es6",
                     sourcemap: true,
-                    declaration: true
+                    declaration: false
                 }
             }
         },
@@ -43,8 +43,8 @@ module.exports = function (grunt) {
                     target: 'ES6',
                     mode: "file",
                     readme: "./READMEDOC.md",
-                    externalPattern: "node_modules"
-                    //theme: "minimal"
+                    externalPattern: "node_modules",
+                    theme: "./node_modules/typedoc-dash-theme/bin"
                 },
                 src: ['./lib/**/*']
             }

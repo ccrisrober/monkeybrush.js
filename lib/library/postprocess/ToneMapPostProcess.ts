@@ -24,11 +24,11 @@ import { PostProcess2 } from "./PostProcess2";
 "use strict";
 
 
-type ToneOperator = "gamma" | "reinhard" | "filmic" | "srgb" | "uncharted2";
+// type ToneOperator = "gamma" | "reinhard" | "filmic" | "srgb" | "uncharted2";
 
 class ToneMapPostProcess extends PostProcess2 {
-    protected _operator: ToneOperator;
-    constructor(operator: ToneOperator) {
+    protected _operator: string /*ToneOperator*/;
+    constructor(operator: string /*ToneOperator*/) {
         super();
         this._operator = operator;
     }
@@ -46,4 +46,4 @@ class ToneMapPostProcess extends PostProcess2 {
     ];
 };
 
-export { ToneOperator, ToneMapPostProcess };
+export { /*ToneOperator,*/ ToneMapPostProcess };

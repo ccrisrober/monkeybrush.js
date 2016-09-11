@@ -30,7 +30,7 @@ import { Font } from "../extras/Font";
 class TextGeom extends Drawable {
     constructor(font: Font, text: string, size: number, height: number, curveSegments: number) {
         super();
-        let shapes = font.generateShapes(text, size, curveSegments);
+        // let shapes = font.generateShapes(text, size, curveSegments);
     }
 };
 

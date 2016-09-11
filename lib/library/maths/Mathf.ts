@@ -61,7 +61,7 @@ namespace Mathf {
         if (v === 0 || isNaN(v)) {
             return v;
         }
-        return (v > 0) ? 1: -1;
+        return (v > 0) ? 1 : -1;
     }
     export function smoothstep(x: number, min: number = 0, max: number = 1): number {
         if (x <= min) return 0;

@@ -17,7 +17,7 @@ export { constants };
 import * as core from "./core/__core__";
 export { core };
 
-//Extras
+// Extras
 import * as extras from "./extras/__extras__";
 export { extras };
 

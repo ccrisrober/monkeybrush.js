@@ -7,6 +7,7 @@ export { Mat2 } from "./Mat2";
 export { Mat3 } from "./Mat3";
 export { Mat4 } from "./Mat4";
 export { Mathf } from "./Mathf";
+export { Path } from "./Path";
 export { Quat } from "./Quat";
 export { Sphere2D } from "./Sphere2D";
 export { Sphere3D } from "./Sphere3D";
