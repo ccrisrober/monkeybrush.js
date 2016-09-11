@@ -60,4 +60,6 @@ class Sprite {
          * sprite.scale.set(4, 4, 4);
          */
     }
-}
+};
+
+export { Sprite };

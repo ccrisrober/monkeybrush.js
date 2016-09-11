@@ -55,4 +55,6 @@ class CubeCamera {
         // camNZ.up = ( 0, - 1, 0 );
         // camNZ.lookAt( new Vect3( 0, 0, - 1 ) );
     }
-}
+};
+
+export { CubeCamera };

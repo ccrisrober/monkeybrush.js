@@ -46,4 +46,6 @@ class DOMElement {
 
         // const style = "translate3d(0, 0,";
     }
-}
+};
+
+export { DOMElement };

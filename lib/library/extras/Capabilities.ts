@@ -25,10 +25,10 @@ import { Extensions } from "./Extensions";
 
 
 /**
- * Capabilites namespace
- * @namespace Capabilites
+ * Capabilities namespace
+ * @namespace Capabilities
  */
-namespace Capabilites {
+namespace Capabilities {
     let _capabilities = {};
 
     /**
@@ -112,4 +112,4 @@ namespace Capabilites {
      */
 };
 
-export { Capabilites };
+export { Capabilities };

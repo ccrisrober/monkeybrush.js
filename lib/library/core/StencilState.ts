@@ -73,7 +73,7 @@ class StencilState {
         gl.stencilMask(mask);
     }
     /**
-     * Fontrol the front and/or back writing of individual bits in the stencil planes
+     * Control the front and/or back writing of individual bits in the stencil planes
      * @param {FaceSide} face Specifies whether the front and/or back stencil writemask is updated
      * @param {number} mask Specifies a bit mask to enable and disable writing of individual
      *    bits in the stencil planes.

@@ -26,6 +26,15 @@ if (Number.smallEpsilon === undefined ) {
 if (Number.defaultIOR === undefined ) {
     Number.defaultIOR = 1.000277;
 }*/
+
+if (Math["degree"] === undefined) {
+    Math["degree"] = Math.PI / 180.0;
+}
+if (Math["toRadian"] === undefined) {
+    Math["toRadian"] = function(a) {
+        return a * Math["degree"];
+    };
+}
 /*
 Element.prototype.remove = function() {
     this.parentElement.removeChild(this);

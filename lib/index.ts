@@ -104,11 +104,11 @@ class MyScene extends MB.Scene {
         let points = [];
         const height = 5;
         const count = 30;
-        for (let p = 0; p < count; p++) {
+        for (let p = count; p > 0; --p) {
             points.push(
                 new MB.Vect3((Math.sin(p * 0.2) + Math.cos(p * 0.3)) * height + 12,
-                    p + height,
-                    (p - count) + count / 2));
+                    p - height,
+                    (count - p) + count / 2));
         }
         this.cubito = new MB.Lathe(points, 275); /*new MB.CustomHedron(
             [

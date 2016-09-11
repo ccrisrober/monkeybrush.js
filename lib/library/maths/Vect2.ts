@@ -382,6 +382,15 @@ class Vect2 {
 
         return new Vect2(x, y);
     };
+    /**
+     * Replace X and Y values from Vect2
+     * @param {number} x New X value
+     * @param {number} y New Y value
+     */
+    public setXY(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
 };
 
 export { Vect2 };

@@ -86,3 +86,5 @@ namespace Encodings {
         return bits;
     }
 };
+
+export { Encodings };

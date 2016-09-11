@@ -20,6 +20,9 @@
 "use strict";
 
 import { Vect3 } from "../maths/Vect3";
+import { PlaneModel } from "../maths/models/PlaneModel";
+import { SphereModel } from "../maths/models/SphereModel";
+import { TriangleModel } from "../maths/models/TriangleModel";
 
 /**
  * Ray class
@@ -83,6 +86,19 @@ class Ray {
      */
     public lookAt(v: Vect3) {
         this._direction = Vect3.sub(v, this._origin).normalize();
+    };
+
+    public intersectPlane(plane: PlaneModel): boolean {
+        return false;
+    };
+    public intersectSphere(sphere: SphereModel): boolean {
+        return false;
+    };
+    public intersectTriangle(triangle: TriangleModel): boolean {
+        return false;
+    };
+    public intersectBox(box): boolean {
+        return false;
     };
 };
 

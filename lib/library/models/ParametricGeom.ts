@@ -18,6 +18,7 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+import { Vect2 } from "../maths/Vect2";
 import { Vect3 } from "../maths/Vect3";
 import { Drawable } from "./Drawable";
 
@@ -72,14 +73,14 @@ class ParametricGeom extends Drawable {
                 uvd = new Array([j / slices, (i + 1) / stacks]);
 
                 indices.push(new Vect3(pA, pB, pD));
-                uvs.push(uva[0], uva[1]);
-                uvs.push(uvb[0], uvb[1]);
-                uvs.push(uvd[0], uvd[1]);
+                uvs.push(new Vect2(uva[0], uva[1]));
+                uvs.push(new Vect2(uvb[0], uvb[1]));
+                uvs.push(new Vect2(uvd[0], uvd[1]));
 
                 indices.push(new Vect3(pB, pC, pD));
-                uvs.push(uvb[0], uvb[1]);
-                uvs.push(uvc[0], uvc[1]);
-                uvs.push(uvd[0], uvd[1]);
+                uvs.push(new Vect2(uvb[0], uvb[1]));
+                uvs.push(new Vect2(uvc[0], uvc[1]));
+                uvs.push(new Vect2(uvd[0], uvd[1]));
             }
         }
 

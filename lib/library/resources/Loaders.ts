@@ -23,6 +23,9 @@ import { ResourceMap } from "./ResourceMap";
 "use strict";
 
 namespace Loaders {
+    /*export function VertexBufferGeometryLoader(src: string) {
+
+    }*/
     export function loadWebCam() {
         const alias: string = "webcam";
         if (!ResourceMap.isAssetLoaded(alias)) {
