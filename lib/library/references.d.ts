@@ -18,44 +18,21 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-/// <reference path="./MonkeyBrush.ts" />
 /// <reference path="./App.ts" />
-
-/// <reference path="./lol/model.ts" />
-/// <reference path="./lol/model2.ts" />
-
-/// <reference path="./core/Core.ts" />
-/// <reference path="./core/Input.ts" />
-/// <reference path="./core/Program.ts" />
-/// <reference path="./core/VertexUBO.ts" />
-/// <reference path="./core/Utils.ts" />
-
-/// <reference path="./resources/ProgramManager.ts" />
-/// <reference path="./resources/ResourceMap.ts" />
-/// <reference path="./resources/Loaders.ts" />
-/// <reference path="./resources/ObjLoader.ts" />
-
-/// <reference path="./models/Floor.ts" />
-/// <reference path="./models/Torus.ts" />
-/// <reference path="./models/Sphere.ts" />
-/// <reference path="./models/Plane.ts" />
-/// <reference path="./models/Cube.ts" />
-/// <reference path="./models/Disc.ts" />
-/// <reference path="./models/Icosphere.ts" />
-/// <reference path="./models/Cone.ts" />
-/// <reference path="./models/Prism.ts" />
-/// <reference path="./models/Cylinder.ts" />
-/// <reference path="./models/Mesh.ts" />
-/// <reference path="./models/CustomModel.ts" />
-
-/// <reference path="./textures/Texture2d.ts" />
-
-/// <reference path="./extras/Axis.ts" />
-
-/// <reference path="./core/Query.ts" />
-/// <reference path="./core/Sync.ts" />
-/// <reference path="./core/Sampler.ts" />
-/// <reference path="./extras/Timer.ts" />
-/// <reference path="./extras/Skybox.ts" />
-
 /// <reference path="./Camera2.ts" />
+/// <reference path="./Decorators.ts" />
+/// <reference path="./polyfills.ts" />
+/// <reference path="./Scene.ts" />
+
+/// <reference path="./camera/__camera__.ts" />
+/// <reference path="./constants/__constants__.ts" />
+/// <reference path="./core/__core__.ts" />
+/// <reference path="./extras/__extras__.ts" />
+/// <reference path="./lights/__lights__.ts" />
+/// <reference path="./maths/__maths__.ts" />
+/// <reference path="./models/__models__.ts" />
+/// <reference path="./postprocess/__postprocess__.ts" />
+/// <reference path="./resources/__resources__.ts" />
+/// <reference path="./textures/__textures__.ts" />
+
+/// <reference path="./MonkeyBrush.ts" />

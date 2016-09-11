@@ -131,6 +131,14 @@ namespace Loaders {
         video.loop = true;
         video.play();*/
     };
+    export function loadCubeMap(directorySrc: string) {
+        [
+            "/back.jpg", "/bottom.jpg", "/front.jpg",
+            "/left.jpg", "/right.jpg", "/top.jpg"
+        ].map(function(imageSrc: string) {
+            loadImage(directorySrc + imageSrc, "");
+        });
+    };
     /**
      * @param {string}
      * @param {string = ""}

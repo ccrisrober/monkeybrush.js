@@ -1,5 +1,0 @@
-class MyModel {
-
-}
-
-export { MyModel };
