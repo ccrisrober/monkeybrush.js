@@ -46,4 +46,4 @@ class ToneMapPostProcess extends PostProcess2 {
     ];
 };
 
-export { ToneMapPostProcess };
+export { ToneOperator, ToneMapPostProcess };

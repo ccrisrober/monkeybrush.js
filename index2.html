@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MonkeyDemo</title>
+    <link rel="stylesheet" type="text/css" href="./bower_components/vanillatoasts/vanillatoasts.css">
+    <style>
+        body {
+            margin: 0;
+            background-color: gray;
+        }
+        canvas {
+            padding: 0;
+            margin: auto;
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border: 20px solid black;
+        }
+        /**
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        /**/
+        #stats {
+            /*position: absolute;
+            top: 0;*/
+        }
+        .spinner div {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            left: -20px;
+            top: 40px;
+            background-color: white;
+            border-radius: 50%;
+            animation: move 4s infinite cubic-bezier(.2,.64,.81,.23);
+        }
+        .spinner div:nth-child(2) {
+            animation-delay: 150ms;
+        }
+        .spinner div:nth-child(3) {
+            animation-delay: 300ms;
+        }
+        .spinner div:nth-child(4) {
+            animation-delay: 450ms;
+        }
+        @keyframes move {
+            0% {left: 0%;}
+            75% {left:100%;}
+            100% {left:100%;}
+        }
+        .spinner {
+            width: 100%;
+            height: 60px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 60px;
+            right: 0;
+            margin: auto;
+        }
+        body {
+            overflow: hidden;
+        }
+
+        #vanillatoasts-container {
+            z-index: 999999999999;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./bower_components/vanillatoasts/vanillatoasts.js"></script>
+    <script type="text/javascript" src="./bower_components/log4javascript/log4javascript.js"></script>
+    <script type="text/javascript" src="./js/stats.min.js"></script>
+    <script type="text/javascript" src="./js/dat.gui.min.js"></script>
+    <script type="text/javascript" src="./js/gl-matrix-min.js"></script>
+    <script type="text/javascript" src="build/bundle.js"></script>
+
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var SimpleConfig = function () {
+            return {
+                max: 5,
+                resume: true,
+                render: "0"
+            };
+        };
+        // MonkeyBrush.mod.MyModel
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, SimpleConfig(), "App", 2);
+                this.homePoint = new MonkeyBrush.maths.Vect3(-2.7, -1.4, 11.8);
+                this.camera = new MonkeyBrush.Camera2(this.homePoint);
+                this.angle = 0;
+                this.mainShader = "prog";
+                this.layer = 0;
+                this.pos = 0;
+                this.identityMatrix = new MonkeyBrush.maths.Mat4().identity;
+                this.model = new MonkeyBrush.maths.Mat4();
+            }
+            MyScene.prototype.loadAssets = function () {
+                MonkeyBrush.resources.Loaders.loadCubeMap("assets/images/hw_mystic");
+                MonkeyBrush.resources.Loaders.loadImage("assets/images/55ac38bc604ce.jpg", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+                this.skybox = new MonkeyBrush.extras.Skybox("assets/images/hw_mystic", this._webglVersion === 2);
+                var myTexture = MonkeyBrush.resources.ResourceMap.retrieveAsset("myTex");
+                this.tex2d = new MonkeyBrush.textures.Texture2D(myTexture, {
+                    flipY: true,
+                    minFilter: MonkeyBrush.constants.TextureType.Nearest,
+                    magFilter: MonkeyBrush.constants.TextureType.Nearest,
+                    wrapS: MonkeyBrush.constants.WrapMode.Clamp2Edge,
+                    wrapT: MonkeyBrush.constants.WrapMode.Clamp2Edge
+                });
+                var points = [];
+                var height = 5;
+                var count = 30;
+                for (var p = count; p > 0; --p) {
+                    points.push(new MonkeyBrush.maths.Vect3((Math.sin(p * 0.2) + Math.cos(p * 0.3)) * height + 12, p - height, (count - p) + count / 2));
+                }
+                this.cubito = new MonkeyBrush.models.Lathe(points, 275);
+                MonkeyBrush.resources.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MonkeyBrush.core.Program();
+                    if (_this._webglVersion === 2) {
+                        prog.addShader("shaders/demoShader.vert", MonkeyBrush.constants.ProgramCte.shader_type.vertex, MonkeyBrush.constants.ProgramCte.mode.read_file);
+                        prog.addShader("shaders/demoShader.frag", MonkeyBrush.constants.ProgramCte.shader_type.fragment, MonkeyBrush.constants.ProgramCte.mode.read_file);
+                    }
+                    else {
+                        prog.addShader("shaders/demowebgl1.vert", MonkeyBrush.constants.ProgramCte.shader_type.vertex, MonkeyBrush.constants.ProgramCte.mode.read_file);
+                        prog.addShader("shaders/demowebgl1.frag", MonkeyBrush.constants.ProgramCte.shader_type.fragment, MonkeyBrush.constants.ProgramCte.mode.read_file);
+                    }
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["projection", "view", "model", "tex", "tex2"]);
+                    return prog;
+                });
+                this.cameraUpdate();
+            };
+            MyScene.prototype.update = function (dt) {
+                if (MonkeyBrush.core.Input.isButtonClicked(MonkeyBrush.core.MouseButton.Left)) {
+                    console.log("Mouse left clicked");
+                }
+                this.camera.timeElapsed = MonkeyBrush.extras.Timer.deltaTime() / 10.0;
+                this.camera.update(this.cameraUpdate.bind(this));
+                this.angle += MonkeyBrush.extras.Timer.deltaTime() * 0.001;
+            };
+            MyScene.prototype.draw = function (dt) {
+                MonkeyBrush.core.Core.getInstance().clearColorAndDepth();
+                var prog = MonkeyBrush.resources.ProgramManager.get(this.mainShader);
+                prog.use();
+                // let varvar = this.text.max;
+                var i = 0, j = 0, k = 0;
+                var dd = -1;
+                this.tex2d.bind(0);
+                prog.sendUniform1i("tex", 0);
+                var renderMode = this.text.render;
+                var mode;
+                switch (renderMode) {
+                    case "0":
+                        mode = "render";
+                        break;
+                    case "1":
+                        mode = "render2";
+                        break;
+                    case "2":
+                        mode = "render3";
+                        break;
+                }
+                this.model =
+                    this.model
+                        .reset()
+                        .translate(new MonkeyBrush.maths.Vect3(i * 1.0, j * 1.0, k * 1.0))
+                        .rotate(90.0 * Math.PI / 180, MonkeyBrush.maths.Vect3.yAxis)
+                        .rotate(this.angle * 0.5 * dd, MonkeyBrush.maths.Vect3.yAxis)
+                        .scale(new MonkeyBrush.maths.Vect3(0.25, 0.25, 0.25));
+                prog.sendUniformMat4("model", this.model);
+                this.cubito[mode]();
+                this.skybox.render(this.view, this.projection);
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                var canvas = MonkeyBrush.core.Core.getInstance().canvas();
+                this.view = this.camera.GetViewMatrix();
+                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                var prog = MonkeyBrush.resources.ProgramManager.get(this.mainShader);
+                prog.use();
+                prog.sendUniformVec3("viewPos", this.camera.GetPos());
+                prog.sendUniformMat4("projection", this.projection);
+                prog.sendUniformMat4("view", this.view);
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "max", 5, 100);
+                gui.add(this.text, "render", {
+                    simple: 0,
+                    lines: 1,
+                    points: 2
+                });
+            };
+            return MyScene;
+        }(MonkeyBrush.Scene));
+        ;
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

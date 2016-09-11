@@ -3,14 +3,18 @@ var path = require('path');
 var CircularDependencyPlugin = require('circular-dependency-plugin');
 var WebpackNotifierPlugin = require('webpack-notifier');
 
+
+var libraryName = "MonkeyBrush";
+
 module.exports = {
     devtool: 'eval',
-    context: __dirname + "/lib",
-	entry: "./index.ts",
+    context: __dirname + "/lib/library",
+	entry: "./MonkeyBrush.ts",
 	output: {
         publicPath: "/build",
         filename: "bundle.js",
-        path: path.resolve("build")
+        path: path.resolve("build"),
+        library: libraryName
         //,library: "LolLib"
 	},
 	resolve: {

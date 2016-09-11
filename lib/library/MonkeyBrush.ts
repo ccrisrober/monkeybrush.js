@@ -2,7 +2,7 @@
 import "./polyfills";
 
 export { Camera2 } from "./Camera2";
-export { App, IApp } from "./App";
+// export { App, IApp } from "./App";
 export { Scene } from "./Scene";
 
 // Camera

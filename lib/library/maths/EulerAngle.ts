@@ -20,10 +20,7 @@
 
 import { Quat } from "./Quat";
 import { Vect3 } from "./Vect3";
-
-enum RotSeq {
-    zyx, zyz, zxy, zxz, yxz, yxy, yzx, yzy, xyz, xyx, xzy, xzx
-};
+import { RotSeq } from "./ERotSeq";
 
 class EulerAngle {
 
@@ -138,4 +135,4 @@ class EulerAngle {
     }
 };
 
-export { EulerAngle };
+export { RotSeq, EulerAngle };

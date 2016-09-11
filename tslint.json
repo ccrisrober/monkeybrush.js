@@ -23,7 +23,8 @@
         "quotemark": [
             true,
             "double"
-        ],"max-line-length": [true, 120],
+        ],
+        "max-line-length": [true, 120],
         "no-empty": true,
         "eofline": true,
         "no-unused-variable": [true, {"ignore-pattern": "^_"}],

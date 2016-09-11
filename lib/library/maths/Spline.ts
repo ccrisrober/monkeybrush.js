@@ -24,7 +24,7 @@ import { Vect3 } from "./Vect3";
 
 "use strict";
 
-type InterpolationMode = "catmullRom" | "linear" | "bezier";
+// type InterpolationMode = "catmullRom" | "linear" | "bezier";
 namespace Interpolation {
     // Code based on https://github.com/tweenjs/tween.js/blob/master/src/Tween.js
     export function linear(p0: number, p1: number, t: number): number {
@@ -65,9 +65,9 @@ namespace Interpolation {
 };
 class Spline2D {
     protected controlPoints: Array<Vect2> = [];
-    protected intpMode: InterpolationMode;
-    constructor(intpMode: InterpolationMode = "catmullRom", points: Array<Vect2> = []) {
-        this.intpMode = intpMode;
+    protected _intpMode: string /*InterpolationMode*/;
+    constructor(intpMode: string /*InterpolationMode*/ = "catmullRom", points: Array<Vect2> = []) {
+        this._intpMode = intpMode;
         this.controlPoints = points;
     }
     public evaluate(dt: number): Vect2 {
@@ -83,10 +83,10 @@ class Spline2D {
                                         this.controlPoints.length - 1 : intPoint + 2];
 
         return new Vect2(
-            Interpolation[this.intpMode](
+            Interpolation[this._intpMode](
                 p0.x, p1.x, p2.x, p3.x, w
             ),
-            Interpolation[this.intpMode](
+            Interpolation[this._intpMode](
                 p0.y, p1.y, p2.y, p3.y, w
             )
         );
@@ -95,11 +95,11 @@ class Spline2D {
 
 class Spline3D {
     protected controlPoints: Array<Vect3> = [];
-    protected intpMode: InterpolationMode;
+    protected _intpMode: string /*InterpolationMode*/;
     protected _oldDT: number = 0;
     protected _currentDT: number = 0;
-    constructor(intpMode: InterpolationMode = "catmullRom", points: Array<Vect3> = []) {
-        this.intpMode = intpMode;
+    constructor(intpMode: string /*InterpolationMode*/ = "catmullRom", points: Array<Vect3> = []) {
+        this._intpMode = intpMode;
         this.controlPoints = points;
     }
     public evaluate(dt: number): Vect3 {
@@ -115,13 +115,13 @@ class Spline3D {
                                         this.controlPoints.length - 1 : intPoint + 2];
 
         return new Vect3(
-            Interpolation[this.intpMode](
+            Interpolation[this._intpMode](
                 p0.x, p1.x, p2.x, p3.x, w
             ),
-            Interpolation[this.intpMode](
+            Interpolation[this._intpMode](
                 p0.y, p1.y, p2.y, p3.y, w
             ),
-            Interpolation[this.intpMode](
+            Interpolation[this._intpMode](
                 p0.z, p1.z, p2.z, p3.z, w
             )
         );

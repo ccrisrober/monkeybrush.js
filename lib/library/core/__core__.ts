@@ -6,7 +6,7 @@ export { DepthState } from "./DepthState";
 export { Framebuffer } from "./Framebuffer";
 export { GlobalState } from "./GlobalState";
 export { DOMElement } from "./DOMElement";
-export { Input, MouseButton, KeyState } from "./Input";
+export { Input, KeyState, MouseButton } from "./Input";
 export { Log } from "./Log";
 export { Program } from "./Program";
 export { Query } from "./Query";
@@ -19,3 +19,7 @@ export { Utils } from "./Utils";
 export { VertexArray } from "./VertexArray";
 export { VertexBuffer } from "./VertexBuffer";
 export { VertexUBO } from "./VertexUBO";
+
+
+// export { KeyState } from "./InputKeys";
+// export { MouseButton } from "./InputMouse";

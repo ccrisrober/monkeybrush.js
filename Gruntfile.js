@@ -6,6 +6,8 @@ var fs = require("fs");
 var parseOBJ = require("parse-obj");
 
 module.exports = function (grunt) {
+    grunt.loadNpmTasks("grunt-typescript");
+    grunt.loadNpmTasks("grunt-contrib-watch");
 
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
@@ -17,7 +19,22 @@ module.exports = function (grunt) {
                 }
             }
         },
-
+        typescript: {
+            base: {
+                src: ["lib/index.ts"],
+                dest: "index.js",
+                options: {
+                    module: "amd",
+                    target: "es5",
+                    sourcemap: true,
+                    declaration: true
+                }
+            }
+        },
+        watch: {
+            files: "lib/index.ts",
+            tasks: ["typescript"]
+        },
         typedoc: {
             build: {
                 options: {
@@ -36,6 +53,8 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-typedoc');
+
+    grunt.registerTask("default", ["typescript", "typescript", "watch"]);
 
     grunt.registerTask("parseobj", "", function(fileRoute) {
         var done = this.async();

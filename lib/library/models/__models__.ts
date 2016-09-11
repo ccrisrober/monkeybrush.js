@@ -20,3 +20,5 @@ export { Sphere } from "./Sphere";
 export { Tetrahedron } from "./Tetrahedron";
 export { TextGeom } from "./TextGeom";
 export { Torus } from "./Torus";
+
+export { ICustomModel } from "./ICustomModel";

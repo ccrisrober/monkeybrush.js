@@ -25,13 +25,17 @@ import { ResourceMap } from "./resources/ResourceMap";
 import { Timer } from "./extras/Timer";
 import { Log } from "./core/Log";
 
+/// <reference path="../typings/stats.d.ts" />
+/// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
+
+
 "use strict";
 
 @Decorators.sealed
 abstract class Scene {
 
-    protected stats: Stats;
-    protected gui: dat.GUI;
+    protected _stats: Stats;
+    protected _gui: dat.GUI;
     protected _webglVersion;
 
     protected text: any;
@@ -62,17 +66,17 @@ abstract class Scene {
     abstract update(dt: number);
     abstract draw(dt?: number);
     abstract cameraUpdate();
-    abstract textCB(gui: dat.GUI);
+    abstract textCB(g: dat.GUI);
 
     private __init__(text) {
         Core.getInstance().initialize([1.0, 0.0, 1.0, 1.0]);
 
-        this.gui = new dat.GUI();
+        this._gui = new dat.GUI();
 
-        this.textCB(this.gui);
+        this.textCB(this._gui);
 
         let self = this;
-        this.gui.add(text, "resume", true).onChange(function(v) {
+        this._gui.add(text, "resume", true).onChange(function(v) {
             if (v === true) {
                self.resume();
             } else {
@@ -80,15 +84,19 @@ abstract class Scene {
             }
         });
 
-        this.stats = new Stats();
-        this.stats.setMode(0);
-        document.body.appendChild(this.stats.domElement);
+        this._stats = new Stats();
+        this._stats.setMode(0);
+        document.body.appendChild(this._stats.domElement);
 
         this.loadAssets();
     }
 
+    get stats(): Stats {
+        return this._stats;
+    }
+
     public start() {
-        let self = this;
+        let self: Scene = this;
         ResourceMap.setLoadCompleteCallback(function() {
             console.log("ALL RESOURCES LOADED!!!!");
 

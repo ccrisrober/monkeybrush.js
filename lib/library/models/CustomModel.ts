@@ -19,21 +19,9 @@
 
 
 import { Drawable } from "./Drawable";
+import { ICustomModel } from "./ICustomModel";
 
 "use strict";
-
-/**
- * ICustomModel interface
- * @interface ICustomModel
- */
-interface ICustomModel {
-    indices: Array<number>;
-    vertices: Array<number>;
-    normals?: Array<number>;
-    regenerateNormals?: boolean;    // TODO: Unused
-    generateTangents?: boolean;    // TODO: Unused
-    texCoords?: Array<number>;
-};
 
 /**
  * CustomModel class
