@@ -9,6 +9,13 @@
             true,
             "spaces"
         ],
+
+
+
+        "no-any": false,
+        "no-arg": true,
+        "no-default-export": true,
+
         "no-duplicate-variable": true,
         "no-eval": true,
         "no-internal-module": true,

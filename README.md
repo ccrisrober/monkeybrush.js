@@ -175,6 +175,6 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [ ] Create "shadertoy" for desktop
 
 ### Help
-> - tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt
+> - tslint src/**/*.ts --exclude src/**/*.d.ts > tslintwarnings.txt
 > - https://www.npmjs.com/package/webpack-glsl-loader
 > - http://www.jbrantly.com/es6-modules-with-typescript-and-webpack/
