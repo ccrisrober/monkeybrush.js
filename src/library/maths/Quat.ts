@@ -133,7 +133,7 @@ class Quat {
             this._value[1],
             this._value[2],
             this._value[3]
-        );
+       );
     }
     /**
      * Calculate dot product with another quaternion

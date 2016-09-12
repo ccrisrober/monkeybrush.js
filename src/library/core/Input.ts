@@ -19,8 +19,7 @@
 
 
 import { Core } from "./Core";
-import { KeyState } from "./InputKeys";
-import { MouseButton } from "./InputMouse";
+import { KeyState, MouseButton } from "../constants/Constants";
 
 "use strict";
 
@@ -137,6 +136,7 @@ class Input {
     public static getMousePosY(): number {
         return this._mousePosY;
     };
+
 
     protected static _buttonPreviousState: Array<boolean> = [];
     protected static _isButtonPressed: Array<boolean> = [];

@@ -75,7 +75,7 @@ class SimpleTexture2D extends Texture {
                     this.getHeight(),
                     this._format_, // Format
                     null
-                );
+               );
             } else {
                 gl.texSubImage2D(
                     this._target_,
@@ -87,7 +87,7 @@ class SimpleTexture2D extends Texture {
                     this._format_, // Format
                     this._type_, // Size of each channel
                     null
-                );
+               );
             }
         } else {
             if (this._compressed_) {
@@ -99,7 +99,7 @@ class SimpleTexture2D extends Texture {
                     this.getHeight(),
                     0,
                     null
-                );
+               );
             } else {
                 gl.texImage2D(
                     this._target_,
@@ -111,7 +111,7 @@ class SimpleTexture2D extends Texture {
                     this._format_, // Format
                     this._type_, // Size of each channel
                     null
-                );
+               );
             }
         }
 
@@ -125,7 +125,7 @@ class SimpleTexture2D extends Texture {
             this._format_, // Format
             this._type_, // Size of each channel
             null
-        );*/
+       );*/
 
         this.minFilter(options.minFilter || TextureType.Nearest);
         this.magFilter(options.minFilter || TextureType.Nearest);
@@ -167,7 +167,7 @@ class SimpleTexture2D extends Texture {
                 this._format_, // Format
                 this._type_, // Size of each channel
                 null
-            );
+           );
         }
     }
 };

@@ -19,6 +19,7 @@
 
 
 import { Vect3 } from "../maths/Vect3";
+import { RandomGenerator } from "./RandomGenerator";
 
 "use strict";
 
@@ -41,6 +42,33 @@ class Color3 {
         this.r = r;
         this.g = g;
         this.b = b;
+    };
+    /**
+     * Check if another color is equals than current color.
+     * @param  {Color3}  c Another color
+     * @return {boolean}
+     */
+    public isEquals(c: Color3): boolean {
+        return this._color.exactEquals(c._color);
+    };
+    /**
+     * [clone description]
+     * @return {Color3} [description]
+     */
+    public clone(): Color3 {
+        return new Color3(this.r, this.g, this.b);
+    };
+    /**
+     * [copy description]
+     * @param  {Color3} c [description]
+     * @return {Color3}   [description]
+     */
+    public copy(c: Color3): Color3 {
+        this.r = c.r;
+        this.g = c.g;
+        this.b = c.b;
+
+        return this;
     };
     /**
      * Return red channel
@@ -104,7 +132,7 @@ class Color3 {
      * @param  {Color3} minColor Minimum color.
      * @param  {Color3} maxColor Maximum color.
      * @param  {number} alpha    Alpha. Clamped to the range [0, 1].
-     * @return {Color3}          New color.
+     * @return {Color3}          New color generated.
      */
     public static lerp(minColor: Color3, maxColor: Color3, alpha: number): Color3 {
         const r = minColor.r + (maxColor.r - minColor.r) * alpha;
@@ -115,24 +143,32 @@ class Color3 {
     /**
      * Create new color using hexadecimal value.
      * @param  {number} hex Hexadecimal value.
-     * @return {Color3}          New color.
+     * @return {Color3}          New color generated.
      */
     static createFromHex(hex: number): Color3 {
         return new Color3(
             (hex >> 16 & 255) / 255,
             (hex >> 8 & 255) / 255,
             (hex & 255) / 255
-        );
+       );
     };
-
-
+    /**
+     * Create random color
+     * @return {Color3} New color generated.
+     */
+    static getRandomColor(): Color3 {
+        const r: number = RandomGenerator.random();
+        const g: number = RandomGenerator.random();
+        const b: number = RandomGenerator.random();
+        return new Color3(r, g, b);
+    };
     // TODO: https://github.com/bgrins/TinyColor/blob/master/tinycolor.js
     // TODO: https://github.com/davidmerfield/randomColor
 
     /**
      * Convert current color from gamma to linear range.
      * @param  {number = 2.2} gammaFactor Gamma factor value
-     * @return {Color3}          New color.
+     * @return {Color3}          New color generated.
      */
     public gammaToLinear(gammaFactor: number = 2.2): Color3 {
         this.r = Math.pow(this.r, gammaFactor);
@@ -144,7 +180,7 @@ class Color3 {
     /**
      * Convert current color from linear to gamma range.
      * @param  {number = 2.2}         gammaFactor Gamma factor value
-     * @return {Color3}          New color.
+     * @return {Color3}          New color generated.
      */
     public linearToGamma(gammaFactor: number = 2.2): Color3 {
         const invGamma: number = (gammaFactor > 0) ? (1.0 / gammaFactor) : 1.0;

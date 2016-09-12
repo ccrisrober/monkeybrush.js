@@ -31,17 +31,17 @@ class Clock {
      */
     protected _running: boolean;
     /**
-     * It hold the start time of the clock.
+     * Hold the start time of the clock.
      * @type {number}
      */
     protected _startTime: number;
     /**
-     * It hold the previous time from a update.
+     * Hold the previous time from a update.
      * @type {number}
      */
     protected _oldTime: number;
     /**
-     * It hold the time elapsed between the start
+     * Hold the time elapsed between the start
      *     of the clock to the previous update.
      * @type {number}
      */
@@ -63,7 +63,7 @@ class Clock {
         }
     };
     /**
-     * Starts clock
+     * Starts clock.
      */
     public start() {
         this._autostart = true;
@@ -80,15 +80,15 @@ class Clock {
     };
     /**
      * Return the seconds passed since the clock started.
-     * @return {number} Elapsed time
+     * @return {number} Elapsed time.
      */
     get elapsedTime(): number {
         this.delta;
         return this._elapsed;
     }
     /**
-     * Return the seconds passed since the last call of this method
-     * @return {number} Delta time
+     * Return the seconds passed since the last call of this method.
+     * @return {number} Delta time.
      */
     get delta(): number {
         let diff = 0;

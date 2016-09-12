@@ -67,7 +67,7 @@ class CanvasTexture extends Texture {
             this._format_, // Format
             this._type_, // Size of each channel
             this._domCanvas
-        );
+       );
 
         this.minFilter(options.minFilter || TextureType.Nearest);
         this.magFilter(options.minFilter || TextureType.Nearest);
@@ -101,7 +101,7 @@ class CanvasTexture extends Texture {
             this._format_,
             this._type_,
             this._domCanvas
-        );
+       );
         this.unbind();
     };
 };

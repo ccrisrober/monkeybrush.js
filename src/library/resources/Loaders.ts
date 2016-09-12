@@ -236,7 +236,7 @@ namespace Loaders {
                     function (buffer) {
                         ResourceMap.asyncLoadCompleted(alias, buffer);
                     }
-               );
+              );
             }.bind(this);
             request.send();
         }
@@ -393,7 +393,7 @@ namespace Loaders {
                 ((scanline_width < 8) || (scanline_width > 0x7fff)) ||
                 // this file is not run length encoded
                 ((2 !== buffer[0]) || (2 !== buffer[1]) || (buffer[2] & 0x80))
-           ) {
+          ) {
                 // return the flat buffer
                 return new Uint8Array(buffer);
             }

@@ -372,7 +372,7 @@ class Mat4 {
             this._value[0] * x + this._value[4] * y + this._value[8]  * z + this._value[12],
             this._value[1] * x + this._value[5] * y + this._value[9]  * z + this._value[13],
             this._value[2] * x + this._value[6] * y + this._value[10] * z + this._value[14]
-        );
+       );
     };
     identity(): Mat4 {
         this._value[0] = 1;
@@ -403,7 +403,7 @@ class Mat4 {
              ${this._value[4]},  ${this._value[5]},  ${this._value[6]},  ${this._value[7]},
              ${this._value[8]},  ${this._value[9]}, ${this._value[10]}, ${this._value[11]},
             ${this._value[12]}, ${this._value[13]}, ${this._value[14]}, ${this._value[15]},
-        )`;
+       )`;
     };*/
     static frustum(l: number, r: number, b: number, t: number, n: number, f: number): Mat4 {
         const

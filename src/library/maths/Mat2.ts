@@ -119,7 +119,7 @@ class Mat2 {
         return `Mat2(
             ${this._value[0]}, ${this._value[1]},
             ${this._value[2]}, ${this._value[3]}
-        )`;
+       )`;
     };
     rotate(angle: number): Mat2 {
         const a11 = this._value[0],

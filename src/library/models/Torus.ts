@@ -50,11 +50,11 @@ class Torus extends Drawable {
         let ringFactor = (Math.PI * 2.0) / rings;
         let sideFactor = (Math.PI * 2.0) / sides;
         let idx = 0, tidx = 0;
-        for ( let ring = 0; ring <= rings; ring++ ) {
+        for (let ring = 0; ring <= rings; ring++) {
             let u = ring * ringFactor;
             let cu = Math.cos(u);
             let su = Math.sin(u);
-            for ( let side = 0; side < sides; side++ ) {
+            for (let side = 0; side < sides; side++) {
                 let v = side * sideFactor;
                 let cv = Math.cos(v);
                 let sv = Math.sin(v);
@@ -69,9 +69,9 @@ class Torus extends Drawable {
                 tex[tidx + 1] = v / (Math.PI * 2.0);
                 tidx += 2;
                 // Normalize
-                let len = Math.sqrt( norms[idx] * norms[idx] +
+                let len = Math.sqrt(norms[idx] * norms[idx] +
                                   norms[idx + 1] * norms[idx + 1] +
-                                  norms[idx + 2] * norms[idx + 2] );
+                                  norms[idx + 2] * norms[idx + 2]);
                 norms[idx] /= len;
                 norms[idx + 1] /= len;
                 norms[idx + 2] /= len;
@@ -80,10 +80,10 @@ class Torus extends Drawable {
         }
 
         idx = 0;
-        for ( let ring = 0; ring < rings; ring++ ) {
+        for (let ring = 0; ring < rings; ring++) {
             let ringStart = ring * sides;
             let nextRingStart = (ring + 1) * sides;
-            for ( let side = 0; side < sides; side++ ) {
+            for (let side = 0; side < sides; side++) {
                 let nextSide = (side + 1) % sides;
                 // The quad
                 el[idx] = (ringStart + side);

@@ -54,10 +54,10 @@ class Sphere extends Drawable {
         let phiFac = Math.PI / stacks;
         let nx, ny, nz, s, t;
         let idx = 0, tIdx = 0;
-        for ( let i = 0; i <= slices; ++i ) {
+        for (let i = 0; i <= slices; ++i) {
             theta = i * thetaFac;
                     s = i / slices;
-            for ( let j = 0; j <= stacks; ++j ) {
+            for (let j = 0; j <= stacks; ++j) {
                 phi = j * phiFac;
                 t = j / stacks;
                 nx = Math.sin(phi) * Math.cos(theta);
@@ -75,16 +75,16 @@ class Sphere extends Drawable {
 
         // Generate the element list
         idx = 0;
-        for ( let i = 0; i < slices; ++i ) {
+        for (let i = 0; i < slices; ++i) {
             let stackStart = i * (stacks + 1);
             let nextStackStart = (i + 1) * (stacks + 1);
-            for ( let j = 0; j < stacks; ++j ) {
-                if ( j === 0 ) {
+            for (let j = 0; j < stacks; ++j) {
+                if (j === 0) {
                     el[idx] = stackStart;
                     el[idx + 1] = stackStart + 1;
                     el[idx + 2] = nextStackStart + 1;
                     idx += 3;
-                } else if ( j === stacks - 1) {
+                } else if (j === stacks - 1) {
                     el[idx] = stackStart + j;
                     el[idx + 1] = stackStart + j + 1;
                     el[idx + 2] = nextStackStart + j;

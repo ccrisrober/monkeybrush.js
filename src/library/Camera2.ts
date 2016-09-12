@@ -175,7 +175,7 @@ class Camera2 {
             Math.cos(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch)),
             Math.sin(Math["toRadian"](this.pitch)),
             Math.sin(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch))
-        );
+       );
         this.front = front.normalize();
 
         // Recalculate right and up vector
@@ -189,9 +189,9 @@ class Camera2 {
             Vect3.add(
                 this.position,
                 this.front
-            ),
+           ),
             this.up
-        );
+       );
     }
     public GetOrthoProjectionMatrix(w: number, h: number): Mat4 {
         const yMin = -0.0001 * Math.tan(this.fov * Math.PI / 360.0);

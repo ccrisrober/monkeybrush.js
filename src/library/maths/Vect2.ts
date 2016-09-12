@@ -92,6 +92,17 @@ class Vect2 {
         return this;
     };
     /**
+     * Multiplies current Vect2 with scalar
+     * @param  {number} s Scalar value.
+     * @return {Vect2} a new Vect2
+     */
+    public multByScalar(s: number): Vect2 {
+        this.x *= s;
+        this.y *= s;
+
+        return this;
+    };
+    /**
      * Divides current Vect2 with another Vect2
      * @param  {Vect2} v Second vector
      * @return {Vect2} a new Vect2

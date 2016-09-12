@@ -32,8 +32,8 @@ namespace Capabilities {
     let _capabilities = {};
 
     /**
-     * Return the maximum anisotropy value from current WebGL implementation
-     * @return {number} Maximum anisotropy value
+     * Return the maximum anisotropy value from current WebGL implementation.
+     * @return {number} Maximum anisotropy value.
      */
     export function getMaxAnisotropy(): number {
         if (!_capabilities["anisotropy"]) {
@@ -44,8 +44,8 @@ namespace Capabilities {
         return _capabilities["anisotropy"];
     };
     /**
-     * Returns the maximum number of textures permitted
-     * @return {number} Maximum textures permitted
+     * Returns the maximum number of textures permitted.
+     * @return {number} Maximum textures permitted.
      */
     export function getMaxTextures(): number {
         if (!_capabilities["maxTextures"]) {
@@ -87,6 +87,20 @@ namespace Capabilities {
         }
         return "lowp";
     };
+    export function getMaxDrawBuffers(): number {
+        if (!_capabilities["maxDrawBuffers"]) {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            _capabilities["maxDrawBuffers"] = gl.getParameter(gl.MAX_DRAW_BUFFERS);
+        }
+        return _capabilities["maxDrawBuffers"];
+    };
+    export function getMaxColorAttachments(): number {
+        if (!_capabilities["maxColorAttachments"]) {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            _capabilities["maxColorAttachments"] = gl.getParameter(gl.MAX_COLOR_ATTACHMENTS);
+        }
+        return _capabilities["maxColorAttachments"];
+    };
     /**
     var logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true && !! extensions.get('EXT_frag_depth');
     var maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
@@ -98,13 +112,9 @@ namespace Capabilities {
     var floatFragmentTextures = !! extensions.get('OES_texture_float');
     var floatVertexTextures = vertexTextures && floatFragmentTextures;
 
-
-
     MAX_COMBINED_TEXTURE_IMAGE_UNITS
     MAX_VERTEX_TEXTURE_IMAGE_UNITS
     MAX_TEXTURE_IMAGE_UNITS
-    MAX_DRAW_BUFFERS
-    MAX_COLOR_ATTACHMENTS
     MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS
     MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS
     MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS

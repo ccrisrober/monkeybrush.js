@@ -63,15 +63,26 @@ namespace Interpolation {
             (- 3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
     };
 };
+/**
+ * Spline2D class
+ * Create a smooth 2D spline curve from a points list.
+ *
+ * @class Spline2D
+ */
 class Spline2D {
     protected controlPoints: Array<Vect2> = [];
     protected _intpMode: string /*InterpolationMode*/;
     constructor(intpMode: string /*InterpolationMode*/ = "catmullRom", points: Array<Vect2> = []) {
         this._intpMode = intpMode;
         this.controlPoints = points;
-    }
-    public evaluate(dt: number): Vect2 {
-        const point = (this.controlPoints.length - 1) * dt;
+    };
+    /**
+     * Return interpolate point at t.
+     * @param  {number} t Interpolation value [0, 1].
+     * @return {Vect2}     Interpolated position.
+     */
+    public evaluate(t: number): Vect2 {
+        const point = (this.controlPoints.length - 1) * t;
         const intPoint = Math.floor(point);
         const w = point - intPoint;
 
@@ -85,14 +96,19 @@ class Spline2D {
         return new Vect2(
             Interpolation[this._intpMode](
                 p0.x, p1.x, p2.x, p3.x, w
-            ),
+           ),
             Interpolation[this._intpMode](
                 p0.y, p1.y, p2.y, p3.y, w
-            )
-        );
-    }
+           )
+       );
+    };
 };
-
+/**
+ * Spline3D class
+ * Create a smooth 3D spline curve from a points list.
+ *
+ * @class Spline3D
+ */
 class Spline3D {
     protected controlPoints: Array<Vect3> = [];
     protected _intpMode: string /*InterpolationMode*/;
@@ -101,9 +117,14 @@ class Spline3D {
     constructor(intpMode: string /*InterpolationMode*/ = "catmullRom", points: Array<Vect3> = []) {
         this._intpMode = intpMode;
         this.controlPoints = points;
-    }
-    public evaluate(dt: number): Vect3 {
-        const point = (this.controlPoints.length - 1) * dt;
+    };
+    /**
+     * Return interpolate point at t.
+     * @param  {number} t Interpolation value [0, 1].
+     * @return {Vect3}     Interpolated position.
+     */
+    public evaluate(t: number): Vect3 {
+        const point = (this.controlPoints.length - 1) * t;
         const intPoint = Math.floor(point);
         const w = point - intPoint;
 
@@ -117,15 +138,15 @@ class Spline3D {
         return new Vect3(
             Interpolation[this._intpMode](
                 p0.x, p1.x, p2.x, p3.x, w
-            ),
+           ),
             Interpolation[this._intpMode](
                 p0.y, p1.y, p2.y, p3.y, w
-            ),
+           ),
             Interpolation[this._intpMode](
                 p0.z, p1.z, p2.z, p3.z, w
-            )
-        );
-    }
+           )
+       );
+    };
     public getTangent(oldDT: number = this._oldDT,
         currentDT: number = this._currentDT): Vect3 {
 
@@ -133,7 +154,7 @@ class Spline3D {
         const p1: Vect3 = this.evaluate(currentDT);
 
         return Vect3.sub(p1, p0).normalize();
-    }
+    };
     public angleBetweenPoints(oldDT: number = this._oldDT,
         currentDT: number = this._currentDT): number {
         const p0: Vect3 = this.evaluate(oldDT);
@@ -142,7 +163,7 @@ class Spline3D {
         const angle = Math.atan2(p1.z - p0.z, p1.x - p0.x);
         return angle * Math.PI / 180.0;
         // TODO: Use Mathf
-    }
+    };
 };
 
 export { Interpolation, Spline2D, Spline3D };

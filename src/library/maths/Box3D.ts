@@ -28,21 +28,49 @@ import { Vect3 } from "./Vect3";
  */
 class Box3D {
     /**
-     * Min corner
+     * Min corner.
      * @type {Vect3}
      */
     protected _min: Vect3;
     /**
-     * Max corner
+     * Max corner.
      * @type {Vect3}
      */
     protected _max: Vect3;
     /**
-     * Box center
+     * Box center.
      * @type {Vect3}
      */
     protected _center: Vect3;
 
+    /**
+     * Return min Box2D position.
+     * @return {Vect3}
+     */
+    public get min(): Vect3 {
+        return this._min;
+    };
+    /**
+     * Return max Box2D position.
+     * @return {Vect3}
+     */
+    public get max(): Vect3 {
+        return this._max;
+    };
+    /**
+     * Return Box2D center.
+     * @return {Vect3}
+     */
+    public get center(): Vect3 {
+        return this._center;
+    };
+    /**
+     * Return box size.
+     * @return {Vect3}
+     */
+    public get size(): Vect3 {
+        return Vect3.sub(this.max, this.min);
+    };
     /**
      * Box3D constructor
      * @param {Vect3 = new Vect3(Infinity, Infinity, Infinity)} min: Box min corner
@@ -121,15 +149,7 @@ class Box3D {
         return new Box3D(
             new Vect3(minX, minY, minZ),
             new Vect3(maxX, maxY, maxZ)
-        );
-    };
-
-    /**
-     * Get Box3D center
-     * @return {Vect3} Box center
-     */
-    public center(): Vect3 {
-        return this._center;
+       );
     };
 };
 

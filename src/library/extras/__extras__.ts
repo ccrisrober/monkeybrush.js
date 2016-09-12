@@ -15,7 +15,7 @@ export { Noise } from "./Noise";
 export { PingPong } from "./PingPong";
 export { PointCloud } from "./PointCloud";
 export { PostProcess } from "./PostProcess";
-// export { RandomGenerator } from "./RandomGenerator";
+export { RandomGenerator } from "./RandomGenerator";
 // export { Ray } from "./Ray";
 export { Skybox } from "./Skybox";
 export { SourceFrags } from "./SourceFrags";

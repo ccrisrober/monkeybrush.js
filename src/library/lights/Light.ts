@@ -61,7 +61,7 @@ abstract class Light {
             1.0,        // Constant
             0.014,      // Linear
             0.0007      // Quadratic
-        );
+       );
     }
 
     /**

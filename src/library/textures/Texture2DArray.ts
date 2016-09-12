@@ -79,7 +79,7 @@ class Texture2DArray extends Texture {
             gl.TEXTURE_2D_ARRAY, 0, gl.RGB8,
             this._numTex_, this._numTex_, 16, 0,
             gl.RGB, gl.UNSIGNED_BYTE, null
-        );
+       );
 
         images.forEach((image: any, i: number) => {
             gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0,

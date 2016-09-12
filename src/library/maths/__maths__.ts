@@ -1,4 +1,4 @@
-// export { Box2D } from "./Box2D";
+export { Box2D } from "./Box2D";
 export { Box3D } from "./Box3D";
 export { Curves } from "./Curves";
 // export { EulerAngle } from "./EulerAngle";

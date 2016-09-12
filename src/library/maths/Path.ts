@@ -31,27 +31,27 @@ class Path {
      * @param {number} y The y-coordinate of where to create the line to.
      */
     public lineTo(x: number, y: number) {
-        let curve = new Curves.Line(
+        let curve = new Curves.Line2D(
             this._currentPoint.clone(),
             new Vect2(x, y)
-        );
+       );
         this._curves.push(curve);
         this._currentPoint.setXY(x, y);
     };
     /**
      * Adds a point to the current path by using the specified control points that represent
      * a quadratic Bézier curve.
-     * @param  {number} cpx: number        The x-coordinate of the Bézier control point.
-     * @param  {number} cpy: number        The y-coordinate of the Bézier control point.
-     * @param  {number} x:   number        The x-coordinate of the ending point.
-     * @param  {number} y:   number        The y-coordinate of the ending point.
+     * @param  {number} cpx: number    The x-coordinate of the Bézier control point.
+     * @param  {number} cpy: number    The y-coordinate of the Bézier control point.
+     * @param  {number} x:   number    The x-coordinate of the ending point.
+     * @param  {number} y:   number    The y-coordinate of the ending point.
      */
     public quadraticCurveTo(cpx: number,  cpy: number, x: number, y: number) {
-        let curve = new Curves.QuadraticBezierCurve(
+        let curve = new Curves.QuadraticBezier(
             this._currentPoint.clone(),
             new Vect2(cpx, cpy),
             new Vect2(x, y)
-        );
+       );
         this._curves.push(curve);
         this._currentPoint.setXY(x, y);
     };
@@ -67,12 +67,12 @@ class Path {
      */
     public bezierCurveTo(cpx1: number, cpy1: number,
         cpx2: number, cpy2: number, x: number, y: number) {
-        let curve = new Curves.BezierCurve(
+        let curve = new Curves.CubicBezier(
             this._currentPoint.clone(),
             new Vect2(cpx1, cpy1),
             new Vect2(cpx2, cpy2),
             new Vect2(x, y)
-        );
+       );
         this._curves.push(curve);
         this._currentPoint.setXY(x, y);
     };

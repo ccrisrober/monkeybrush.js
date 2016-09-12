@@ -35,7 +35,7 @@ class Vector2<T> {
     constructor(x: T, y: T) {
         this._x = x;
         this._y = y;
-    }
+    };
     /**
      * Check if two Vector2<T> are equals
      * @param  {Vector2<T>} other: Second vector
@@ -43,11 +43,35 @@ class Vector2<T> {
      */
     public isEqual(other: Vector2<T>): boolean {
         return this.x === other.x && this.y === other.y;
-    }
-    get x(): T { return this._x; };
-    get y(): T { return this._y; };
-    set x(x: T) { this._x = x; };
-    set y(y: T) { this._y = y; };
+    };
+    /**
+     * Return x value.
+     * @return {T}
+     */
+    get x(): T {
+        return this._x;
+    };
+    /**
+     * Return y value.
+     * @return {T}
+     */
+    get y(): T {
+        return this._y;
+    };
+    /**
+     * Set x value.
+     * @param {T} x New value.
+     */
+    set x(x: T) {
+        this._x = x;
+    };
+    /**
+     * Set y value.
+     * @param {T} y New value.
+     */
+    set y(y: T) {
+        this._y = y;
+    };
 };
 
 export { Vector2 };

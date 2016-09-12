@@ -94,7 +94,7 @@ class SimpleTexture3D extends Texture {
             gl.RED,         // format
             gl.UNSIGNED_BYTE,       // type
             data            // pixel
-        );
+       );
         gl.generateMipmap(gl.TEXTURE_3D);
         gl.bindTexture(gl.TEXTURE_3D, null);*/
 
@@ -111,7 +111,7 @@ class SimpleTexture3D extends Texture {
                     size.z,
                     this._format_,
                     data
-                );
+               );
             } else {
                 gl.texSubImage3D(
                     this._target_,
@@ -125,7 +125,7 @@ class SimpleTexture3D extends Texture {
                     this._format_,
                     this._type_,
                     data
-                );
+               );
             }
         } else {
             if (this._compressed_) {
@@ -138,7 +138,7 @@ class SimpleTexture3D extends Texture {
                     size.z,
                     0,
                     data
-                );
+               );
             } else {
                 gl.texImage3D(
                     this._target_,
@@ -151,7 +151,7 @@ class SimpleTexture3D extends Texture {
                     this._format_,
                     this._type_,
                     data
-                );
+               );
             }
         }
 

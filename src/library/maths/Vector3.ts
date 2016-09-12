@@ -38,7 +38,7 @@ class Vector3<T> {
         this._x = x;
         this._y = y;
         this._z = z;
-    }
+    };
     /**
      * Check if two Vector3<T> are equals
      * @param  {Vector3<T>} other: Second vector
@@ -46,13 +46,49 @@ class Vector3<T> {
      */
     public isEqual(other: Vector3<T>): boolean {
         return this.x === other.x && this.y === other.y && this.z === other.z;
-    }
-    get x(): T { return this._x; };
-    get y(): T { return this._y; };
-    get z(): T { return this._z; };
-    set x(x: T) { this._x = x; };
-    set y(y: T) { this._y = y; };
-    set z(z: T) { this._z = z; };
+    };
+    /**
+     * Return x value.
+     * @return {T}
+     */
+    get x(): T {
+        return this._x;
+    };
+    /**
+     * Return y value.
+     * @return {T}
+     */
+    get y(): T {
+        return this._y;
+    };
+    /**
+     * Return z value.
+     * @return {T}
+     */
+    get z(): T {
+        return this._z;
+    };
+    /**
+     * Set x value.
+     * @param {T} x New value.
+     */
+    set x(x: T) {
+        this._x = x;
+    };
+    /**
+     * Set y value.
+     * @param {T} y New value.
+     */
+    set y(y: T) {
+        this._y = y;
+    };
+    /**
+     * Set z value.
+     * @param {T} z New value.
+     */
+    set z(z: T) {
+        this._z = z;
+    };
 };
 
 export { Vector3 };

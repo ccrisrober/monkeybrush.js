@@ -68,7 +68,7 @@ class Texture3D extends Texture {
                 size.z,
                 0,
                 data
-            );
+           );
         } else {
             gl.texImage3D(
                 this._target_,
@@ -81,7 +81,7 @@ class Texture3D extends Texture {
                 this._format_,
                 this._type_,
                 data
-            );
+           );
         }
 
 

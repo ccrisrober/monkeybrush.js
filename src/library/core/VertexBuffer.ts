@@ -137,7 +137,7 @@ class VertexBuffer {
             normalized,
             numElems * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
             offset // Offset from the beginning of a single vertex to this attribute
-        );
+       );
     };
 
     public copySub(readTarget: number, writeTarget: number, readOffset: number, writeOffset: number, size: number) {

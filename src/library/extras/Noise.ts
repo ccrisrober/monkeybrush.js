@@ -30,9 +30,11 @@
  */
 namespace Noise {
     export namespace fractal {
-        export function noise(x, y, z, octaves, noiseCallback) {
+        export function noise(x: number, y: number, z: number, octaves: number,
+            noiseCallback: (x: number, y: number, z: number) => number) {
+
             let t = 0, f = 1, n = 0;
-            for (let i = 0; i < octaves; i++) {
+            for (let i = 0; i < octaves; ++i) {
                 n += noiseCallback(x * f, y * f, z * f) / f;
                 t += 1 / f;
                 f *= 2;
@@ -160,20 +162,20 @@ namespace Noise {
 
         let seedValue = _seed ? xorshift(_seed) : 0;
 
-        export function setSeed(seed) {
+        export function setSeed(seed: number) {
             seedValue = seed ? xorshift(seed) : 0;
         };
         let x;
-        function xorshift(seed) {
+        function xorshift(seed: number) {
             x = seed ^ (seed >> 12);
             x = x ^ (x << 25);
             x = x ^ (x >> 27);
             return x * 2;
         };
 
-        function lerp(t, a, b) { return a + t * (b - a); };
+        function lerp(t: number, a: number, b: number) { return a + t * (b - a); };
 
-        function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); };
+        function fade(t: number) { return t * t * t * (t * (t * 6 - 15) + 10); };
 
         function grad(hash, x, y, z) {
             let h = hash & 15,
@@ -181,7 +183,7 @@ namespace Noise {
                 v = h < 4 ? y : h === 12 || h === 14 ? x : z;
             return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
         };
-        export function noise(x, y, z) {
+        export function noise(x: number, y: number, z: number) {
             x += seedValue;
             y += seedValue;
             z += seedValue;
@@ -201,12 +203,12 @@ namespace Noise {
                 lerp(v,
                     lerp(u, grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z)),
                     lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z))
-                ),
+               ),
                 lerp(v,
                     lerp(u, grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1)),
                     lerp(u, grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1))
-                )
-            );
+               )
+           );
         }
     };
     export namespace simplex {

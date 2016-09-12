@@ -33,7 +33,7 @@ import { ComparisonFunc } from "../constants/Constants";
 declare var WebGL2RenderingContext: any;
 
 /**
-* This class get WebGL2 context and animationFrame for your navigator.
+* This class get WebGL context and animationFrame for your navigator.
 *
 * @class core.Core
 */
@@ -54,7 +54,7 @@ class Core {
 
     public initialize(color: Array<number>) {
         const gl = this._gl;
-
+        // gl.getParameter(gl.VERSION)
         // Load all extensions if WebGLRenderingContext === 1
         if (!(this._gl instanceof WebGL2RenderingContext)) {
             [
@@ -80,8 +80,7 @@ class Core {
         }
 
         this.init();
-        // ToneMap.init(gl);
-        gl.clearColor(color[0], color[1], color[2], color[3]);
+        GlobalState.setClearColor(color[0], color[1], color[2], color[3]);
     }
 
     public clearColorAndDepth() {
@@ -122,7 +121,5 @@ class Core {
         return this._gl;
     }
 };
-// Context.getContext();
-// Core.getInstance();
 
 export { Core };

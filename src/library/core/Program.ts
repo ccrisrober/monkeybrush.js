@@ -33,6 +33,22 @@ import { ProgramCte, TFMode } from "../constants/Constants";
 
 declare var WebGL2RenderingContext: any;
 
+interface IAttr {
+    name: string;
+    id: number;
+    type: string;
+};
+interface IUnif {
+    name: string;
+    id: number;
+    type: string;
+};
+
+interface ICachedUnifAttr {
+    attributes: Array<IAttr>;
+    uniforms: Array<IUnif>;
+};
+
 /**
  * Program class
  * @class Program
@@ -49,22 +65,30 @@ class Program {
     private _shaders: Array<WebGLShader>;
     private _isLinked: boolean;
 
+    /**
+     * Vertex shader raw code.
+     * @type {string}
+     */
     public _vertexSource: string;
+    /**
+     * Fragment shader raw code.
+     * @type {string}
+     */
     public _fragmentSource: string;
 
     public uniformLocations: { [key: string]: WebGLUniformLocation; } = {};
     public attribLocations: { [key: string]: number; } = {};
 
     /**
-     * [addAttributesArgs description]
-     * @param {string[]} ...attrs [description]
+     * Caches a list of attributes using varying arguments
+     * @param {string[]} ...attrs Attributes names
      */
     public addAttributesArgs(...attrs: string[]) {
         this.addAttributes(attrs);
     };
     /**
-     * [addAttributes description]
-     * @param {Array<string>} attrs [description]
+     * Caches a list of attributes using array of strings
+     * @param {Array<string>} attrs Array of string that contains attributes names
      */
     public addAttributes(attrs: Array<string>) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -79,15 +103,15 @@ class Program {
         }
     };
     /**
-     * [addUniformsArgs description]
-     * @param {string[]} ...unifs [description]
+     * Caches a list of uniforms using varying arguments
+     * @param {string[]} ...unifs Uniforms names
      */
     public addUniformsArgs(...unifs: string[]) {
         this.addUniforms(unifs);
     };
     /**
-     * [addUniforms description]
-     * @param {Array<string>} unifs [description]
+     * Caches a list of uniforms using array of strings
+     * @param {Array<string>} unifs Array of string that contains uniforms names
      */
     public addUniforms(unifs: Array<string>) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -102,25 +126,23 @@ class Program {
         }
     };
     /**
-     * [id description]
+     * Return internal program identifier
      * @return {WebGLProgram} [description]
      */
     public id(): WebGLProgram {
         return this._compiledShader;
     };
     /**
-     * [addShader description]
-     * @param {string}                 shader_ [description]
-     * @param {ProgramCte.shader_type} type    [description]
-     * @param {ProgramCte.mode}        _mode   [description]
+     * Attach a new shader to this program.
+     * @param {string}                 shader_ String that contains file route, script id or raw shader code.
+     * @param {ProgramCte.shader_type} type    Shader type (Vertex or Fragment).
+     * @param {ProgramCte.mode}        _mode   Shader read mode (from file, from script or raw mode).
      */
     public addShader(shader_: string, type: ProgramCte.shader_type, _mode: ProgramCte.mode) {
         let shader: WebGLShader;
-
         if (type < 0) {
             throw new Error("SHADER TYPE UNDEFINED");
         }
-
         if (_mode === ProgramCte.mode.read_file) {
             shader = this.loadAndCompileWithFile(shader_, type);
         } else if (_mode === ProgramCte.mode.read_script) {
@@ -130,6 +152,9 @@ class Program {
         }
         this._shaders.push(shader);
     };
+    /**
+     * Create shader program and attach vertex and fragment shader.
+     */
     public _compile() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         // Create and compile shader
@@ -138,6 +163,10 @@ class Program {
             gl.attachShader(this._compiledShader, this._shaders[i]);
         }
     };
+    /**
+     * Link program to current WebGLRenderingContext.
+     * @return {boolean} True if linked correctly. False otherwise.
+     */
     public _link(): boolean {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.linkProgram(this._compiledShader);
@@ -156,7 +185,7 @@ class Program {
         return true;
     };
     /**
-     * Compile and link Program
+     * Compile and link program
      * @return {boolean}: True if not errors
      */
     public compile(): boolean {
@@ -182,9 +211,9 @@ class Program {
         return true;
     };
     /**
-     * [loadAndCompileWithFile description]
-     * @param {string} filePath   [description]
-     * @param {number} shaderType [description]
+     * Create shader from file route.
+     * @param {string} filePath   File route.
+     * @param {number} shaderType Shader type.
      */
     private loadAndCompileWithFile(filePath: string, shaderType: number) {
         let request: XMLHttpRequest = new XMLHttpRequest();
@@ -206,9 +235,9 @@ class Program {
         return this.compileShader(shaderSource, shaderType);
     };
     /**
-     * [loadAndCompileFromText description]
-     * @param {string} shaderSource [description]
-     * @param {number} shaderType   [description]
+     * Create shader from raw code.
+     * @param {string} shaderSource Raw shader code.
+     * @param {number} shaderType   Shader type.
      */
     private loadAndCompileFromText(shaderSource: string, shaderType: number) {
         if (shaderSource === null) {
@@ -220,9 +249,9 @@ class Program {
         return this.compileShader(shaderSource, shaderType);
     };
     /**
-     * [loadAndCompile description]
-     * @param {string} id         [description]
-     * @param {number} shaderType [description]
+     * Create shader from HTML shader script
+     * @param {string} id         HTML script ID.
+     * @param {number} shaderType Shader type.
      */
     private loadAndCompile(id: string, shaderType: number) {
         let shaderText: HTMLElement, shaderSource: string;
@@ -240,9 +269,9 @@ class Program {
         return this.compileShader(shaderSource, shaderType);
     };
     /**
-     * [compileShader description]
-     * @param {string} shaderSource [description]
-     * @param {number} shaderType   [description]
+     * Compile shader from shader source.
+     * @param {string} shaderSource Raw shader code.
+     * @param {number} shaderType   Shader type.
      */
     private compileShader(shaderSource: string, shaderType: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -274,14 +303,14 @@ class Program {
         return compiledShader;
     };
     /**
-     * [use description]
+     * Active program.
      */
     public use() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.useProgram(this._compiledShader);
     };
     /**
-     * [destroy description]
+     * Destroy program.
      */
     public destroy() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -291,78 +320,78 @@ class Program {
         gl.deleteShader(this._compiledShader);
     };
     /**
-     * [sendUniform1f description]
-     * @param {string} name  [description]
-     * @param {number} value [description]
+     * Send uniform float value.
+     * @param {string} name  Uniform name.
+     * @param {number} value Float value.
      */
     public sendUniform1f(name: string, value: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.uniform1f(this.uniformLocations[name], value);
     };
     /**
-     * [sendUniform1i description]
-     * @param {string} name  [description]
-     * @param {number} value [description]
+     * Send uniform integer value.
+     * @param {string} name  Uniform name.
+     * @param {number} value Integer value.
      */
     public sendUniform1i(name: string, value: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.uniform1i(this.uniformLocations[name], value);
     };
     /**
-     * [sendUniform1b description]
-     * @param {string}  name  [description]
-     * @param {boolean} value [description]
+     * Send uniform boolean value.
+     * @param {string} name  Uniform name.
+     * @param {boolean} value Boolean value.
      */
     public sendUniform1b(name: string, value: boolean) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.uniform1i(this.uniformLocations[name], value === true ? 1 : 0);
     };
     /**
-     * [sendUniform1u description]
-     * @param {string} name  [description]
-     * @param {number} value [description]
+     * Send uniform unsigned integer value.
+     * @param {string} name  Uniform name.
+     * @param {number} value Unsigned integer value.
      */
     public sendUniform1u(name: string, value: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.uniform1ui(this.uniformLocations[name], value);
     };
     /**
-     * [sendUniform2f description]
-     * @param {string} name [description]
-     * @param {number} x    [description]
-     * @param {number} y    [description]
+     * Send two separated uniform floats value.
+     * @param {string} name  Uniform name.
+     * @param {number} x    First float value.
+     * @param {number} y    Second float value.
      */
     public sendUniform2f(name: string, x: number, y: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.uniform2f(this.uniformLocations[name], x, y);
     };
     /**
-     * [sendUniform3f description]
-     * @param {string} name [description]
-     * @param {number} x    [description]
-     * @param {number} y    [description]
-     * @param {number} z    [description]
+     * Send three separated uniform floats value.
+     * @param {string} name  Uniform name.
+     * @param {number} x    First float value.
+     * @param {number} y    Second float value.
+     * @param {number} z    Third float value.
      */
     public sendUniform3f(name: string, x: number, y: number, z: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.uniform3f(this.uniformLocations[name], x, y, z);
     };
     /**
-     * [sendUniform4f description]
-     * @param {string} name [description]
-     * @param {number} x    [description]
-     * @param {number} y    [description]
-     * @param {number} z    [description]
-     * @param {number} w    [description]
+     * Send four separated uniform floats value.
+     * @param {string} name  Uniform name.
+     * @param {number} x    First float value.
+     * @param {number} y    Second float value.
+     * @param {number} z    Third float value.
+     * @param {number} w    Fourth float value.
      */
     public sendUniform4f(name: string, x: number, y: number, z: number, w: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.uniform4f(this.uniformLocations[name], x, y, z, w);
     };
     /**
-     * [sendUniformVec2 description]
-     * @param {string}          name [description]
-     * @param {Float32Array |    Vect2}       value [description]
+     * Send uniform vector of float with 2 values.
+     * @param {string} name  Uniform name.
+     * @param {Float32Array | Vect2} value Vector of floats.
      */
     public sendUniformVec2(name: string, value: Float32Array | Vect2) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -375,9 +404,9 @@ class Program {
         gl.uniform3fv(this.uniformLocations[name], val);
     };
     /**
-     * [sendUniformVec3 description]
-     * @param {string}          name [description]
-     * @param {Float32Array |    Vect3}       value [description]
+     * Send uniform vector of float with 3 values.
+     * @param {string} name  Uniform name.
+     * @param {Float32Array | Vect3} value Vector of floats.
      */
     public sendUniformVec3(name: string, value: Float32Array | Vect3) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -390,9 +419,9 @@ class Program {
         gl.uniform3fv(this.uniformLocations[name], val);
     };
     /**
-     * [sendUniformVec4 description]
-     * @param {string}          name [description]
-     * @param {Float32Array |    Vect4}       value [description]
+     * Send uniform vector of float with 4 values.
+     * @param {string} name  Uniform name.
+     * @param {Float32Array | Vect4} value Vector of floats.
      */
     public sendUniformVec4(name: string, value: Float32Array | Vect4) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -405,10 +434,10 @@ class Program {
         gl.uniform3fv(this.uniformLocations[name], val);
     };
     /**
-     * [sendUniformMat2 description]
-     * @param {string}          name [description]
-     * @param {Float32Array |    Mat2}        value     [description]
-     * @param {boolean      =    false}       transpose [description]
+     * Send uniform mat2.
+     * @param {string} name  Uniform name.
+     * @param {Float32Array | Mat2} value mat2.
+     * @param {boolean = false} transpose Transpose mat2.
      */
     public sendUniformMat2(name: string, value: Float32Array | Mat2, transpose: boolean = false) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -421,10 +450,10 @@ class Program {
         gl.uniformMatrix2fv(this.uniformLocations[name], transpose, val);
     };
     /**
-     * [sendUniformMat3 description]
-     * @param {string}          name [description]
-     * @param {Float32Array |    Mat3}        value     [description]
-     * @param {boolean      =    false}       transpose [description]
+     * Send uniform mat3.
+     * @param {string} name  Uniform name.
+     * @param {Float32Array | Mat3} value mat3.
+     * @param {boolean = false} transpose Transpose mat3.
      */
     public sendUniformMat3(name: string, value: Float32Array | Mat3, transpose: boolean = false) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -437,10 +466,10 @@ class Program {
         gl.uniformMatrix3fv(this.uniformLocations[name], transpose, val);
     };
     /**
-     * [sendUniformMat4 description]
-     * @param {string}          name [description]
-     * @param {Float32Array |    Mat4}        value     [description]
-     * @param {boolean      =    false}       transpose [description]
+     * Send uniform mat4.
+     * @param {string} name  Uniform name.
+     * @param {Float32Array | Mat4} value mat4.
+     * @param {boolean = false} transpose Transpose mat4.
      */
     public sendUniformMat4(name: string, value: Float32Array | Mat4, transpose: boolean = false) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -493,7 +522,13 @@ class Program {
         "INT_SAMPLER_CUBE": "isamplerCube",
     };
     protected static GL_TABLE = null;
-    protected static getType(gl, type) {
+    /**
+     * Return uniform or attribute human readable type.
+     * @param  {WebGL2RenderingContext} gl   WebGLRenderingContext
+     * @param  {number} type WebGL internal uniform/attribute type.
+     * @return {string}
+     */
+    protected static getType(gl: WebGL2RenderingContext, type: number): string {
         if (!Program.GL_TABLE) {
             let typeNames = Object.keys(Program.GL_TO_GLSL_TYPES);
             Program.GL_TABLE = {};
@@ -507,7 +542,15 @@ class Program {
         }
         return Program.GL_TABLE[type];
     };
-    public unifAndAttribs() {
+    /**
+     * Return a object that contains active attributes and uniforms in program.
+     * @return {ICachedUnifAttr}
+     */
+    public unifAndAttribs(): ICachedUnifAttr {
+        let ret: ICachedUnifAttr = {
+            "attributes": [],
+            "uniforms": []
+        }
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         console.log("UNIFORMS");
         const numUniforms = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_UNIFORMS);
@@ -525,33 +568,43 @@ class Program {
                     });
                 }
             } else {
-                result.push({
+                ret.uniforms.push({
                     name: info.name,
                     type: type,
                     id: i
                 });
             }
         }
-        console.log(result);
+        console.log(ret.uniforms);
         console.log("ATTRIBUTES");
         const numAttributes = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_ATTRIBUTES);
         result = [];
         for (let i = 0; i < numAttributes; ++i) {
             const info = gl.getActiveAttrib(this._compiledShader, i);
             if (info) {
-                result.push({
+                ret.attributes.push({
                     name: info.name,
                     type: Program.getType(gl, info.type),
                     id: i
                 });
             }
         }
-        console.log(result);
+        console.log(ret.attributes);
+        return ret;
     };
+    /**
+     * Return if program is linked
+     * @return {boolean}
+     */
     public isLinked(): boolean {
         return this._isLinked;
     };
-    // Only call this before linking program
+    /**
+     * Attach transform feedback varying to this program.
+     * Only call this before linking program.
+     * @param {Array<string>} varyings Array of string that contains varying attributes.
+     * @param {TFMode}        mode     Transform Feedback mode (record mode).
+     */
     public feedbackVarying(varyings: Array<string>, mode: TFMode) {
         if (this._isLinked === true) {
             alert("ONLY EXEC THIS BEFORE LINK");
@@ -564,6 +617,10 @@ class Program {
         }
         TransformFeedback.varyings(this, varyings, mode);
     };
+    /**
+     * Add a foo fragment shader.
+     * Useful for transform feedback or shadow techniques.
+     */
     public setFooFragment() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {

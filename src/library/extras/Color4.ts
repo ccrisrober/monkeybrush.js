@@ -22,6 +22,10 @@ import { Vect4 } from "../maths/Vect4";
 
 "use strict";
 
+/**
+ * Color4 class
+ * @class Color4
+ */
 class Color4 {
     /**
      * Internal array that identifies the color values

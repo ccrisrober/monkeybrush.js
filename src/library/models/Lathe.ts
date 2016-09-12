@@ -59,7 +59,7 @@ class Lathe extends Drawable {
         let buffUV = new BufferAttribute(new Float32Array((segments + 1) * points.length * 2), 2);
 
         let i, j, base, a, b, c, d, size;
-        for ( i = 0; i <= segments; ++i) {
+        for (i = 0; i <= segments; ++i) {
             const phi = phiInit + i * inverseSegments * phiRadius;
 
             const sin = Math.sin(phi);
@@ -70,7 +70,7 @@ class Lathe extends Drawable {
                     points[j].x * sin,
                     points[j].y,
                     points[j].x * cos
-                ));
+              ));
 
                 buffUV.setXY(UV++,
                     i / segments,
@@ -78,7 +78,7 @@ class Lathe extends Drawable {
                 /*uvs.push(new Vect2(
                     i / segments,
                     j / (points.length - 1)
-                ));*/
+              ));*/
             }
         }
 

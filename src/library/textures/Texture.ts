@@ -21,6 +21,7 @@
 
 import { Core } from "../core/Core";
 import { Vect2 } from "../maths/Vect2";
+import { Capabilities } from "../extras/Capabilities";
 import { Extensions } from "../extras/Extensions";
 import { TextureFormat, WrapMode, TextureType, TextureTarget }
     from "../constants/Constants";
@@ -75,6 +76,11 @@ abstract class Texture {
 
     protected _level_: number = 0;
     protected _compressed_: boolean = false;
+    /**
+     * Internal WebGLTexture handler.
+     * @type {WebGLTexture}
+     */
+    protected _handle_: WebGLTexture;
 
     /**
      * Change texture minification filter
@@ -128,11 +134,11 @@ abstract class Texture {
     public setAnisotropic(level: number = 0) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         level = Math.floor(level);
-        const ext = Extensions.get("EXT_texture_filter_anisotropic");
-        const max_anisotropy = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        // const ext = Extensions.get("EXT_texture_filter_anisotropic");
+        const max_anisotropy = Capabilities.getMaxAnisotropy();
         if (max_anisotropy < level) {
             this._anisotropy_ = level;
-            gl.texParameterf(this._target_, ext.TEXTURE_MAX_ANISOTROPY_EXT, level);
+            gl.texParameterf(this._target_, 0x84FE/*ext.TEXTURE_MAX_ANISOTROPY_EXT*/, level);
         }
     };
     public bind(slot?: number) {
@@ -167,15 +173,15 @@ abstract class Texture {
 
 
 
-    protected _handle_: WebGLTexture;
     constructor(target: TextureTarget) {
         this._target_ = target;
     }
     get target(): number { return this._target_; }
 
-    public handle(): WebGLTexture {
+
+    get handler(): WebGLTexture {
         return this._handle_;
-    }
+    };
 
     public resize(size: Vect2) {
         // Nothing to do here

@@ -135,7 +135,7 @@ abstract class Drawable {
                 gl.UNSIGNED_SHORT,
                 0,
                 numInstances
-            );
+          );
         } else {
             const ext = Extensions.get("ANGLE_instanced_arrays");
             if (ext) {
@@ -145,7 +145,7 @@ abstract class Drawable {
                     gl.UNSIGNED_SHORT,
                     0,
                     numInstances
-                );
+              );
             } else {
                 throw new Error("Instance array undefined");
             }
@@ -166,7 +166,7 @@ abstract class Drawable {
                 0,
                 this._indicesLen,
                 numInstances
-            );
+          );
         } else {
             const ext = Extensions.get("ANGLE_instanced_arrays");
             if (ext) {
@@ -175,7 +175,7 @@ abstract class Drawable {
                     0,
                     this._indicesLen,
                     numInstances
-                );
+              );
             } else {
                 throw new Error("Instance array undefined");
             }

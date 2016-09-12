@@ -17,13 +17,13 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/*if (Number.epsilon === undefined ) {
+/*if (Number.epsilon === undefined) {
     Number.epsilon = 0.0001;
 }
-if (Number.smallEpsilon === undefined ) {
+if (Number.smallEpsilon === undefined) {
     Number.smallEpsilon = 0.0000001;
 }
-if (Number.defaultIOR === undefined ) {
+if (Number.defaultIOR === undefined) {
     Number.defaultIOR = 1.000277;
 }*/
 

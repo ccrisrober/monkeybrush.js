@@ -103,6 +103,18 @@ class Vect3 {
         return this;
     };
     /**
+     * Multiplies current Vect3 with scalar
+     * @param  {number} s Scalar value.
+     * @return {Vect3} a new Vect3
+     */
+    public multByScalar(s: number): Vect3 {
+        this.x *= s;
+        this.y *= s;
+        this.z *= s;
+
+        return this;
+    };
+    /**
      * Divides current Vect3 with another Vect3
      * @param  {Vect3} v Second vector
      * @return {Vect3} a new Vect3

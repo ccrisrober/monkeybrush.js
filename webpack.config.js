@@ -5,14 +5,19 @@ var WebpackNotifierPlugin = require('webpack-notifier');
 var libraryName = "MonkeyBrush";
 module.exports = {
     context: __dirname + "/src",
-    entry: "./index.ts",
+    entry: {
+        "entry1": "./index.ts"
+        //"entry2": "./index2.ts"
+        //,"entryLib": "./library/MonkeyBrush.ts"
+    },
     output: {
         publicPath: "/build",
-        filename: "bundle.js",
+        filename: "bundle[name].js",
         path: path.resolve("build")
         //, library: libraryName
     },
     resolve: {
+        root: path.resolve('./src'),
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".js"],
         moduleDirectories: ["bower_components", "js"]
     },
@@ -23,7 +28,7 @@ module.exports = {
     plugins: [
         //new webpack.optimize.UglifyJsPlugin(),
         // Add the Webpack HMR plugin so it will notify the browser when the app code changes
-        new webpack.HotModuleReplacementPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
         // Set up the notifier plugin - you can remove this (or set alwaysNotify false) if desired
         new WebpackNotifierPlugin({
             alwaysNotify: true,
@@ -39,5 +44,10 @@ module.exports = {
         loaders: [
             { test: /\.tsx?$/, loaders: ['babel', 'ts-loader'] }
         ]
+    },
+    // Individual Plugin Options
+    tslint: {
+        emitErrors: true,
+        failOnHint: true
     }
 };

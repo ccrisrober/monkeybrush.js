@@ -56,7 +56,7 @@ class Sprite {
          *         Math.random() * range - range / 2,
          *         Math.random() * range - range / 2,
          *         Math.random() * range - range / 2
-         * );
+         *);
          * sprite.scale.set(4, 4, 4);
          */
     }

@@ -355,11 +355,122 @@ enum WrapMode {
     MirroredRepeat = 0x8370
 };
 
+
+
+
+
+
+
+
+// Key code constants
+enum KeyState {
+    Delete = 8,
+    Tab = 9,
+    Enter = 13,
+    Left_Shift = 16,
+    Left_Control = 17,
+    Alt = 18,
+    Esc = 27,
+    Space = 32,
+
+    // arrows
+    Left = 37,
+    Up = 38,
+    Right = 39,
+    Down = 40,
+
+    // numbers
+    Zero = 48,
+    One = 49,
+    Two = 50,
+    Three = 51,
+    Four = 52,
+    Five = 53,
+    Six = 54,
+    Seven = 55,
+    Eight = 56,
+    Nine = 57,
+
+    // Alphabets
+    A = 65,
+    B = 66,
+    C = 67,
+    D = 68,
+    E = 69,
+    F = 70,
+    G = 71,
+    H = 72,
+    I = 73,
+    J = 74,
+    K = 75,
+    L = 76,
+    M = 77,
+    N = 78,
+    O = 79,
+    P = 80,
+    Q = 81,
+    R = 82,
+    S = 83,
+    T = 84,
+    U = 85,
+    V = 86,
+    W = 87,
+    X = 88,
+    Y = 89,
+    Z = 90,
+
+    // NumPad
+    Num0 = 96,
+    Num1 = 97,
+    Num2 = 98,
+    Num3 = 99,
+    Num4 = 100,
+    Num5 = 101,
+    Num6 = 102,
+    Num7 = 103,
+    Num8 = 104,
+    Num9 = 105,
+
+    // FX codes
+    F1 = 112,
+    F2 = 113,
+    F3 = 114,
+    F4 = 115,
+    F5 = 116,
+    F6 = 117,
+    F7 = 118,
+    F8 = 119,
+    F9 = 120,
+    F10 = 121,
+    F11 = 122,
+    F12 = 123,
+    LastKeyCode = 222
+};
+
+
+// Mouse states
+enum MouseButton {
+    Left = 0,
+    Middle = 1,
+    Right = 2
+};
+
+
+
+
 export {
     BlendingEq, BlendingMode, BlendingType, BufferType, ComparisonFunc,
     CompressedTex, DataType, DrawBuffer, FaceDir, FaceSide,
     PixelType, ProgramCte, QueryParams, QueryTarget, RenderType, SamplerParameter,
     ShadingMode, StencilOp, SyncCondition, SyncStatus, SyncType,
     SyncWaitResult, TextureFormat, TextureTarget, TextureType,
-    TFMode, TFPrimitive, TFTarget, UsageType, WrapMode
+    TFMode, TFPrimitive, TFTarget, UsageType, WrapMode,
+
+
+
+
+
+
+    KeyState,
+    MouseButton
 };

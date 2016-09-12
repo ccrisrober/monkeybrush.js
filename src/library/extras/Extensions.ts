@@ -22,19 +22,19 @@ import { Core } from "../core/Core";
 
 "use strict";
 
-namespace Extensions {
+class Extensions {
     /**
      * Cache extensions
      */
-    let _Extensions = {};
+    protected static _extensions = {};
     /**
      * Return a specific extension.
      * @param {string} name Extension name
      * @return {any} Extension (null if undefined)
      */
-    export function get(name: string): any {
-        if (name in _Extensions) {
-            return _Extensions[name];
+    public static get(name: string): any {
+        if (name in this._extensions) {
+            return this._extensions[name];
         }
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
@@ -43,7 +43,7 @@ namespace Extensions {
             console.warn(name + " extension not supported.");
             return;
         }
-        _Extensions[name] = ext;
+        this._extensions[name] = ext;
         return ext;
     }
 };

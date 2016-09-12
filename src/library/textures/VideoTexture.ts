@@ -89,7 +89,7 @@ class VideoTexture extends Texture {
             this._format_, // Format
             this._type_, // Size of each channel
             this._video
-        );
+       );
         gl.generateMipmap(gl.TEXTURE_2D);
         this.unbind();
     };

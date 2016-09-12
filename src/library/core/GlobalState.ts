@@ -20,6 +20,8 @@
 
 import { Core } from "./Core";
 import { Color4 } from "../extras/Color4";
+import { Box2D } from "../maths/Box2D";
+import { Vect2 } from "../maths/Vect2";
 import { Vector4 } from "../maths/Vector4";
 import { BlendingEq, BlendingType, ComparisonFunc, FaceSide, StencilOp }
     from "../constants/Constants";
@@ -32,6 +34,10 @@ import { BlendingEq, BlendingType, ComparisonFunc, FaceSide, StencilOp }
  *     machine through a common API.
  */
 class GlobalState {
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // Color
     static _bgColor: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);
     static _currentColorMask: Vector4<boolean> = new Vector4<boolean>(true, true, true, true);
     static _currentColorClear: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);
@@ -43,7 +49,14 @@ class GlobalState {
             this._currentColorMask = colorMask;
         }
     };
-    static setClearColor(r, g, b, a) {
+    /**
+     * Set new clear color value
+     * @param {number} r Red channel value
+     * @param {number} g Green channel value
+     * @param {number} b Blue channel value
+     * @param {number = 1.0} a Alpha channel value
+     */
+    static setClearColor(r: number, g: number, b: number, a: number = 1.0) {
         this._bgColor.r = r;
         this._bgColor.g = g;
         this._bgColor.b = b;
@@ -152,13 +165,13 @@ class GlobalState {
     // Stencil
     static _stencilEnabled: boolean = false;
     static _currentStencilMask: number = 0;
-    static _currentStencilFunc = null;
-    static _currentStencilRef = null;
-    static _currentStencilFuncMask = null;
-    static _currentStencilFail  = null;
-    static _currentStencilZFail = null;
-    static _currentStencilZPass = null;
-    static _currentStencilClear = null;
+    static _currentStencilFunc: ComparisonFunc = null;
+    static _currentStencilRef: number = null;
+    static _currentStencilFuncMask: number = null;
+    static _currentStencilFail: StencilOp  = null;
+    static _currentStencilZFail: StencilOp = null;
+    static _currentStencilZPass: StencilOp = null;
+    static _currentStencilClear: number = null;
 
     static setStencilTest(enabled: boolean) {
         if (this._stencilEnabled !== enabled) {
@@ -191,8 +204,14 @@ class GlobalState {
      *    reference value and the stored stencil value when the test is done.
      */
     static setStencilFunc(compFun: ComparisonFunc, ref: number, mask: number) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.stencilFunc(compFun, ref, mask);
+        if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref && this._currentStencilFuncMask !== mask) {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            gl.stencilFunc(compFun, ref, mask);
+
+            this._currentStencilFunc = compFun;
+            this._currentStencilRef = ref;
+            this._currentStencilFuncMask = mask;
+        }
     };
     /**
      * Set front and back stencil test actions.
@@ -203,12 +222,17 @@ class GlobalState {
      *    and depth test passes.
      */
     static setStencilOp(fail: StencilOp, zfail: StencilOp, zpass: StencilOp) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.stencilOp(fail, zfail, zpass);
+        if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail && this._currentStencilZPass !== zpass) {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            gl.stencilOp(fail, zfail, zpass);
+
+            this._currentStencilFail = fail;
+            this._currentStencilZFail = zfail;
+            this._currentStencilZPass = zpass;
+        }
     }
-    public static stencilMask(mask: number) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.stencilMask(mask);
+    public static getStencilMask(mask: number) {
+        return this._currentStencilMask;
     }
     static setStencilClear(s: number) {
         if (this._currentStencilClear !== s) {
@@ -315,6 +339,10 @@ class GlobalState {
      */
     public static isCullingEnabled(): boolean {
         return this._cullingEnabled === true;
+    };
+    public static resetCulling() {
+        this._cullingEnabled = false;
+        this._cullingFaceMode = FaceSide.FrontAndBack;
     };
 
 
@@ -429,6 +457,7 @@ class GlobalState {
 
     // Scissors
     static _scissorsEnabled: boolean = false;
+    static _scissorsBox: Box2D = new Box2D();
 
     public static setScissorStatus(enabled: boolean) {
         if (this._scissorsEnabled !== enabled) {
@@ -448,24 +477,40 @@ class GlobalState {
      * @param {number} width: Specifying the width of the scissor box.
      * @param {number} height: Specifying the height of the scissor box.
      */
-    public setScissorsRectangle(x: number, y: number, width: number, height: number) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.scissor(x, y, width, height);
-    }
+    public static setScissorsRectangle(x: number, y: number, width: number, height: number) {
+        let b: Box2D = new Box2D(new Vect2(x, y), new Vect2(width, height));
+        if (!this._scissorsBox.isEqual(b)) {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
+            this._scissorsBox = b;
+        }
+    };
+    /**
+     * Define the scissor box.
+     * @param {number} x: Specifying the horizontal coordinate for the lower left corner of the box.
+     * @param {number} y: Specifying the vertical coordinate for the lower left corner of the box.
+     * @param {number} width: Specifying the width of the scissor box.
+     * @param {number} height: Specifying the height of the scissor box.
+     */
+    public static setScissorsRectangleBox2D(b: Box2D) {
+        if (!this._scissorsBox.isEqual(b)) {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
+            this._scissorsBox = b;
+        }
+    };
     /**
      * Get scissor rectangle in use.
-     * @return {Int32Array}: Scissor box size [x, y, width, height]
+     * @return {Box2D}: Scissor box size
      */
-    public getScissorsRectangle(): Int32Array {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getParameter(gl.SCISSOR_BOX); // TODO: Cache
+    public static getScissorsRectangle(): Box2D {
+        return this._scissorsBox;
     };
     /**
      * Checks if scissor test is activated
      * @return {boolean}: True if activated
      */
     public static isScissorsEnabled(): boolean {
-        // const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         return this._scissorsEnabled === true;
     }
 

@@ -221,7 +221,7 @@ class Mat3 {
             ${this._value[0]}, ${this._value[1]},  ${this._value[2]},
             ${this._value[3]}, ${this._value[4]},  ${this._value[5]},
             ${this._value[6]}, ${this._value[7]},  ${this._value[8]}
-        )`;
+       )`;
     };
     translate(v: Vect2): Mat3 {
         const

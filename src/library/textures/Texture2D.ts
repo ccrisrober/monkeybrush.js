@@ -57,7 +57,7 @@ class Texture2D extends Texture {
             this._format_, // Format
             this._type_, // Size of each channel
             data
-        );
+       );
 
         this.minFilter(options.minFilter || TextureType.Nearest);
         this.magFilter(options.minFilter || TextureType.Nearest);

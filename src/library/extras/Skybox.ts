@@ -24,6 +24,8 @@ import { ResourceMap } from "../resources/ResourceMap";
 import { CubeMapTexture } from "../textures/CubemapTexture";
 import { GlobalState } from "../core/GlobalState";
 
+import { Mat4 } from "../maths/Mat4";
+
 import { VertexBuffer } from "../core/VertexBuffer";
 import { VertexArray } from "../core/VertexArray";
 
@@ -38,26 +40,32 @@ import { ProgramCte, ComparisonFunc, UsageType, BufferType }
  */
 class Skybox {
     /**
-     * [_VertexArray description]
+     * Internal VertexArray
      * @type {VertexArray}
      */
     protected _VertexArray: VertexArray;
     /**
-     * [_VertexBuffer description]
+     * Internal VertexBuffer
      * @type {VertexBuffer}
      */
     protected _VertexBuffer: VertexBuffer;
     /**
-     * [_prog description]
+     * Internal program that draw skybox
      * @type {Program}
      */
     protected _prog: Program;
     /**
-     * [CubeMapTexture description]
+     * Internal CubeMap texture
      * @type {CubeMapTexture}
      */
     protected CubeMapTexture: CubeMapTexture;
-    get texture(): CubeMapTexture { return this.CubeMapTexture; }
+    /**
+     * Return internal CubeMap texture
+     * @return {CubeMapTexture}
+     */
+    get texture(): CubeMapTexture {
+        return this.CubeMapTexture;
+    };
     /**
      * Skybox constructor
      * @param {string} dir Skybox directory (without "/")
@@ -187,8 +195,13 @@ class Skybox {
         this._loadCubemap(faces);
 
         this._VertexArray.unbind();
-    }
-    public render(view, projection) {
+    };
+    /**
+     * Render skybox using given view and projetion mat4
+     * @param {Mat4} view       View matrix
+     * @param {Mat4} projection Projection matrix
+     */
+    public render(view: Mat4, projection: Mat4) {
         const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
         let currDepthComp = GlobalState.getCurrentDepthComparisonFunc();
@@ -210,14 +223,15 @@ class Skybox {
 
         GlobalState.setDepthComparisonFunc(currDepthComp);
     }
-    /**
-     *
-     */
+   /**
+    * Destroy skybox.
+    */
     public destroy() {
         this.CubeMapTexture.destroy();
     }
     /**
-     * @param {Array<string>}
+     * Loads all cubemaps faces.
+     * @param {Array<string>} faces Array of image routes.
      */
     protected _loadCubemap(faces: Array<string>) {
         this.CubeMapTexture = new CubeMapTexture();

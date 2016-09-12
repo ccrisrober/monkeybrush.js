@@ -76,7 +76,7 @@ class Framebuffer {
             gl.framebufferTexture2D(gl.FRAMEBUFFER,
                 DrawBuffer.ColorAttach0 + i,
                 target,
-                texture.handle(), 0);
+                texture.handler, 0);
 
             texture.unbind();    // TODO: Unbind debería ser un abstract de texture
         });
@@ -88,7 +88,7 @@ class Framebuffer {
                 size,
                 gl.DEPTH_COMPONENT16,
                 gl.DEPTH_ATTACHMENT
-            );
+           );
         }
 
         /**
@@ -120,7 +120,7 @@ class Framebuffer {
                 size,
                 gl.STENCIL_INDEX,
                 gl.STENCIL_ATTACHMENT
-            );
+           );
         }
         /**/
 
@@ -160,7 +160,7 @@ class Framebuffer {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         // gl.bindTexture(gl.TEXTURE_2D, texture2);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-            gl.TEXTURE_2D, tex.handle, 0);
+            gl.TEXTURE_2D, tex.handler, 0);
     };
     /**
      * Check if framebuffer is valid
@@ -169,7 +169,7 @@ class Framebuffer {
     public isValid(): boolean {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         this.bind();
-        this._valid = ( gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE );
+        this._valid = (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE);
         this.unbind();
         return this._valid;
     };
