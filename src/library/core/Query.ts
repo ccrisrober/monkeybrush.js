@@ -27,8 +27,10 @@ import { QueryTarget , QueryParams } from "../constants/Constants";
 
 /**
  * Query class.
- * Provideways to asynchronously query for information.
  * @class Query
+ *
+ * Query Objects are objects that are used for asynchronous
+ *     queries of certain kinds of information.
  */
 class Query {
     protected _handle: WebGLQuery;

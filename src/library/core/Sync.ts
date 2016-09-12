@@ -29,10 +29,19 @@ import { SyncCondition, SyncStatus, SyncType, SyncWaitResult }
 /**
  * Sync class
  * @class Sync
+ *
+ * Sync Objects are objects that are used to synchronize
+ * the activity between the GPU and the application.
+ * glFinish​ is a start to synchronization,
+ * but sync objects allow for much finer grained control.
  */
 class Sync {
     protected _handle: WebGLSync;
 
+    /**
+     * Sync constructor
+     * @param {SyncCondition = SyncCondition.GPUCommandsComplete} condition Sync condition
+     */
     constructor(condition: SyncCondition = SyncCondition.GPUCommandsComplete) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         this._handle = gl.fenceSync(condition, 0);

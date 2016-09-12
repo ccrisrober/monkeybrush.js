@@ -29,12 +29,30 @@ namespace Easing {
     const PI_2 = Math.PI / 2.0;
     // Sine functions
     export namespace sine {
+        /**
+         * Easing equation for a sinusoidal (sin(t)) ease-in,
+         * accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             return Math.sin(PI_2 * t);
         };
+        /**
+         * Easing equation for a sinusoidal (sin(t)) ease-out,
+         *     decelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             return 1.0 + Math.sin(PI_2 * (--t));
         };
+        /**
+         * Easing equation for a sinusoidal (sin(t)) ease-in/out,
+         *     accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             return 0.5 * (1.0 + Math.sin(Math.PI * (t - 0.5)));
         };
@@ -42,12 +60,31 @@ namespace Easing {
 
     // Quad functions
     export namespace quad {
+        /**
+         * Easing equation for a quadratic (t^2) ease-in,
+         *     accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             return t * t;
         };
+        /**
+         * Easing equation for a quadratic (t^2) ease-out,
+         *     decelerating to zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             return t * (2.0 - t);
         };
+        /**
+         * Easing equation for a quadratic (t^2) ease-in/out,
+         *     accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
+
         export function easeInOut(t: number): number {
             return t < 0.5 ? 2.0 * t * t : t * (4.0 - 2.0 * t) - 1;
         };
@@ -55,12 +92,30 @@ namespace Easing {
 
     // Cubic functions
     export namespace cubic {
+        /**
+         * Easing equation function for a cubic (t^3) ease-in,
+         *     accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             return t * t * t;
         };
+        /**
+         * Easing equation for a cubic (t^3) ease-out,
+         * decelerating to zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             return 1 + (--t) * t * t;
         };
+        /**
+         * Easing equation for a cubic (t^3) ease-in/out,
+         *     accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             return t < 0.5 ? 4.0 * t * t * t : 1.0 + (--t) *
                     (2.0 * (--t)) * (2.0 * t);
@@ -69,14 +124,32 @@ namespace Easing {
 
     // Quart functions
     export namespace quart {
+        /**
+         * Easing equation for a quartic (t^4) ease-in,
+         * accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             t *= t;
             return t * t;
         };
+        /**
+         * Easing equation for a quartic (t^4) ease-out,
+         *     decelerating to zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             t = (--t) * t;
             return 1.0 - t * t;
         };
+        /**
+         * Easing equation for a quartic (t^4) ease-in/out,
+         * accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             if (t < 0.5) {
                 t *= t;
@@ -90,14 +163,32 @@ namespace Easing {
 
     // Quint functions
     export namespace quint {
+        /**
+         * Easing equation function for a quintic (t^5) ease-in,
+         *     accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             const t2: number = t * t;
             return t * t2 * t2;
         };
+        /**
+         * Easing equation for a quintic (t^5) ease-out,
+         *     decelerating to zero velocity..
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             const t2: number = (--t) * t;
             return 1.0 + t * t2 * t2;
         };
+        /**
+         * Easing equation for a quintic (t^5) ease-in/out,
+         *     accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             let t2: number;
             if (t < 0.5) {
@@ -112,12 +203,30 @@ namespace Easing {
 
     // Expo functions
     export namespace expo {
+        /**
+         * Easing equation for an exponential (2^t) ease-in,
+         *     accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             return (Math.pow(2.0, 8.0 * t) - 1.0) / 255.0;
         };
+        /**
+         * Easing equation for an exponential (2^t) ease-out,
+         *     decelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             return 1 - Math.pow(2.0, -8.0 * t);
         };
+        /**
+         * Easing equation for an exponential (2^t) ease-in/out,
+         *     accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             if (t < 0.5) {
                 return (Math.pow(2.0, 16.0 * t) - 1.0) / 510.0;
@@ -129,12 +238,30 @@ namespace Easing {
 
     // Circ functions
     export namespace circ {
+        /**
+         * Easing equation for a circular (sqrt(1-t^2)) ease-in,
+         *     accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             return 1.0 - Math.sqrt(1.0 - t);
         };
+        /**
+         * Easing equation for a circular (sqrt(1-t^2)) ease-out,
+         *     decelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             return Math.sqrt(t);
         };
+        /**
+         * Easing equation for a circular (sqrt(1-t^2)) ease-in/out,
+         *     accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             if (t < 0.5) {
                 return (1.0 - Math.sqrt(1.0 - 2.0 * t)) * 0.5;
@@ -146,12 +273,31 @@ namespace Easing {
 
     // Back functions
     export namespace back {
+        /**
+         * Easing equation for a back (overshooting cubic easing:
+         *     (s+1)*t^3 - s*t^2) ease-in, accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             return t * t * (2.70158 * t - 1.70158);
         };
+        /**
+         * Easing equation for a back (overshooting cubic easing:
+         *     (s+1)*t^3 - s*t^2) ease-out, decelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             return 1.0 + (--t) * t * (2.70158 * t + 1.70158);
         };
+        /**
+         *  Easing equation for a back (overshooting cubic easing:
+         *      (s+1)*t^3 - s*t^2) ease-in/out, accelerating until halfway,
+         *      then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             if (t < 0.5) {
                 return t * t * (7.0 * t - 2.5) * 2.0;
@@ -163,14 +309,33 @@ namespace Easing {
 
     // Elastic functions
     export namespace elastic {
+        /**
+         * Easing equation for an elastic (exponentially decaying
+         *     sine wave) ease-in, accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             const t2: number = t * t;
             return t2 * t2 * Math.sin(t * Math.PI * 4.5);
         };
+        /**
+         * Easing equation for an elastic (exponentially decaying
+         *     sine wave) ease-out, decelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             const t2: number = (t - 1.0) * (t - 1.0);
             return 1.0 - t2 * t2 * Math.cos(t * Math.PI * 4.5);
         };
+        /**
+         * Easing equation for an elastic (exponentially decaying
+         *     sine wave) ease-out/in, decelerating until halfway,
+         *     then accelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             let t2: number;
             if (t < 0.45) {
@@ -187,12 +352,30 @@ namespace Easing {
 
     // Bounce functions
     export namespace bounce {
+        /**
+         * Easing equation for a bounce (exponentially decaying parabolic
+         *     bounce) ease-in, accelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeIn(t: number): number {
             return Math.pow(2.0, 6.0 * (t - 1.0)) * Math.abs(Math.sin(t * Math.PI * 3.5));
         };
+        /**
+         * Easing equation for a bounce (exponentially decaying parabolic
+         *     bounce) ease-out, decelerating from zero velocity.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeOut(t: number): number {
             return 1.0 - Math.pow(2.0, -6.0 * t) * Math.abs(Math.cos(t * Math.PI * 3.5));
         };
+        /**
+         * Easing equation for a bounce (exponentially decaying parabolic
+         *     bounce) ease-in/out, accelerating until halfway, then decelerating.
+         * @param  {number} t Time
+         * @return {number}
+         */
         export function easeInOut(t: number): number {
             if (t < 0.5) {
                 return 8.0 * Math.pow(2.0, 8.0 * (t - 1.0)) * Math.abs(Math.sin(t * Math.PI * 7.0));

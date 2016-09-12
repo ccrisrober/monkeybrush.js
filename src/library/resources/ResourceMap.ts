@@ -24,50 +24,76 @@
 
 namespace ResourceMap {
     export class MapEntry {
-        public _asset: string;
-        public _refCount: number;
+        protected _asset: string;
+        protected _refCount: number;
+        /**
+         * MapEntry constructor
+         * @param {string} resName Resource name
+         */
         constructor(resName: string) {
             this._asset = resName;
             this._refCount = 1;
-        }
-        public getAsset(): string { return this._asset; }
+        };
+        /**
+         * Return asset name
+         * @return {string} [description]
+         */
+        public getAsset(): string {
+            return this._asset;
+        };
+        /**
+         * Set asset name
+         * @param {string} name New asset name
+         */
         public setAsset(name: string) {
             this._asset = name;
-        }
+        };
+        /**
+         * Return asset counter
+         * @return {number} Number of uses of this asset
+         */
         public count(): number {
             return this._refCount;
-        }
+        };
+        /**
+         * Increment asset counter.
+         */
         public incCount() {
             this._refCount++;
-        }
+        };
+        /**
+         * Decrement asset counter.
+         */
         public decCount() {
             this._refCount--;
-        }
-    }
+        };
+    };
     /**
-     * [_numOutstandingLoads description]
+     * Number of resources per load.
      * @type {number}
      */
     let _numOutstandingLoads: number = 0;
     /**
-     * [_loadCompleteCallback description]
+     * All resources finished loading callback.
      * @type {Function}
      */
     let _loadCompleteCallback: Function = null;
     /**
      * [MapEntry description]
-     * @type {[type]}
+     * @type {[key: string]: MapEntry;}
      */
     export let _ResourceMap: { [ key: string ]: MapEntry; } = {};
     /**
-     * @param {string}
+     * Create an asynchronous request to load a resource.
+     * @param {string} resName Resource name.
      */
     export function asyncLoadRequested(resName: string) {
         _ResourceMap[resName] = new MapEntry(resName);
         ++_numOutstandingLoads;
     };
     /**
-     * @param {string}
+     * Ends resource load with failed.
+     * @param {string} resName Resource name.
      */
     export function asyncLoadFailed(resName: string) {
         VanillaToasts.create({
@@ -80,10 +106,11 @@ namespace ResourceMap {
         _checkForAllLoadCompleted();
     }
     /**
-     * @param {string}
-     * @param {[type]}
+     * Calling this function when the resource is loaded correctly.
+     * @param {string} resName     Resource name.
+     * @param {any} loadedAsset Resource object.
      */
-    export function asyncLoadCompleted(resName: string, loadedAsset) {
+    export function asyncLoadCompleted(resName: string, loadedAsset: any) {
         if (!isAssetLoaded(resName)) {
             VanillaToasts.create({
                 title: `asyncLoadCompleted: [${resName}] not in map!`,
@@ -103,7 +130,7 @@ namespace ResourceMap {
         _checkForAllLoadCompleted();
     };
     /**
-     *
+     * Check if all resources are loaded.
      */
     function _checkForAllLoadCompleted() {
         if ((_numOutstandingLoads === 0) && (_loadCompleteCallback !== null)) {
@@ -113,7 +140,8 @@ namespace ResourceMap {
         }
     };
     /**
-     * Set callback function that called when all assets have finished loading.
+     * Set callback function that called when all assets
+     *     have finished loading.
      * @param {Function}
      */
     export function setLoadCompleteCallback(fn) {
@@ -121,7 +149,7 @@ namespace ResourceMap {
         _checkForAllLoadCompleted();
     };
     /**
-     * Get asset from alias/name
+     * Return asset from alias/name
      * @param  {string} resName [description]
      * @return {any}
      */

@@ -20,10 +20,18 @@
 
 import { Core } from "./Core";
 import { SamplerParams } from "./interfaces";
+import { SamplerParameter } from "../constants/Constants";
 
 "use strict";
 
 
+/**
+ * Sampler class.
+ * @class Sampler
+ *
+ * Sampler Object are objects that stores the sampling
+ *     parameters for a Texture access inside of a shader.
+ */
 // TODO: Added this to textures
 class Sampler {
     public _handle: WebGLSampler;
@@ -31,6 +39,10 @@ class Sampler {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         this._handle = gl.createSampler();
     };
+    /**
+     * Set a list of texture parameters (filters, wraps, LOD, ...)
+     * @param {SamplerParams} params SamplerParams interface
+     */
     public setParams(params: SamplerParams) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         if (params.minFilter) {
@@ -65,7 +77,7 @@ class Sampler {
         }
     };
     /**
-     * [bind description]
+     * Bind (active) sampler
      * @param {number} unit Specifying the index of the texture
      *                       to which to bind the sampler
      */
@@ -73,26 +85,52 @@ class Sampler {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.bindSampler(unit, this._handle);
     };
+    /**
+     * Unbind (disable) sampler
+     * @param {number} unit Specifying the index of the texture
+     *                       to which to unbind the sampler
+     */
     public unbind(unit: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.bindSampler(unit, null);
     };
-    public parameteri(name: number, param: number) {
+    /**
+     * Set a unique texture parameter
+     * @param {SamplerParameter} name  Parameter name
+     * @param {number} param Parameter value
+     */
+    public parameteri(name: SamplerParameter, param: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.samplerParameteri(this._handle, name, param);
     };
-    public parameterf(name: number, param: number) {
+    /**
+     * Set a unique texture parameter
+     * @param {SamplerParameter} name  Parameter name
+     * @param {number} param Parameter value
+     */
+    public parameterf(name: SamplerParameter, param: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.samplerParameterf(this._handle, name, param);
     };
-    public getParameter(name: number) {
+    /**
+     * Return parameter for this sampler object.
+     * @param {SamplerParameter} name  Parameter name
+     */
+    public getParameter(name: SamplerParameter) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         return gl.getSamplerParameter(this._handle, name);
     };
+    /**
+     * Destroy sampler object.
+     */
     public destroy() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.deleteSampler(this._handle);
     };
+    /**
+     * Return if this sampler is a valid sampler.
+     * @return {boolean}
+     */
     public isValid(): boolean {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         return gl.isSampler(this._handle);

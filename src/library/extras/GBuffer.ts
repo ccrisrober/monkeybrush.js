@@ -30,11 +30,12 @@ import { TextureFormat, TextureType } from "../constants/Constants";
 
 /**
  * GBuffer class
+ * This class lets you use deferred shading technique.
  * @class GBuffer
  */
 class GBuffer {
     /**
-     * [Framebuffer description]
+     * Framebuffer handler
      * @type {Framebuffer}
      */
     protected Framebuffer: Framebuffer;

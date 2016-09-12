@@ -25,12 +25,12 @@ import { Vect3 } from "../maths/Vect3";
 
 /**
  * Point light class
- * @class PointLight
  *
  * Point light is light that is being emitted from a point,
  * radiating in all directions. This is how many real-world
  * light sources usually work. A light bulb emits light
  * in all directions, for example.
+ * @class PointLight
  */
 class PointLight extends Light {
     /**

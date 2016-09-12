@@ -26,7 +26,10 @@ import { BufferAttribute } from "../extras/VertexBufferGeometry";
 "use strict";
 
 /**
- * Lathe class
+ * Lathe class.
+ *
+ * This class is using for generating meshes with axial symetry.
+ * Examples: Vases, pipes, ...
  * @class Lathe
  */
 class Lathe extends Drawable {

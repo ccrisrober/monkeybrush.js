@@ -29,6 +29,13 @@ import { DrawBuffer } from "../constants/Constants";
 "use strict";
 
 // TODO: Blit FBO (https://www.opengl.org/wiki/Framebuffer#Blitting)
+/**
+ * Framebuffer class
+ * @class Framebuffer
+ *
+ * A framebuffer is a collection of buffers that can be
+ * used as the destination for rendering.
+ */
 class Framebuffer {
     protected _size: Vect2;
     protected _handle: WebGLFramebuffer;
@@ -133,29 +140,43 @@ class Framebuffer {
         }
         this._valid = true;
         this.unbind();
-    }
+    };
+    /**
+     * Enable default framebuffer
+     */
     public static RestoreDefaultFBO() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    }
+    };
+    /**
+     * Replace a texture on the other in an existing framebuffer attachment
+     * @param {Texture} tex    New texture
+     * @param {number}  attach Attachment index [0, 15]
+     */
     public replaceTexture(tex: Texture, attach: number) {
-      if (attach > this._attachments.length) {
-        throw new Error("Attachment undefined");
-      }
-      const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-      // gl.bindTexture(gl.TEXTURE_2D, texture2);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-        gl.TEXTURE_2D, tex.handle, 0);
-    }
-
+        if (attach > this._attachments.length) {
+            throw new Error("Attachment undefined");
+        }
+        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // gl.bindTexture(gl.TEXTURE_2D, texture2);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+            gl.TEXTURE_2D, tex.handle, 0);
+    };
+    /**
+     * Check if framebuffer is valid
+     * @return {boolean} True if correct framebuffer
+     */
     public isValid(): boolean {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         this.bind();
         this._valid = ( gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE );
         this.unbind();
         return this._valid;
-    }
-
+    };
+    /**
+     * Return framebuffer status
+     * @param {number} status
+     */
     private checkStatus(status: number) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         switch (status) {
@@ -170,13 +191,17 @@ class Framebuffer {
             default:
                 throw new Error("Framebuffer: Framebuffer failed for unspecified reason");
         }
-    }
-
+    };
+    /**
+     * Bind (active) this framebuffer
+     */
     public bind() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
-    }
-
+    };
+    /**
+     * Bind (active) all textures asociated to this framebuffer
+     */
     public onlyBindTextures() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -184,10 +209,18 @@ class Framebuffer {
             tex.bind(idx);
         });
     };
+    /**
+     * Unbind (disable) this framebuffer.
+     * Enable default framebuffer
+     */
     public unbind() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     };
+    /**
+     * Rebuild framebuffer base in a new size
+     * @param {Vect2} size New framebuffer size
+     */
     public rebuild(size: Vect2) {
         if (!size.exactEquals(this._size)) {
             // TODO
@@ -202,6 +235,9 @@ class Framebuffer {
             }
         }
     };
+    /**
+     * Destroy framebuffer and asociated textures.
+     */
     public destroy() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         let oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
@@ -228,9 +264,6 @@ class Framebuffer {
             this._depth = null;
         }
     };
-    public blit(fbo: Framebuffer) {
-        // TODO: gl.blitFramebuffer()
-    }
 };
 
 export { Framebuffer };

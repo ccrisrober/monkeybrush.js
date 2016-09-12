@@ -39,7 +39,7 @@ class ProgramManager {
      */
     static _progDictionary: { [ key: string ]: Program; } = {};
     /**
-     * Get Program from name
+     * Return cached program from name
      * @param  {string} name: Program name
      * @return {Program}
      */
@@ -51,7 +51,7 @@ class ProgramManager {
         return prog;
     }
     /**
-     * Execute a callback function using the specified Program (name).
+     * Execute a callback function using the specified program (name).
      * @param  {string} name: Program name
      * @param {ProgramUseCallback}: Function to execute
      */
@@ -63,9 +63,10 @@ class ProgramManager {
         cb(prog);
     }
     /**
-     * Add a new Program with his name and a function that creates the Program.
+     * Add a new Program with his name and a function that creates the program.
      * @param {string} name: Program name
-     * @param {ProgramCallback}: Function that creates the Program (return Program)
+     * @param {ProgramCallback}: Function that creates the program
+     *                                    (return program)
      */
     public static addWithFun(name: string, fn: ProgramCallback) {
         this.add(name, fn());
@@ -73,7 +74,7 @@ class ProgramManager {
     /**
      * Add a existing Program with his name and the Program.
      * @param {string} name: Program name.
-     * @param {Program} prog: Existing Program.
+     * @param {Program} prog: Existing program.
      */
     public static add(name: string, prog: Program) {
         if (!prog) {
@@ -82,7 +83,7 @@ class ProgramManager {
         this._progDictionary[name] = prog;
     }
     /**
-     * Destroy all Programs and clear cache.
+     * Destroy all programs and clear cache.
      */
     public static destroy() {
         for (let key in this._progDictionary) {

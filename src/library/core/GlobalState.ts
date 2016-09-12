@@ -24,6 +24,13 @@ import { Vector4 } from "../maths/Vector4";
 import { BlendingEq, BlendingType, ComparisonFunc, FaceSide, StencilOp }
     from "../constants/Constants";
 
+/**
+ * GlobalState class
+ * @class GlobalState
+ *
+ * This class is used to manage the WebGL state
+ *     machine through a common API.
+ */
 class GlobalState {
     static _bgColor: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);
     static _currentColorMask: Vector4<boolean> = new Vector4<boolean>(true, true, true, true);

@@ -29,6 +29,13 @@
  * @namespace Geometry
  */
 namespace Geometry {
+    /**
+     * Return triangle centroid (geometry center).
+     * @param  {Float32Array} v1 First triangle vertex.
+     * @param  {Float32Array} v2 Second triangle vertex.
+     * @param  {Float32Array} v3 Third triangle vertex.
+     * @return {Float32Array}    Centroid position of given triangle
+     */
     export function triangleCentroid(
         v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array {
 
@@ -43,6 +50,13 @@ namespace Geometry {
 
         return res;
     };
+    /**
+     * Return triangle incenter.
+     * @param  {Float32Array} v1 First triangle vertex.
+     * @param  {Float32Array} v2 Second triangle vertex.
+     * @param  {Float32Array} v3 Third triangle vertex.
+     * @return {Float32Array}    Incenter position of given triangle
+     */
     export function triangleIncenter(
         v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array {
 
@@ -106,6 +120,11 @@ namespace Geometry {
         lower.pop();
         return lower.concat(upper);
     };
+    /**
+     * Return a convex hull from 1D points list
+     * @param  {ArrayLike<number>} points Point list
+     * @return {Array<number>}            [description]
+     */
     export function convexHull1D(points: ArrayLike<number>): Array<number> {
         let lo: number = 0;
         let hi: number = 0;
@@ -125,7 +144,16 @@ namespace Geometry {
             return [lo];
         }
     };
-    export function removeOrphanVertices(positions: Array<Array<number>>, indices: Array<Array<number>>) {
+    /**
+     * Return a new vertices and indices list removed orphan vertices
+     * @param  {Array<Array<number>>} positions Positions list
+     * @param  {Array<Array<number>>} indices   Indices list
+     * @return {Object}                         New indices (indices)
+     *                                              and positions (positions)
+     */
+    export function removeOrphanVertices(positions: Array<Array<number>>,
+        indices: Array<Array<number>>): Object {
+
         let newPositions = [];
         let indexLookUp = {};
 

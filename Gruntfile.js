@@ -46,7 +46,7 @@ module.exports = function (grunt) {
                     externalPattern: "node_modules",
                     theme: "minimal"
                 },
-                src: ['./lib/**/*']
+                src: ['./src/**/*']
             }
         }
     });
@@ -54,7 +54,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-typedoc');
 
-    grunt.registerTask("default", ["typescript", "typescript", "watch"]);
+    //grunt.registerTask("default", ["typescript", "typescript", "watch"]);
 
     grunt.registerTask("parseobj", "", function(fileRoute) {
         var done = this.async();

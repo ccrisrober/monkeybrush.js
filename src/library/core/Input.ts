@@ -151,13 +151,24 @@ class Input {
     protected static _isKeyClicked: Array<boolean> = [];
     private static _instance: Input;
 
-
+    /**
+     * OnKeyDown canvas callback
+     * @param {KeyboardEvent} ev [description]
+     */
     protected static _onKeyDown(ev: KeyboardEvent) {
         this._isKeyPressed[ev.keyCode] = true;
     };
+    /**
+     * OnKeyUp canvas callback
+     * @param {KeyboardEvent} ev [description]
+     */
     protected static _onKeyUp(ev: KeyboardEvent) {
         this._isKeyPressed[ev.keyCode] = false;
     };
+    /**
+     * OnMouseMove canvas callback
+     * @param {KeyboardEvent} ev [description]
+     */
     protected static _onMouseMove(ev: MouseEvent): boolean {
         let inside = false;
 
@@ -178,11 +189,19 @@ class Input {
         }
         return inside;
     };
+    /**
+     * OnMouseDown canvas callback
+     * @param {KeyboardEvent} ev [description]
+     */
     protected static _onMouseDown(ev: MouseEvent) {
         if (this._onMouseMove(ev)) {
             this._isButtonPressed[ev.button] = true;
         }
     };
+    /**
+     * OnMouseUp canvas callback
+     * @param {KeyboardEvent} ev [description]
+     */
     protected static _onMouseUp(ev: MouseEvent) {
         this._onMouseMove(ev);
         this._isButtonPressed[ev.button] = false;

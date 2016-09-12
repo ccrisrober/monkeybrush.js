@@ -24,15 +24,15 @@ import { Core } from "../core/Core";
 
 namespace Extensions {
     /**
-     * [_Extensions description]
-     * @type {Object}
+     * Cache extensions
      */
     let _Extensions = {};
     /**
-     * [get description]
-     * @param {string} name [description]
+     * Return a specific extension.
+     * @param {string} name Extension name
+     * @return {any} Extension (null if undefined)
      */
-    export function get(name: string) {
+    export function get(name: string): any {
         if (name in _Extensions) {
             return _Extensions[name];
         }

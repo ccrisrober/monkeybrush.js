@@ -25,13 +25,13 @@ import { Vect3 } from "../maths/Vect3";
 
 /**
  * Directional light class
- * @class DirectionalLight
  *
  * Directional light is light that is emitted from a
  * specific direction.
  * This is light that's coming from so far away that every
  * photon is moving parallel to every other photon.
  * Sunlight, for example, is directional light.
+ * @class DirectionalLight
  */
 class DirectionalLight extends Light {
     /**

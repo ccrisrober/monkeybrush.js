@@ -236,6 +236,17 @@ enum RenderType {
     TriangleStrip = 0x0005,
     TriangleFan = 0x0006,
 };
+enum SamplerParameter {
+    TextureCompareFunc = 0x884D,
+    TextureCompareMode = 0x884C,
+    TextureMinFilter = 0x2801,
+    TextureMinLOD = 0x813A,
+    TextureMagFilter = 0x2800,
+    TextureMaxLOD = 0x813B,
+    TextureWrapR = 0x8072,
+    TextureWrapS = 0x2802,
+    TextureWrapT = 0x2803
+};
 enum ShadingMode {
     None,
     Smooth,
@@ -347,7 +358,7 @@ enum WrapMode {
 export {
     BlendingEq, BlendingMode, BlendingType, BufferType, ComparisonFunc,
     CompressedTex, DataType, DrawBuffer, FaceDir, FaceSide,
-    PixelType, ProgramCte, QueryParams, QueryTarget, RenderType,
+    PixelType, ProgramCte, QueryParams, QueryTarget, RenderType, SamplerParameter,
     ShadingMode, StencilOp, SyncCondition, SyncStatus, SyncType,
     SyncWaitResult, TextureFormat, TextureTarget, TextureType,
     TFMode, TFPrimitive, TFTarget, UsageType, WrapMode

@@ -25,7 +25,6 @@ import { Vect3 } from "../maths/Vect3";
 
 /**
  * Spot light class
- * @class SpotLight
  *
  * A spotlight is a light source that is located somewhere
  * in the environment that, instead of shooting light rays
@@ -33,6 +32,7 @@ import { Vect3 } from "../maths/Vect3";
  * The result is that only the objects within a certain radius of
  * the spotlight's direction are lit and everything else stays dark.
  * A good example of a spotlight would be a street lamp or a flashlight.
+ * @class SpotLight
  */
 class SpotLight extends Light {
     /**

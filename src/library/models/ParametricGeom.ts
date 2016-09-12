@@ -24,6 +24,8 @@ import { Drawable } from "./Drawable";
 
 "use strict";
 
+// Code based on http://prideout.net/blog/?p=44 ideas
+
 /**
  * ParametricGeom class
  * @class ParametricGeom

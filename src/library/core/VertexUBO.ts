@@ -24,8 +24,18 @@ import { Core } from "../core/Core";
 
 declare var WebGL2RenderingContext: any;
 
+/**
+ * VertexUBO class
+ * @class VertexUBO
+ *
+ * Such buffers can send information to programs (in block form)
+ * more efficiently than variables uniform manner.
+ */
 class VertexUBO {
-
+    /**
+     * Uniform Buffer Object handler.
+     * @type {WebGLBuffer}
+     */
     protected _handle: WebGLBuffer;
     protected _index: number;
     // TODO: A futuro usar el Program y no
@@ -42,6 +52,9 @@ class VertexUBO {
             this._index = blockBindIdx;
         }
     };
+    /**
+     * Bind Uniform Buffer Object.
+     */
     public bind() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
@@ -54,6 +67,10 @@ class VertexUBO {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         gl.bindBufferBase(gl.UNIFORM_BUFFER, this._index, this._handle);
     };
+    /**
+     * Update UBO values.
+     * @param {Float32Array} data [description]
+     */
     public update(data: Float32Array) {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
@@ -63,6 +80,9 @@ class VertexUBO {
             gl.bindBufferBase(gl.UNIFORM_BUFFER, this._index, this._handle);
         }
     };
+    /**
+     * Unbind Uniform Buffer Object.
+     */
     public unbind() {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         if (gl instanceof WebGL2RenderingContext) {
@@ -70,6 +90,9 @@ class VertexUBO {
             return;
         }
     };
+    /**
+     * Destroy UBO object.
+     */
     public destroy() {
         this.bind();
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -78,6 +101,10 @@ class VertexUBO {
             return;
         }
     };
+    /**
+     * Returns if the current context allows use UBO.
+     * @return {boolean} True if allows use UBO.
+     */
     public static isSupported(): boolean {
         const gl: WebGL2RenderingContext = Core.getInstance().getGL();
         return gl instanceof WebGL2RenderingContext;
