@@ -6,7 +6,7 @@ let SimpleConfig = function() {
     return {
         max: 5,
         resume: true,
-        render: "1"
+        render: "0"
     };
 };
 
@@ -112,15 +112,33 @@ class MyScene extends MonkeyBrush.Scene {
                 break;
         }
 
-        this.model =
+        let varvar = this.text.max;
+        for (i = -varvar; i < varvar; i += 5.0) {
+            for (j = -varvar; j < varvar; j += 5.0) {
+                for (k = -varvar; k < varvar; k += 5.0) {
+                dd *= -1;
+                this.model =
+                    this.identityMatrix.clone()
+                        .translate(new MonkeyBrush.maths.Vect3(i * 1.0, j * 1.0, k * 1.0))
+                        .rotate(90.0 * Math.PI / 180, MonkeyBrush.maths.Vect3.yAxis)
+                        .rotate(this.angle * 0.5 * dd, MonkeyBrush.maths.Vect3.yAxis)
+                        .scale(new MonkeyBrush.maths.Vect3(0.25, 0.25, 0.25));
+                prog.sendUniformMat4("model", this.model);
+                // console.log(this.identityMatrix._value);
+                this.cubito[mode]();
+                }
+            }
+        }
+
+        /*this.model =
             this.identityMatrix.clone()
                 .translate(new MonkeyBrush.maths.Vect3(i * 1.0, j * 1.0, k * 1.0))
                 .rotate(90.0 * Math.PI / 180, MonkeyBrush.maths.Vect3.yAxis)
                 .rotate(this.angle * 0.5 * dd, MonkeyBrush.maths.Vect3.yAxis)
-                .scale(new MonkeyBrush.maths.Vect3(0.25, 0.25, 0.25));
+                .scale(new MonkeyBrush.maths.Vect3(1.25, 1.25, 1.25));
         prog.sendUniformMat4("model", this.model);
         // console.log(this.identityMatrix._value);
-        this.cubito[mode]();
+        this.cubito[mode]();*/
         this.skybox.render(this.view, this.projection);
     }
     public pos = 0;

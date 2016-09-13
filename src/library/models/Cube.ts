@@ -144,7 +144,7 @@ class Cube extends Drawable {
             20, 21, 22, 20, 22, 23
         ]));
 
-        this.createWireframe();
+        // this.createWireframe();
 
         this._handle = [];
         this._vao.bind();

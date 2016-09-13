@@ -42,7 +42,9 @@ module.exports = {
     ],
     module: {
         loaders: [
-            { test: /\.tsx?$/, loaders: ['babel', 'ts-loader'] }
+            {
+                test: /\.tsx?$/, loaders: [/*'babel', */'ts-loader']
+            }
         ]
     },
     // Individual Plugin Options

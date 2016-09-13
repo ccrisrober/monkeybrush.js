@@ -29,12 +29,17 @@ if (Number.defaultIOR === undefined) {
 
 if (Math["degree"] === undefined) {
     Math["degree"] = Math.PI / 180.0;
-}
+};
 if (Math["toRadian"] === undefined) {
     Math["toRadian"] = function(a) {
         return a * Math["degree"];
     };
-}
+};
+if (Math["trunc"] === undefined) {
+    Math["trunc"] = function(x) {
+        return x - x % 1;
+    };
+};
 /*
 Element.prototype.remove = function() {
     this.parentElement.removeChild(this);

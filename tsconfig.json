@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "declaration": false,
-    "module": "es6",
-    "target": "es6",
+    "module": "es5",
+    "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,

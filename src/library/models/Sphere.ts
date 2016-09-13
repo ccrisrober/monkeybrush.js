@@ -36,8 +36,8 @@ class Sphere extends Drawable {
     constructor(radius: number, slices: number, stacks: number) {
         super();
 
-        slices = Math.trunc(slices);
-        stacks = Math.trunc(stacks);
+        slices = Math["trunc"](slices);
+        stacks = Math["trunc"](stacks);
 
         let nv = (slices + 1) * (stacks + 1);
         let elements = (slices * 2 * (stacks - 1)) * 3;

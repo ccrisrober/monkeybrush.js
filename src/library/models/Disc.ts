@@ -42,8 +42,8 @@ class Disc extends Drawable {
             throw Error("divisions must be 3 or greater");
         }
 
-        divisions = Math.trunc(divisions);
-        stacks = Math.trunc(stacks);
+        divisions = Math["trunc"](divisions);
+        stacks = Math["trunc"](stacks);
 
         const nv = 0;
 
