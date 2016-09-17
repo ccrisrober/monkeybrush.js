@@ -17,19 +17,22 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"use strict";
 
-namespace SourceFrags {
-    export function parse(str: string): string {
-        const regex = /#import +<([\w\d.]+)>/g;
-        function replace(match: string, include: string): string {
-            const replace = SourceFrags[include];
-            if (replace === undefined) {
-                throw new Error(`Can not resolve #import <${include}>`);
+namespace MB {
+    export namespace extras {
+        export namespace SourceFrags {
+            export function parse(str: string): string {
+                const regex = /#import +<([\w\d.]+)>/g;
+                function replace(match: string, include: string): string {
+                    const replace = SourceFrags[include];
+                    if (replace === undefined) {
+                        throw new Error(`Can not resolve #import <${include}>`);
+                    }
+                    return parse(replace);
+                }
+                return str.replace(regex, replace);
             }
-            return parse(replace);
-        }
-        return str.replace(regex, replace);
-    }
+        };
+    };
 };
-
-export { SourceFrags };

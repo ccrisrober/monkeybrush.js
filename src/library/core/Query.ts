@@ -17,91 +17,87 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Core } from "./Core";
-
-import { QueryTarget , QueryParams } from "../constants/Constants";
-
 "use strict";
 
-
-/**
- * Query class.
- * @class Query
- *
- * Query Objects are objects that are used for asynchronous
- *     queries of certain kinds of information.
- */
-class Query {
-    protected _handle: WebGLQuery;
-    /**
-     * Query constructor
-     */
-    constructor() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        this._handle = gl.createQuery();
-    };
-    /**
-     * Delete query object
-     */
-    public destroy() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.deleteQuery(this._handle);
-    };
-    /**
-     * Start the asynchronous query.
-     * @param {QueryTarget} target Indicate which kind of query to begin.
-     */
-    public begin(target: QueryTarget) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.beginQuery(target, this._handle);
-    };
-    /**
-     * Marks the end of a given query target.
-     * @param {QueryTarget} target Specifying the target of the query.
-     */
-    public end(target: QueryTarget) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.endQuery(target);
-    };
-    public useAnySamples(cb: Function) {
-        this.oneUse(QueryTarget.AnySamplesPassed, cb);
-    };
-    public useAnySamplesConservative(cb: Function) {
-        this.oneUse(QueryTarget.AnySamplesPassedConservative, cb);
-    };
-    public useTransfFeedbackPrimWritten(cb: Function) {
-        this.oneUse(QueryTarget.TransformFeedbackPrimitivesWritten, cb);
-    };
-    public oneUse(target: QueryTarget, cb: Function) {
-        this.begin(target);
-        cb();
-        this.end(target);
-    };
-    /**
-     * Return query param
-     * @param  {QueryParams} param [description]
-     * @return {any}               [description]
-     */
-    public getParameter(param: QueryParams): any {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getQueryParameter(this._handle, param);
-    };
-    /**
-     * Return a boolean indicating whether or not a query
-     *     result is available.
-     * @return {boolean} Query has result now.
-     */
-    public isResultAvailable(): boolean {
-        return this.getParameter(QueryParams.QueryResultAvailable);
-    };
-    /**
-     * Return a number containing the query result.
-     * @return {number} Query result (0 or 1)
-     */
-    public getResult(): number {
-        return this.getParameter(QueryParams.QueryResult);
+namespace MB {
+    export namespace core {
+        /**
+         * Query class.
+         * @class Query
+         *
+         * Query Objects are objects that are used for asynchronous
+         *     queries of certain kinds of information.
+         */
+        export class Query {
+            protected _handle: WebGLQuery;
+            /**
+             * Query constructor
+             */
+            constructor() {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                this._handle = gl.createQuery();
+            };
+            /**
+             * Delete query object
+             */
+            public destroy() {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.deleteQuery(this._handle);
+            };
+            /**
+             * Start the asynchronous query.
+             * @param {MB.ctes.QueryTarget} target Indicate which kind of query to begin.
+             */
+            public begin(target: MB.ctes.QueryTarget) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.beginQuery(target, this._handle);
+            };
+            /**
+             * Marks the end of a given query target.
+             * @param {MB.ctes.QueryTarget} target Specifying the target of the query.
+             */
+            public end(target: MB.ctes.QueryTarget) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.endQuery(target);
+            };
+            public useAnySamples(cb: Function) {
+                this.oneUse(MB.ctes.QueryTarget.AnySamplesPassed, cb);
+            };
+            public useAnySamplesConservative(cb: Function) {
+                this.oneUse(MB.ctes.QueryTarget.AnySamplesPassedConservative, cb);
+            };
+            public useTransfFeedbackPrimWritten(cb: Function) {
+                this.oneUse(MB.ctes.QueryTarget.TransformFeedbackPrimitivesWritten, cb);
+            };
+            public oneUse(target: MB.ctes.QueryTarget, cb: Function) {
+                this.begin(target);
+                cb();
+                this.end(target);
+            };
+            /**
+             * Return query param
+             * @param  {MB.ctes.QueryParams} param [description]
+             * @return {any}               [description]
+             */
+            public getParameter(param: MB.ctes.QueryParams): any {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.getQueryParameter(this._handle, param);
+            };
+            /**
+             * Return a boolean indicating whether or not a query
+             *     result is available.
+             * @return {boolean} Query has result now.
+             */
+            public isResultAvailable(): boolean {
+                return this.getParameter(MB.ctes.QueryParams.QueryResultAvailable);
+            };
+            /**
+             * Return a number containing the query result.
+             * @return {number} Query result (0 or 1)
+             */
+            public getResult(): number {
+                return this.getParameter(MB.ctes.QueryParams.QueryResult);
+            };
+        };
     };
 };
-
-export { Query };

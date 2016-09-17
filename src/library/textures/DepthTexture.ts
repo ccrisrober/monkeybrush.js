@@ -17,26 +17,28 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import { Core } from "../core/Core";
-import { Texture } from "./Texture";
+"use strict";
 
-import { TextureTarget } from "../constants/Constants";
+namespace MB {
+    export namespace textures {
 
-declare var WebGL2RenderingContext: any;
+        declare var WebGL2RenderingContext: any;
 
-class DepthTexture extends Texture {
-    /**
-     * DepthTexture constructor
-     * @param {() => void = null} onSuccess Optional callback that runs when creating DepthTexture.
-     */
-    constructor(onSuccess: () => void = null) {
-        super(TextureTarget.Texture2D);
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        if (gl instanceof WebGL2RenderingContext) {
-            this._internalformat_ = gl.DEPTH_COMPONENT32F;
-        } else {
-            this._internalformat_ = gl.DEPTH_COMPONENT16;
-        }
+        export class DepthTexture extends Texture {
+            /**
+             * DepthTexture constructor
+             * @param {() => void = null} onSuccess Optional callback that runs when creating DepthTexture.
+             */
+            constructor(onSuccess: () => void = null) {
+                super(MB.ctes.TextureTarget.Texture2D);
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                if (gl instanceof WebGL2RenderingContext) {
+                    this._internalformat_ = gl.DEPTH_COMPONENT32F;
+                } else {
+                    this._internalformat_ = gl.DEPTH_COMPONENT16;
+                }
+            };
+        };
     };
 };
 

@@ -17,108 +17,103 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Core } from "./Core";
-
-import { SyncCondition, SyncStatus, SyncType, SyncWaitResult }
-    from "../constants/Constants";
-
 "use strict";
 
+namespace MB {
+    export namespace core {
+        /**
+         * Sync class
+         * @class Sync
+         *
+         * Sync Objects are objects that are used to synchronize
+         * the activity between the GPU and the application.
+         * glFinish​ is a start to synchronization,
+         * but sync objects allow for much finer grained control.
+         */
+        export class Sync {
+            protected _handle: WebGLSync;
 
-/**
- * Sync class
- * @class Sync
- *
- * Sync Objects are objects that are used to synchronize
- * the activity between the GPU and the application.
- * glFinish​ is a start to synchronization,
- * but sync objects allow for much finer grained control.
- */
-class Sync {
-    protected _handle: WebGLSync;
-
-    /**
-     * Sync constructor
-     * @param {SyncCondition = SyncCondition.GPUCommandsComplete} condition Sync condition
-     */
-    constructor(condition: SyncCondition = SyncCondition.GPUCommandsComplete) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        this._handle = gl.fenceSync(condition, 0);
-    };
-    /*
-     * Block and wait for a sync object to become signaled
-     * @param {number} timeout: Timeout (in nanoseconds) for which to wait
-     *      for the sync obj to become signaled.
-     */
-    public clientWait(timeout: number): SyncWaitResult {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.clientWaitSync(this._handle, 0, timeout);
-    };
-    /**
-     * Destroy sync object
-     */
-    public destroy() {
-       const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.deleteSync(this._handle);
-    };
-    /**
-     * Return if sync object is a valid sync
-     * @return {boolean} True if sync object is valid
-     */
-    public isValid(): boolean {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.isSync(this._handle);
-    };
-    /**
-     * Instruct the server to block until the sync object becomes signaled.
-     * @param {number = -1} timeout Specifies the timeout that the server
-     *                  should wait before continuing.
-     */
-    public wait(timeout: number = -1) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.waitSync(this._handle, 0, timeout);
-    };
-    /**
-     * Return current sync status.
-     * @return {SyncStatus} Current sync status.
-     */
-    public status(): SyncStatus {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getParameter(gl.SYNC_STATUS);
-    };
-    /**
-     * Return current sync condition.
-     * @return {SyncStatus} Current sync condition.
-     */
-    public condition(): SyncCondition {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getParameter(gl.SYNC_CONDITION);
-    };
-    /**
-     * Return current sync type.
-     * @return {SyncStatus} Current sync type.
-     */
-    public type(): SyncType {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getParameter(gl.OBJECT_TYPE);
-    };
-    /**
-     * Check if sync is signaled.
-     * @return {boolean}
-     */
-    public isSignaled(): boolean {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getParameter(gl.SYNC_STATUS) === SyncStatus.Signaled;
-    };
-    /**
-     * Return sync status.
-     * @return {SyncStatus}
-     */
-    get signaled(): SyncStatus {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getParameter(gl.SYNC_STATUS);
+            /**
+             * Sync constructor
+             * @param {MB.ctes.SyncCondition = MB.ctes.SyncCondition.GPUCommandsComplete} condition Sync condition
+             */
+            constructor(condition: MB.ctes.SyncCondition = MB.ctes.SyncCondition.GPUCommandsComplete) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                this._handle = gl.fenceSync(condition, 0);
+            };
+            /*
+             * Block and wait for a sync object to become signaled
+             * @param {number} timeout: Timeout (in nanoseconds) for which to wait
+             *      for the sync obj to become signaled.
+             */
+            public clientWait(timeout: number): MB.ctes.SyncWaitResult {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.clientWaitSync(this._handle, 0, timeout);
+            };
+            /**
+             * Destroy sync object
+             */
+            public destroy() {
+               const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.deleteSync(this._handle);
+            };
+            /**
+             * Return if sync object is a valid sync
+             * @return {boolean} True if sync object is valid
+             */
+            public isValid(): boolean {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.isSync(this._handle);
+            };
+            /**
+             * Instruct the server to block until the sync object becomes signaled.
+             * @param {number = -1} timeout Specifies the timeout that the server
+             *                  should wait before continuing.
+             */
+            public wait(timeout: number = -1) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.waitSync(this._handle, 0, timeout);
+            };
+            /**
+             * Return current sync status.
+             * @return {MB.ctes.SyncStatus} Current sync status.
+             */
+            public status(): MB.ctes.SyncStatus {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.getParameter(gl.SYNC_STATUS);
+            };
+            /**
+             * Return current sync condition.
+             * @return {MB.ctes.SyncStatus} Current sync condition.
+             */
+            public condition(): MB.ctes.SyncCondition {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.getParameter(gl.SYNC_CONDITION);
+            };
+            /**
+             * Return current sync type.
+             * @return {MB.ctes.SyncStatus} Current sync type.
+             */
+            public type(): MB.ctes.SyncType {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.getParameter(gl.OBJECT_TYPE);
+            };
+            /**
+             * Check if sync is signaled.
+             * @return {boolean}
+             */
+            public isSignaled(): boolean {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.getParameter(gl.SYNC_STATUS) === MB.ctes.SyncStatus.Signaled;
+            };
+            /**
+             * Return sync status.
+             * @return {MB.ctes.SyncStatus}
+             */
+            get signaled(): MB.ctes.SyncStatus {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.getParameter(gl.SYNC_STATUS);
+            };
+        };
     };
 };
-
-export { Sync };

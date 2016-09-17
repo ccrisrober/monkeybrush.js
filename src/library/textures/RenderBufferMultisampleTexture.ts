@@ -17,50 +17,45 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-/// <reference path="../maths/Vector2.ts" />
-/// <reference path="../core/Core.ts" />
-
-import { Core } from "../core/Core";
-import { Vect2 } from "../maths/Vect2";
-
 "use strict";
 
-class RenderBufferMultisampleTexture {
-    protected _handle: WebGLRenderbuffer;
-    protected _size: Vect2;
-    protected _samples: number;
-    protected _format: number;
-    constructor(size: Vect2, format: number, attachment: number, samples: number = 4) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        this._handle = gl.createRenderbuffer();
-        this._size = size;
-        this._format = format;
-        this._samples = samples;
-        gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-        gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, size.x, size.y);
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
-        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+namespace MB {
+    export namespace textures {
+        export class RenderBufferMultisampleTexture {
+            protected _handle: WebGLRenderbuffer;
+            protected _size: MB.maths.Vect2;
+            protected _samples: number;
+            protected _format: number;
+            constructor(size: MB.maths.Vect2, format: number, attachment: number, samples: number = 4) {
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                this._handle = gl.createRenderbuffer();
+                this._size = size;
+                this._format = format;
+                this._samples = samples;
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+                gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, size.x, size.y);
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
+                gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+            };
+            public bind() {
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+            };
+            public unbind() {
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+            }
+            public destroy() {
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                gl.deleteTexture(this._handle);
+            };
+            public resize(size: MB.maths.Vect2) {
+                if (!size.exactEquals(this._size)) {
+                    const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                    gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+                    gl.renderbufferStorageMultisample(gl.RENDERBUFFER, this._format, size.x, size.y, this._samples);
+                }
+            }
+        };
     };
-    public bind() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-    };
-    public unbind() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-    }
-    public destroy() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.deleteTexture(this._handle);
-    };
-    public resize(size: Vect2) {
-        if (!size.exactEquals(this._size)) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-            gl.renderbufferStorageMultisample(gl.RENDERBUFFER, this._format, size.x, size.y, this._samples);
-        }
-    }
 };
-
-export { RenderBufferMultisampleTexture };

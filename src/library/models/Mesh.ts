@@ -17,73 +17,72 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Drawable } from "./Drawable";
-
 "use strict";
 
-/**
- * Mesh class
- * @class Mesh
- */
-class Mesh extends Drawable {
-    /**
-     * Mesh definition
-     * @param {string} fileRoute: JSON file route
-     */
-    constructor(fileRoute: string) {
-        super();
-        this.loadJSON(fileRoute);
-    }
+namespace MB {
+    export namespace models {
+        /**
+         * Mesh class
+         * @class Mesh
+         */
+        export class Mesh extends Drawable {
+            /**
+             * Mesh definition
+             * @param {string} fileRoute: JSON file route
+             */
+            constructor(fileRoute: string) {
+                super();
+                this.loadJSON(fileRoute);
+            }
 
-    /**
-     * Vao construction
-     * @param {[type]} model: Model object in JSON format
-     * @param {[type]} el: Indices array
-     */
-    private createVAO(model, el: Array<number>) {
-        this._handle = [];
-        this._vao.bind();
-        // console.log(model.meshes[0]);
+            /**
+             * Vao construction
+             * @param {[type]} model: Model object in JSON format
+             * @param {[type]} el: Indices array
+             */
+            private createVAO(model, el: Array<number>) {
+                this._handle = [];
+                this._vao.bind();
+                // console.log(model.meshes[0]);
 
-        if (model.meshes[0].vertices) {
-            let verts = model.meshes[0].vertices;
-            this.addBufferArray(0, new Float32Array(verts), 3);
-        }
-        if (model.meshes[0].normals) {
-            let norms = model.meshes[0].normals;
-            this.addBufferArray(1, new Float32Array(norms), 3);
-        }
-        if (model.meshes[0].texturecoords) {
-            let tc = model.meshes[0].texturecoords[0];
-            this.addBufferArray(2, new Float32Array(tc), 2);
-        }
+                if (model.meshes[0].vertices) {
+                    let verts = model.meshes[0].vertices;
+                    this.addBufferArray(0, new Float32Array(verts), 3);
+                }
+                if (model.meshes[0].normals) {
+                    let norms = model.meshes[0].normals;
+                    this.addBufferArray(1, new Float32Array(norms), 3);
+                }
+                if (model.meshes[0].texturecoords) {
+                    let tc = model.meshes[0].texturecoords[0];
+                    this.addBufferArray(2, new Float32Array(tc), 2);
+                }
 
-        this.addElementArray(new Uint16Array(el));
+                this.addElementArray(new Uint16Array(el));
 
-        this._vao.unbind();
-        this._indicesLen = el.length;
-    }
+                this._vao.unbind();
+                this._indicesLen = el.length;
+            }
 
-    /**
-     * Read JSON file
-     * @param {string} url: JSON file route
-     */
-    private loadJSON(url: string) {
-        let request = new XMLHttpRequest();
-        request.open("GET", url, false);
-        let self = this;
-        request.onload = function () {
-            if (request.status < 200 || request.status > 299) {
-                console.log(`Error: HTTP Status ${request.status} on resource ${url}`);
-                return {};
-            } else {
-                let modelObj = JSON.parse(request.responseText);
-                self.createVAO(modelObj, [].concat.apply([], modelObj.meshes[0].faces));
+            /**
+             * Read JSON file
+             * @param {string} url: JSON file route
+             */
+            private loadJSON(url: string) {
+                let request = new XMLHttpRequest();
+                request.open("GET", url, false);
+                let self = this;
+                request.onload = function () {
+                    if (request.status < 200 || request.status > 299) {
+                        console.log(`Error: HTTP Status ${request.status} on resource ${url}`);
+                        return {};
+                    } else {
+                        let modelObj = JSON.parse(request.responseText);
+                        self.createVAO(modelObj, [].concat.apply([], modelObj.meshes[0].faces));
+                    }
+                };
+                request.send();
             }
         };
-        request.send();
-    }
+    };
 };
-
-export { Mesh };

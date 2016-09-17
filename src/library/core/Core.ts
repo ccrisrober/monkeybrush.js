@@ -17,109 +17,103 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Context } from "./Context";
-import { PostProcess } from "../extras/PostProcess";
-import { Input } from "./Input";
-import { Log } from "./Log";
-import { Extensions } from "../extras/Extensions";
-
-import { GlobalState } from "./GlobalState";
-
-import { ComparisonFunc } from "../constants/Constants";
-
 "use strict";
 
-declare var WebGL2RenderingContext: any;
+namespace MB {
+    export namespace core {
 
-/**
-* This class get WebGL context and animationFrame for your navigator.
-*
-* @class core.Core
-*/
-class Core {
-    private static _instance: Core = null;
+        declare var WebGL2RenderingContext: any;
 
-    private _gl: WebGL2RenderingContext;
+        /**
+        * This class get WebGL context and animationFrame for your navigator.
+        *
+        * @class core.Core
+        */
+        export class Core {
+            private static _instance: Core = null;
 
-    constructor() {
-        Log.info("INIT CORE");
-        if (Core._instance) {
-            throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
-        }
-        this._gl = Context.getContext();
+            private _gl: WebGL2RenderingContext;
 
-        Core._instance = this;
-    }
+            constructor() {
+                Log.info("INIT CORE");
+                if (Core._instance) {
+                    throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
+                }
+                this._gl = Context.getContext();
 
-    public initialize(color: Array<number>) {
-        const gl = this._gl;
-        // gl.getParameter(gl.VERSION)
-        // Load all extensions if WebGLRenderingContext === 1
-        if (!(this._gl instanceof WebGL2RenderingContext)) {
-            [
-                "OES_element_index_uint",
-                "EXT_sRGB",
-                "EXT_blend_minmax",
-                "EXT_frag_depth",
-                "WEBGL_depth_texture",
-                "WEBKIT_WEBGL_depth_texture",
-                "EXT_shader_texture_lod",
-                "OES_standard_derivatives",
-                "OES_texture_float",
-                "OES_texture_half_float",
-                "OES_texture_half_float_linear",
-                "OES_vertex_array_object",
-                "WEBGL_draw_buffers",
-                "OES_fbo_render_mipmap",
-                "ANGLE_instanced_arrays"
-            ].forEach((ext: string) => {
-                Extensions.get(ext);
-            });
-            console.log("All WebGL1 extensions enabled");
-        }
+                Core._instance = this;
+            }
 
-        this.init();
-        GlobalState.setClearColor(color[0], color[1], color[2], color[3]);
-    }
+            public initialize(color: Array<number>) {
+                const gl = this._gl;
+                // gl.getParameter(gl.VERSION)
+                // Load all extensions if WebGLRenderingContext === 1
+                if (!(this._gl instanceof WebGL2RenderingContext)) {
+                    [
+                        "OES_element_index_uint",
+                        "EXT_sRGB",
+                        "EXT_blend_minmax",
+                        "EXT_frag_depth",
+                        "WEBGL_depth_texture",
+                        "WEBKIT_WEBGL_depth_texture",
+                        "EXT_shader_texture_lod",
+                        "OES_standard_derivatives",
+                        "OES_texture_float",
+                        "OES_texture_half_float",
+                        "OES_texture_half_float_linear",
+                        "OES_vertex_array_object",
+                        "WEBGL_draw_buffers",
+                        "OES_fbo_render_mipmap",
+                        "ANGLE_instanced_arrays"
+                    ].forEach((ext: string) => {
+                        MB.extras.Extensions.get(ext);
+                    });
+                    console.log("All WebGL1 extensions enabled");
+                }
 
-    public clearColorAndDepth() {
-        this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
-    }
-    public changeViewport(x: number, y: number, w: number, h: number) {
-        this._gl.viewport(x, y, w, h);
-    }
-    public canvas(): HTMLCanvasElement {
-        return this._gl.canvas;
-    }
-    protected init() {
-        Input.initialize();
-        PostProcess.initialize();
+                this.init();
+                GlobalState.initializeAll();
+                GlobalState.setClearColor(color[0], color[1], color[2], color[3]);
+            }
 
-        GlobalState.setDepthStatus(true);
-        GlobalState.setDepthComparisonFunc(ComparisonFunc.Less);
+            public clearColorAndDepth() {
+                this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
+            }
+            public changeViewport(x: number, y: number, w: number, h: number) {
+                this._gl.viewport(x, y, w, h);
+            }
+            public canvas(): HTMLCanvasElement {
+                return this._gl.canvas;
+            }
+            protected init() {
+                Input.initialize();
+                MB.extras.PostProcess.initialize();
 
-        GlobalState.setCullingStatus(true);
-        GlobalState.setBlendingStatus(false);
-    }
+                GlobalState.setDepthStatus(true);
+                GlobalState.setDepthComparisonFunc(MB.ctes.ComparisonFunc.Less);
 
-    public static getInstance(): Core {
-        if (!Core._instance) {
-            console.log("Creando core");
-            Core._instance = new Core();
-        }
-        return Core._instance;
-    }
+                GlobalState.setCullingStatus(true);
+                GlobalState.setBlendingStatus(false);
+            }
 
-    /**
-    * Return global WebGL context
-    *
-    * @method getGL
-    * @return {WebGLRenderingContext} Returns WebGL rendering context
-    */
-    public getGL(): WebGL2RenderingContext {
-        return this._gl;
-    }
+            public static getInstance(): Core {
+                if (!Core._instance) {
+                    Log.info("Creando core");
+                    Core._instance = new Core();
+                }
+                return Core._instance;
+            }
+
+            /**
+            * Return global WebGL context
+            *
+            * @method getGL
+            * @return {WebGLRenderingContext} Returns WebGL rendering context
+            */
+            public getGL(): WebGL2RenderingContext {
+                return this._gl;
+            }
+        };
+    };
 };
-
-export { Core };
+        

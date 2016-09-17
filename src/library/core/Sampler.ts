@@ -17,124 +17,135 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Core } from "./Core";
-import { SamplerParams } from "./interfaces";
-import { SamplerParameter } from "../constants/Constants";
-
 "use strict";
 
+namespace MB {
+    export namespace core {
+        export interface SamplerParams {
+            minFilter?: number;
+            magFilter?: number;
+            wrapS?: number;
+            wrapT?: number;
+            wrapR?: number;
+            minLOD?: number;
+            maxLOD?: number;
+            compareFunc?: number;
+            compareMode?: number;
+            anisotropic?: number;     // TODO ext.TEXTURE_MAX_ANISOTROPY_EXT
+                                      //     (EXT_texture_filter_anisotropic)
+            maxLevel?: number;        // TODO gl.TEXTURE_MAX_LEVEL
+            baseLevel?: number;       // TODO gl.TEXTURE_BASE_LEVEL
+        };
+        /**
+         * Sampler class.
+         * @class Sampler
+         *
+         * Sampler Object are objects that stores the sampling
+         *     parameters for a Texture access inside of a shader.
+         */
+        // TODO: Added this to textures
+        export class Sampler {
+            public _handle: WebGLSampler;
+            constructor() {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                this._handle = gl.createSampler();
+            };
+            /**
+             * Set a list of texture parameters (filters, wraps, LOD, ...)
+             * @param {SamplerParams} params SamplerParams interface
+             */
+            public setParams(params: SamplerParams) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                if (params.minFilter) {
+                    this.parameteri(gl.TEXTURE_MIN_FILTER, params.minFilter);
+                }
+                if (params.magFilter) {
+                    this.parameteri(gl.TEXTURE_MAG_FILTER, params.magFilter);
+                }
 
-/**
- * Sampler class.
- * @class Sampler
- *
- * Sampler Object are objects that stores the sampling
- *     parameters for a Texture access inside of a shader.
- */
-// TODO: Added this to textures
-class Sampler {
-    public _handle: WebGLSampler;
-    constructor() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        this._handle = gl.createSampler();
-    };
-    /**
-     * Set a list of texture parameters (filters, wraps, LOD, ...)
-     * @param {SamplerParams} params SamplerParams interface
-     */
-    public setParams(params: SamplerParams) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        if (params.minFilter) {
-            this.parameteri(gl.TEXTURE_MIN_FILTER, params.minFilter);
-        }
-        if (params.magFilter) {
-            this.parameteri(gl.TEXTURE_MAG_FILTER, params.magFilter);
-        }
+                if (params.wrapS) {
+                    this.parameteri(gl.TEXTURE_WRAP_S, params.wrapS);
+                }
+                if (params.wrapT) {
+                    this.parameteri(gl.TEXTURE_WRAP_T, params.wrapT);
+                }
+                if (params.wrapR) {
+                    this.parameteri(gl.TEXTURE_WRAP_R, params.wrapR);
+                }
 
-        if (params.wrapS) {
-            this.parameteri(gl.TEXTURE_WRAP_S, params.wrapS);
-        }
-        if (params.wrapT) {
-            this.parameteri(gl.TEXTURE_WRAP_T, params.wrapT);
-        }
-        if (params.wrapR) {
-            this.parameteri(gl.TEXTURE_WRAP_R, params.wrapR);
-        }
+                if (params.minLOD) {
+                    this.parameterf(gl.TEXTURE_MIN_LOD, params.minLOD);
+                }
+                if (params.maxLOD) {
+                    this.parameterf(gl.TEXTURE_MAX_LOD, params.maxLOD);
+                }
 
-        if (params.minLOD) {
-            this.parameterf(gl.TEXTURE_MIN_LOD, params.minLOD);
-        }
-        if (params.maxLOD) {
-            this.parameterf(gl.TEXTURE_MAX_LOD, params.maxLOD);
-        }
-
-        if (params.compareFunc) {
-            this.parameteri(gl.TEXTURE_COMPARE_FUNC, params.compareFunc);
-        }
-        if (params.compareMode) {
-            this.parameteri(gl.TEXTURE_COMPARE_MODE, params.compareMode);
-        }
-    };
-    /**
-     * Bind (active) sampler
-     * @param {number} unit Specifying the index of the texture
-     *                       to which to bind the sampler
-     */
-    public bind(unit: number) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.bindSampler(unit, this._handle);
-    };
-    /**
-     * Unbind (disable) sampler
-     * @param {number} unit Specifying the index of the texture
-     *                       to which to unbind the sampler
-     */
-    public unbind(unit: number) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.bindSampler(unit, null);
-    };
-    /**
-     * Set a unique texture parameter
-     * @param {SamplerParameter} name  Parameter name
-     * @param {number} param Parameter value
-     */
-    public parameteri(name: SamplerParameter, param: number) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.samplerParameteri(this._handle, name, param);
-    };
-    /**
-     * Set a unique texture parameter
-     * @param {SamplerParameter} name  Parameter name
-     * @param {number} param Parameter value
-     */
-    public parameterf(name: SamplerParameter, param: number) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.samplerParameterf(this._handle, name, param);
-    };
-    /**
-     * Return parameter for this sampler object.
-     * @param {SamplerParameter} name  Parameter name
-     */
-    public getParameter(name: SamplerParameter) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.getSamplerParameter(this._handle, name);
-    };
-    /**
-     * Destroy sampler object.
-     */
-    public destroy() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.deleteSampler(this._handle);
-    };
-    /**
-     * Return if this sampler is a valid sampler.
-     * @return {boolean}
-     */
-    public isValid(): boolean {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        return gl.isSampler(this._handle);
+                if (params.compareFunc) {
+                    this.parameteri(gl.TEXTURE_COMPARE_FUNC, params.compareFunc);
+                }
+                if (params.compareMode) {
+                    this.parameteri(gl.TEXTURE_COMPARE_MODE, params.compareMode);
+                }
+            };
+            /**
+             * Bind (active) sampler
+             * @param {number} unit Specifying the index of the texture
+             *                       to which to bind the sampler
+             */
+            public bind(unit: number) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.bindSampler(unit, this._handle);
+            };
+            /**
+             * Unbind (disable) sampler
+             * @param {number} unit Specifying the index of the texture
+             *                       to which to unbind the sampler
+             */
+            public unbind(unit: number) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.bindSampler(unit, null);
+            };
+            /**
+             * Set a unique texture parameter
+             * @param {MB.ctes.SamplerParameter} name  Parameter name
+             * @param {number} param Parameter value
+             */
+            public parameteri(name: MB.ctes.SamplerParameter, param: number) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.samplerParameteri(this._handle, name, param);
+            };
+            /**
+             * Set a unique texture parameter
+             * @param {MB.ctes.SamplerParameter} name  Parameter name
+             * @param {number} param Parameter value
+             */
+            public parameterf(name: MB.ctes.SamplerParameter, param: number) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.samplerParameterf(this._handle, name, param);
+            };
+            /**
+             * Return parameter for this sampler object.
+             * @param {MB.ctes.SamplerParameter} name  Parameter name
+             */
+            public getParameter(name: MB.ctes.SamplerParameter) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.getSamplerParameter(this._handle, name);
+            };
+            /**
+             * Destroy sampler object.
+             */
+            public destroy() {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.deleteSampler(this._handle);
+            };
+            /**
+             * Return if this sampler is a valid sampler.
+             * @return {boolean}
+             */
+            public isValid(): boolean {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                return gl.isSampler(this._handle);
+            };
+        };
     };
 };
-
-export { SamplerParams, Sampler };

@@ -17,92 +17,94 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 "use strict";
 
-/**
- * Clock class
- * @class Clock
- */
-class Clock {
-    /**
-     * Keeps track whether the clock is running or not.
-     * @type {boolean}
-     */
-    protected _running: boolean;
-    /**
-     * Hold the start time of the clock.
-     * @type {number}
-     */
-    protected _startTime: number;
-    /**
-     * Hold the previous time from a update.
-     * @type {number}
-     */
-    protected _oldTime: number;
-    /**
-     * Hold the time elapsed between the start
-     *     of the clock to the previous update.
-     * @type {number}
-     */
-    protected _elapsed: number;
-    /**
-     * Clock constructor.
-     * Used for keeping track of time.
-     * @param {boolean = true} autostart Automatically start the clock.
-     */
-    constructor(protected _autostart: boolean = true) {
-        this._startTime = 0.0;
-        this._oldTime = 0.0;
-        this._elapsed = 0.0;
+namespace MB {
+    export namespace extras {
+        /**
+         * Clock class
+         * @class Clock
+         */
+        export class Clock {
+            /**
+             * Keeps track whether the clock is running or not.
+             * @type {boolean}
+             */
+            protected _running: boolean;
+            /**
+             * Hold the start time of the clock.
+             * @type {number}
+             */
+            protected _startTime: number;
+            /**
+             * Hold the previous time from a update.
+             * @type {number}
+             */
+            protected _oldTime: number;
+            /**
+             * Hold the time elapsed between the start
+             *     of the clock to the previous update.
+             * @type {number}
+             */
+            protected _elapsed: number;
+            /**
+             * Clock constructor.
+             * Used for keeping track of time.
+             * @param {boolean = true} autostart Automatically start the clock.
+             */
+            constructor(protected _autostart: boolean = true) {
+                this._startTime = 0.0;
+                this._oldTime = 0.0;
+                this._elapsed = 0.0;
 
-        this._running = false;
+                this._running = false;
 
-        if (this._autostart) {
-            this.start();
-        }
+                if (this._autostart) {
+                    this.start();
+                }
+            };
+            /**
+             * Starts clock.
+             */
+            public start() {
+                this._autostart = true;
+                this._startTime = (performance || Date).now();
+                this._oldTime = this._startTime;
+                this._running = true;
+            };
+            /**
+             * Stop clock
+             */
+            public stop() {
+                this.elapsedTime;
+                this._running = false;
+            };
+            /**
+             * Return the seconds passed since the clock started.
+             * @return {number} Elapsed time.
+             */
+            get elapsedTime(): number {
+                this.delta;
+                return this._elapsed;
+            }
+            /**
+             * Return the seconds passed since the last call of this method.
+             * @return {number} Delta time.
+             */
+            get delta(): number {
+                let diff = 0;
+                if (this._autostart && !this._running) {
+                    this.start();
+                }
+                if (this._running) {
+                    const newTime = (performance || Date).now();
+                    diff = (newTime - this._oldTime) / 1000;
+                    this._oldTime = newTime;
+                    this._elapsed += diff;
+                }
+                return diff;
+            }
+        };
     };
-    /**
-     * Starts clock.
-     */
-    public start() {
-        this._autostart = true;
-        this._startTime = (performance || Date).now();
-        this._oldTime = this._startTime;
-        this._running = true;
-    };
-    /**
-     * Stop clock
-     */
-    public stop() {
-        this.elapsedTime;
-        this._running = false;
-    };
-    /**
-     * Return the seconds passed since the clock started.
-     * @return {number} Elapsed time.
-     */
-    get elapsedTime(): number {
-        this.delta;
-        return this._elapsed;
-    }
-    /**
-     * Return the seconds passed since the last call of this method.
-     * @return {number} Delta time.
-     */
-    get delta(): number {
-        let diff = 0;
-        if (this._autostart && !this._running) {
-            this.start();
-        }
-        if (this._running) {
-            const newTime = (performance || Date).now();
-            diff = (newTime - this._oldTime) / 1000;
-            this._oldTime = newTime;
-            this._elapsed += diff;
-        }
-        return diff;
-    }
 };
-
-export { Clock };
+        

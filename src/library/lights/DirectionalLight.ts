@@ -17,46 +17,44 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Light } from "./Light";
-import { Vect3 } from "../maths/Vect3";
-
 "use strict";
 
-/**
- * Directional light class
- *
- * Directional light is light that is emitted from a
- * specific direction.
- * This is light that's coming from so far away that every
- * photon is moving parallel to every other photon.
- * Sunlight, for example, is directional light.
- * @class DirectionalLight
- */
-class DirectionalLight extends Light {
-    /**
-     * Vector pointing from the surface to the light source.
-     * @type {Vect3}
-     */
-    protected _direction: Vect3;
-    /**
-     * Directional light constructor
-     * @param {Vect3 = new Vect3(0.0, 0.0, 0.0)} direction [description]
-     */
-    constructor(direction: Vect3 = new Vect3(0.0, 0.0, 0.0)) {
-        super();
-        this._direction = direction;
-    }
-    /**
-     * Return light direction
-     * @return {Vect3}
-     */
-    get direction(): Vect3 { return this._direction; }
-    /**
-     * Set light direction
-     * @param {Vect3} New light direciton
-     */
-    set direction(direction: Vect3) { this._direction = direction; }
+namespace MB {
+    export namespace lights {
+        /**
+         * Directional light class
+         *
+         * Directional light is light that is emitted from a
+         * specific direction.
+         * This is light that's coming from so far away that every
+         * photon is moving parallel to every other photon.
+         * Sunlight, for example, is directional light.
+         * @class DirectionalLight
+         */
+        export class DirectionalLight extends Light {
+            /**
+             * Vector pointing from the surface to the light source.
+             * @type {MB.maths.Vect3}
+             */
+            protected _direction: MB.maths.Vect3;
+            /**
+             * Directional light constructor
+             * @param {MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)} direction [description]
+             */
+            constructor(direction: MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)) {
+                super();
+                this._direction = direction;
+            }
+            /**
+             * Return light direction
+             * @return {MB.maths.Vect3}
+             */
+            get direction(): MB.maths.Vect3 { return this._direction; }
+            /**
+             * Set light direction
+             * @param {MB.maths.Vect3} New light direciton
+             */
+            set direction(direction: MB.maths.Vect3) { this._direction = direction; }
+        };
+    };
 };
-
-export { DirectionalLight };

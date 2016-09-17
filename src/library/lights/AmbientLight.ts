@@ -17,26 +17,25 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Light } from "./Light";
-
 "use strict";
 
-/**
- * Ambient light class
- *
- * Ambient light is the light that permeates the scene;
- * it's non-directional and affects every face in the scene
- * equally, regardless of which direction it's facing.
- * @class AmbientLight
- */
-class AmbientLight extends Light {
-    /**
-     * Ambient light constructor
-     */
-    constructor() {
-        super();
-    }
+namespace MB {
+    export namespace lights {
+        /**
+         * Ambient light class
+         *
+         * Ambient light is the light that permeates the scene;
+         * it's non-directional and affects every face in the scene
+         * equally, regardless of which direction it's facing.
+         * @class AmbientLight
+         */
+        export class AmbientLight extends Light {
+            /**
+             * Ambient light constructor
+             */
+            constructor() {
+                super();
+            }
+        };
+    };
 };
-
-export { AmbientLight };
