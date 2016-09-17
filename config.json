@@ -1,0 +1,87 @@
+{
+  "build": {
+    "filename": "monkeybrush.js",
+    "minFilename": "monkeybrush.min.js",
+    "declarationFilename": "monkeybrush.d.ts",
+    "outputDirectory": "./dist"
+  },
+  "core": {
+    "ts_files": [
+      "./src/typings/**/*.d.ts",
+      "./src/library/polyfills.ts",
+
+      "./src/library/others/**/*.ts",
+      
+      "./src/library/maths/**/*.ts",
+
+      "./src/library/cameras/**/*.ts",
+
+      "./src/library/Camera2.ts",
+      "./src/library/Decorators.ts",
+      "./src/library/Scene.ts",
+      "./src/library/App.ts",
+
+      "./src/library/models/Drawable.ts",
+      "./src/library/models/Polyhedron.ts",
+      "./src/library/models/Cone.ts",
+
+      "./src/library/constants/**/*.ts",
+      
+      "./src/library/core/**/*.ts",
+
+      "./src/library/extras/**/*.ts",
+
+      "./src/library/lights/Light.ts",
+      "./src/library/lights/**/*.ts",
+
+      "./src/library/models/**/*.ts",
+
+      "./src/library/resources/**/*.ts",
+
+      "./src/library/textures/Texture.ts",
+      "./src/library/textures/**/*.ts",
+
+      "!node_modules/**"
+    ],
+    "typescript": [
+      "./src/typings/**/*.d.ts",
+      "./src/library/polyfills.ts",
+      
+      "./src/library/others/**/*.ts",
+      
+      "./src/library/maths/**/*.ts",
+      
+      "./src/library/cameras/**/*.ts",
+
+      "./src/library/Camera2.ts",
+      "./src/library/Decorators.ts",
+      "./src/library/Scene.ts",
+      "./src/library/App.ts",
+
+      "./src/library/models/Drawable.ts",
+      "./src/library/models/Polyhedron.ts",
+      "./src/library/models/Cone.ts",
+
+      "./src/library/constants/**/*.ts",
+      
+      "./src/library/core/**/*.ts",
+
+      "./src/library/extras/**/*.ts",
+
+      "./src/library/lights/Light.ts",
+      "./src/library/lights/**/*.ts",
+
+      "./src/library/models/**/*.ts",
+
+      "./src/library/resources/**/*.ts",
+
+      "./src/library/textures/Texture.ts",
+      "./src/library/textures/**/*.ts",
+
+      "../../external references/**/*.d.ts"
+    ],
+    "files2": [
+      "./src/*.js"
+    ]
+  }
+}

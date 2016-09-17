@@ -17,67 +17,62 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Core } from "../core/Core.ts";
-import { VertexArray } from "../core/VertexArray.ts";
-import { VertexBuffer } from "../core/VertexBuffer.ts";
-
-import { UsageType, BufferType } from "../constants/Constants.ts";
-
 "use strict";
 
-/**
-* This class wrap PostProcess effects
-* @class core.PostProcess
-*/
-class PostProcess {
-    /**
-     * [initialize description]
-     */
-    static initialize() {
-        if (!PostProcess._planeVAO) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            const positions = [
-                -1.0, -1.0,
-                 1.0, -1.0,
-                -1.0,  1.0,
-                 1.0,  1.0
-            ];
-            PostProcess._planeVAO = new VertexArray();
-            // Unnecesary gl.bindVertexArray(PostProcess._planeVAO);
-            this._planeVertexVBO = new VertexBuffer(BufferType.Array);
-            // Unnecesary gl.bindBuffer(gl.ARRAY_BUFFER, this._planeVertexVBO);
-            this._planeVertexVBO.bufferData(new Float32Array(positions), UsageType.StaticDraw);
-            this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
-            PostProcess._planeVAO.unbind();
-        }
-    }
-    /**
-     *
-     */
-    public static bind() {
-        PostProcess._planeVAO.bind();
-    }
-    /**
-     *
-     */
-    public static render() {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        // console.log("DRAW QUAD");
-        PostProcess._planeVAO.bind();
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        PostProcess._planeVAO.unbind();
-    }
-    /**
-     * [_planeVAO description]
-     * @type {VertexArray}
-     */
-    protected static _planeVAO: VertexArray = null;
-    /**
-     * [_planeVertexVBO description]
-     * @type {VertexBuffer}
-     */
-    protected static _planeVertexVBO: VertexBuffer = null;
+namespace MB {
+    export namespace extras {
+        /**
+        * This class wrap PostProcess effects
+        * @class core.PostProcess
+        */
+        export class PostProcess {
+            /**
+             * [initialize description]
+             */
+            static initialize() {
+                if (!PostProcess._planeVAO) {
+                    const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                    const positions = [
+                        -1.0, -1.0,
+                         1.0, -1.0,
+                        -1.0,  1.0,
+                         1.0,  1.0
+                    ];
+                    PostProcess._planeVAO = new MB.core.VertexArray();
+                    // Unnecesary gl.bindVertexArray(PostProcess._planeVAO);
+                    this._planeVertexVBO = new MB.core.VertexBuffer(MB.ctes.BufferType.Array);
+                    // Unnecesary gl.bindBuffer(gl.ARRAY_BUFFER, this._planeVertexVBO);
+                    this._planeVertexVBO.bufferData(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
+                    this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
+                    PostProcess._planeVAO.unbind();
+                }
+            }
+            /**
+             *
+             */
+            public static bind() {
+                PostProcess._planeVAO.bind();
+            }
+            /**
+             *
+             */
+            public static render() {
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                // console.log("DRAW QUAD");
+                PostProcess._planeVAO.bind();
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                PostProcess._planeVAO.unbind();
+            }
+            /**
+             * [_planeVAO description]
+             * @type {VertexArray}
+             */
+            protected static _planeVAO: MB.core.VertexArray = null;
+            /**
+             * [_planeVertexVBO description]
+             * @type {VertexBuffer}
+             */
+            protected static _planeVertexVBO: MB.core.VertexBuffer = null;
+        };
+    };
 };
-
-export { PostProcess };

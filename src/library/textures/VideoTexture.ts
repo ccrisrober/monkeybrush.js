@@ -17,86 +17,83 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"use strict";
 
-import { Core } from "../core/Core";
+namespace MB {
+    export namespace textures {
+        export class VideoTexture extends Texture {
+            protected _video: HTMLVideoElement;
+            /**
+             * [constructor description]
+             * @param {HTMLVideoElement} video [description]
+             * @param {boolean = true} loop [description]
+             * @param {number = 15} frameTime [description]
+             * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
+             */
+            constructor(video: HTMLVideoElement, loop: boolean = true, frameTime: number = 15, onSuccess: () => void = null) {
+                super(MB.ctes.TextureTarget.Texture2D);
 
-import { Texture } from "./Texture";
-import { TextureFormat, TextureType, TextureTarget }
-    from "../constants/Constants";
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
 
-class VideoTexture extends Texture {
-    protected _video: HTMLVideoElement;
-    /**
-     * [constructor description]
-     * @param {HTMLVideoElement} video [description]
-     * @param {boolean = true} loop [description]
-     * @param {number = 15} frameTime [description]
-     * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
-     */
-    constructor(video: HTMLVideoElement, loop: boolean = true, frameTime: number = 15, onSuccess: () => void = null) {
-        super(TextureTarget.Texture2D);
+                this._video = video;
+                this._video.muted = true;
+                this._video.loop = loop;
 
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                this._flipY_ = Boolean(true);
+                this._handle_ = gl.createTexture();
 
-        this._video = video;
-        this._video.muted = true;
-        this._video.loop = loop;
+                this._internalformat_ = MB.ctes.TextureFormat.RGBA;
+                this._format_ = MB.ctes.TextureFormat.RGBA;
+                this._type_ = gl.UNSIGNED_BYTE;
+                this._level_ = 0;
 
-        this._flipY_ = Boolean(true);
-        this._handle_ = gl.createTexture();
+                this.bind();
 
-        this._internalformat_ = TextureFormat.RGBA;
-        this._format_ = TextureFormat.RGBA;
-        this._type_ = gl.UNSIGNED_BYTE;
-        this._level_ = 0;
+                this.update();
 
-        this.bind();
+                this.minFilter(MB.ctes.TextureType.LinearMMNearest);
+                this.magFilter(MB.ctes.TextureType.Linear);
 
-        this.update();
+                // this.wrap([MB.ctes.TextureType.Linear, MB.ctes.TextureType.Clamp2Edge]);
 
-        this.minFilter(TextureType.LinearMMNearest);
-        this.magFilter(TextureType.Linear);
+                if (this._flipY_) {
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
+                }
 
-        // this.wrap([TextureType.Linear, TextureType.Clamp2Edge]);
+                this.unbind();
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
 
-        if (this._flipY_) {
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-        }
+                if (onSuccess) {
+                    onSuccess();
+                }
 
-        this.unbind();
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+                this._video.play();
 
-        if (onSuccess) {
-            onSuccess();
-        }
+                setInterval(function() {
+                    this.update();
+                }.bind(this), frameTime);
+            };
+            public update() {
+                if (this._video.readyState !== this._video.HAVE_ENOUGH_DATA) return;
 
-        this._video.play();
-
-        setInterval(function() {
-            this.update();
-        }.bind(this), frameTime);
+                // Update texture
+                this.bind();
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+                gl.texImage2D(
+                    this._target_,
+                    this._level_, // Level of details
+                    this._internalformat_, // Internal format
+                    this._format_, // Format
+                    this._type_, // Size of each channel
+                    this._video
+               );
+                gl.generateMipmap(gl.TEXTURE_2D);
+                this.unbind();
+            };
+            public destroy() {
+                super.destroy();
+                this._video.pause();
+            }
+        };
     };
-    public update() {
-        if (this._video.readyState !== this._video.HAVE_ENOUGH_DATA) return;
-
-        // Update texture
-        this.bind();
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-        gl.texImage2D(
-            this._target_,
-            this._level_, // Level of details
-            this._internalformat_, // Internal format
-            this._format_, // Format
-            this._type_, // Size of each channel
-            this._video
-       );
-        gl.generateMipmap(gl.TEXTURE_2D);
-        this.unbind();
-    };
-    public destroy() {
-        super.destroy();
-        this._video.pause();
-    }
 };
-
-export { VideoTexture };

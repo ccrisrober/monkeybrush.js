@@ -17,22 +17,42 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"use strict";
 
-/// <reference path="./App.ts" />
-/// <reference path="./Camera2.ts" />
-/// <reference path="./Decorators.ts" />
-/// <reference path="./polyfills.ts" />
-/// <reference path="./Scene.ts" />
+namespace MB {
+    export namespace models {
+        /**
+         * Octahedron class
+         * @class Octahedron
+         */
+        export class Octahedron extends Polyhedron {
+            /**
+             * Octahedron constructor
+             * @param {number} radius: Octahedron radius
+             * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
+             */
+            constructor(radius: number, subdivisions: number) {
+                let verts = [
+                     1,  0,  0,
+                    -1,  0,  0,
+                     0,  1,  0,
+                     0, -1,  0,
+                     0,  0,  1,
+                     0,  0, -1];
+                let el = [
+                    0, 2, 4,
+                    0, 4, 3,
+                    0, 3, 5,
+                    0, 5, 2,
+                    1, 2, 5,
+                    1, 5, 3,
+                    1, 3, 4,
+                    1, 4, 2
+                ];
 
-// /// <reference path="./cameras/__camera__.ts" />
-/// <reference path="./constants/Constants.ts" />
-/// <reference path="./core/__core__.ts" />
-/// <reference path="./extras/__extras__.ts" />
-/// <reference path="./lights/__lights__.ts" />
-/// <reference path="./maths/__maths__.ts" />
-/// <reference path="./models/__models__.ts" />
-// /// <reference path="./postprocess/__postprocess__.ts" />
-/// <reference path="./resources/__resources__.ts" />
-/// <reference path="./textures/__textures__.ts" />
 
-/// <reference path="./MonkeyBrush.ts" />
+                super(verts, el, radius, subdivisions);
+            };
+        };
+    };
+};

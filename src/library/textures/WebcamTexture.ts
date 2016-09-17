@@ -17,27 +17,26 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"use strict";
 
-import { VideoTexture } from "./VideoTexture";
-import { Vect2 } from "../maths/Vect2";
-import { ResourceMap } from "../resources/ResourceMap";
+namespace MB {
+    export namespace textures {
+        /**
+         * WebcamTexture class
+         * @class WebcamTexture
+         */
+        class WebcamTexture extends VideoTexture {
+            /**
+             * WebcamTexture constructor.
+             * @param {MB.maths.Vect2 = [320, 320]} size Webcam viewport size.
+             * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
+             */
+            constructor(size: MB.maths.Vect2 = MB.maths.Vect2.createFromScalar(320), onSuccess: () => void = null) {
+                super(MB.resources.ResourceMap.retrieveAsset("webcam"));
 
-/**
- * WebcamTexture class
- * @class WebcamTexture
- */
-class WebcamTexture extends VideoTexture {
-    /**
-     * WebcamTexture constructor.
-     * @param {Vect2 = [320, 320]} size Webcam viewport size.
-     * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
-     */
-    constructor(size: Vect2 = Vect2.createFromScalar(320), onSuccess: () => void = null) {
-        super(ResourceMap.retrieveAsset("webcam"));
-
-        this._video.width = size.x;
-        this._video.height = size.y;
+                this._video.width = size.x;
+                this._video.height = size.y;
+            };
+        };
     };
 };
-
-export { WebcamTexture };

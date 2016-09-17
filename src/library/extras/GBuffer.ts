@@ -17,81 +17,74 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Core } from "../core/Core";
-import { Vect2 } from "../maths/Vect2";
-import { SimpleTexture2D } from "../textures/SimpleTexture2D";
-import { TexOptions } from "../textures/Texture";
-import { Framebuffer } from "../core/Framebuffer";
-
-import { TextureFormat, TextureType } from "../constants/Constants";
-
 "use strict";
 
-/**
- * GBuffer class
- * This class lets you use deferred shading technique.
- * @class GBuffer
- */
-class GBuffer {
-    /**
-     * Framebuffer handler
-     * @type {Framebuffer}
-     */
-    protected Framebuffer: Framebuffer;
-    /**
-     * GBuffer constructor
-     * @param {Vect2} size GBuffer size
-     */
-    constructor(size: Vect2) {
-        const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+namespace MB {
+    export namespace extras {
+        /**
+         * GBuffer class
+         * This class lets you use deferred shading technique.
+         * @class GBuffer
+         */
+        export class GBuffer {
+            /**
+             * Framebuffer handler
+             * @type {Framebuffer}
+             */
+            protected Framebuffer: MB.core.Framebuffer;
+            /**
+             * GBuffer constructor
+             * @param {MB.maths.Vect2} size GBuffer size
+             */
+            constructor(size: MB.maths.Vect2) {
+                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
 
-        const configTex: TexOptions = {
-            internalFormat: TextureFormat.RGB,
-            format: TextureFormat.RGB,
-            type: gl.FLOAT,
-            minFilter: TextureType.Nearest,
-            magFilter: TextureType.Nearest
+                const configTex: MB.textures.TexOptions = {
+                    internalFormat: MB.ctes.TextureFormat.RGB,
+                    format: MB.ctes.TextureFormat.RGB,
+                    type: gl.FLOAT,
+                    minFilter: MB.ctes.TextureType.Nearest,
+                    magFilter: MB.ctes.TextureType.Nearest
+                };
+
+                this.Framebuffer = new MB.core.Framebuffer([
+                    // Position color buffer
+                    new MB.textures.SimpleTexture2D(size, configTex),
+                    // Normal color buffer
+                    new MB.textures.SimpleTexture2D(size, configTex),
+                    // Color + Specular color buffer
+                    new MB.textures.SimpleTexture2D(size, configTex)
+                ], size, true, true, {});
+
+                console.log("done");
+            };
+            /**
+             * Bind GBuffer for reading (pospass)
+             */
+            public bindForReading() {
+                this.Framebuffer.onlyBindTextures();
+            };
+            /**
+             * Bind GBuffer for writing (prepass)
+             */
+            public bindForWriting() {
+                this.Framebuffer.bind();
+            };
+            /**
+             * Destroy GBuffer
+             */
+            public destroy() {
+                if (this.Framebuffer) {
+                    this.Framebuffer.destroy();
+                }
+            };
+            /**
+             * Rebuild GBuffer
+             * @param {Vect2} size New GBuffer size
+             */
+            public rebuild(size: MB.maths.Vect2) {
+                this.Framebuffer.rebuild(size);
+            };
         };
-
-        this.Framebuffer = new Framebuffer([
-            // Position color buffer
-            new SimpleTexture2D(size, configTex),
-            // Normal color buffer
-            new SimpleTexture2D(size, configTex),
-            // Color + Specular color buffer
-            new SimpleTexture2D(size, configTex)
-        ], size, true, true, {});
-
-        console.log("done");
-    };
-    /**
-     * Bind GBuffer for reading (pospass)
-     */
-    public bindForReading() {
-        this.Framebuffer.onlyBindTextures();
-    };
-    /**
-     * Bind GBuffer for writing (prepass)
-     */
-    public bindForWriting() {
-        this.Framebuffer.bind();
-    };
-    /**
-     * Destroy GBuffer
-     */
-    public destroy() {
-        if (this.Framebuffer) {
-            this.Framebuffer.destroy();
-        }
-    };
-    /**
-     * Rebuild GBuffer
-     * @param {Vect2} size New GBuffer size
-     */
-    public rebuild(size: Vect2) {
-        this.Framebuffer.rebuild(size);
     };
 };
-
-export { GBuffer };

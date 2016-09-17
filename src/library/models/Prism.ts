@@ -17,29 +17,28 @@
 /// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import { Cone } from "./Cone";
-
 "use strict";
 
-/**
- * Prism class
- * @class Prism
- */
-class Prism extends Cone {
-    /**
-     * Prism constructor
-     * @param {number} radius: Prism radius
-     * @param {number} height: Prism height
-     * @param {number = 1.0} sides: Number of sides of the prism
-     * @param {number = 1.0} heightSubDiv Height subdivisions
-     * @param {boolean = true} createTopBase: Create top base
-     * @param {boolean = true} createBottomBase: Create bottom base
-     */
-    constructor(radius: number, height: number, sides: number,
-        heightSubDiv: number = 1.0, topCap: boolean = true, bottomCap: boolean = true) {
-        super(radius, radius, height, sides, heightSubDiv, topCap, bottomCap);
+namespace MB {
+    export namespace models {
+        /**
+         * Prism class
+         * @class Prism
+         */
+        export class Prism extends Cone {
+            /**
+             * Prism constructor
+             * @param {number} radius: Prism radius
+             * @param {number} height: Prism height
+             * @param {number = 1.0} sides: Number of sides of the prism
+             * @param {number = 1.0} heightSubDiv Height subdivisions
+             * @param {boolean = true} createTopBase: Create top base
+             * @param {boolean = true} createBottomBase: Create bottom base
+             */
+            constructor(radius: number, height: number, sides: number,
+                heightSubDiv: number = 1.0, topCap: boolean = true, bottomCap: boolean = true) {
+                super(radius, radius, height, sides, heightSubDiv, topCap, bottomCap);
+            };
+        };
     };
 };
-
-export { Prism };
