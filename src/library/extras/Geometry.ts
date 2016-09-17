@@ -169,6 +169,68 @@ namespace MB {
                     positions: newPositions
                 };
             };
+            /**
+             * Export quad faces to triangle faces
+             * @param  {Array<Array<number>>} faces [description]
+             * @return {Array}                      [description]
+             */
+            export function triangulateQuadFace(faces: Array<Array<number>>): Array<Array<number>> {
+                let triangles: Array<Array<number>> = [];
+                faces.forEach(function(face) {
+                    triangles.push([face[0], face[1], face[2]]);
+                    for(var j = 2; j < face.length-1; ++j) {
+                      triangles.push([face[0],face[j],face[j+1]]);
+                    }
+                });
+                return triangles;
+            };
+
+            export function removeDegerateIndices(indices: number[][]) {
+                function equ(a: number, b: number) {
+                    return a === b;
+                };
+
+                return indices.filter(function(indice) {
+                    for(var i = 0; i < indice.length; ++i) {
+                        for(var j = 0; j < indice.length; ++j) {
+                            if(i != j && equ(indice[i], indice[j])) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                });
+            };
+            export function removeDegerateIndicesWithVertices(
+                indices: number[][], vertices: number[][]) {
+                function equ(a: number[], b: number[]) {
+                    if(a.length !== b.length) {
+                        return false;
+                    }
+
+                    for(var i = 0; i< a.length; ++i) {
+                        if(a[i] !== b[i]) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                };
+
+                return indices.filter(function(indice) {
+                    let indice2 = indice.map(function(idx) {
+                        return vertices[idx];
+                    });
+                    for(var i = 0; i < indice2.length; i++) {
+                        for(var j = 0; j < indice2.length; j++) {
+                            if(i != j && equ(indice2[i], indice2[j])) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                });
+            };
         };
     };
 };
