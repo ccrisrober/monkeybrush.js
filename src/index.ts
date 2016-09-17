@@ -129,16 +129,6 @@ class MyScene extends MonkeyBrush.Scene {
                 }
             }
         }
-
-        /*this.model =
-            this.identityMatrix.clone()
-                .translate(new MonkeyBrush.maths.Vect3(i * 1.0, j * 1.0, k * 1.0))
-                .rotate(90.0 * Math.PI / 180, MonkeyBrush.maths.Vect3.yAxis)
-                .rotate(this.angle * 0.5 * dd, MonkeyBrush.maths.Vect3.yAxis)
-                .scale(new MonkeyBrush.maths.Vect3(1.25, 1.25, 1.25));
-        prog.sendUniformMat4("model", this.model);
-        // console.log(this.identityMatrix._value);
-        this.cubito[mode]();*/
         this.skybox.render(this.view, this.projection);
     }
     public pos = 0;

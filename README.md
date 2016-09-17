@@ -42,7 +42,13 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Add prism model
 - [x] Add cylinder model
 - [x] Add disc model
+- [x] Add polyhedron abstract model
+- [x] Add octahedron model
 - [x] Add icosphere model
+- [x] Add tetrahedron model
+- [x] Add dodecahedron model
+- [x] Add parametric geometry model
+- [x] Add lathe model
 - [x] Add capsule model
 - [x] Add object parser (faces: x1/y1/z1 x2/y2/z2 x3/y3/z3)
 - [x] Add custom model (indices, vertices, normals and texcoords list)
@@ -135,7 +141,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Epsilon
 - [x] SmallEpsilon
 - [x] Default IOR (air)
-- [x] Element DOM remove
+- [ ] Element DOM remove
 - [ ] Array remove by index
 
 ### Others
@@ -149,8 +155,9 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 
 
 ### Development
-- [x] Grunt integration
-- [x] Webpack integration
+- [x] Grunt integration (deprecated)
+- [x] Webpack integration (deprecated)
+- [x] Gulp integration
 - [x] Typescript definition file for WebGL2RenderingContext
 - [x] Shader uniforms and attributes extraction
 - [x] Clean project generator (Simple project gen.) (https://github.com/maldicion069/monkeybrush-generator)
@@ -178,3 +185,5 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 > - tslint src/**/*.ts --exclude src/**/*.d.ts > tslintwarnings.txt
 > - https://www.npmjs.com/package/webpack-glsl-loader
 > - http://www.jbrantly.com/es6-modules-with-typescript-and-webpack/
+
+> - tslint code/mb/library/**/*.ts --exclude code/mb/**/*.d.ts > tslintwarnings.txt

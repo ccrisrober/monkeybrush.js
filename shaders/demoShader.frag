@@ -26,7 +26,7 @@ void main() {
 
     //fragColor = vec4(outNormal, 1.0);
 
-    vec3 color = vec3(0.0, 0.0, 1.0);
+    vec3 color = vec3(0.0, 1.0, 0.0);
     color = texture(tex, outUV).xyz;
 
     // Ambient
