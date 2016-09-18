@@ -77,6 +77,88 @@ namespace MB {
         protected _handle_: WebGLTexture;
 
         /**
+         * Returns false if gl.LINEAR is not supported as a texture
+         *     filter mode for textures of type gl.FLOAT.
+         * @return {boolean} [description]
+         */
+        public static canUseFloatingPointTextures(): boolean {
+            const gl = Core.getInstance().getGL();
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            } else {
+                return !!MB.Extensions.get("OES_texture_float");
+            }
+        };
+
+        public static canUseFloatingPointLinearFiltering(): boolean {
+            return !!MB.Extensions.get("ES_texture_float_linear");
+        };
+
+        /**
+         * Returns false if gl.HALF_FLOAT_OES is not supported as a
+         *     texture type.
+         * WebGL2 supports this without extension.
+         * @return {boolean} [description]
+         */
+        public static canUseHalfFloatingPointTextures(): boolean {
+            const gl = Core.getInstance().getGL();
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            } else {
+                return !!MB.Extensions.get("OES_texture_half_float");
+            }
+        };
+
+        /**
+         * Returns false if gl.LINEAR is not supported as a texture
+         *     filter mode for textures of type gl.HALF_FLOAT_OES.
+         * WebGL2 supports this without extension.
+         * @return {boolean} [description]
+         */
+        public static canUseHalfFloatingPointLinearFiltering(): boolean {
+            const gl = Core.getInstance().getGL();
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            } else {
+                return !!MB.Extensions.get("OES_texture_half_float_linear");
+            }
+        };
+
+        constructor(target: MB.ctes.TextureTarget, options: TexOptions = {}) {
+            this._target_ = target;
+
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._handle_ = gl.createTexture();
+
+            this._flipY_ = Boolean(options.flipY || false);
+            this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
+            this._format_ = options.format || MB.ctes.TextureFormat.RGBA;
+            this._type_ = options.type || gl.UNSIGNED_BYTE;
+            this._level_ = options.level || 0;
+
+            this._compressed_ = Boolean(options.compressed || false);
+
+
+            if (this._type_ === gl.FLOAT) {
+                if (!Texture.canUseFloatingPointTextures()) {
+                    throw new Error('OES_texture_float is required but not supported');
+                }
+                /*if ((minFilter !== gl.NEAREST || magFilter !== gl.NEAREST) &&
+                    !Texture.canUseFloatingPointLinearFiltering()) {
+                    throw new Error('OES_texture_float_linear is required but not supported');
+                }*/
+            } else if (this._type_ === gl.HALF_FLOAT) {
+                if (!Texture.canUseHalfFloatingPointTextures()) {
+                    throw new Error('OES_texture_half_float is required but not supported');
+                }
+                /*if ((minFilter !== gl.NEAREST || magFilter !== gl.NEAREST) &&
+                    !Texture.canUseHalfFloatingPointLinearFiltering()) {
+                    throw new Error('OES_texture_half_float_linear is required but not supported');
+                }*/
+            }
+        };
+
+        /**
          * Change texture minification filter
          * @param {MB.ctes.TextureType} filter: Minification filter type
          */
@@ -130,7 +212,7 @@ namespace MB {
             level = Math.floor(level);
             // const ext = Extensions.get("EXT_texture_filter_anisotropic");
             const max_anisotropy = MB.Capabilities.getMaxAnisotropy();
-            if (max_anisotropy < level) {
+            if (max_anisotropy < level && this._anisotropy_ !== level) {
                 this._anisotropy_ = level;
                 gl.texParameterf(this._target_, 0x84FE/*ext.TEXTURE_MAX_ANISOTROPY_EXT*/, level);
             }
@@ -163,12 +245,6 @@ namespace MB {
                 // Prevents t-coordinate wrapping (repeating).
                 MB.ctes.WrapMode.Clamp2Edge
             ]);*/
-        }
-
-
-
-        constructor(target: MB.ctes.TextureTarget) {
-            this._target_ = target;
         }
         get target(): number { return this._target_; }
 

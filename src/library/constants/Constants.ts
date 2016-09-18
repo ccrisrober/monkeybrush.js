@@ -316,7 +316,7 @@ namespace MB {
             Texture2DArray = 0x8C1A,
             TextureCubeMap = 0x8513
         };
-        export enum TextureType {
+        export enum TextureType { // TODO: New name => TextureFilter
             Nearest = 0x2600,
             Linear = 0x2601,
             NearestMMNearest = 0x2700,

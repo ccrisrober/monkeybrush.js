@@ -20,34 +20,21 @@
 "use strict";
 
 namespace MB {
-    export class RenderBufferMultisampleTexture extends RenderBuffer {
+    export abstract class RenderBuffer {
+        protected _handle: WebGLRenderbuffer;
+        protected _size: MB.Vect2;
+        protected _samples: number;
+        protected _format: number;
         constructor(size: MB.Vect2, format: number, attachment: number, samples: number = 4) {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            super(size, format, attachment);
-
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-            gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, size.x, size.y);
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+            this._handle = gl.createRenderbuffer();
+            this._size = size;
+            this._format = format;
+            this._samples = samples;
         };
-        public bind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-        };
-        public unbind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-        }
-        public destroy() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.deleteTexture(this._handle);
-        };
-        public resize(size: MB.Vect2) {
-            if (!size.exactEquals(this._size)) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-                gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-                gl.renderbufferStorageMultisample(gl.RENDERBUFFER, this._format, size.x, size.y, this._samples);
-            }
-        }
+        public abstract bind();
+        public abstract unbind();
+        public abstract destroy();
+        public abstract resize(size: MB.Vect2);
     };
 };

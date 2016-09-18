@@ -20,15 +20,11 @@
 "use strict";
 
 namespace MB {
-    export class RenderBufferTexture {
-        protected _handle: WebGLRenderbuffer;
-        protected _size: MB.Vect2;
-        protected _format: number;
+    export class RenderBufferTexture extends RenderBuffer {
         constructor(size: MB.Vect2, format: number, attachment: number) {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            this._handle = gl.createRenderbuffer();
-            this._size = size;
-            this._format = format;
+            super(size, format, attachment);
+
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
             gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);

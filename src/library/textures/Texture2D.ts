@@ -28,19 +28,9 @@ namespace MB {
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
          */
         constructor(data: any, options: TexOptions = {}, onSuccess: () => void = null) {
-            super(MB.ctes.TextureTarget.Texture2D);
+            super(MB.ctes.TextureTarget.Texture2D, options);
 
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-
-            // TODO: Support compression
-
-            this._flipY_ = Boolean(options.flipY || false);
-            this._handle_ = gl.createTexture();
-
-            this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
-            this._format_ = options.format || MB.ctes.TextureFormat.RGBA;
-            this._type_ = options.type || gl.UNSIGNED_BYTE;
-            this._level_ = options.level || 0;
 
             this.bind();
 

@@ -37,23 +37,14 @@ namespace MB {
          * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
          */
         constructor(size: MB.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
-            super(MB.ctes.TextureTarget.Texture2D);
+            super(MB.ctes.TextureTarget.Texture2D, options);
 
             this._size = size;
 
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            this._handle_ = gl.createTexture();
+            this._offsets_ = options.offsets;
 
             // TODO: Support compression
-
-            this._flipY_ = options.flipY === true;
-
-            this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
-            this._format_ = options.format || gl.RGBA;
-            this._type_ = options.type || gl.UNSIGNED_BYTE;
-            this._level_ = options.level || 0;
-            this._compressed_ = Boolean(options.compressed || false);
-            this._offsets_ = options.offsets;
 
             this.bind();
 

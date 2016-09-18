@@ -36,21 +36,18 @@ namespace MB {
         constructor(video: HTMLVideoElement, loop: boolean = true,
             frameTime: number = 15, onSuccess: () => void = null) {
 
-            super(MB.ctes.TextureTarget.Texture2D);
-
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+
+            super(MB.ctes.TextureTarget.Texture2D, {
+                internalFormat: MB.ctes.TextureFormat.RGBA,
+                format: MB.ctes.TextureFormat.RGBA,
+                type: gl.UNSIGNED_BYTE,
+                flipY: true
+            });
 
             this._video = video;
             this._video.muted = true;
             this._video.loop = loop;
-
-            this._flipY_ = Boolean(true);
-            this._handle_ = gl.createTexture();
-
-            this._internalformat_ = MB.ctes.TextureFormat.RGBA;
-            this._format_ = MB.ctes.TextureFormat.RGBA;
-            this._type_ = gl.UNSIGNED_BYTE;
-            this._level_ = 0;
 
             this.bind();
 

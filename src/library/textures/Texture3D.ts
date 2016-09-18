@@ -36,17 +36,8 @@ namespace MB {
             if (!(gl instanceof WebGL2RenderingContext)) {
                 throw new Error("Must provide a WebGL2 context ...");
             }
-            super(MB.ctes.TextureTarget.Texture3D);
+            super(MB.ctes.TextureTarget.Texture3D, options);
 
-            this._flipY_ = Boolean(options.flipY || false);
-            this._handle_ = gl.createTexture();
-
-            this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
-            this._format_ = options.format || MB.ctes.TextureFormat.RGBA;
-            this._type_ = options.type || gl.UNSIGNED_BYTE;
-            this._level_ = options.level || 0;
-
-            this._compressed_ = Boolean(options.compressed || false);
             // TODO: WRAP
 
             this.bind();

@@ -39,21 +39,15 @@ namespace MB {
          * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
          */
         constructor(domCanvas: HTMLCanvasElement, options: TexOptions = {}, onSuccess: () => void = null) {
-            super(MB.ctes.TextureTarget.Texture2D);
+            super(MB.ctes.TextureTarget.Texture2D, options);
             // TODO: Al constructor sería mejor mandarle el tipo y las options (para ahorrar código)
             // Luego el propio constructor sube las texturas que sea (que el padre solo lea las opciones
             // y rellene los datos de turno)
 
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            this._handle_ = gl.createTexture();
 
-            this._flipY_ = options.flipY === true;
             this._domCanvas = domCanvas;
 
-            this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
-            this._format_ = options.format || gl.RGBA;
-            this._type_ = options.type || gl.UNSIGNED_BYTE;
-            this._level_ = options.level || 0;
             this._compressed_ = Boolean(options.compressed || false);
 
             this.bind();

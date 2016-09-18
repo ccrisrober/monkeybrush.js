@@ -135,7 +135,7 @@ gulp.task("typedoc", function() {
         out: "./doc",
 
         // TypeDoc options (see typedoc docs)
-        name: "my-project",
+        name: "Monkey Brush",
         readme: "./READMEDOC.md",
         //theme: "minimal",
         mode: "file",
