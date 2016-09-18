@@ -2,75 +2,7 @@
 <html>
 <head>
     <title>Hello Triangle</title>
-    <link rel="stylesheet" type="text/css" href="../bower_components/vanillatoasts/vanillatoasts.css">
-    <style>
-        body {
-            margin: 0;
-            /* background-color: gray; */
-        }
-        canvas {
-            padding: 0;
-            margin: auto;
-            display: block;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-        /**/
-        canvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-        }
-        /**/
-        #stats {
-            /*position: absolute;
-            top: 0;*/
-        }
-        .spinner div {
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            left: -20px;
-            top: 40px;
-            background-color: white;
-            border-radius: 50%;
-            animation: move 4s infinite cubic-bezier(.2,.64,.81,.23);
-        }
-        .spinner div:nth-child(2) {
-            animation-delay: 150ms;
-        }
-        .spinner div:nth-child(3) {
-            animation-delay: 300ms;
-        }
-        .spinner div:nth-child(4) {
-            animation-delay: 450ms;
-        }
-        @keyframes move {
-            0% {left: 0%;}
-            75% {left:100%;}
-            100% {left:100%;}
-        }
-        .spinner {
-            width: 100%;
-            height: 60px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 60px;
-            right: 0;
-            margin: auto;
-        }
-        body {
-            overflow: hidden;
-        }
-
-        #vanillatoasts-container {
-            z-index: 999999999999;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
     <div class="spinner" id="spinner">
@@ -81,11 +13,7 @@
     </div>
     <div id="stats"></div>
     <div id="samplesPassed"></div>
-    <script type="text/javascript" src="../bower_components/vanillatoasts/vanillatoasts.js"></script>
-    <script type="text/javascript" src="../bower_components/log4javascript/log4javascript.js"></script>
-    <script type="text/javascript" src="../bower_components/stats.js/build/stats.min.js"></script>
-    <script type="text/javascript" src="../bower_components/dat.gui/dat.gui.min.js"></script>
-    <script type="text/javascript" src="../bower_components/gl-matrix/dist/gl-matrix-min.js"></script>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
@@ -97,27 +25,27 @@
         };
 
         var SimpleConfig = function () {
-		    return {
-		        resume: true
-		    };
-		};
-		var MyScene = (function (_super) {
-		    __extends(MyScene, _super);
-		    function MyScene() {
-		        _super.call(this, SimpleConfig(), "App", 2);
-		        this.homePoint = new MB.maths.Vect3(2.11, -0.55, 28.25);
-		        this.camera = new MB.Camera2(this.homePoint);
-		        this.angle = 0;
-		        this.mainShader = "prog";
-		        this.pos = 0;
-		        this.identityMatrix = MB.maths.Mat4.identity.clone();
-		        this.model = new MB.maths.Mat4();
-		    }
-		    MyScene.prototype.loadAssets = function () {
-		    };
-		    MyScene.prototype.initialize = function () {
-		        var _this = this;
-		        this.triangleModel = new MB.models.CustomModel({
+            return {
+                resume: true
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, SimpleConfig(), "App", 2);
+                this.homePoint = new MB.maths.Vect3(2.11, -0.55, 28.25);
+                this.camera = new MB.Camera2(this.homePoint);
+                this.angle = 0;
+                this.mainShader = "prog";
+                this.pos = 0;
+                this.identityMatrix = MB.maths.Mat4.identity.clone();
+                this.model = new MB.maths.Mat4();
+            }
+            MyScene.prototype.loadAssets = function () {
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+                this.triangleModel = new MB.models.CustomModel({
                     indices: [
                         0, 1, 2
                     ],
@@ -132,29 +60,29 @@
                         0.0, 0.0, 1.0  // Vertex 3: Blue
                     ]
                 });
-		        MB.resources.ProgramManager.addWithFun("prog", function () {
-		            var prog = new MB.core.Program();
+                MB.resources.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.core.Program();
 
-	                prog.addShader("../shaders/triangleShader.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-	                prog.addShader("../shaders/triangleShader.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                    prog.addShader("../shaders/triangleShader.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
+                    prog.addShader("../shaders/triangleShader.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
 
-		            prog.compile();
-		            prog.use();
-		            prog.addUniforms(["projection", "view", "model"]);
-		            return prog;
-		        });
-		        this.cameraUpdate();
-		    };
-		    MyScene.prototype.update = function (dt) {
-		        this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
-		        this.camera.update(this.cameraUpdate.bind(this));
-		        this.angle += MB.extras.Timer.deltaTime() * 0.001;
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["projection", "view", "model"]);
+                    return prog;
+                });
+                this.cameraUpdate();
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+                this.camera.update(this.cameraUpdate.bind(this));
+                this.angle += MB.extras.Timer.deltaTime() * 0.001;
                 this.__resize__();
-		    };
-		    MyScene.prototype.draw = function (dt) {
-		        MB.core.Core.getInstance().clearColorAndDepth();
-		        var prog = MB.resources.ProgramManager.get(this.mainShader);
-		        prog.use();
+            };
+            MyScene.prototype.draw = function (dt) {
+                MB.core.Core.getInstance().clearColorAndDepth();
+                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                prog.use();
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.maths.Vect3(0.0, 0.0, 0.0))
@@ -164,26 +92,26 @@
                 MB.core.GlobalState.setCullingStatus(false);
 
                 this.triangleModel.render();
-		    };
-		    MyScene.prototype.cameraUpdate = function () {
-		        var canvas = MB.core.Core.getInstance().canvas();
-		        this.view = this.camera.GetViewMatrix();
-		        this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-		        var prog = MB.resources.ProgramManager.get(this.mainShader);
-		        prog.use();
-		        prog.sendUniformVec3("viewPos", this.camera.GetPos());
-		        prog.sendUniformMat4("projection", this.projection);
-		        prog.sendUniformMat4("view", this.view);
-		    };
-		    MyScene.prototype.textCB = function (gui) {
-		    };
-		    return MyScene;
-		}(MB.Scene));
-		;
-		window.onload = function () {
-		    var myScene = new MyScene();
-		    myScene.start();
-		};
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                var canvas = MB.core.Core.getInstance().canvas();
+                this.view = this.camera.GetViewMatrix();
+                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                prog.use();
+                prog.sendUniformVec3("viewPos", this.camera.GetPos());
+                prog.sendUniformMat4("projection", this.projection);
+                prog.sendUniformMat4("view", this.view);
+            };
+            MyScene.prototype.textCB = function (gui) {
+            };
+            return MyScene;
+        }(MB.Scene));
+        ;
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
     </script>
 </body>
 </html>
