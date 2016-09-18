@@ -1,0 +1,167 @@
+#vanillatoasts-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  font-family: 'Helvetica';
+}
+
+.vanillatoasts-toast {
+  position: relative;
+  padding: 20px 17px;
+  margin: 20px;
+  border-radius: 10px;
+  background: #F5F5F5;
+  cursor: pointer;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  animation-duration:  .3s;
+  animation-name: VanillaToasts;
+  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+}
+
+.vanillatoasts-fadeOut {
+  animation-name: VanillaToastsFadeOut;
+  animation-duration: .3s;
+  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  animation-fill-mode: forwards;
+}
+
+#vanillatoasts-container p, h4 {
+  margin: 3px 0!important;
+}
+
+.vanillatoasts-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.vanillatoasts-text {
+  font-size: 14px;
+  color: #777;
+}
+
+.vanillatoasts-icon {
+  position: absolute;
+  top: 5px;
+  left: -40px;
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  background: #FFF;
+}
+
+.vanillatoasts-toast a, .vanillatoasts-toast a:hover {
+  color: #549EDB !important;
+  text-decoration: none !important;
+}
+
+/** toast types */
+.vanillatoasts-success {
+  border-bottom: 2px solid #51C625;
+}
+
+.vanillatoasts-warning {
+  border-bottom: 2px solid #DB9215;
+}
+
+.vanillatoasts-error {
+  border-bottom: 2px solid #DB2B1D;
+}
+
+.vanillatoasts-info {
+  border-bottom: 2px solid #27ABDB;
+}
+
+@keyframes VanillaToasts {
+  from {
+    transform: translate3d(400px, 0, 0);;
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes VanillaToastsFadeOut {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(400px, 0, 0);
+    opacity: 0;
+  }
+}
+
+
+
+
+body {
+    margin: 0;
+    /* background-color: gray; */
+}
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+/**/
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+/**/
+#stats {
+    /*position: absolute;
+    top: 0;*/
+}
+.spinner div {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: -20px;
+    top: 40px;
+    background-color: white;
+    border-radius: 50%;
+    animation: move 4s infinite cubic-bezier(.2,.64,.81,.23);
+}
+.spinner div:nth-child(2) {
+    animation-delay: 150ms;
+}
+.spinner div:nth-child(3) {
+    animation-delay: 300ms;
+}
+.spinner div:nth-child(4) {
+    animation-delay: 450ms;
+}
+@keyframes move {
+    0% {left: 0%;}
+    75% {left:100%;}
+    100% {left:100%;}
+}
+.spinner {
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 60px;
+    right: 0;
+    margin: auto;
+}
+body {
+    overflow: hidden;
+}
+
+#vanillatoasts-container {
+    z-index: 999999999999;
+}
