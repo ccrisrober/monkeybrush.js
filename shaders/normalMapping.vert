@@ -26,7 +26,7 @@ void main() {
 
     vec2 uvv = vec2(uv.x, 1.0 - uv.y);
 
-	outNormal = normalize(normalMatrix * texture(texNormal, uvv).rgb);
+	outNormal = normalize(normalMatrix * (texture(texNormal, uvv).rgb * 2.0 - 1.0));
 	outUV = uvv;
 
 	lp = vec3(view * model * vec4(lightPosition, 1.0));

@@ -80,7 +80,9 @@ namespace MB {
              * @return {VertexBuffer} [description]
              */
             protected addBufferArray(attribLocation: number,
-                data: Float32Array, numElems: number, type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw): MB.core.VertexBuffer {
+                data: Float32Array, numElems: number,
+                type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw): MB.core.VertexBuffer {
+
                 const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
                 let vb: MB.core.VertexBuffer = new MB.core.VertexBuffer(MB.ctes.BufferType.Array);
                 vb.bufferData(data, type);

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Random hedron</title>
+    <title>Click points</title>
     <link rel="stylesheet" type="text/css" href="../bower_components/vanillatoasts/vanillatoasts.css">
     <style>
         body {
@@ -104,7 +104,7 @@
 		    __extends(MyScene, _super);
 		    function MyScene() {
 		        _super.call(this, SimpleConfig(), "App", 2);
-		        this.homePoint = new MB.maths.Vect3(3.91, -4.52, 60.35);
+                this.homePoint = new MB.maths.Vect3(0.08, 0.16, 20.25);
 		        this.camera = new MB.Camera2(this.homePoint);
 		        this.angle = 0;
 		        this.mainShader = "prog";
@@ -115,95 +115,67 @@
 		    };
 		    MyScene.prototype.initialize = function () {
 		        var _this = this;
-
-                this.cuboctahedron0 = new MB.models.Cuboctahedron(12.5, 0.0);
-                this.cuboctahedron1 = new MB.models.Cuboctahedron(12.5, 1.0);
-                this.cuboctahedron2 = new MB.models.Cuboctahedron(12.5, 2.0);
-                this.cuboctahedron3 = new MB.models.Cuboctahedron(12.5, 3.0);
-                this.cuboctahedron4 = new MB.models.Cuboctahedron(12.5, 4.0);
-
-		        this.octahedron0 = new MB.models.Octahedron(12.5, 0.0);
-		        this.octahedron1 = new MB.models.Octahedron(12.5, 1.0);
-		        this.octahedron2 = new MB.models.Octahedron(12.5, 2.0);
-		        this.octahedron3 = new MB.models.Octahedron(12.5, 3.0);
-		        this.octahedron4 = new MB.models.Octahedron(12.5, 4.0);
-
-		        this.icosahedron0 = new MB.models.Icosahedron(12.5, 0.0);
-		        this.icosahedron1 = new MB.models.Icosahedron(12.5, 1.0);
-		        this.icosahedron2 = new MB.models.Icosahedron(12.5, 2.0);
-		        this.icosahedron3 = new MB.models.Icosahedron(12.5, 3.0);
-		        this.icosahedron4 = new MB.models.Icosahedron(12.5, 4.0);
-
-		        this.tetrahedron0 = new MB.models.Tetrahedron(12.5, 0.0);
-		        this.tetrahedron1 = new MB.models.Tetrahedron(12.5, 1.0);
-		        this.tetrahedron2 = new MB.models.Tetrahedron(12.5, 2.0);
-		        this.tetrahedron3 = new MB.models.Tetrahedron(12.5, 3.0);
-		        this.tetrahedron4 = new MB.models.Tetrahedron(12.5, 4.0);
-
-		        this.dodecahedron0 = new MB.models.Dodecahedron(12.5, 0.0);
-		        this.dodecahedron1 = new MB.models.Dodecahedron(12.5, 1.0);
-		        this.dodecahedron2 = new MB.models.Dodecahedron(12.5, 2.0);
-		        this.dodecahedron3 = new MB.models.Dodecahedron(12.5, 3.0);
-		        this.dodecahedron4 = new MB.models.Dodecahedron(12.5, 4.0);
-
-		        this.customHedron0 = new MB.models.Polyhedron(
-		        	[ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-		        	[ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 0.0);
-		        this.customHedron1 = new MB.models.Polyhedron(
-		        	[ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-		        	[ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 1.0);
-		        this.customHedron2 = new MB.models.Polyhedron(
-		        	[ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-		        	[ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 2.0);
-		        this.customHedron3 = new MB.models.Polyhedron(
-		        	[ 1, 1, -1.23 -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-		        	[ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 3.0);
-		        this.customHedron4 = new MB.models.Polyhedron(
-		        	[ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-		        	[ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 4.0);
-
+		        this.cubito = new MB.models.Cube(15.0);
 		        MB.resources.ProgramManager.addWithFun("prog", function () {
 		            var prog = new MB.core.Program();
-	                prog.addShader("../shaders/demoShader.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-	                prog.setFooFragment();
+	                prog.addShader("../shaders/clickPoint.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
+	                prog.addShader("../shaders/clickPoint.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
 		            prog.compile();
 		            prog.use();
 		            prog.addUniforms(["projection", "view", "model"]);
 		            return prog;
 		        });
-		        this.cameraUpdate();
 
-                this.renders = [
-                    { name: "cuboctahedron", y: -22.5 },
-                    { name: "customHedron", y: -15.0 },
-                    { name: "octahedron", y: -7.5 },
-                    { name: "icosahedron", y: 0.0 },
-                    { name: "tetrahedron", y: 7.5 },
-                    { name: "dodecahedron", y: 15.0 }
-                ];
+
+                this.maxNumTriangles = 200;
+                this.maxNumVertices  = 3 * this.maxNumTriangles;
+                this.index = 0;
+
+                var vBuffer = gl.createBuffer();
+                gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
+                gl.bufferData( gl.ARRAY_BUFFER, 8 * this.maxNumVertices, gl.STATIC_DRAW );
+
+                gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(0);
+
+                var cBuffer = gl.createBuffer();
+                gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+                gl.bufferData( gl.ARRAY_BUFFER, 16 * this.maxNumVertices, gl.STATIC_DRAW );
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+                var t = vec2(-1 + 2*event.clientX/canvas.width,
+                -1 + 2*(canvas.height-event.clientY)/canvas.height);
+                gl.bufferSubData(gl.ARRAY_BUFFER, sizeof[’vec2’]*index, t);
+                index++;
+
+		        this.cameraUpdate();
 		    };
 		    MyScene.prototype.update = function (dt) {
 		        this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
 		        this.camera.update(this.cameraUpdate.bind(this));
 		        this.angle += MB.extras.Timer.deltaTime() * 0.001;
                 this.__resize__();
+
+                if (MB.core.Input.isButtonClicked(MB.ctes.MouseButton.Left)) {
+                    var pos = {
+                        x: MB.core.Input.getMousePosX(),
+                        y: MB.core.Input.getMousePosY()
+                    };
+                    console.log(pos);
+                }
 		    };
 		    MyScene.prototype.draw = function (dt) {
 		        MB.core.Core.getInstance().clearColorAndDepth();
 		        var prog = MB.resources.ProgramManager.get(this.mainShader);
 		        prog.use();
-                for (var i = 0; i < 5; ++i) {
-                    this.renders.forEach(function(v) {
-                        this.model =
-                            this.identityMatrix.clone()
-                                .translate(new MB.maths.Vect3(-15.0 + (7.5 * i), v.y, 0.0))
-                                .rotate(90.0 * Math.PI / 180, MB.maths.Vect3.yAxis)
-                                .rotate(this.angle * 0.5, MB.maths.Vect3.yAxis)
-                                .scale(new MB.maths.Vect3(0.25, 0.25, 0.25));
-                        prog.sendUniformMat4("model", this.model);
-                        this[v.name + i].render2();
-                    }.bind(this));
-                }
+                this.model =
+                    this.identityMatrix.clone()
+                        .translate(new MB.maths.Vect3(0.0, 0.0, 0.0))
+                        .rotate(90.0 * Math.PI / 180, MB.maths.Vect3.yAxis)
+                        .rotate(this.angle * 0.5, MB.maths.Vect3.yAxis)
+                        .scale(new MB.maths.Vect3(0.25, 0.25, 0.25));
+                prog.sendUniformMat4("model", this.model);
+                this.cubito.render3();
 		    };
 		    MyScene.prototype.cameraUpdate = function () {
 		        var canvas = MB.core.Core.getInstance().canvas();

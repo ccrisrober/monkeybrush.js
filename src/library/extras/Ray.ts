@@ -33,7 +33,8 @@ namespace MB {
              * @param {MB.maths.Vect3 = new MB.maths.Vect3()} origin: Ray origin point.
              * @param {MB.maths.Vect3 = new MB.maths.Vect3()} direction: Ray direction.
              */
-            constructor(origin: MB.maths.Vect3 = new MB.maths.Vect3(), direction: MB.maths.Vect3 = new MB.maths.Vect3()) {
+            constructor(origin: MB.maths.Vect3 = new MB.maths.Vect3(),
+                direction: MB.maths.Vect3 = new MB.maths.Vect3()) {
                 this._origin = origin;
                 this._direction = direction;
             };

@@ -36,7 +36,9 @@ namespace MB {
              * @param {number = 0} phiInit [description]
              * @param {number = 2 * Math.PI} phiRadius [description]
              */
-            constructor(points: ArrayLike<MB.maths.Vect3>, segments: number, phiInit: number = 0, phiRadius: number = 2 * Math.PI) {
+            constructor(points: ArrayLike<MB.maths.Vect3>, segments: number,
+                phiInit: number = 0, phiRadius: number = 2 * Math.PI) {
+
                 super();
                 let vertices = [];
                 let normals = [];

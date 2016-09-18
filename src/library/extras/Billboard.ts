@@ -90,7 +90,7 @@ namespace MB {
                     out vec4 fragColor;
 
                     void main() {
-                        if(length(tt - 0.5) > 0.5) discard;
+                        if (length(tt - 0.5) > 0.5) discard;
                         else fragColor = texture(tex, tc);
                     }`,
                     MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_text);

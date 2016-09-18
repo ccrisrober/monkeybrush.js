@@ -67,5 +67,5 @@ namespace MB {
                 this._position.z += z;
             }
         };
-};
+    };
 };

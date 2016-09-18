@@ -205,7 +205,9 @@ namespace MB {
              *    reference value and the stored stencil value when the test is done.
              */
             static setStencilFunc(compFun: MB.ctes.ComparisonFunc, ref: number, mask: number) {
-                if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref && this._currentStencilFuncMask !== mask) {
+                if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
+                    && this._currentStencilFuncMask !== mask) {
+
                     const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                     gl.stencilFunc(compFun, ref, mask);
 
@@ -223,7 +225,9 @@ namespace MB {
              *    and depth test passes.
              */
             static setStencilOp(fail: MB.ctes.StencilOp, zfail: MB.ctes.StencilOp, zpass: MB.ctes.StencilOp) {
-                if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail && this._currentStencilZPass !== zpass) {
+                if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
+                    && this._currentStencilZPass !== zpass) {
+
                     const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                     gl.stencilOp(fail, zfail, zpass);
 

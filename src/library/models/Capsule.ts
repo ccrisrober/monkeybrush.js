@@ -33,7 +33,9 @@ namespace MB {
              * @param {number = 12} subHeight Capsule height subdivision
              * @param {number = 12} numSegm Capsule num segments
              */
-            constructor(radius: number = 0.5, height: number = radius * 2, subHeight: number = 12, numSegm: number = 12) {
+            constructor(radius: number = 0.5, height: number = radius * 2,
+                subHeight: number = 12, numSegm: number = 12) {
+
                 super();
 
                 let verts = [];
@@ -75,7 +77,8 @@ namespace MB {
                 const ringIncr = 1.0 / (subHeight - 1);
 
                 for (let r = 0; r < subHeight / 2; ++r) {
-                    calcNewRing(numSegm, Math.sin(Math.PI * r * ringIncr), Math.sin(Math.PI * (r * ringIncr - 0.5)), -0.5);
+                    calcNewRing(numSegm, Math.sin(Math.PI * r * ringIncr),
+                        Math.sin(Math.PI * (r * ringIncr - 0.5)), -0.5);
                 }
 
                 for (let r = 0; r < ringsBody; ++r) {
@@ -83,7 +86,8 @@ namespace MB {
                 }
 
                 for (let r = subHeight / 2; r < subHeight; ++r) {
-                    calcNewRing(numSegm, Math.sin(Math.PI * r * ringIncr), Math.sin(Math.PI * (r * ringIncr - 0.5)), +0.5);
+                    calcNewRing(numSegm, Math.sin(Math.PI * r * ringIncr),
+                        Math.sin(Math.PI * (r * ringIncr - 0.5)), +0.5);
                 }
 
                 for (let r = 0; r < ringsTotal - 1; ++r) {

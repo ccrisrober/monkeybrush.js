@@ -71,7 +71,9 @@ namespace MB {
                     let deltaAngle = this._endAngle - this._startAngle;
                     if (deltaAngle < 0) deltaAngle += TWOPI;
                     if (deltaAngle > TWOPI) deltaAngle -= TWOPI;
-                    let angle = this._isClockwise ? this._endAngle + (1 - t) * (TWOPI - deltaAngle) : this._startAngle + t * deltaAngle;
+                    let angle = this._isClockwise ? this._endAngle + (1 - t) *
+                        (TWOPI - deltaAngle) : this._startAngle + t * deltaAngle;
+
                     const tx = this._center.x + this._radius.x * Math.cos(angle);
                     const ty = this._center.y + this._radius.y * Math.sin(angle);
                     return new Vect2(tx, ty);

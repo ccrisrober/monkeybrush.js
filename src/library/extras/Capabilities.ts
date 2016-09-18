@@ -99,7 +99,8 @@ namespace MB {
                 return _capabilities["maxColorAttachments"];
             };
             /**
-            var logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true && !! extensions.get('EXT_frag_depth');
+            var logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true
+                && !! extensions.get('EXT_frag_depth');
             var maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
             var maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
             var maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
@@ -120,4 +121,4 @@ namespace MB {
         };
     };
 };
-        
+

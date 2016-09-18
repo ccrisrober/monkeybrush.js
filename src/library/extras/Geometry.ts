@@ -99,7 +99,9 @@ namespace MB {
 
                 let lower = [];
                 for (let i = 0; i < points.length; ++i) {
-                    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0) {
+                    while (lower.length >= 2 && cross(lower[lower.length - 2],
+                        lower[lower.length - 1], points[i]) <= 0) {
+
                         lower.pop();
                     }
                     lower.push(points[i]);
@@ -107,7 +109,9 @@ namespace MB {
 
                 let upper = [];
                 for (let i = points.length - 1; i >= 0; --i) {
-                    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0) {
+                    while (upper.length >= 2 && cross(upper[upper.length - 2],
+                        upper[upper.length - 1], points[i]) <= 0) {
+
                         upper.pop();
                     }
                     upper.push(points[i]);
@@ -178,8 +182,8 @@ namespace MB {
                 let triangles: Array<Array<number>> = [];
                 faces.forEach(function(face) {
                     triangles.push([face[0], face[1], face[2]]);
-                    for(var j = 2; j < face.length-1; ++j) {
-                      triangles.push([face[0],face[j],face[j+1]]);
+                    for (let j = 2; j < face.length - 1; ++j) {
+                      triangles.push([face[0], face[j], face[j + 1]]);
                     }
                 });
                 return triangles;
@@ -191,9 +195,9 @@ namespace MB {
                 };
 
                 return indices.filter(function(indice) {
-                    for(var i = 0; i < indice.length; ++i) {
-                        for(var j = 0; j < indice.length; ++j) {
-                            if(i != j && equ(indice[i], indice[j])) {
+                    for (let i = 0; i < indice.length; ++i) {
+                        for (let j = 0; j < indice.length; ++j) {
+                            if (i !== j && equ(indice[i], indice[j])) {
                                 return false;
                             }
                         }
@@ -204,12 +208,12 @@ namespace MB {
             export function removeDegerateIndicesWithVertices(
                 indices: number[][], vertices: number[][]) {
                 function equ(a: number[], b: number[]) {
-                    if(a.length !== b.length) {
+                    if (a.length !== b.length) {
                         return false;
                     }
 
-                    for(var i = 0; i< a.length; ++i) {
-                        if(a[i] !== b[i]) {
+                    for (let i = 0; i < a.length; ++i) {
+                        if (a[i] !== b[i]) {
                             return false;
                         }
                     }
@@ -221,9 +225,9 @@ namespace MB {
                     let indice2 = indice.map(function(idx) {
                         return vertices[idx];
                     });
-                    for(var i = 0; i < indice2.length; i++) {
-                        for(var j = 0; j < indice2.length; j++) {
-                            if(i != j && equ(indice2[i], indice2[j])) {
+                    for (let i = 0; i < indice2.length; i++) {
+                        for (let j = 0; j < indice2.length; j++) {
+                            if (i !== j && equ(indice2[i], indice2[j])) {
                                 return false;
                             }
                         }

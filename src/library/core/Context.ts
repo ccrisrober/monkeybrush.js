@@ -58,7 +58,8 @@ namespace MB {
 
                         document.body.appendChild(this._canvas);
                     } else {
-                        this._canvas = <HTMLCanvasElement>document.createElementNS("http://www.w3.org/1999/xhtml", canvasName);
+                        this._canvas = <HTMLCanvasElement>document.createElementNS(
+                            "http://www.w3.org/1999/xhtml", canvasName);
                     }
                     Log.info("Get context");
                     Context._gl = Context._getContext(this._canvas);

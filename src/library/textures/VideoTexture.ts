@@ -30,7 +30,9 @@ namespace MB {
              * @param {number = 15} frameTime [description]
              * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
              */
-            constructor(video: HTMLVideoElement, loop: boolean = true, frameTime: number = 15, onSuccess: () => void = null) {
+            constructor(video: HTMLVideoElement, loop: boolean = true,
+                frameTime: number = 15, onSuccess: () => void = null) {
+
                 super(MB.ctes.TextureTarget.Texture2D);
 
                 const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();

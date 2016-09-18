@@ -90,7 +90,9 @@ namespace MB {
              * @param {Float32Array | Uint16Array | number}          data  [description]
              * @param {MB.ctes.UsageType    = MB.ctes.UsageType.StaticDraw} usage [description]
              */
-            public bufferData(data: Float32Array | Uint16Array | number, usage: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
+            public bufferData(data: Float32Array | Uint16Array | number,
+                usage: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
+
                 this.bind();
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                 gl.bufferData(this._type, data, usage);
@@ -137,7 +139,8 @@ namespace MB {
                );
             };
 
-            public copySub(readTarget: number, writeTarget: number, readOffset: number, writeOffset: number, size: number) {
+            public copySub(readTarget: number, writeTarget: number, readOffset: number,
+                writeOffset: number, size: number) {
                 // TODO: https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/copyBufferSubData
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                 gl.copyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);

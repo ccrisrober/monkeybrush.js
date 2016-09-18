@@ -34,7 +34,9 @@ namespace MB {
              * @param {number = 0.0} innerRadius: Inner radius of disc
              * @param {number} stackInc: Width inc/dec around center.
              */
-            constructor(radius: number, divisions: number, stacks: number = 1.0, innerRadius: number = 0.0, stackInc: number) {
+            constructor(radius: number, divisions: number, stacks: number = 1.0,
+                innerRadius: number = 0.0, stackInc: number) {
+
                 super();
 
                 if (divisions < 3) {

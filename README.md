@@ -187,3 +187,6 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 > - http://www.jbrantly.com/es6-modules-with-typescript-and-webpack/
 
 > - tslint code/mb/library/**/*.ts --exclude code/mb/**/*.d.ts > tslintwarnings.txt
+
+## Changelog
+- 

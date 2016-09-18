@@ -241,7 +241,8 @@ namespace MB {
             }
             get meshPerAttr(): number { return this._meshPerAttr; };
         };
-        // type VBAttribute = "vertices" | "normals" | "texCoords"; // | "colors" | "tangents" | "bitangents" | "offset";
+        // type VBAttribute = "vertices" | "normals" | "texCoords";
+        // // | "colors" | "tangents" | "bitangents" | "offset";
         /**
          * VertexBufferGeometry class
          * @class VertexBufferGeometry

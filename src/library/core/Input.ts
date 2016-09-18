@@ -211,8 +211,8 @@ namespace MB {
                 this._isButtonPressed[ev.button] = false;
             };
             protected static _onMouseScroll(ev: MouseEvent) {
-                let e: any = window.event || ev; // old IE support
-                let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+                // let e: any = window.event || ev; // old IE support
+                // let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
             }
         };
     };

@@ -309,7 +309,8 @@ namespace MB {
                 this._value[2] = value;
             };
             /**
-             * Returns whether or not current Vect3 and another Vect3 have exactly the same elements in the same position
+             * Returns whether or not current Vect3 and another Vect3 have exactly the same elements
+             *     in the same position.
              * @param  {Vect3}   other The second vector
              * @return {boolean} True if the vectors are equals, false otherwise
              */
@@ -317,7 +318,8 @@ namespace MB {
                 return this.x === other.x && this.y === other.y  && this.z === other.z;
             }
             /**
-             * Returns whether or not current Vect3 and another Vect3 have approximately the same elements in the same position.
+             * Returns whether or not current Vect3 and another Vect3 have approximately the same elements
+             *     in the same position.
              * @param  {Vect3}   other The second vector
              * @param  {boolean} Enable or disable threshold epsilon in values comparison
              * @return {boolean} True if the vectors are equals, false otherwise

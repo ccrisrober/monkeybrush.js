@@ -45,7 +45,7 @@ namespace MB {
             }
 
             public initialize(color: Array<number>) {
-                const gl = this._gl;
+                // const gl = this._gl;
                 // gl.getParameter(gl.VERSION)
                 // Load all extensions if WebGLRenderingContext === 1
                 if (!(this._gl instanceof WebGL2RenderingContext)) {
@@ -116,4 +116,4 @@ namespace MB {
         };
     };
 };
-        
+

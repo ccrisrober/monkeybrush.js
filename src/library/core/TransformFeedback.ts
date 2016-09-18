@@ -138,7 +138,7 @@ namespace MB {
                 let info2 = {
                     name: info.name,
                     type: Program.getType(gl, info["type"])
-                }
+                };
                 return info2;    // TODO: Create interface
             };
             /**
