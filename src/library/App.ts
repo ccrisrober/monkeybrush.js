@@ -45,10 +45,10 @@ namespace MB {
             }
             this._appFunctions = init;
             console.log(this._appFunctions);
-            // console.log(MB.core.Context.webglVersion);
-            MB.core.Context.webglVersion = init.webglVersion;
-            // console.log(MB.core.Context.webglVersion);
-            MB.core.Core.getInstance();
+            // console.log(MB.Context.webglVersion);
+            MB.Context.webglVersion = init.webglVersion;
+            // console.log(MB.Context.webglVersion);
+            MB.Core.getInstance();
 
             document.title = init.title || `WebGL${init.webglVersion} app`;
 
@@ -60,7 +60,7 @@ namespace MB {
         }
 
         private __init__(text) {
-            MB.core.Core.getInstance().initialize([1.0, 0.0, 1.0, 1.0]);
+            MB.Core.getInstance().initialize([1.0, 0.0, 1.0, 1.0]);
 
             this.gui = new dat.GUI();
 
@@ -87,7 +87,7 @@ namespace MB {
 
         public start() {
             let self = this;
-            MB.resources.ResourceMap.setLoadCompleteCallback(function() {
+            MB.ResourceMap.setLoadCompleteCallback(function() {
                 console.log("ALL RESOURCES LOADED!!!!");
 
                 self._appFunctions.initialize(self);
@@ -95,8 +95,8 @@ namespace MB {
                 // Remove loader css3 window
                 document.getElementById("spinner").remove();
 
-                /*MB.core.Core.getInstance().canvas().addEventListener("dblclick", function(){
-                    var el: any = MB.core.Core.getInstance().canvas();
+                /*MB.Core.getInstance().canvas().addEventListener("dblclick", function(){
+                    var el: any = MB.Core.getInstance().canvas();
 
                     if (el.webkitRequestFullScreen) {
                         el.webkitRequestFullScreen();
@@ -110,12 +110,12 @@ namespace MB {
                     (function __render__(dt?: number) {
                         requestAnimationFrame(__render__);
                         // console.log(dt);
-                        MB.core.Input.update();
+                        MB.Input.update();
 
                         self.stats.begin();
                         dt *= 0.001; // convert to seconds
 
-                        MB.extras.Timer.update();
+                        MB.Timer.update();
 
                         // self.__resize__();
 
@@ -150,7 +150,7 @@ namespace MB {
         protected _resume: boolean = true;
 
         protected __resize__() {
-            let canvas: HTMLCanvasElement = MB.core.Core.getInstance().canvas();
+            let canvas: HTMLCanvasElement = MB.Core.getInstance().canvas();
             let realToCSSPixels = window.devicePixelRatio || 1;
 
             // Lookup the size the browser is displaying the canvas in CSS pixels
@@ -168,7 +168,7 @@ namespace MB {
                 canvas.height = displayHeight;
 
                 // Set the viewport to match
-                MB.core.Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
+                MB.Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
 
                 this.cameraUpdateCb();
             }

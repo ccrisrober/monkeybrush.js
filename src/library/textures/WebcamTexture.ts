@@ -20,23 +20,21 @@
 "use strict";
 
 namespace MB {
-    export namespace textures {
+    /**
+     * WebcamTexture class
+     * @class WebcamTexture
+     */
+    class WebcamTexture extends VideoTexture {
         /**
-         * WebcamTexture class
-         * @class WebcamTexture
+         * WebcamTexture constructor.
+         * @param {MB.Vect2 = [320, 320]} size Webcam viewport size.
+         * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
          */
-        class WebcamTexture extends VideoTexture {
-            /**
-             * WebcamTexture constructor.
-             * @param {MB.maths.Vect2 = [320, 320]} size Webcam viewport size.
-             * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
-             */
-            constructor(size: MB.maths.Vect2 = MB.maths.Vect2.createFromScalar(320), onSuccess: () => void = null) {
-                super(MB.resources.ResourceMap.retrieveAsset("webcam"));
+        constructor(size: MB.Vect2 = MB.Vect2.createFromScalar(320), onSuccess: () => void = null) {
+            super(MB.ResourceMap.retrieveAsset("webcam"));
 
-                this._video.width = size.x;
-                this._video.height = size.y;
-            };
+            this._video.width = size.x;
+            this._video.height = size.y;
         };
     };
 };

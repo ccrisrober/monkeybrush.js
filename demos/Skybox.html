@@ -32,29 +32,29 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.maths.Vect3(-2.7, -1.4, 11.8);
+                this.homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
                 this.camera = new MB.Camera2(this.homePoint);
             }
             MyScene.prototype.loadAssets = function () {
-                MB.resources.Loaders.loadCubeMap("../assets/images/canyon");
+                MB.Loaders.loadCubeMap("../assets/images/canyon");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.skybox = new MB.extras.Skybox("../assets/images/canyon", this._webglVersion === 2);
+                this.skybox = new MB.Skybox("../assets/images/canyon", this._webglVersion === 2);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
                 this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.extras.Timer.deltaTime() * 0.001;
+                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
+                MB.Core.getInstance().clearColorAndDepth();
                 this.skybox.render(this.view, this.projection);
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.core.Core.getInstance().canvas();
+                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
                 this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
             };

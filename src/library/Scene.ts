@@ -33,12 +33,12 @@ namespace MB {
         protected text: any;
 
         constructor(text: any, title: string = null, webglVersion: number = 2) {
-            MB.core.Log.info("init scene");
+            MB.Log.info("init scene");
             if (!webglVersion) {
                 webglVersion = 2;
             }
-            MB.core.Context.webglVersion = webglVersion;
-            MB.core.Core.getInstance();
+            MB.Context.webglVersion = webglVersion;
+            MB.Core.getInstance();
 
             this._webglVersion = webglVersion;
             this.text = text;
@@ -51,15 +51,16 @@ namespace MB {
         public webglVersion(): number {
             return this._webglVersion;
         }
-        abstract loadAssets();
+        public loadAssets()  {}
+        public cameraUpdate() {}
+        public textCB(g: dat.GUI) {}
+
         abstract initialize();
         abstract update(dt: number);
         abstract draw(dt?: number);
-        abstract cameraUpdate();
-        abstract textCB(g: dat.GUI);
 
         private __init__(text) {
-            MB.core.Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
+            MB.Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
 
             this._gui = new dat.GUI();
 
@@ -87,16 +88,16 @@ namespace MB {
 
         public start() {
             let self: Scene = this;
-            MB.resources.ResourceMap.setLoadCompleteCallback(function() {
-                MB.core.Log.info("ALL RESOURCES LOADED!!!!");
+            MB.ResourceMap.setLoadCompleteCallback(function() {
+                MB.Log.info("ALL RESOURCES LOADED!!!!");
 
                 self.initialize();
 
                 // Remove loader css3 window
                 document.getElementById("spinner").remove();
 
-                // MB.core.Core.getInstance().canvas().addEventListener("dblclick", function(){
-                //     var el: any = MB.core.Core.getInstance().canvas();
+                // MB.Core.getInstance().canvas().addEventListener("dblclick", function(){
+                //     var el: any = MB.Core.getInstance().canvas();
                 //     if (el.webkitRequestFullScreen) {
                 //         el.webkitRequestFullScreen();
                 //     }
@@ -109,12 +110,12 @@ namespace MB {
                     (function __render__(dt?: number) {
                         requestAnimationFrame(__render__);
                         // console.log(dt);
-                        MB.core.Input.update();
+                        MB.Input.update();
 
                         self.stats.begin();
                         dt *= 0.001; // convert to seconds
 
-                        MB.extras.Timer.update();
+                        MB.Timer.update();
 
                         // self.__resize__();
 
@@ -149,7 +150,7 @@ namespace MB {
         protected _resume: boolean = true;
 
         protected __resize__() {
-            let canvas: HTMLCanvasElement = MB.core.Core.getInstance().canvas();
+            let canvas: HTMLCanvasElement = MB.Core.getInstance().canvas();
             let realToCSSPixels = window.devicePixelRatio || 1;
 
             // Lookup the size the browser is displaying the canvas in CSS pixels
@@ -167,7 +168,7 @@ namespace MB {
                 canvas.height = displayHeight;
 
                 // Set the viewport to match
-                MB.core.Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
+                MB.Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
 
                 this.cameraUpdate();
             }

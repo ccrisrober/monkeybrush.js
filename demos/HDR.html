@@ -36,13 +36,13 @@
                 this.mainShader = "prog";
             }
             MyScene.prototype.loadAssets = function () {
-                MB.resources.Loaders.loadImage("../assets/images/memorial.png", "myTex");
+                MB.Loaders.loadImage("../assets/images/memorial.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                var myTexture = MB.resources.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.textures.Texture2D(myTexture, {
+                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
+                this.tex2d = new MB.Texture2D(myTexture, {
                     flipY: true,
                     minFilter: MB.ctes.TextureType.Linear,
                     magFilter: MB.ctes.TextureType.Linear,
@@ -50,10 +50,10 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                    prog.addShader("../shaders/hdr.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/hdr.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["tex", "exposure"]);
@@ -65,14 +65,14 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1f("exposure", this.text.exposure);
 
-                MB.extras.PostProcess.render();
+                MB.PostProcess.render();
             };
             MyScene.prototype.cameraUpdate = function () {
             };

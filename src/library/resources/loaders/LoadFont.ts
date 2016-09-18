@@ -20,40 +20,38 @@
 "use strict";
 
 namespace MB {
-    export namespace resources {
-        export namespace Loaders {
-            /**
-             * [loadFont description]
-             * @param {string}    fontSrc [description]
-             * @param {string =       ""}          alias [description]
-             */
-            export function loadFont(fontSrc: string, alias: string = "") {
-                alias = _getAlias(fontSrc, alias);
-                if (!(ResourceMap.isAssetLoaded(alias))) {
-                    // Update resources in load counter
-                    ResourceMap.asyncLoadRequested(alias);
+    export namespace Loaders {
+        /**
+         * [loadFont description]
+         * @param {string}    fontSrc [description]
+         * @param {string =       ""}          alias [description]
+         */
+        export function loadFont(fontSrc: string, alias: string = "") {
+            alias = _getAlias(fontSrc, alias);
+            if (!(ResourceMap.isAssetLoaded(alias))) {
+                // Update resources in load counter
+                ResourceMap.asyncLoadRequested(alias);
 
-                    // Async request the data from server
-                    let request = new XMLHttpRequest();
-                    request.open("GET", fontSrc, true);
+                // Async request the data from server
+                let request = new XMLHttpRequest();
+                request.open("GET", fontSrc, true);
 
-                    // Specify that the request retrieves binary data.
-                    request.responseType = "arraybuffer";
+                // Specify that the request retrieves binary data.
+                request.responseType = "arraybuffer";
 
-                    request.onload = function () {
-                        // Asynchronously decode, then call the function in parameter.
-                        ResourceMap.asyncLoadCompleted(alias, JSON.parse(request.response));
-                    }.bind(this);
-                    request.send();
-                }
-            };
-            /**
-             * [unloadFont description]
-             * @param {string} imageSrc [description]
-             */
-            export function unloadFont(fontSrc: string) {
-                ResourceMap.unloadAsset(fontSrc);
-            };
+                request.onload = function () {
+                    // Asynchronously decode, then call the function in parameter.
+                    ResourceMap.asyncLoadCompleted(alias, JSON.parse(request.response));
+                }.bind(this);
+                request.send();
+            }
+        };
+        /**
+         * [unloadFont description]
+         * @param {string} imageSrc [description]
+         */
+        export function unloadFont(fontSrc: string) {
+            ResourceMap.unloadAsset(fontSrc);
         };
     };
 };

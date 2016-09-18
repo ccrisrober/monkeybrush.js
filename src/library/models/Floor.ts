@@ -20,65 +20,63 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Floor class
+     * @class Floor
+     */
+    export class Floor extends Drawable {
         /**
-         * Floor class
-         * @class Floor
+         * Floor constructor
+         * @param {number = 80} dim [description]
+         * @param {number = 2}  e   [description]
          */
-        export class Floor extends Drawable {
-            /**
-             * Floor constructor
-             * @param {number = 80} dim [description]
-             * @param {number = 2}  e   [description]
-             */
-            constructor(dim: number = 80, e: number = 2) {
-                super();
-                const lines = 2 * dim / e;
-                const inc = 2 * dim / lines;
+        constructor(dim: number = 80, e: number = 2) {
+            super();
+            const lines = 2 * dim / e;
+            const inc = 2 * dim / lines;
 
-                let verts = [];
-                let el = [];
+            let verts = [];
+            let el = [];
 
-                for (let l = 0; l <= lines; ++l) {
-                    verts[6 * l] = -dim;
-                    verts[6 * l + 1] = 0;
-                    verts[6 * l + 2] = -dim + (l * inc);
+            for (let l = 0; l <= lines; ++l) {
+                verts[6 * l] = -dim;
+                verts[6 * l + 1] = 0;
+                verts[6 * l + 2] = -dim + (l * inc);
 
-                    verts[6 * l + 3] = dim;
-                    verts[6 * l + 4] = 0;
-                    verts[6 * l + 5] = -dim + (l * inc);
+                verts[6 * l + 3] = dim;
+                verts[6 * l + 4] = 0;
+                verts[6 * l + 5] = -dim + (l * inc);
 
-                    verts[6 * (lines + 1) + 6 * l] = -dim + (l * inc);
-                    verts[6 * (lines + 1) + 6 * l + 1] = 0;
-                    verts[6 * (lines + 1) + 6 * l + 2] = -dim;
+                verts[6 * (lines + 1) + 6 * l] = -dim + (l * inc);
+                verts[6 * (lines + 1) + 6 * l + 1] = 0;
+                verts[6 * (lines + 1) + 6 * l + 2] = -dim;
 
-                    verts[6 * (lines + 1) + 6 * l + 3] = -dim + (l * inc);
-                    verts[6 * (lines + 1) + 6 * l + 4] = 0;
-                    verts[6 * (lines + 1) + 6 * l + 5] = dim;
+                verts[6 * (lines + 1) + 6 * l + 3] = -dim + (l * inc);
+                verts[6 * (lines + 1) + 6 * l + 4] = 0;
+                verts[6 * (lines + 1) + 6 * l + 5] = dim;
 
-                    el[2 * l] = 2 * l;
-                    el[2 * l + 1] = 2 * l + 1;
-                    el[2 * (lines + 1) + 2 * l] = 2 * (lines + 1) + 2 * l;
-                    el[2 * (lines + 1) + 2 * l + 1] = 2 * (lines + 1) + 2 * l + 1;
-                }
+                el[2 * l] = 2 * l;
+                el[2 * l + 1] = 2 * l + 1;
+                el[2 * (lines + 1) + 2 * l] = 2 * (lines + 1) + 2 * l;
+                el[2 * (lines + 1) + 2 * l + 1] = 2 * (lines + 1) + 2 * l + 1;
+            }
 
-                this._handle = [];
-                this._vao.bind();
+            this._handle = [];
+            this._vao.bind();
 
-                this.addElementArray(new Uint16Array(el));
+            this.addElementArray(new Uint16Array(el));
 
-                this.addBufferArray(0, new Float32Array(verts), 3);
+            this.addBufferArray(0, new Float32Array(verts), 3);
 
-                this._indicesLen = el.length;
-            };
-            /*
-            public render() {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-                this._vao.bind();
-                gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-                this._vao.unbind();
-            };
-            */
+            this._indicesLen = el.length;
         };
+        /*
+        public render() {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            this._vao.bind();
+            gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            this._vao.unbind();
+        };
+        */
     };
 };

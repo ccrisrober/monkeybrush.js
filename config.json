@@ -8,6 +8,7 @@
   "core": {
     "ts_files": [
       "./src/typings/**/*.d.ts",
+      "./src/library/MonkeyBrush.ts",
       "./src/library/polyfills.ts",
 
       "./src/library/others/**/*.ts",
@@ -44,6 +45,7 @@
     "typescript": [
       "./src/typings/**/*.d.ts",
       "./src/library/polyfills.ts",
+      "./src/library/MonkeyBrush.ts",
 
       "./src/library/others/**/*.ts",
 

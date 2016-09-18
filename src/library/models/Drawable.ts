@@ -20,110 +20,119 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
 
-        declare var WebGL2RenderingContext: any;
+    declare var WebGL2RenderingContext: any;
+
+    /**
+     * Drawable abstract class
+     * @class Drawable
+     */
+    export abstract class Drawable {
+        protected _indicesLen: number;
+        protected _handle: Array<MB.VertexBuffer>;
+        protected _vao: MB.VertexArray;
+
+        protected _geometry: MB.VertexBufferGeometry;
 
         /**
-         * Drawable abstract class
-         * @class Drawable
+         * Drawable constructor
          */
-        export abstract class Drawable {
-            protected _indicesLen: number;
-            protected _handle: Array<MB.core.VertexBuffer>;
-            protected _vao: MB.core.VertexArray;
+        constructor() {
+            this._vao = new MB.VertexArray();
+            this._geometry = new MB.VertexBufferGeometry();
+        };
 
-            protected _geometry: MB.extras.VertexBufferGeometry;
-
-            /**
-             * Drawable constructor
-             */
-            constructor() {
-                this._vao = new MB.core.VertexArray();
-                this._geometry = new MB.extras.VertexBufferGeometry();
-            };
-
-            createWireframe() {
-                // TODO: FAIL!!
-                let newcells = [];
-                let el0 = this._geometry.indices;
-                for (let i = 0; i < el0.length; i += 3) {
-                    const a = el0[i + 0];
-                    const b = el0[i + 1];
-                    const c = el0[i + 2];
-                    if (a !== null && b !== null) newcells.push(a, b);
-                    if (b !== null && c !== null) newcells.push(b, c);
-                    if (a !== null && c !== null) newcells.push(c, a);
-                }
-
-                this._geometry.setIndex(new Uint16Array(newcells));
+        createWireframe() {
+            // TODO: FAIL!!
+            let newcells = [];
+            let el0 = this._geometry.indices;
+            for (let i = 0; i < el0.length; i += 3) {
+                const a = el0[i + 0];
+                const b = el0[i + 1];
+                const c = el0[i + 2];
+                if (a !== null && b !== null) newcells.push(a, b);
+                if (b !== null && c !== null) newcells.push(b, c);
+                if (a !== null && c !== null) newcells.push(c, a);
             }
 
-            /**
-             * Add Element buffer object.
-             * @param {Uint16Array} data [description]
-             * @param {MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw} type [description]
-             */
-            protected addElementArray(data: Uint16Array, type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
-                let vb: MB.core.VertexBuffer = new MB.core.VertexBuffer(MB.ctes.BufferType.ElementArray);
-                vb.bufferData(new Uint16Array(data), type);
-                this._handle.push(vb);
-                return vb;
-            };
+            this._geometry.setIndex(new Uint16Array(newcells));
+        }
 
-            /**
-             * Add Vertex buffer object.
-             * @param  {number} attribLocation [description]
-             * @param  {Float32Array} data [description]
-             * @param  {number} numElems [description]
-             * @param  {MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw} type [description]
-             * @return {VertexBuffer} [description]
-             */
-            protected addBufferArray(attribLocation: number,
-                data: Float32Array, numElems: number,
-                type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw): MB.core.VertexBuffer {
+        /**
+         * Add Element buffer object.
+         * @param {Uint16Array} data [description]
+         * @param {MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw} type [description]
+         */
+        protected addElementArray(data: Uint16Array, type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
+            let vb: MB.VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.ElementArray);
+            vb.bufferData(new Uint16Array(data), type);
+            this._handle.push(vb);
+            return vb;
+        };
 
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                let vb: MB.core.VertexBuffer = new MB.core.VertexBuffer(MB.ctes.BufferType.Array);
-                vb.bufferData(data, type);
-                vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
-                this._handle.push(vb);
-                return vb;
-            };
+        /**
+         * Add Vertex buffer object.
+         * @param  {number} attribLocation [description]
+         * @param  {Float32Array} data [description]
+         * @param  {number} numElems [description]
+         * @param  {MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw} type [description]
+         * @return {VertexBuffer} [description]
+         */
+        protected addBufferArray(attribLocation: number,
+            data: Float32Array, numElems: number,
+            type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw): MB.VertexBuffer {
 
-            /**
-             * Normal render
-             */
-            public render() {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                this._vao.bind();
-                gl.drawElements(MB.ctes.RenderType.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-                this._vao.unbind();
-            };
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            let vb: MB.VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.Array);
+            vb.bufferData(data, type);
+            vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
+            this._handle.push(vb);
+            return vb;
+        };
 
-            public render2() {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                this._vao.bind();
-                gl.drawElements(MB.ctes.RenderType.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-                this._vao.unbind();
-            };
+        /**
+         * Normal render
+         */
+        public render() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._vao.bind();
+            gl.drawElements(MB.ctes.RenderType.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            this._vao.unbind();
+        };
 
-            public render3() {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                this._vao.bind();
-                gl.drawElements(MB.ctes.RenderType.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
-                this._vao.unbind();
-            };
+        public render2() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._vao.bind();
+            gl.drawElements(MB.ctes.RenderType.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            this._vao.unbind();
+        };
 
-            /**
-             * Render with element instance mode
-             * @param {number} numInstances: Instances to render
-             */
-            public renderElementInstance(numInstances: number) {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                this._vao.bind();
-                if (gl instanceof WebGL2RenderingContext) {
-                    gl.drawElementsInstanced(
+        public render3() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._vao.bind();
+            gl.drawElements(MB.ctes.RenderType.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            this._vao.unbind();
+        };
+
+        /**
+         * Render with element instance mode
+         * @param {number} numInstances: Instances to render
+         */
+        public renderElementInstance(numInstances: number) {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._vao.bind();
+            if (gl instanceof WebGL2RenderingContext) {
+                gl.drawElementsInstanced(
+                    gl.TRIANGLES,
+                    this._indicesLen,
+                    gl.UNSIGNED_SHORT,
+                    0,
+                    numInstances
+              );
+            } else {
+                const ext = MB.Extensions.get("ANGLE_instanced_arrays");
+                if (ext) {
+                    ext.drawElementsInstancedANGLE(
                         gl.TRIANGLES,
                         this._indicesLen,
                         gl.UNSIGNED_SHORT,
@@ -131,52 +140,41 @@ namespace MB {
                         numInstances
                   );
                 } else {
-                    const ext = MB.extras.Extensions.get("ANGLE_instanced_arrays");
-                    if (ext) {
-                        ext.drawElementsInstancedANGLE(
-                            gl.TRIANGLES,
-                            this._indicesLen,
-                            gl.UNSIGNED_SHORT,
-                            0,
-                            numInstances
-                      );
-                    } else {
-                        throw new Error("Instance array undefined");
-                    }
+                    throw new Error("Instance array undefined");
                 }
-                this._vao.unbind();
-            };
+            }
+            this._vao.unbind();
+        };
 
-            /**
-             * Render with array instance mode
-             * @param {number} numInstances: Instances to render
-             */
-            public renderArrayInstance(numInstances: number) {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                this._vao.bind();
-                if (gl instanceof WebGL2RenderingContext) {
-                    gl.drawArraysInstanced(
+        /**
+         * Render with array instance mode
+         * @param {number} numInstances: Instances to render
+         */
+        public renderArrayInstance(numInstances: number) {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._vao.bind();
+            if (gl instanceof WebGL2RenderingContext) {
+                gl.drawArraysInstanced(
+                    gl.TRIANGLES,
+                    0,
+                    this._indicesLen,
+                    numInstances
+              );
+            } else {
+                const ext = MB.Extensions.get("ANGLE_instanced_arrays");
+                if (ext) {
+                    ext.drawArraysInstancedANGLE(
                         gl.TRIANGLES,
                         0,
                         this._indicesLen,
                         numInstances
                   );
                 } else {
-                    const ext = MB.extras.Extensions.get("ANGLE_instanced_arrays");
-                    if (ext) {
-                        ext.drawArraysInstancedANGLE(
-                            gl.TRIANGLES,
-                            0,
-                            this._indicesLen,
-                            numInstances
-                      );
-                    } else {
-                        throw new Error("Instance array undefined");
-                    }
+                    throw new Error("Instance array undefined");
                 }
-                this._vao.unbind();
-            };
-
+            }
+            this._vao.unbind();
         };
+
     };
 };

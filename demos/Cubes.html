@@ -32,22 +32,22 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.maths.Vect3(0.08, 0.58, 59.79);
+                this.homePoint = new MB.Vect3(0.08, 0.58, 59.79);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
-                this.identityMatrix = MB.maths.Mat4.identity.clone();
-                this.model = new MB.maths.Mat4();
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
             }
             MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.models.Cube(2.0);
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
-                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                    prog.addShader("../shaders/uvRender.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                this.cubito = new MB.Cube(2.0);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/uvRender.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["projection", "view", "model"]);
@@ -56,35 +56,35 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
                 this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.extras.Timer.deltaTime() * 0.001;
+                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
 
                 for (var yy = 0; yy < 11; ++yy) {
                     for (var xx = 0; xx < 11; ++xx) {
                         this.model =
                             this.identityMatrix.clone()
-                                .translate(new MB.maths.Vect3(
+                                .translate(new MB.Vect3(
                                     -15.0 + xx * 3.0,
                                     -15.0 + yy * 3.0,
                                     0.0))
-                                .rotate(this.angle + xx * 0.21 + yy * 0.37, MB.maths.Vect3.zAxis);
+                                .rotate(this.angle + xx * 0.21 + yy * 0.37, MB.Vect3.zAxis);
                         prog.sendUniformMat4("model", this.model);
                         this.cubito.render();
                     }
                 }
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.core.Core.getInstance().canvas();
+                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
                 this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());
                 prog.sendUniformMat4("projection", this.projection);

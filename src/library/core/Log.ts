@@ -22,17 +22,15 @@
 
 
 namespace MB {
-    export namespace core {
-        /**
-        * This class wraps a logger
-        * @class core.Logger
-        */
-        export var Log = function _log(logName: string): log4javascript.Logger {
-            let Log: log4javascript.Logger = log4javascript.getLogger(logName);
-            let consoleAppender = new log4javascript.BrowserConsoleAppender();
-            Log.addAppender(consoleAppender);
-            Log.setLevel(log4javascript.Level.INFO);
-            return Log;
-        }("my_logger");
-    };
+    /**
+    * This class wraps a logger
+    * @class core.Logger
+    */
+    export var Log = function _log(logName: string): log4javascript.Logger {
+        let Log: log4javascript.Logger = log4javascript.getLogger(logName);
+        let consoleAppender = new log4javascript.BrowserConsoleAppender();
+        Log.addAppender(consoleAppender);
+        Log.setLevel(log4javascript.Level.INFO);
+        return Log;
+    }("my_logger");
 };

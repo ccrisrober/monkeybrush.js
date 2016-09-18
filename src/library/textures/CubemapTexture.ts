@@ -20,43 +20,41 @@
 "use strict";
 
 namespace MB {
-    export namespace textures {
-        export class CubeMapTexture extends Texture {
+    export class CubeMapTexture extends Texture {
 
-            protected finished: boolean;
+        protected finished: boolean;
 
-            /**
-             * CubeMapTexture constructor
-             * @param {TexOptions = {}} options: Texture options
-             */
-            constructor(options: TexOptions = {}) {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                super(MB.ctes.TextureTarget.TextureCubeMap);
+        /**
+         * CubeMapTexture constructor
+         * @param {TexOptions = {}} options: Texture options
+         */
+        constructor(options: TexOptions = {}) {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            super(MB.ctes.TextureTarget.TextureCubeMap);
 
-                this.finished = false;
+            this.finished = false;
 
-                // TODO: Faltan todo el tema de filtrados o wrap de las opciones
-                    // que me he saltado por falta de tiempo :(
-                this._handle_ = gl.createTexture();
+            // TODO: Faltan todo el tema de filtrados o wrap de las opciones
+                // que me he saltado por falta de tiempo :(
+            this._handle_ = gl.createTexture();
+        }
+        public addImage(i: number, data) {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
+                gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, data);
+        }
+        public finishTex() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, MB.ctes.TextureType.Linear);
+            gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, MB.ctes.TextureType.Linear);
+            gl.texParameteri(this._target_, gl.TEXTURE_WRAP_S, MB.ctes.WrapMode.Clamp2Edge);
+            gl.texParameteri(this._target_, gl.TEXTURE_WRAP_T, MB.ctes.WrapMode.Clamp2Edge);
+
+            if (gl.TEXTURE_WRAP_R) {
+                gl.texParameteri(this._target_, gl.TEXTURE_WRAP_R, MB.ctes.WrapMode.Clamp2Edge);
             }
-            public addImage(i: number, data) {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
-                    gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, data);
-            }
-            public finishTex() {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, MB.ctes.TextureType.Linear);
-                gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, MB.ctes.TextureType.Linear);
-                gl.texParameteri(this._target_, gl.TEXTURE_WRAP_S, MB.ctes.WrapMode.Clamp2Edge);
-                gl.texParameteri(this._target_, gl.TEXTURE_WRAP_T, MB.ctes.WrapMode.Clamp2Edge);
 
-                if (gl.TEXTURE_WRAP_R) {
-                    gl.texParameteri(this._target_, gl.TEXTURE_WRAP_R, MB.ctes.WrapMode.Clamp2Edge);
-                }
-
-                this.finished = true;
-            }
-        };
+            this.finished = true;
+        }
     };
 };

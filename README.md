@@ -189,4 +189,4 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 > - tslint code/mb/library/**/*.ts --exclude code/mb/**/*.d.ts > tslintwarnings.txt
 
 ## Changelog
-- 
+- (09/17/2016) Release first version

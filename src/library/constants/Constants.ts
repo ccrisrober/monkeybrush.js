@@ -198,16 +198,14 @@ namespace MB {
             UInt = 0x1405,
             Float = 0x1406
         };
-        export namespace ProgramCte {
-            export enum mode {
-                read_file,
-                read_script,
-                read_text
-            };
-            export enum shader_type {
-                vertex = 0x8B31,
-                fragment = 0x8B30
-            }
+        export enum ShaderType {
+            vertex = 0x8B31,
+            fragment = 0x8B30
+        };
+        export enum ReadMode {
+            read_file,
+            read_script,
+            read_text
         };
         export enum QueryParams {
             QueryResult = 0x8866,

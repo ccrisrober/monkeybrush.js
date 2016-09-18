@@ -20,106 +20,104 @@
 "use strict";
 
 namespace MB {
-    export namespace lights {
+    /**
+     * Light abstract class
+     * @class Light
+     */
+    export abstract class Light {
         /**
-         * Light abstract class
-         * @class Light
+         * Light source intensity [0, 1]
+         * @type {number}
          */
-        export abstract class Light {
-            /**
-             * Light source intensity [0, 1]
-             * @type {number}
-             */
-            protected _intensity: number;
-            /**
-             * Light diffuse color.
-             * @type {MB.extras.Color3}
-             */
-            protected _color: MB.extras.Color3;
-            /**
-             * Light specular color.
-             * @type {MB.extras.Color3}
-             */
-            protected _specColor: MB.extras.Color3;
-            protected _enable: boolean;
-            /**
-             * Attenuations light constants
-             * @type {MB.maths.Vect3}
-             */
-            protected _attenuation: MB.maths.Vect3;
-            /**
-             * Light constructor
-             */
-            constructor() {
-                this._intensity = 1.0;
-                this._color = new MB.extras.Color3(1.0, 1.0, 1.0);
-                this._specColor = new MB.extras.Color3(1.0, 1.0, 1.0);
-                this._enable = true;
-                this._attenuation = new MB.maths.Vect3(
-                    1.0,        // Constant
-                    0.014,      // Linear
-                    0.0007      // Quadratic
-               );
-            }
+        protected _intensity: number;
+        /**
+         * Light diffuse color.
+         * @type {MB.Color3}
+         */
+        protected _color: MB.Color3;
+        /**
+         * Light specular color.
+         * @type {MB.Color3}
+         */
+        protected _specColor: MB.Color3;
+        protected _enable: boolean;
+        /**
+         * Attenuations light constants
+         * @type {MB.Vect3}
+         */
+        protected _attenuation: MB.Vect3;
+        /**
+         * Light constructor
+         */
+        constructor() {
+            this._intensity = 1.0;
+            this._color = new MB.Color3(1.0, 1.0, 1.0);
+            this._specColor = new MB.Color3(1.0, 1.0, 1.0);
+            this._enable = true;
+            this._attenuation = new MB.Vect3(
+                1.0,        // Constant
+                0.014,      // Linear
+                0.0007      // Quadratic
+           );
+        }
 
-            /**
-             * Set constant attenuation value.
-             * @param {number} v: Constant attenuation value.
-             */
-            public setConstantAtt(value: number) {
-                this._attenuation.x = value;
-            }
-            /**
-             * Set linear attenuation value.
-             * @param {number} v Linear attenuation value.
-             */
-            public setLinearAtt(value: number) {
-                this._attenuation.y = value;
-            }
-            /**
-             * Set quadratic attenuation value.
-             * @param {number} v Quadratic attenuation value.
-             */
-            public setQuadraticAtt(value: number) {
-                this._attenuation.z = value;
-            }
-            /**
-             * Return light attenuation value.
-             * @return {MB.maths.Vect3}
-             */
-            get attenuation(): MB.maths.Vect3 { return this._attenuation; }
+        /**
+         * Set constant attenuation value.
+         * @param {number} v: Constant attenuation value.
+         */
+        public setConstantAtt(value: number) {
+            this._attenuation.x = value;
+        }
+        /**
+         * Set linear attenuation value.
+         * @param {number} v Linear attenuation value.
+         */
+        public setLinearAtt(value: number) {
+            this._attenuation.y = value;
+        }
+        /**
+         * Set quadratic attenuation value.
+         * @param {number} v Quadratic attenuation value.
+         */
+        public setQuadraticAtt(value: number) {
+            this._attenuation.z = value;
+        }
+        /**
+         * Return light attenuation value.
+         * @return {MB.Vect3}
+         */
+        get attenuation(): MB.Vect3 { return this._attenuation; }
 
-            /**
-             * Get light intensity.
-             * @return {number}
-             */
-            get intensity(): number { return this._intensity; }
-            /**
-             * Set light intensity.
-             * @param {number} intensity Light intensity.
-             */
-            set intensity(intensity: number) { this._intensity = intensity; }
+        /**
+         * Get light intensity.
+         * @return {number}
+         */
+        get intensity(): number { return this._intensity; }
+        /**
+         * Set light intensity.
+         * @param {number} intensity Light intensity.
+         */
+        set intensity(intensity: number) { this._intensity = intensity; }
 
-            /**
-             * Return light diffuse color.
-             * @return {MB.extras.Color3}
-             */
-            get color(): MB.extras.Color3 { return this._color; }
-            /**
-             * Set light diffuse color
-             * @param {MB.extras.Color3} color Color value
-             */
-            set color(color: MB.extras.Color3) { this._color = color; }
-            /**
-             * Return light specular color.
-             * @return {MB.extras.Color3}
-             */
-            get specularColor(): MB.extras.Color3 { return this._specColor; }
-            /**
-             * Set light specular color
-             * @param {MB.extras.Color3} color Color value
-             */
-            set specularColor(color: MB.extras.Color3) { this._specColor = color; }
-        };
+        /**
+         * Return light diffuse color.
+         * @return {MB.Color3}
+         */
+        get color(): MB.Color3 { return this._color; }
+        /**
+         * Set light diffuse color
+         * @param {MB.Color3} color Color value
+         */
+        set color(color: MB.Color3) { this._color = color; }
+        /**
+         * Return light specular color.
+         * @return {MB.Color3}
+         */
+        get specularColor(): MB.Color3 { return this._specColor; }
+        /**
+         * Set light specular color
+         * @param {MB.Color3} color Color value
+         */
+        set specularColor(color: MB.Color3) { this._specColor = color; }
     };
 };

@@ -20,22 +20,20 @@
 "use strict";
 
 namespace MB {
-    export namespace lights {
+    /**
+     * Ambient light class
+     *
+     * Ambient light is the light that permeates the scene;
+     * it's non-directional and affects every face in the scene
+     * equally, regardless of which direction it's facing.
+     * @class AmbientLight
+     */
+    export class AmbientLight extends Light {
         /**
-         * Ambient light class
-         *
-         * Ambient light is the light that permeates the scene;
-         * it's non-directional and affects every face in the scene
-         * equally, regardless of which direction it's facing.
-         * @class AmbientLight
+         * Ambient light constructor
          */
-        export class AmbientLight extends Light {
-            /**
-             * Ambient light constructor
-             */
-            constructor() {
-                super();
-            }
-        };
+        constructor() {
+            super();
+        }
     };
 };

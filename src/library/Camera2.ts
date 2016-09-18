@@ -22,11 +22,11 @@
 namespace MB {
     export class Camera2 {
         // Camera attrs
-        protected position: MB.maths.Vect3;
-        protected front: MB.maths.Vect3;
-        protected up: MB.maths.Vect3;
-        protected right: MB.maths.Vect3;
-        protected worldUp: MB.maths.Vect3;
+        protected position: MB.Vect3;
+        protected front: MB.Vect3;
+        protected up: MB.Vect3;
+        protected right: MB.Vect3;
+        protected worldUp: MB.Vect3;
 
         // Euler angles
         protected yaw: number;
@@ -38,25 +38,25 @@ namespace MB {
         protected _updateCamera: boolean = false;
         public timeElapsed: number;
 
-        public GetPos(): MB.maths.Vect3 {
+        public GetPos(): MB.Vect3 {
             return this.position;
         }
 
-        public setHome(v: MB.maths.Vect3) {
+        public setHome(v: MB.Vect3) {
             this.position = v;
             this.updateCameraVectors();
         }
 
-        constructor(position: MB.maths.Vect3 = new MB.maths.Vect3(0, 0, 0),
-            up: MB.maths.Vect3 = new MB.maths.Vect3(0, 1, 0), yaw: number = -90.0, pitch: number = 0.0) {
-            this.front = new MB.maths.Vect3(0, 0, -1);
+        constructor(position: MB.Vect3 = new MB.Vect3(0, 0, 0),
+            up: MB.Vect3 = new MB.Vect3(0, 1, 0), yaw: number = -90.0, pitch: number = 0.0) {
+            this.front = new MB.Vect3(0, 0, -1);
             this.position = position;
             this.worldUp = up;
             this.yaw = yaw;
             this.pitch = pitch;
 
-            this.right = new MB.maths.Vect3();
-            this.up = new MB.maths.Vect3();
+            this.right = new MB.Vect3();
+            this.up = new MB.Vect3();
 
             this.updateCameraVectors();
         }
@@ -65,61 +65,61 @@ namespace MB {
 
             let speed = 1.0;
 
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.Left_Shift)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.Left_Shift)) {
                 speed = 2.5;
             }
 
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.Z)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.Z)) {
                 if (this.fov > 30.0) {
                     this.fov -= 0.5;
                     this._updateCamera = true;
                 }
             }
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.X)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.X)) {
                 if (this.fov < 90.0) {
                     this.fov += 0.5;
                     this._updateCamera = true;
                 }
             }
 
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.W)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.W)) {
                 this.processKeyboard(4, speed);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.S)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.S)) {
                 this.processKeyboard(5, speed);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.A)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.A)) {
                 this.processKeyboard(2, speed);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.D)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.D)) {
                 this.processKeyboard(3, speed);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.E)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.E)) {
                 this.processKeyboard(0, speed);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(MB.ctes.KeyState.Q)) {
+            if (MB.Input.isKeyPressed(MB.ctes.KeyState.Q)) {
                 this.processKeyboard(1, speed);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(38)) {
+            if (MB.Input.isKeyPressed(38)) {
                 this.processMouseMovement(0.0, 2.5);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(40)) {
+            if (MB.Input.isKeyPressed(40)) {
                 this.processMouseMovement(0.0, -2.5);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(37)) {
+            if (MB.Input.isKeyPressed(37)) {
                 // this.processMouseMovement(2.5, 0.0);
                 this.processMouseMovement(-2.5, 0.0);
                 this._updateCamera = true;
             }
-            if (MB.core.Input.isKeyPressed(39)) {
+            if (MB.Input.isKeyPressed(39)) {
                 // this.processMouseMovement(-2.5, 0.0);
                 this.processMouseMovement(2.5, 0.0);
                 this._updateCamera = true;
@@ -136,17 +136,17 @@ namespace MB {
             const velocity = this.movSpeed * this.timeElapsed * speed;
             // console.log(direction);
             if (direction === 0) {
-                this.position = MB.maths.Vect3.scaleAndAdd(this.position, this.front, velocity);
+                this.position = MB.Vect3.scaleAndAdd(this.position, this.front, velocity);
             } else if (direction === 1) {
-                this.position = MB.maths.Vect3.scaleAndAdd(this.position, this.front, -velocity);
+                this.position = MB.Vect3.scaleAndAdd(this.position, this.front, -velocity);
             } else if (direction === 2) {
-                this.position = MB.maths.Vect3.scaleAndAdd(this.position, this.right, -velocity);
+                this.position = MB.Vect3.scaleAndAdd(this.position, this.right, -velocity);
             } else if (direction === 3) {
-                this.position = MB.maths.Vect3.scaleAndAdd(this.position, this.right, velocity);
+                this.position = MB.Vect3.scaleAndAdd(this.position, this.right, velocity);
             } else if (direction === 4) {
-                this.position = MB.maths.Vect3.scaleAndAdd(this.position, this.up, velocity);
+                this.position = MB.Vect3.scaleAndAdd(this.position, this.up, velocity);
             } else if (direction === 5) {
-                this.position = MB.maths.Vect3.scaleAndAdd(this.position, this.up, -velocity);
+                this.position = MB.Vect3.scaleAndAdd(this.position, this.up, -velocity);
             }
         }
 
@@ -167,7 +167,7 @@ namespace MB {
         }
 
         public updateCameraVectors() {
-            const front: MB.maths.Vect3 = new MB.maths.Vect3(
+            const front: MB.Vect3 = new MB.Vect3(
                 Math.cos(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch)),
                 Math.sin(Math["toRadian"](this.pitch)),
                 Math.sin(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch))
@@ -175,29 +175,29 @@ namespace MB {
             this.front = front.normalize();
 
             // Recalculate right and up vector
-            this.right = MB.maths.Vect3.cross(this.front, this.worldUp).normalize();
-            this.up = MB.maths.Vect3.cross(this.right, this.front).normalize();
+            this.right = MB.Vect3.cross(this.front, this.worldUp).normalize();
+            this.up = MB.Vect3.cross(this.right, this.front).normalize();
         }
 
-        public GetViewMatrix(): MB.maths.Mat4 {
-            return MB.maths.Mat4.lookAt(
+        public GetViewMatrix(): MB.Mat4 {
+            return MB.Mat4.lookAt(
                 this.position,
-                MB.maths.Vect3.add(
+                MB.Vect3.add(
                     this.position,
                     this.front
                ),
                 this.up
            );
         }
-        public GetOrthoProjectionMatrix(w: number, h: number): MB.maths.Mat4 {
+        public GetOrthoProjectionMatrix(w: number, h: number): MB.Mat4 {
             const yMin = -0.0001 * Math.tan(this.fov * Math.PI / 360.0);
             const yMax = -yMin;
             const xMin = yMin + (w * 1.0) / (h * 1.0);
             const xMax = yMax + (w * 1.0) / (h * 1.0);
-            return MB.maths.Mat4.orthographic(xMin, xMax, yMin, yMax, 0.0001, 11000.0);
+            return MB.Mat4.orthographic(xMin, xMax, yMin, yMax, 0.0001, 11000.0);
         }
-        public GetProjectionMatrix(w: number, h: number): MB.maths.Mat4 {
-            return MB.maths.Mat4.perspective(this.fov, (w * 1.0) / (h * 1.0), 0.0001, 1000.0);
+        public GetProjectionMatrix(w: number, h: number): MB.Mat4 {
+            return MB.Mat4.perspective(this.fov, (w * 1.0) / (h * 1.0), 0.0001, 1000.0);
         }
 
         public fov: number = 45.0;

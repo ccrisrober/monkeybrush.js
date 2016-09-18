@@ -20,105 +20,103 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * ICustomModel interface
+     * @interface ICustomModel
+     */
+    export interface ICustomModel {
+        indices: Array<number>;
+        vertices: Array<number>;
+        normals?: Array<number>;
+        regenerateNormals?: boolean;    // TODO: Unused
+        generateTangents?: boolean;    // TODO: Unused
+        texCoords?: Array<number>;
+    };
+    /**
+     * CustomModel class
+     * @class CustomModel
+     */
+    export class CustomModel extends Drawable {
         /**
-         * ICustomModel interface
-         * @interface ICustomModel
+         * CustomModel constructor
+         * @param {ICustomModel} model: Model data
          */
-        export interface ICustomModel {
-            indices: Array<number>;
-            vertices: Array<number>;
-            normals?: Array<number>;
-            regenerateNormals?: boolean;    // TODO: Unused
-            generateTangents?: boolean;    // TODO: Unused
-            texCoords?: Array<number>;
+        constructor(model: ICustomModel) {
+            super();
+
+            this._handle = [];
+            this._vao.bind();
+
+            let i = 0;
+
+            if (model.indices && model.indices.length) {
+                this.addElementArray(new Uint16Array(model.indices));
+            } else {
+                throw new Error("Indices undefined");
+            }
+            if (model.vertices && model.vertices.length && model.vertices.length % 3 === 0) {
+                this.addBufferArray(i++, new Float32Array(model.vertices), 3);
+                console.log("vertices");
+                console.log(model.vertices);
+            } else {
+                throw new Error("Vertices undefined");
+            }
+            if (model.regenerateNormals === false || !model.regenerateNormals) {
+                if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
+                    this.addBufferArray(i++, new Float32Array(model.normals), 3);
+                    console.log("normals");
+                    console.log(model.normals);
+                }
+            } else if (model.regenerateNormals === true) {
+                this.recalculateNormals(); // TODO
+            }
+            if (model.texCoords && model.texCoords.length && model.texCoords.length % 2 === 0) {
+                this.addBufferArray(i++, new Float32Array(model.texCoords), 2);
+            }
+
+            if (model.generateTangents === true) {
+                this.addBufferArray(i++, new Float32Array([]), 3);
+                // TODO: generateTangents
+            }
+
+            this._indicesLen = model.indices.length;
+
+            this.vertices = model.vertices;
+            this.faces = model.indices;
         };
-        /**
-         * CustomModel class
-         * @class CustomModel
-         */
-        export class CustomModel extends Drawable {
-            /**
-             * CustomModel constructor
-             * @param {ICustomModel} model: Model data
-             */
-            constructor(model: ICustomModel) {
-                super();
+        public vertices: Array<number>;
+        public faces: Array<number>;
 
-                this._handle = [];
-                this._vao.bind();
+        public recalculateNormals() {
+            // let normals: Array<number> = new Array(this.vertices.length);
 
-                let i = 0;
+            // function getPoint(face: number): Array<number> {
+            //     let arr: Array<number> = new Array(3);
 
-                if (model.indices && model.indices.length) {
-                    this.addElementArray(new Uint16Array(model.indices));
-                } else {
-                    throw new Error("Indices undefined");
-                }
-                if (model.vertices && model.vertices.length && model.vertices.length % 3 === 0) {
-                    this.addBufferArray(i++, new Float32Array(model.vertices), 3);
-                    console.log("vertices");
-                    console.log(model.vertices);
-                } else {
-                    throw new Error("Vertices undefined");
-                }
-                if (model.regenerateNormals === false || !model.regenerateNormals) {
-                    if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
-                        this.addBufferArray(i++, new Float32Array(model.normals), 3);
-                        console.log("normals");
-                        console.log(model.normals);
-                    }
-                } else if (model.regenerateNormals === true) {
-                    this.recalculateNormals(); // TODO
-                }
-                if (model.texCoords && model.texCoords.length && model.texCoords.length % 2 === 0) {
-                    this.addBufferArray(i++, new Float32Array(model.texCoords), 2);
-                }
+            //     arr[0] = this.vertices[face * 3];
+            //     arr[1] = this.vertices[(face * 3) + 1];
+            //     arr[2] = this.vertices[(face * 3) + 2];
 
-                if (model.generateTangents === true) {
-                    this.addBufferArray(i++, new Float32Array([]), 3);
-                    // TODO: generateTangents
-                }
+            //     return arr;
+            // }
 
-                this._indicesLen = model.indices.length;
+            // for (let i = 0; i < this.faces.length; i += 3) {
+            //     let p1 = new Vect3(getPoint(i)[0], getPoint(i)[1], getPoint(i)[2]) ;
+            //     let p2 = new Vect3(getPoint(i + 1)[0], getPoint(i + 1)[1], getPoint(i + 1)[2]) ;
+            //     let p3 = new Vect3(getPoint(i + 2)[0], getPoint(i + 2)[1], getPoint(i + 2)[2]) ;
 
-                this.vertices = model.vertices;
-                this.faces = model.indices;
-            };
-            public vertices: Array<number>;
-            public faces: Array<number>;
+            //     // let a = Vect3.rem(p2, p1);
+            //     // let b = Vect3.rem(p3, p1);
+            //     // let n = Vect3.cross(a, b).normalize();
 
-            public recalculateNormals() {
-                // let normals: Array<number> = new Array(this.vertices.length);
+            //     // normals[faces[i]] += n;
+            //     // normals[faces[i+1]] += n;
+            //     // normals[faces[i+2]] += n;
+            // }
 
-                // function getPoint(face: number): Array<number> {
-                //     let arr: Array<number> = new Array(3);
-
-                //     arr[0] = this.vertices[face * 3];
-                //     arr[1] = this.vertices[(face * 3) + 1];
-                //     arr[2] = this.vertices[(face * 3) + 2];
-
-                //     return arr;
-                // }
-
-                // for (let i = 0; i < this.faces.length; i += 3) {
-                //     let p1 = new Vect3(getPoint(i)[0], getPoint(i)[1], getPoint(i)[2]) ;
-                //     let p2 = new Vect3(getPoint(i + 1)[0], getPoint(i + 1)[1], getPoint(i + 1)[2]) ;
-                //     let p3 = new Vect3(getPoint(i + 2)[0], getPoint(i + 2)[1], getPoint(i + 2)[2]) ;
-
-                //     // let a = Vect3.rem(p2, p1);
-                //     // let b = Vect3.rem(p3, p1);
-                //     // let n = Vect3.cross(a, b).normalize();
-
-                //     // normals[faces[i]] += n;
-                //     // normals[faces[i+1]] += n;
-                //     // normals[faces[i+2]] += n;
-                // }
-
-                // for (let i = 0; i < normals.length; ++i) {
-                //     // normals[i] = glm::normalize(normals[i]);
-                // }
-            };
+            // for (let i = 0; i < normals.length; ++i) {
+            //     // normals[i] = glm::normalize(normals[i]);
+            // }
         };
     };
 };

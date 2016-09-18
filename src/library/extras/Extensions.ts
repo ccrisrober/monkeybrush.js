@@ -20,32 +20,30 @@
 "use strict";
 
 namespace MB {
-    export namespace extras {
-        export class Extensions {
-            /**
-             * Cache extensions
-             */
-            protected static _extensions = {};
-            /**
-             * Return a specific extension.
-             * @param {string} name Extension name
-             * @return {any} Extension (null if undefined)
-             */
-            public static get(name: string): any {
-                if (name in this._extensions) {
-                    return this._extensions[name];
-                }
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
-
-                if (ext === null) {
-                    console.warn(name + " extension not supported.");
-                    return;
-                }
-                this._extensions[name] = ext;
-                return ext;
+    export class Extensions {
+        /**
+         * Cache extensions
+         */
+        protected static _extensions = {};
+        /**
+         * Return a specific extension.
+         * @param {string} name Extension name
+         * @return {any} Extension (null if undefined)
+         */
+        public static get(name: string): any {
+            if (name in this._extensions) {
+                return this._extensions[name];
             }
-        };
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
+
+            if (ext === null) {
+                console.warn(name + " extension not supported.");
+                return;
+            }
+            this._extensions[name] = ext;
+            return ext;
+        }
     };
 };
 

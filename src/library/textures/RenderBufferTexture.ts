@@ -20,40 +20,38 @@
 "use strict";
 
 namespace MB {
-    export namespace textures {
-        export class RenderBufferTexture {
-            protected _handle: WebGLRenderbuffer;
-            protected _size: MB.maths.Vect2;
-            protected _format: number;
-            constructor(size: MB.maths.Vect2, format: number, attachment: number) {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                this._handle = gl.createRenderbuffer();
-                this._size = size;
-                this._format = format;
+    export class RenderBufferTexture {
+        protected _handle: WebGLRenderbuffer;
+        protected _size: MB.Vect2;
+        protected _format: number;
+        constructor(size: MB.Vect2, format: number, attachment: number) {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._handle = gl.createRenderbuffer();
+            this._size = size;
+            this._format = format;
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+            gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
+            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+        };
+        public bind() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+        };
+        public unbind() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+        }
+        public destroy() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.deleteTexture(this._handle);
+        };
+        public resize(size: MB.Vect2) {
+            if (!size.exactEquals(this._size)) {
+                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
                 gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
                 gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
-                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
-                gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-            };
-            public bind() {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-            };
-            public unbind() {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                gl.bindRenderbuffer(gl.RENDERBUFFER, null);
             }
-            public destroy() {
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                gl.deleteTexture(this._handle);
-            };
-            public resize(size: MB.maths.Vect2) {
-                if (!size.exactEquals(this._size)) {
-                    const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                    gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-                    gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
-                }
-            }
-        };
+        }
     };
 };

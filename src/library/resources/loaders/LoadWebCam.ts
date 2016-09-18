@@ -20,48 +20,46 @@
 "use strict";
 
 namespace MB {
-    export namespace resources {
-        export namespace Loaders {
-            /**
-             * [loadWebCam description]
-             */
-            export function loadWebCam() {
-                const alias: string = "webcam";
-                if (!ResourceMap.isAssetLoaded(alias)) {
-                    // Update resources in load counter
-                    ResourceMap.asyncLoadRequested(alias);
+    export namespace Loaders {
+        /**
+         * [loadWebCam description]
+         */
+        export function loadWebCam() {
+            const alias: string = "webcam";
+            if (!ResourceMap.isAssetLoaded(alias)) {
+                // Update resources in load counter
+                ResourceMap.asyncLoadRequested(alias);
 
-                    let video = document.createElement("video");
-                    video.autoplay = true;
+                let video = document.createElement("video");
+                video.autoplay = true;
 
-                    video.muted = true;
-                    video.loop = true;
+                video.muted = true;
+                video.loop = true;
 
-                    if (navigator["webkitGetUserMedia"]) {
-                        navigator["webkitGetUserMedia"]({video: true}, function(stream) {
-                            video.src = URL.createObjectURL(stream);
-                            video.addEventListener("loadeddata", function() {
-                                // Video is loaded and can be played
-                                ResourceMap.asyncLoadCompleted(alias, video);
-                            }, false);
-                        }.bind(this), function(err) {
-                            alert("You got no WebRTC webcam ...");
-                        });
-                    } else if (navigator["mozGetUserMedia"]) {
-                        navigator["mozGetUserMedia"]({video: true}, function(stream) {
-                            video.src = URL.createObjectURL(stream);
-                            video.addEventListener("loadeddata", function() {
-                                // Video is loaded and can be played
-                                ResourceMap.asyncLoadCompleted(alias, video);
-                            }, false);
-                        }.bind(this), function(error) {
-                            alert("You got no WebRTC webcam ...");
-                        });
-                    } else {
-                        console.assert(false);
-                    }
+                if (navigator["webkitGetUserMedia"]) {
+                    navigator["webkitGetUserMedia"]({video: true}, function(stream) {
+                        video.src = URL.createObjectURL(stream);
+                        video.addEventListener("loadeddata", function() {
+                            // Video is loaded and can be played
+                            ResourceMap.asyncLoadCompleted(alias, video);
+                        }, false);
+                    }.bind(this), function(err) {
+                        alert("You got no WebRTC webcam ...");
+                    });
+                } else if (navigator["mozGetUserMedia"]) {
+                    navigator["mozGetUserMedia"]({video: true}, function(stream) {
+                        video.src = URL.createObjectURL(stream);
+                        video.addEventListener("loadeddata", function() {
+                            // Video is loaded and can be played
+                            ResourceMap.asyncLoadCompleted(alias, video);
+                        }, false);
+                    }.bind(this), function(error) {
+                        alert("You got no WebRTC webcam ...");
+                    });
+                } else {
+                    console.assert(false);
                 }
-            };
+            }
         };
     };
 };

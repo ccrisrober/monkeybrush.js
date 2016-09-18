@@ -33,23 +33,23 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.maths.Vect3(-0.18, 1.60, 25.23);
+                this.homePoint = new MB.Vect3(-0.18, 1.60, 25.23);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.mainShader = "prog";
-                this.identityMatrix = MB.maths.Mat4.identity.clone();
-                this.model = new MB.maths.Mat4();
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
             }
             MyScene.prototype.loadAssets = function () {
-                MB.resources.Loaders.loadImage("../assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
-                MB.resources.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "earth");
+                MB.Loaders.loadImage("../assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
+                MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "earth");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                console.log(MB.resources.ResourceMap);
-                this.plane = new MB.models.Plane(50.0, 30.0, 200.0, 200.0);
+                console.log(MB.ResourceMap);
+                this.plane = new MB.Plane(50.0, 30.0, 200.0, 200.0);
 
-                let grassImage = MB.resources.ResourceMap.retrieveAsset("heightmap");
-                this.tex2d = new MB.textures.Texture2D(grassImage, {
+                let grassImage = MB.ResourceMap.retrieveAsset("heightmap");
+                this.tex2d = new MB.Texture2D(grassImage, {
                     flipY: true,
                     minFilter: MB.ctes.TextureType.Nearest,
                     magFilter: MB.ctes.TextureType.Nearest,
@@ -57,18 +57,18 @@
                     wrapT: MB.ctes.TextureType.Clamp2Edge
                 });
 
-                var heightmapImage = MB.resources.ResourceMap.retrieveAsset("earth");
-                this.tex2d2 = new MB.textures.Texture2D(heightmapImage, {
+                var heightmapImage = MB.ResourceMap.retrieveAsset("earth");
+                this.tex2d2 = new MB.Texture2D(heightmapImage, {
                     flipY: true,
                     minFilter: MB.ctes.TextureType.Nearest,
                     magFilter: MB.ctes.TextureType.Nearest,
                     wrapS: MB.ctes.TextureType.Clamp2Edge,
                     wrapT: MB.ctes.TextureType.Clamp2Edge
                 });
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
-                    prog.addShader("../shaders/earth/demoShader.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                    prog.addShader("../shaders/earth/demoShader.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/earth/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/earth/demoShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["projection", "view", "model", "tex", "tex2"]);
@@ -77,14 +77,14 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
                 this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.extras.Timer.deltaTime() * 0.001;
+                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
                 this.tex2d2.bind(1);
@@ -103,19 +103,19 @@
                 }
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.maths.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.maths.Vect3.yAxis)
-                        .scale(new MB.maths.Vect3(0.25, 0.25, 0.25));
+                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
+                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1i("tex2", 1);
                 this.plane[mode]();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.core.Core.getInstance().canvas();
+                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
                 this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformMat4("projection", this.projection);
                 prog.sendUniformMat4("view", this.view);

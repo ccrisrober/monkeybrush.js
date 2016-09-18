@@ -20,52 +20,50 @@
 "use strict";
 
 namespace MB {
-    export namespace lights {
+    /**
+     * Point light class
+     *
+     * Point light is light that is being emitted from a point,
+     * radiating in all directions. This is how many real-world
+     * light sources usually work. A light bulb emits light
+     * in all directions, for example.
+     * @class PointLight
+     */
+    export class PointLight extends Light {
         /**
-         * Point light class
-         *
-         * Point light is light that is being emitted from a point,
-         * radiating in all directions. This is how many real-world
-         * light sources usually work. A light bulb emits light
-         * in all directions, for example.
-         * @class PointLight
+         * Light source position.
+         * @type {MB.Vect3}
          */
-        export class PointLight extends Light {
-            /**
-             * Light source position.
-             * @type {MB.maths.Vect3}
-             */
-            protected _position: MB.maths.Vect3;
-            /**
-             * Point light constructor
-             * @param {MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)} position
-             */
-            constructor(position: MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)) {
-                super();
-                this._position = position;
-            }
-            /**
-             * Return light source position
-             * @return {MB.maths.Vect3}
-             */
-            get position(): MB.maths.Vect3 { return this._position; }
-            /**
-             * Set light source position
-             * @param {MB.maths.Vect3} position
-             */
-            set position(position: MB.maths.Vect3) { this._position = position; }
+        protected _position: MB.Vect3;
+        /**
+         * Point light constructor
+         * @param {MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0)} position
+         */
+        constructor(position: MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0)) {
+            super();
+            this._position = position;
+        }
+        /**
+         * Return light source position
+         * @return {MB.Vect3}
+         */
+        get position(): MB.Vect3 { return this._position; }
+        /**
+         * Set light source position
+         * @param {MB.Vect3} position
+         */
+        set position(position: MB.Vect3) { this._position = position; }
 
-            /**
-             * Increment position from current position
-             * @param {number = 0.0} x
-             * @param {number = 0.0} y
-             * @param {number = 0.0} z
-             */
-            public addTransform(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
-                this._position.x += x;
-                this._position.y += y;
-                this._position.z += z;
-            }
-        };
+        /**
+         * Increment position from current position
+         * @param {number = 0.0} x
+         * @param {number = 0.0} y
+         * @param {number = 0.0} z
+         */
+        public addTransform(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
+            this._position.x += x;
+            this._position.y += y;
+            this._position.z += z;
+        }
     };
 };

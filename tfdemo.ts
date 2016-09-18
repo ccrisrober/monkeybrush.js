@@ -19,41 +19,41 @@ class MyScene extends MB.Scene {
         this.mainShader = "prog";
     }
     public loadAssets() { };
-    protected tex: MB.textures.Texture2D;
+    protected tex: MB.Texture2D;
     protected mainShader: string;
 
     public initialize() {
         var _this = this;
 
-        MB.resources.ProgramManager.addWithFun("prog", function () {
-            var prog = new MB.core.Program();
+        MB.ProgramManager.addWithFun("prog", function () {
+            var prog = new MB.Program();
             prog.addShader(`#version 300 es
             in vec3 aPos;
             void main(void) {
                 gl_PointSize = 50.0;
                 gl_Position = vec4(-aPos.x, aPos.yz, 1.0);
-            }`, MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_text);
+            }`, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
             prog.addShader(`#version 300 es
             precision highp float;
             out vec4 fragColor;
             void main(void) {
                 fragColor = vec4( 1.,0.,0., 1. );
             }
-            `, MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_text);
+            `, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             prog._compile();
             prog.feedbackVarying(["gl_Position"], MB.ctes.TFMode.Separate);
             prog._link();
             prog.use();
 
-            MB.core.Core.getInstance().getGL().enableVertexAttribArray(0);
+            MB.Core.getInstance().getGL().enableVertexAttribArray(0);
 
-            _this.bA = new MB.core.VertexBuffer(MB.ctes.BufferType.Array);
+            _this.bA = new MB.VertexBuffer(MB.ctes.BufferType.Array);
             _this.bA.bufferData(new Float32Array([0.8, 0.0, 0.0]), MB.ctes.UsageType.DynamicCopy);
 
-            _this.bB = new MB.core.VertexBuffer(MB.ctes.BufferType.Array);
+            _this.bB = new MB.VertexBuffer(MB.ctes.BufferType.Array);
             _this.bB.bufferData(3 * 4, MB.ctes.UsageType.DynamicCopy);
 
-            _this.ttf = new MB.core.TransformFeedback();
+            _this.ttf = new MB.TransformFeedback();
 
             console.log(_this.ttf.getVarying(prog, 0));
 
@@ -61,10 +61,10 @@ class MyScene extends MB.Scene {
         });
 
     };
-    public bA: MB.core.VertexBuffer;
-    public bB: MB.core.VertexBuffer;
+    public bA: MB.VertexBuffer;
+    public bB: MB.VertexBuffer;
 
-    public ttf: MB.core.TransformFeedback;
+    public ttf: MB.TransformFeedback;
 
     public update(dt: number) {
         this.__resize__();
@@ -74,11 +74,11 @@ class MyScene extends MB.Scene {
         if (this.drawTick === false) {
             return;
         }
-        MB.core.Core.getInstance().clearColorAndDepth();
-        var prog = MB.resources.ProgramManager.get(this.mainShader);
+        MB.Core.getInstance().clearColorAndDepth();
+        var prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
 
-        const gl = MB.core.Core.getInstance().getGL();
+        const gl = MB.Core.getInstance().getGL();
         this.ttf.bind();
 
         this.bA.bind();

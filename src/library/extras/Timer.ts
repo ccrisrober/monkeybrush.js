@@ -20,30 +20,28 @@
 "use strict";
 
 namespace MB {
-    export namespace extras {
-        // TODO: Reorganize using Clock!
+    // TODO: Reorganize using Clock!
+    /**
+     * Timer namespace
+     * @namespace Timer
+     */
+    export namespace Timer {
+        let _lastTime = Date.now();
+        let _currentTime, _deltaTime;
         /**
-         * Timer namespace
-         * @namespace Timer
+         * Update timer
          */
-        export namespace Timer {
-            let _lastTime = Date.now();
-            let _currentTime, _deltaTime;
-            /**
-             * Update timer
-             */
-            export function update() {
-                _currentTime = Date.now();
-                _deltaTime = _currentTime - _lastTime;
-                _lastTime = _currentTime;
-            };
-            /**
-             * Return the seconds passed since the last update
-             * @return {number} Delta time
-             */
-            export function deltaTime(): number {
-                return _deltaTime;
-            };
+        export function update() {
+            _currentTime = Date.now();
+            _deltaTime = _currentTime - _lastTime;
+            _lastTime = _currentTime;
+        };
+        /**
+         * Return the seconds passed since the last update
+         * @return {number} Delta time
+         */
+        export function deltaTime(): number {
+            return _deltaTime;
         };
     };
 };
