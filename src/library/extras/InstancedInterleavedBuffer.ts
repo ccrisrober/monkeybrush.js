@@ -20,7 +20,16 @@
 "use strict";
 
 namespace MB {
-    export abstract class OrthographicCamera /*extends Camera*/ {
-
-    }
-}; // namespace MB
+    /**
+     * InstancedInterleavedBuffer class
+     * @class InstancedInterleavedBuffer
+     */
+    export class InstancedInterleavedBuffer extends BufferAttribute {
+        protected _meshPerAttr: number;
+        constructor(arr: ArrayLike<number>, stride: number, meshPerAttr: number = 1) {
+            super(arr, stride);
+            this._meshPerAttr = meshPerAttr;
+        }
+        get meshPerAttr(): number { return this._meshPerAttr; };
+    };
+};

@@ -40,9 +40,6 @@ namespace MB {
 
             // TODO: WRAP
 
-            this.bind();
-
-
             if (this._compressed_) {
                 gl.compressedTexImage3D(
                     this._target_,
@@ -68,10 +65,6 @@ namespace MB {
                     data
                );
             }
-
-
-            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
 
             this.wrap([
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,

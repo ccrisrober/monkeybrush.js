@@ -41,10 +41,7 @@ namespace MB {
                 this._format_, // Format
                 this._type_, // Size of each channel
                 data
-           );
-
-            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
+            );
 
             this.wrap([
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,

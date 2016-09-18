@@ -129,16 +129,16 @@ namespace MB {
          *     call to "varyings" method.
          * @param  {Program}         program [description]
          * @param  {number}          idx     [description]
-         * @return {Object}         [description]
+         * @return {VaryingInfo}         [description]
          */
-        public getVarying(program: Program, idx: number): Object {
+        public getVarying(program: Program, idx: number): VaryingInfo {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             let info = gl.getTransformFeedbackVarying(program.id(), idx);
-            let info2 = {
+            let info2: VaryingInfo = {
                 name: info.name,
                 type: Program.getType(gl, info["type"])
             };
-            return info2;    // TODO: Create interface
+            return info2;
         };
         /**
          * Return true if this object is a valid TransformFeedback object.
@@ -149,4 +149,8 @@ namespace MB {
             return gl.isTransformFeedback(this._handle);
         };
     };
+    export interface VaryingInfo {
+        name: string;
+        type: string;
+    }
 };

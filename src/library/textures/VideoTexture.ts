@@ -49,12 +49,7 @@ namespace MB {
             this._video.muted = true;
             this._video.loop = loop;
 
-            this.bind();
-
             this.update();
-
-            this.minFilter(MB.ctes.TextureType.LinearMMNearest);
-            this.magFilter(MB.ctes.TextureType.Linear);
 
             // this.wrap([MB.ctes.TextureType.Linear, MB.ctes.TextureType.Clamp2Edge]);
 

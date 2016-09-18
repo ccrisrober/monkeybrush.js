@@ -20,7 +20,8 @@
 "use strict";
 
 namespace MB {
-    export abstract class OrthographicCamera /*extends Camera*/ {
-
+    export abstract class StereoCamera /*extends Camera*/ {
+        protected _cameraL: PerspectiveCamera;
+        protected _cameraR: PerspectiveCamera;
     }
 }; // namespace MB

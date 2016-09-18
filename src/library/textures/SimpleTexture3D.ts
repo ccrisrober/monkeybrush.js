@@ -42,8 +42,6 @@ namespace MB {
             this._offsets_ = options.offsets;
             // TODO: WRAP
 
-            this.bind();
-
             /*
 
             const gl = MB.MB.Core.getInstance().getGL();
@@ -136,9 +134,6 @@ namespace MB {
                    );
                 }
             }
-
-            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
 
             this.wrap([
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,

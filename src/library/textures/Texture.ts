@@ -39,6 +39,7 @@ namespace MB {
         format?: MB.ctes.TextureFormat;
         border?: number;
         compressed?: boolean;
+        anisotropic?: number;
 
         offsets?: Array<number>;
     };
@@ -138,23 +139,37 @@ namespace MB {
 
             this._compressed_ = Boolean(options.compressed || false);
 
+            this.bind();
+
+            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
+            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
+
+            this._minLOD_ = options.minLOD || -1000;
+            this._maxLOD_ = options.maxLOD || 1000;
+            this._anisotropy_ = options.anisotropic || 1;
+
+            /*
+            TEXTURE_MAX_LEVEL 1000
+            */
 
             if (this._type_ === gl.FLOAT) {
                 if (!Texture.canUseFloatingPointTextures()) {
                     throw new Error('OES_texture_float is required but not supported');
                 }
-                /*if ((minFilter !== gl.NEAREST || magFilter !== gl.NEAREST) &&
+                if ((this._minFilter_ !== MB.ctes.TextureType.Nearest
+                    || this._magFilter_ !== MB.ctes.TextureType.Nearest) &&
                     !Texture.canUseFloatingPointLinearFiltering()) {
                     throw new Error('OES_texture_float_linear is required but not supported');
-                }*/
+                }
             } else if (this._type_ === gl.HALF_FLOAT) {
                 if (!Texture.canUseHalfFloatingPointTextures()) {
                     throw new Error('OES_texture_half_float is required but not supported');
                 }
-                /*if ((minFilter !== gl.NEAREST || magFilter !== gl.NEAREST) &&
+                if ((this._minFilter_ !== MB.ctes.TextureType.Nearest
+                    || this._magFilter_ !== MB.ctes.TextureType.Nearest) &&
                     !Texture.canUseHalfFloatingPointLinearFiltering()) {
                     throw new Error('OES_texture_half_float_linear is required but not supported');
-                }*/
+                }
             }
         };
 

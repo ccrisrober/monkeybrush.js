@@ -40,17 +40,12 @@ namespace MB {
          */
         constructor(domCanvas: HTMLCanvasElement, options: TexOptions = {}, onSuccess: () => void = null) {
             super(MB.ctes.TextureTarget.Texture2D, options);
-            // TODO: Al constructor sería mejor mandarle el tipo y las options (para ahorrar código)
-            // Luego el propio constructor sube las texturas que sea (que el padre solo lea las opciones
-            // y rellene los datos de turno)
 
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
             this._domCanvas = domCanvas;
 
             this._compressed_ = Boolean(options.compressed || false);
-
-            this.bind();
 
             gl.texImage2D(
                 this._target_,
@@ -59,10 +54,7 @@ namespace MB {
                 this._format_, // Format
                 this._type_, // Size of each channel
                 this._domCanvas
-           );
-
-            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
+            );
 
             this.wrap([
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,

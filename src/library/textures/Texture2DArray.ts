@@ -50,8 +50,6 @@ namespace MB {
 
             // TODO: WRAP
 
-            this.bind();
-
             // TODO: Poner mejor
             gl.texParameteri(this._target_, gl.TEXTURE_BASE_LEVEL, 0);
             gl.texParameteri(this._target_, gl.TEXTURE_MAX_LEVEL, 0);
@@ -70,10 +68,6 @@ namespace MB {
                     this._numTex_, this._numTex_, 1,
                     gl.RGB, gl.UNSIGNED_BYTE, image);
             });
-
-
-            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
 
             this.wrap([
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,

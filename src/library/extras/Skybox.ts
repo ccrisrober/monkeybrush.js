@@ -223,11 +223,6 @@ namespace MB {
             this._cubeMapTexture = new MB.CubeMapTexture();
             this._cubeMapTexture.bind();
 
-            // TODO: faces.forEach(function(face: string, i: number) {
-            // TODO:     let img = MB.ResourceMap.retrieveAsset(face);
-            // TODO:     this._cubeMapTexture.addImage(i, img);
-            // TODO: }.bind(this));
-
             for (let i = 0; i < 6; ++i) {
                 let img = MB.ResourceMap.retrieveAsset(faces[i]);
                 this._cubeMapTexture.addImage(i, img);

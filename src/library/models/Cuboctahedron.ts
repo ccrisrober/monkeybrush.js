@@ -31,8 +31,8 @@ namespace MB {
          * @param {number} subdivisions: Cuboctahedron subdivisions from base icosphere
          */
         constructor(radius: number = 1.0, subdivisions: number = 1) {
-            // TODO: subdivisions = Math.trunc(subdivisions);
             subdivisions = Math.floor(subdivisions);
+
             if (subdivisions > 10) {
                 MB.Log.warn("Please, don´t use more than 8 subdivisions");
                 return;

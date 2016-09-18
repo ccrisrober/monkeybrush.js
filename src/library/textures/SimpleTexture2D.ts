@@ -46,8 +46,6 @@ namespace MB {
 
             // TODO: Support compression
 
-            this.bind();
-
             if (this._offsets_ && this._offsets_.length === 2) {
                 if (this._compressed_) {
                     gl.compressedTexSubImage2D(
@@ -110,9 +108,6 @@ namespace MB {
                 this._type_, // Size of each channel
                 null
            );*/
-
-            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
 
             this.wrap([
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,

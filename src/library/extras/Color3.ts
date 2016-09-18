@@ -36,9 +36,9 @@ namespace MB {
          * @param {number} b Blue channel
          */
         constructor(r: number, g: number, b: number) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
+            this.r = Mathf.clamp01(r);
+            this.g = Mathf.clamp01(g);
+            this.b = Mathf.clamp01(b);
         };
         /**
          * Check if another color is equals than current color.
@@ -93,21 +93,21 @@ namespace MB {
          * @param {number} r New red channel value.
          */
         set r(r: number) {
-            this._color.x = r;
+            this._color.x = Mathf.clamp01(r);
         };
         /**
          * Set green channel
          * @param {number} g New green channel value.
          */
         set g(g: number) {
-            this._color.y = g;
+            this._color.y = Mathf.clamp01(g);
         };
         /**
          * Set blue channel
          * @param {number} b New blue channel value.
          */
         set b(b: number) {
-            this._color.z = b;
+            this._color.z = Mathf.clamp01(b);
         };
         /**
          * Create color for RGB value.
@@ -117,9 +117,9 @@ namespace MB {
          * @return {Color3}    New color
          */
         public setRGB(r: number, g: number, b: number): Color3 {
-            this.r = r;
-            this.g = g;
-            this.b = b;
+            this.r = Mathf.clamp01(r);
+            this.g = Mathf.clamp01(g);
+            this.b = Mathf.clamp01(b);
 
             return this;
         };

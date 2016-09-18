@@ -30,6 +30,10 @@ namespace MB {
         protected _gui: dat.GUI;
         protected _webglVersion;
 
+        // protected _autoClearColor: boolean = true;
+        // protected _autoClearDepth: boolean = true;
+        // protected _autoClearStencil: boolean = false;
+
         protected text: any;
 
         constructor(text: any, title: string = null, webglVersion: number = 2) {
