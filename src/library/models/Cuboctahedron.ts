@@ -18,19 +18,18 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
-// Code based on: http://bLog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
 namespace MB {
     export namespace models {
         /**
-         * Icosphere class
-         * @class Icosphere
+         * Cuboctahedron class
+         * @class Cuboctahedron
          */
-        export class Icosphere extends Polyhedron {
+        export class Cuboctahedron extends Polyhedron {
             /**
-             * Icosphere constructor
-             * @param {number} radius: Icosphere radius
-             * @param {number} subdivisions: Icosphere subdivisions from base icosphere
+             * Cuboctahedron constructor
+             * @param {number} radius: Cuboctahedron radius
+             * @param {number} subdivisions: Cuboctahedron subdivisions from base icosphere
              */
             constructor(radius: number = 1.0, subdivisions: number = 1) {
                 // TODO: subdivisions = Math.trunc(subdivisions);
@@ -40,45 +39,45 @@ namespace MB {
                     return;
                 }
 
-                const t = (1 + Math.sqrt(5)) / 2;
-
                 let verts = [
-                    -1,  t,  0,
-                     1,  t,  0,
-                    -1, -t,  0,
-                     1, -t,  0,
-
-                     0, -1,  t,
-                     0,  1,  t,
-                     0, -1, -t,
-                     0,  1, -t,
-
-                     t,  0, -1,
-                     t,  0,  1,
-                    -t,  0, -1,
-                    -t,  0,  1
+                     // Front
+                   -radius, -radius, radius,
+                    radius, -radius, radius,
+                    radius,  radius, radius,
+                   -radius,  radius, radius,
+                   // Right
+                    radius, -radius, radius,
+                    radius, -radius, -radius,
+                    radius,  radius, -radius,
+                    radius,  radius, radius,
+                   // Back
+                   -radius, -radius, -radius,
+                   -radius,  radius, -radius,
+                    radius,  radius, -radius,
+                    radius, -radius, -radius,
+                   // Left
+                   -radius, -radius, radius,
+                   -radius,  radius, radius,
+                   -radius,  radius, -radius,
+                   -radius, -radius, -radius,
+                   // Bottom
+                   -radius, -radius, radius,
+                   -radius, -radius, -radius,
+                    radius, -radius, -radius,
+                    radius, -radius, radius,
+                   // Top
+                   -radius,  radius, radius,
+                    radius,  radius, radius,
+                    radius,  radius, -radius,
+                   -radius,  radius, -radius
                 ];
                 let el = [
-                     0, 11,  5,
-                     0,  5,  1,
-                     0,  1,  7,
-                     0,  7, 10,
-                     0, 10, 11,
-                     1,  5,  9,
-                     5, 11,  4,
-                    11, 10,  2,
-                    10,  7,  6,
-                     7,  1,  8,
-                     3,  9,  4,
-                     3,  4,  2,
-                     3,  2,  6,
-                     3,  6,  8,
-                     3,  8,  9,
-                     4,  9,  5,
-                     2,  4, 11,
-                     6,  2, 10,
-                     8,  6,  7,
-                     9,  8,  1
+                    0, 1, 2, 0, 2, 3,
+                    4, 5, 6, 4, 6, 7,
+                    8, 9, 10, 8, 10, 11,
+                    12, 13, 14, 12, 14, 15,
+                    16, 17, 18, 16, 18, 19,
+                    20, 21, 22, 20, 22, 23
                 ];
                 console.log(subdivisions);
                 super(verts, el, radius, subdivisions);

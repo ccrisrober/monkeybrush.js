@@ -1,4 +1,6 @@
 var gulp = require("gulp");
+// remove all __extends declarations except the first one
+var cleants = require('gulp-clean-ts-extends');
 var uglify = require("gulp-uglify");
 var ts = require("gulp-typescript");
 var concat = require("gulp-concat");
@@ -13,11 +15,30 @@ var notify = require("gulp-notify");
 var path = require("path");
 
 gulp.task("gen-dts", function () {
-    var res = gulp.src(config.core.typescript)
+
+    var tsResult = gulp.src(config.core.typescript).
+        pipe(ts({
+            sortOutput: true,
+            noExternalResolve: true,
+            target: 'ES5',
+            declarationFiles: true,
+            typescript: require('typescript'),
+            experimentalDecorators: true
+        }));
+    return merge([
+        tsResult.dts
+            .pipe(concat(config.build.declarationFilename))
+            .pipe(gulp.dest(config.build.outputDirectory))
+        //, tsResult.js
+        //    .pipe(gulp.dest(config.build.srcOutputDirectory))
+    ])
+
+    /*var res = gulp.src(config.core.typescript)
         .pipe(ts({
             sortOutput: true,
             target: "ES5",
             experimentalDecorators: true,
+            typescript: require('typescript'),
             removeComments: true
         }));
     return merge([
@@ -25,10 +46,10 @@ gulp.task("gen-dts", function () {
             .pipe(concat(config.build.declarationFilename))
             .pipe(gulp.dest(config.build.outputDirectory))
 
-        , res.js
-            .pipe(concat(config.build.filename))
-            .pipe(gulp.dest(config.build.outputDirectory))
-    ])
+        //, res.js
+        //    .pipe(concat(config.build.filename))
+        //    .pipe(gulp.dest(config.build.outputDirectory))
+    ])*/
 });
 
 gulp.task("build", function () {
@@ -57,8 +78,7 @@ gulp.task("typescript", ["gen-dts"/*, "build"*/], function(cb) {
 var webserver = require('gulp-webserver');
 
 gulp.task("build-debug", function() {
-    var tsResult =
-        gulp.src(config.core.ts_files)
+    var tsResult = gulp.src(config.core.ts_files)
         .pipe(sourcemaps.init()) // This means sourcemaps will be generated
         .pipe(ts({
             sortOutput: true,
@@ -66,12 +86,25 @@ gulp.task("build-debug", function() {
             experimentalDecorators: true,
             removeComments: true
         }))
+        .on("error", notify.onError({
+            message: "Error: <%= error.message %>",
+            title: "Error running something"
+        }));
+
     return tsResult.js
         .pipe(concat('output.js'))
+        .pipe(cleants())
+        //.pipe(replace(/var\s__extends[\s\S]+?\};/g, ""))
+        //.pipe(replace(/var\s__decorate[\s\S]+?\};/g, ""))
+        //.pipe(addModuleExports("MonkeyBrush"))
         .pipe(sourcemaps.write())
-        .pipe(gulp.dest(config.build.outputDirectory));
+        .pipe(gulp.dest(config.build.outputDirectory))
+        .pipe(notify({
+            title: "monkeybrush.js",
+            message: "Code OK",
+            icon: path.join(__dirname, '_images/logo.png')
+        }));
 });
-
 gulp.task("watch-ts", ["build-debug", "webserver"], function() {
     gulp.watch(config.core.typescript, ["build-debug"]);
 });
@@ -99,7 +132,7 @@ gulp.task("typedoc", function() {
         includeDeclarations: true,
         experimentalDecorators: true,
         // Output options (see typedoc docs)
-        out: "./out",
+        out: "./doc",
 
         // TypeDoc options (see typedoc docs)
         name: "my-project",

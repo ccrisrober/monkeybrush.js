@@ -11,10 +11,8 @@
       "./src/library/polyfills.ts",
 
       "./src/library/others/**/*.ts",
-      
-      "./src/library/maths/**/*.ts",
 
-      "./src/library/cameras/**/*.ts",
+      "./src/library/maths/**/*.ts",
 
       "./src/library/Camera2.ts",
       "./src/library/Decorators.ts",
@@ -26,7 +24,7 @@
       "./src/library/models/Cone.ts",
 
       "./src/library/constants/**/*.ts",
-      
+
       "./src/library/core/**/*.ts",
 
       "./src/library/extras/**/*.ts",
@@ -46,12 +44,10 @@
     "typescript": [
       "./src/typings/**/*.d.ts",
       "./src/library/polyfills.ts",
-      
+
       "./src/library/others/**/*.ts",
-      
+
       "./src/library/maths/**/*.ts",
-      
-      "./src/library/cameras/**/*.ts",
 
       "./src/library/Camera2.ts",
       "./src/library/Decorators.ts",
@@ -63,7 +59,7 @@
       "./src/library/models/Cone.ts",
 
       "./src/library/constants/**/*.ts",
-      
+
       "./src/library/core/**/*.ts",
 
       "./src/library/extras/**/*.ts",

@@ -20,6 +20,7 @@
 "use strict";
 // Code based on http://prideout.net/blog/?p=44 ideas
 
+// TODO: http://paulbourke.net/geometry/verrill/
 namespace MB {
     export namespace models {
         /**

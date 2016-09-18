@@ -115,26 +115,31 @@ namespace MB {
             };
             /**
              * Specifies values to record in TransformFeedback buffers.
-             * @param {Program}       Program    [description]
+             * @param {Program}       program    [description]
              * @param {Array<string>} varyings   [description]
              * @param {MB.ctes.TFMode}        bufferMode [description]
              */
-            public static varyings(Program: Program, varyings: Array<string>,
+            public static varyings(program: Program, varyings: Array<string>,
                 bufferMode: MB.ctes.TFMode) {
 
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-                gl.transformFeedbackVaryings(Program.id(), varyings, bufferMode);
+                gl.transformFeedbackVaryings(program.id(), varyings, bufferMode);
             };
             /**
              * Return information about varying variables specifies in the previous
              *     call to "varyings" method.
-             * @param  {Program}         Program [description]
+             * @param  {Program}         program [description]
              * @param  {number}          idx     [description]
-             * @return {WebGLActiveInfo}         [description]
+             * @return {Object}         [description]
              */
-            public getVarying(Program: Program, idx: number): WebGLActiveInfo {
+            public getVarying(program: Program, idx: number): Object {
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-                return gl.getTransformFeedbackVarying(Program.id(), idx);
+                let info = gl.getTransformFeedbackVarying(program.id(), idx);
+                let info2 = {
+                    name: info.name,
+                    type: Program.getType(gl, info["type"])
+                }
+                return info2;    // TODO: Create interface
             };
             /**
              * Return true if this object is a valid TransformFeedback object.

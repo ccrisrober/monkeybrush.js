@@ -1,99 +1,221 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-    <link rel="stylesheet" type="text/css" href="bower_components/vanillatoasts/vanillatoasts.css" />
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <style>
-        body {
-            margin: 0;
-            background-color: gray;
-        }
-        canvas {
-            padding: 0;
-            margin: auto;
-            display: block;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            border: 20px solid black;
-        }
-        /**
-        canvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-        }
-        /**/
-        #stats {
-            /*position: absolute;
-            top: 0;*/
-        }
-        .spinner div {
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            left: -20px;
-            top: 40px;
-            background-color: white;
-            border-radius: 50%;
-            animation: move 4s infinite cubic-bezier(.2,.64,.81,.23);
-        }
-        .spinner div:nth-child(2) {
-            animation-delay: 150ms;
-        }
-        .spinner div:nth-child(3) {
-            animation-delay: 300ms;
-        }
-        .spinner div:nth-child(4) {
-            animation-delay: 450ms;
-        }
-        @keyframes move {
-            0% {left: 0%;}
-            75% {left:100%;}
-            100% {left:100%;}
-        }
-        .spinner {
-            width: 100%;
-            height: 60px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 60px;
-            right: 0;
-            margin: auto;
-        }
-        body {
-            overflow: hidden;
-        }
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>Monkeybrush</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:700|PT+Serif:400,400italic,700,700italic" type="text/css">
+  <link rel="stylesheet" href="./public/css/non-essentials.css" />
+  <link rel="canonical" href="http://qwtel.com/hydejack/" />
 
-        #vanillatoasts-container {
-            z-index: 999999999999;
-        }
-    </style>
+  <style> *{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}html,body{margin:0;padding:0}html{line-height:1.65}body{color:#515151;background-color:#fff}a{text-decoration:none}img{display:block;max-width:100%;margin:0 0 1rem}h1,h2,h3,h4,h5,h6{margin-bottom:.5rem;font-weight:600;line-height:1.25;color:#313131;text-rendering:optimizeLegibility}h1{font-size:2rem}h2{margin-top:1rem;font-size:1.5rem}p{margin-top:0;margin-bottom:1rem}ul,ol,dl{margin-top:0;margin-bottom:1rem}hr{position:relative;margin:1.5rem 0;border:0;border-top:1px solid #eee;border-bottom:1px solid #fff}.lead{font-size:1.25rem;font-weight:300}.container{max-width:38rem;padding-left:1rem;padding-right:1rem;margin-left:auto;margin-right:auto}.page-title,.post-title{color:#303030}.page-title,.post-title{margin-top:0}.post-date{display:block;margin-top:-.25rem;margin-bottom:1rem;color:#9a9a9a;font-weight:bold}.related{padding-top:2rem;padding-bottom:2rem}.related-posts{padding-left:0;list-style:none}.related-posts>h3{margin-top:0}.related-posts>li a{font-weight:normal}.message{margin-bottom:1rem;padding:1rem;color:#717171;background-color:#f9f9f9;margin-left:-1rem;margin-right:-1rem}@media (min-width: 48em){html{font-size:16px}}@media (min-width: 58em){html{font-size:18px}}.sr-only{display:none}.backdrop{display:none}.sidebar{position:relative;z-index:4;padding:2rem 1rem;color:rgba(255,255,255,0.75);background-color:#202020;text-align:left;min-height:100vh;background-size:cover;background-position:center center}.sidebar a{color:#fff}.sidebar ul{list-style:none;padding-left:0}.sidebar-sticky{position:absolute;right:1rem;bottom:1rem;left:1rem}.sidebar-about>h1{color:#fff;font-size:2rem}.sidebar-nav-item{font-weight:bold;display:block;line-height:1.75;padding:.25rem .1rem;border-top:1px solid rgba(255,255,255,0.23)}.sidebar-social>ul{min-height:3.5rem}@media (min-width: 48em){.sidebar{position:fixed;top:0;left:0;bottom:0;width:18rem}}.menu{display:block;position:absolute;top:0;left:0;padding:1.25rem 1rem;color:#9a9a9a;z-index:2}@media (min-width: 48em){.menu{display:none}}.content{padding-top:4rem;padding-bottom:4rem}@media (min-width: 48em){.content{max-width:38rem;margin-left:20rem;margin-right:2rem;border-left:none}}@media (min-width: 64em){.content{margin-left:22rem;margin-right:4rem}}.me{float:right}</style>
+
+  <style> html { font-family: "PT Serif", Georgia, serif; } :focus { outline-color: #A85641; } .font-accent { font-family: "Roboto Slab", "PT Serif", Georgia, serif; } .content a, .related-posts li a:hover { color: #A85641; } ::selection { color: #fff; background: #A85641; } ::-moz-selection { color: #fff; background: #A85641; } .sidebar { background-image: url('/hydejack/public/img/nap.jpg'); }</style>
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://qwtel.com/hydejack/public/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://qwtel.com/hydejack/public/favicon.ico">
+  <!-- RSS -->
+  <link rel="alternate" type="application/atom+xml" title="Hydejack" href="http://qwtel.com/hydejack/atom.xml">
 </head>
-<body>
-    <div class="spinner" id="spinner">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+  <body>
+    <main class="content container">
+      <article id="post-2016/03/08/introducing-hydejack" class="post">
+        <h1 class="post-title">
+          <a href="/hydejack/2016/03/08/introducing-hydejack/">
+            Introducing MonkeyBrush
+          </a>
+        </h1>
+        <hr/>
+        <p>Hydejack is a pretentious two-column <a href="http://jekyllrb.com">Jekyll</a> theme, stolen by <a href="https://twitter.com/qwtel"><code class="highlighter-rouge">@qwtel</code></a> from <a href="http:/hyde.getpoole.com">Hyde</a>. You could say it was.. <a href="http://media3.giphy.com/media/makedRIckZBW8/giphy.gif">hydejacked</a>.</p>
+        <h2 id="features">Features</h2>
+        <p>Unlike Hyde, it’s very opinionated about how you are going to use it.</p>
+        <p>Features include:</p>
+        <ul>
+          <li>OOP to WebGL2.</li>
+          <li>It´s free!</li>
+        </ul>
+
+        <h3 id="configuration">Configuration</h3>
+        <p>You can configure important aspects of the theme via <a href="https://github.com/qwtel/hydejack/blob/master/_config.yml"><code class="highlighter-rouge">_config.yml</code></a>. This includes:</p>
+
+      </article>
+      <br/>
+
+<!--<article id="post-2012/02/07/example-content" class="post">
+  <h1 class="post-title">
+  <a href="/hydejack/2012/02/07/example-content/">
+    Example content
+  </a>
+  </h1>
+    <p class="message">Howdy! This is an example blog post that shows several types of HTML content supported in this theme.</p>
+
+
+
+  <hr/>
+
+  <p>Cum sociis natoque penatibus et magnis <a href="#">dis parturient montes</a>, nascetur ridiculus mus. <em>Aenean eu leo quam.</em> Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet fermentum.</p>
+
+<blockquote>
+  <p>Curabitur blandit tempus porttitor. Nullam quis risus eget urna mollis ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+</blockquote>
+
+<p>Etiam porta <strong>sem malesuada magna</strong> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+
+<h2 id="inline-html-elements">Inline <abbr title="HyperText Markup Language">HTML</abbr> elements</h2>
+
+<p><abbr title="HyperText Markup Language">HTML</abbr> defines a long list of available inline tags, a complete list of which can be found on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">Mozilla Developer Network</a>.</p>
+
+<ul>
+  <li><strong>To bold text</strong>, use <code class="highlighter-rouge">**To bold text**</code>.</li>
+  <li><em>To italicize text</em>, use <code class="highlighter-rouge">*To italicize text*</code>.</li>
+  <li>Abbreviations, like <abbr title="HyperText Markup Language">HTML</abbr> should be defined like this <code class="highlighter-rouge">*[HTML]: HyperText Markup Language</code>.</li>
+  <li>Citations, like <cite>— Mark otto</cite>, should use <code class="highlighter-rouge">&lt;cite&gt;</code>.</li>
+  <li><del>Deleted</del> text should use <code class="highlighter-rouge">~~deleted~~</code> and <ins>inserted</ins> text should use <code class="highlighter-rouge">&lt;ins&gt;</code>.</li>
+  <li>Superscript <sup>text</sup> uses <code class="highlighter-rouge">&lt;sup&gt;</code> and subscript <sub>text</sub> uses <code class="highlighter-rouge">&lt;sub&gt;</code><sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>.</li>
+</ul>
+
+<p>Most of these elements are styled by browsers with few modifications on our part.</p>
+
+<h2 id="heading">Heading</h2>
+
+<p>Vivamus sagittis lacus vel augue rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
+
+<h3 id="code">Code</h3>
+
+<p>Cum sociis natoque penatibus et magnis dis <code class="highlighter-rouge">code element</code> montes, nascetur ridiculus mus.</p>
+
+<div class="language-js highlighter-rouge"><pre class="highlight"><code><span class="c1">// Example can be run directly in your JavaScript console</span>
+
+<span class="c1">// Create a function that takes two arguments and returns the sum of those</span>
+<span class="c1">// arguments</span>
+<span class="kd">var</span> <span class="nx">adder</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"return a + b"</span><span class="p">);</span>
+
+<span class="c1">// Call the function</span>
+<span class="nx">adder</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+<span class="c1">// &gt; 8</span>
+</code></pre>
+</div>
+
+<h3 id="lists">Lists</h3>
+
+<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+
+<ul>
+  <li>Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</li>
+  <li>Donec id elit non mi porta gravida at eget metus.</li>
+  <li>Nulla vitae elit libero, a pharetra augue.</li>
+</ul>
+
+<p>Donec ullamcorper nulla non metus auctor fringilla. Nulla vitae elit libero, a pharetra augue.</p>
+
+<ol>
+  <li>Vestibulum id ligula porta felis euismod semper.</li>
+  <li>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</li>
+  <li>Maecenas sed diam eget risus varius blandit sit amet non magna.</li>
+</ol>
+
+<p>Cras mattis consectetur purus sit amet fermentum. Sed posuere consectetur est at lobortis.</p>
+
+<dl>
+  <dt>HyperText Markup Language (<abbr title="HyperText Markup Language">HTML</abbr>)</dt>
+  <dd>The language used to describe and define the content of a Web page</dd>
+  <dt>Cascading Style Sheets (<abbr title="Cascading Style Sheets">CSS</abbr>)</dt>
+  <dd>Used to describe the appearance of Web content</dd>
+  <dt>JavaScript (<abbr title="JavaScript">JS</abbr>)</dt>
+  <dd>The programming language used to build advanced Web sites and applications</dd>
+</dl>
+
+<p>Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+
+<h3 id="images">Images</h3>
+
+<p>Quisque consequat sapien eget quam rhoncus, sit amet laoreet diam tempus. Aliquam aliquam metus erat, a pulvinar turpis suscipit at.</p>
+
+<p><img src="http://placehold.it/800x400" alt="placeholder" title="Large example image" />
+<img src="http://placehold.it/400x200" alt="placeholder" title="Medium example image" />
+<img src="http://placehold.it/200x200" alt="placeholder" title="Small example image" />
+<img src="http://placehold.it/200x200" alt="placeholder" title="Small example image" />
+</p>
+
+<h3 id="tables">Tables</h3>
+
+<p>Aenean lacinia bibendum nulla sed consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Upvotes</th>
+      <th>Downvotes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Alice</td>
+      <td>10</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <td>Bob</td>
+      <td>4</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Charlie</td>
+      <td>7</td>
+      <td>9</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>Totals</td>
+      <td>21</td>
+      <td>23</td>
+    </tr>
+  </tfoot>
+</table>
+</article>
+
+  <blockquote>
+    <p>Jekyll is a simple, blog aware, static site generator. It takes a template directory […] and spits out a complete, static website suitable for serving with Apache or your favorite web server. This is also the engine behind GitHub Pages, which you can use to host your project’s page or blog right here from GitHub.</p>
+  </blockquote>
+  <br/>
+  <br/>-->
+    </main>
+<div id="_backdrop" class="backdrop"></div>
+<a id="_menu" class="menu" href="#_sidebar">☰</a>
+<aside id="_sidebar" class="sidebar" style="background-image:url('./public/img/monkey-baby-02.jpg')">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1 class="font-accent"><a href="./index.html">MonkeyBrush</a></h1>
+      <p>A pretentious two-column <a href="http://jekyllrb.com/">Jekyll</a> theme, stolen by <a href="https://twitter.com/qwtel"><code class="highlighter-rouge">@qwtel</code></a> from <a href="http:/hyde.getpoole.com">Hyde</a>. You could say it was.. <a href="http://media3.giphy.com/media/makedRIckZBW8/giphy.gif">hydejacked</a>.</p>
     </div>
-    <div id="stats"></div>
-    <div id="samplesPassed"></div>
-    <script type="text/javascript" src="bower_components/vanillatoasts/vanillatoasts.js"></script>
-    <script type="text/javascript" src="bower_components/log4javascript/log4javascript.js"></script>
-    <script type="text/javascript" src="js/stats.min.js"></script>
-    <script type="text/javascript" src="js/dat.gui.min.js"></script>
-    <script type="text/javascript" src="js/gl-matrix-min.js"></script>
-    <!--<script type="text/javascript" src="js/gl-matrix-min.js"></script>-->
-    <!--<script type="text/javascript" src="js/build.js"></script>-->
-    <script type="text/javascript" src="build/bundleentry1.js"></script>
-    <!--<video id="video" src="assets/video/Firefox.ogv" autoplay muted>
-      Your browser doesn't appear to support the <code>&lt;video&gt;</code> element.
-    </video>-->
-</body>
+    <nav class="sidebar-nav font-accent">
+      <ul>
+        <li>
+          <a class="sidebar-nav-item" href="">Introduction</a>
+        </li>
+        <li>
+          <a class="sidebar-nav-item" href="./demos.html" target="_link">Demos</a>
+        </li>
+        <li>
+          <a class="sidebar-nav-item" href="./doc/index.html" target="_link">Doc</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-social" style="text-align: center">
+    <a href="https://github.com/maldicion069/monkeybrush.js" target="_link"><span class="icon-github"></span></a>
+    <!--
+    <a href="https://facebook.com/<username>"><span class="icon-facebook"></span></a>
+    <a href="https://twitter.com/<username>"><span class="icon-twitter"></span></a>
+    <a href="https://plus.google.com/<number>"><span class="icon-google"></span></a>
+    <a href="https://vk.com/<username>"><span class="icon-vk"></span></a>
+    <a href="https://www.youtube.com/channel/<string>_<string>_<string>"><span class="icon-youtube"></span></a>-->
+    </div>
+  </div>
+</aside>
+    <script src="./public/js/hydejack.js" async></script>
+  </body>
 </html>

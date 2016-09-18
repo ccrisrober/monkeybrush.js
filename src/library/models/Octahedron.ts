@@ -32,13 +32,15 @@ namespace MB {
              * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
              */
             constructor(radius: number, subdivisions: number) {
+                const a: number = 1 / (2 * Math.sqrt(2));
+                const b: number = 1 / 2;
                 let verts = [
-                     1,  0,  0,
-                    -1,  0,  0,
-                     0,  1,  0,
-                     0, -1,  0,
-                     0,  0,  1,
-                     0,  0, -1];
+                     a,  0,  0,
+                    -a,  0,  0,
+                     0,  b,  0,
+                     0, -b,  0,
+                     0,  0,  a,
+                     0,  0, -a];
                 let el = [
                     0, 2, 4,
                     0, 4, 3,

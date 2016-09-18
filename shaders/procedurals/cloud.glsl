@@ -1,6 +1,16 @@
-// Params:
-//  -vec4 skyColor = vec4(0.0, 0.0,0.6, 1.0);
-//  -vec4 cloudColor = vec4(1.0);
+#version 300 es
+precision highp float;
+
+#define PI 3.14159265
+
+out vec4 fragColor;
+in vec2 uv;
+
+uniform float time;
+
+vec4 SkyColor = vec4( 0.3, 0.3, 0.9, 1.0 );
+vec4 CloudColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+
 
 float rand(vec2 n) {
     return fract(cos(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
@@ -14,19 +24,17 @@ float noise(vec2 n) {
 
 float fbm(vec2 n) {
     float total = 0.0, amplitude = 1.0;
-    for (int i = 0; i < 111; i++) {
+    for (int i = 0; i < 4; i++) {
         total += noise(n) * amplitude;
         n += n;
         amplitude *= 0.5;
     }
     return total;
 }
-
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    vec2 uv = fragCoord.xy / iResolution.xy;
-    uv.x += iGlobalTime * 0.1;
-    uv.y += iGlobalTime * 0.05;
-    vec2 p = uv * 25.0;
-    fragColor = mix(skyColor, cloudColor, fbm(p));
+void main() {
+    vec2 uvv = uv;
+    uvv.x += time * 0.1;
+    uvv.y += time * 0.05;
+    vec2 p = uvv * 25.0;
+    fragColor = mix(SkyColor, CloudColor, fbm(p));
 }

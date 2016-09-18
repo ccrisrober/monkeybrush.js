@@ -87,10 +87,10 @@ namespace MB {
             }
             /**
              * [bufferData description]
-             * @param {Float32Array | Uint16Array}          data  [description]
+             * @param {Float32Array | Uint16Array | number}          data  [description]
              * @param {MB.ctes.UsageType    = MB.ctes.UsageType.StaticDraw} usage [description]
              */
-            public bufferData(data: Float32Array | Uint16Array, usage: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
+            public bufferData(data: Float32Array | Uint16Array | number, usage: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
                 this.bind();
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                 gl.bufferData(this._type, data, usage);
@@ -142,6 +142,12 @@ namespace MB {
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                 gl.copyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
             };
+
+
+            public bindBufferBase(target: number, index: number = 0) {
+                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                gl.bindBufferBase(target, index, this._buffer);
+            }
         };
     };
 };

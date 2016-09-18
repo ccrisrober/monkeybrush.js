@@ -519,7 +519,7 @@ namespace MB {
              * @param  {number} type WebGL internal uniform/attribute type.
              * @return {string}
              */
-            protected static getType(gl: WebGL2RenderingContext, type: number): string {
+            public static getType(gl: WebGL2RenderingContext, type: number): string {
                 if (!Program.GL_TABLE) {
                     let typeNames = Object.keys(Program.GL_TO_GLSL_TYPES);
                     Program.GL_TABLE = {};
@@ -529,7 +529,6 @@ namespace MB {
                             Program.GL_TABLE[cte] = Program.GL_TO_GLSL_TYPES[tn];
                         }
                     }
-                    console.log(Program.GL_TABLE);
                 }
                 return Program.GL_TABLE[type];
             };
