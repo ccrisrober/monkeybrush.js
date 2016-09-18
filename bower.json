@@ -26,6 +26,9 @@
   ],
   "dependencies": {
     "vanillatoasts": "*",
-    "log4javascript": "^1.4.9"
+    "log4javascript": "^1.4.9",
+    "gl-matrix": "^2.3.2",
+    "dat.gui": "*",
+    "stats.js": "*"
   }
 }

@@ -83,9 +83,9 @@
     <div id="samplesPassed"></div>
     <script type="text/javascript" src="../bower_components/vanillatoasts/vanillatoasts.js"></script>
     <script type="text/javascript" src="../bower_components/log4javascript/log4javascript.js"></script>
-    <script type="text/javascript" src="../js/stats.min.js"></script>
-    <script type="text/javascript" src="../js/dat.gui.min.js"></script>
-    <script type="text/javascript" src="../js/gl-matrix-min.js"></script>
+    <script type="text/javascript" src="../bower_components/stats.js/build/stats.min.js"></script>
+    <script type="text/javascript" src="../bower_components/dat.gui/dat.gui.min.js"></script>
+    <script type="text/javascript" src="../bower_components/gl-matrix/dist/gl-matrix-min.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
@@ -130,11 +130,11 @@
 		        this.octahedron3 = new MB.models.Octahedron(12.5, 3.0);
 		        this.octahedron4 = new MB.models.Octahedron(12.5, 4.0);
 
-		        this.icosphere0 = new MB.models.Icosahedron(12.5, 0.0);
-		        this.icosphere1 = new MB.models.Icosahedron(12.5, 1.0);
-		        this.icosphere2 = new MB.models.Icosahedron(12.5, 2.0);
-		        this.icosphere3 = new MB.models.Icosahedron(12.5, 3.0);
-		        this.icosphere4 = new MB.models.Icosahedron(12.5, 4.0);
+		        this.icosahedron0 = new MB.models.Icosahedron(12.5, 0.0);
+		        this.icosahedron1 = new MB.models.Icosahedron(12.5, 1.0);
+		        this.icosahedron2 = new MB.models.Icosahedron(12.5, 2.0);
+		        this.icosahedron3 = new MB.models.Icosahedron(12.5, 3.0);
+		        this.icosahedron4 = new MB.models.Icosahedron(12.5, 4.0);
 
 		        this.tetrahedron0 = new MB.models.Tetrahedron(12.5, 0.0);
 		        this.tetrahedron1 = new MB.models.Tetrahedron(12.5, 1.0);
@@ -240,7 +240,7 @@
 	                        .rotate(this.angle * 0.5, MB.maths.Vect3.yAxis)
 	                        .scale(new MB.maths.Vect3(0.25, 0.25, 0.25));
 	                prog.sendUniformMat4("model", this.model);
-	                this["icosphere" + i][mode]();
+	                this["icosahedron" + i][mode]();
 		        }
 
 		        for (var i = 0; i < 5; ++i) {
