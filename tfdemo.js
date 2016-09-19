@@ -18,110 +18,64 @@ var MyScene = (function (_super) {
     __extends(MyScene, _super);
     function MyScene() {
         _super.call(this, SimpleConfig(), "EY", 2);
+        this.viewports = new Array(4);
         this.drawTick = true;
-        this.mainShader = "prog";
         this.angle = 0;
     }
-    MyScene.prototype.loadAssets = function () { };
+    MyScene.prototype.loadAssets = function () {
+        MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
+    };
     ;
     MyScene.prototype.initialize = function () {
         var _this = this;
-        MB.ProgramManager.addWithFun("prog", function () {
+        var gl = MB.Core.getInstance().getGL();
+        MB.ProgramManager.addWithFun("progF", function () {
             var prog = new MB.Program();
-            prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                vec3 pos = vertPosition;\n                pos *= 50.0;\n                gl_Position = viewProj * vec4(pos, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-            prog.addShader("#version 300 es\n            precision highp float;\n            precision highp sampler2DArray;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler2DArray tex;\n\n            void main() {\n                if (uv.x < 0.5) {\n                    if (uv.y < 0.5) {\n                        fragColor = texture(tex, vec3(uv, 0.0));\n                    } else {\n                        fragColor = texture(tex, vec3(uv, 2.0));\n                    }\n                } else {\n                    if (uv.y > 0.5) {\n                        fragColor = texture(tex, vec3(uv, 1.0));\n                    } else {\n                        fragColor = texture(tex, vec3(uv, 3.0));\n                    }\n                }\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            prog.addShader("#version 300 es\n            precision highp float;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler2D tex;\n            uniform bool op;\n\n            void main() {\n                vec4 floatColor = texture(tex, uv);\n                if (op) {\n                    floatColor = floatColor / 64.0 * 64.0;\n                }\n                fragColor = vec4(floatColor);\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             prog._compile();
             prog._link();
             prog.use();
-            prog.addUniforms(["viewProj", "tex"]);
+            prog.addUniforms(["tex", "op"]);
             return prog;
         });
-        var texSize = 1024;
-        var gl = MB.Core.getInstance().getGL();
-        var bb1 = new Uint8Array(texSize * texSize * 3);
-        var checkSize = 5;
-        var n = 0;
-        // Generate some checker board pattern
-        for (var y = 0; y < texSize; ++y) {
-            for (var x = 0; x < texSize; ++x) {
-                if (((x / checkSize + y / checkSize) % 2) == 0) {
-                    bb1[n++] = 255;
-                    bb1[n++] = 255;
-                    bb1[n++] = 255;
-                }
-                else {
-                    bb1[n++] = 0;
-                    bb1[n++] = 0;
-                    bb1[n++] = 0;
-                }
-            }
-        }
-        var bb2 = new Uint8Array(texSize * texSize * 3);
-        n = 0;
-        // Generate some diagonal lines for the second layer
-        for (var y = 0; y < texSize; y++) {
-            for (var x = 0; x < texSize; x++) {
-                if ((x + y) / 3 % 3 == 0) {
-                    bb2[n++] = 255;
-                    bb2[n++] = 255;
-                    bb2[n++] = 255;
-                }
-                else {
-                    bb2[n++] = 128;
-                    bb2[n++] = 128;
-                    bb2[n++] = 128;
-                }
-            }
-        }
-        var bb3 = new Uint8Array(texSize * texSize * 3);
-        n = 0;
-        // Generate some diagonal lines for the second layer
-        for (var y = 0; y < texSize; y++) {
-            for (var x = 0; x < texSize; x++) {
-                if ((x + y) / 4 % 4 == 1) {
-                    bb3[n++] = 128;
-                    bb3[n++] = 128;
-                    bb3[n++] = 128;
-                }
-                else {
-                    bb3[n++] = 255;
-                    bb3[n++] = 255;
-                    bb3[n++] = 255;
-                }
-            }
-        }
-        var bb4 = new Uint8Array(texSize * texSize * 3);
-        n = 0;
-        // Generate some checker board pattern
-        for (var y = 0; y < texSize; ++y) {
-            for (var x = 0; x < texSize; ++x) {
-                if (((x / checkSize + y / checkSize) % 2) == 1) {
-                    bb4[n++] = 0;
-                    bb4[n++] = 0;
-                    bb4[n++] = 0;
-                }
-                else {
-                    bb4[n++] = 255;
-                    bb4[n++] = 255;
-                    bb4[n++] = 255;
-                }
-            }
-        }
-        this.tex2 = new MB.Texture2DArray(new MB.Vector2(texSize, texSize), [
-            bb1, bb2, bb3, bb4
-        ], {
-            autoMipMap: true,
-            minFilter: gl.LINEAR,
-            magFilter: gl.LINEAR,
-            internalFormat: gl.RGB8,
-            level: 0,
-            format: gl.RGB,
-            type: gl.UNSIGNED_BYTE
+        MB.ProgramManager.addWithFun("progI", function () {
+            var prog = new MB.Program();
+            prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            prog.addShader("#version 300 es\n            precision highp float;\n            precision highp usampler2D;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform usampler2D tex;\n            uniform bool op;\n\n            void main() {\n                vec2 uvv = vec2(1.0 - uv.x, uv.y);\n                uvec4 intColor = texture(tex, uvv);\n                if (!op) {\n                    intColor = intColor / 64u * 64u;\n                }\n                fragColor = vec4(intColor) / 255.0;\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            prog._compile();
+            prog._link();
+            prog.use();
+            prog.addUniforms(["tex", "op"]);
+            return prog;
+        });
+        var myTexture = MB.ResourceMap.retrieveAsset("myTex");
+        this.tex2d = new MB.Texture2D(myTexture, {
+            flipY: true,
+            minFilter: MB.ctes.TextureType.Nearest,
+            magFilter: MB.ctes.TextureType.Nearest,
+            wrapS: MB.ctes.WrapMode.Clamp2Edge,
+            wrapT: MB.ctes.WrapMode.Clamp2Edge,
+            autoMipMap: true
+        });
+        this.tex2d2 = new MB.Texture2D(myTexture, {
+            flipY: false,
+            internalFormat: gl.RGBA8UI,
+            format: gl.RGBA_INTEGER,
+            minFilter: MB.ctes.TextureType.Nearest,
+            magFilter: MB.ctes.TextureType.Nearest,
+            wrapS: MB.ctes.WrapMode.Clamp2Edge,
+            wrapT: MB.ctes.WrapMode.Clamp2Edge
         });
     };
     ;
     MyScene.prototype.update = function (dt) {
         this.angle += MB.Timer.deltaTime() * 0.001;
+        var gl = MB.Core.getInstance().getGL();
+        this.viewports[0] = new MB.Vector4(0, 0, gl.canvas.width / 2, gl.canvas.height / 2);
+        this.viewports[1] = new MB.Vector4(gl.canvas.width / 2, 0, gl.canvas.width / 2, gl.canvas.height / 2);
+        this.viewports[2] = new MB.Vector4(gl.canvas.width / 2, gl.canvas.height / 2, gl.canvas.width / 2, gl.canvas.height / 2);
+        this.viewports[3] = new MB.Vector4(0, gl.canvas.height / 2, gl.canvas.width / 2, gl.canvas.height / 2);
         this.__resize__();
     };
     ;
@@ -130,20 +84,57 @@ var MyScene = (function (_super) {
             return;
         }
         MB.Core.getInstance().clearColorAndDepth();
-        var prog = MB.ProgramManager.get(this.mainShader);
+        var prog, vp;
+        // Floating textures
+        prog = MB.ProgramManager.get("progF");
         prog.use();
-        var gl = MB.Core.getInstance().getGL();
-        var viewProj = mat4.create();
-        var proj = mat4.create();
-        var canvas = gl.canvas;
-        mat4.perspective(proj, MB.Mathf.degToRad(60.0), canvas.width / canvas.height, 0.01, 100.0);
-        var view = mat4.create();
-        mat4.lookAt(view, new Float32Array([0.0, 1.0, 5.0]), new Float32Array([0.0, 0.0, 0.0]), new Float32Array([0.0, 1.0, 0.0]));
-        mat4.mul(viewProj, proj, view);
-        this.tex2.bind(0);
         prog.sendUniform1i("tex", 0);
-        prog.sendUniformMat4("viewProj", viewProj);
+        this.tex2d.bind(0);
+        // Top-left
+        prog.sendUniform1b("op", false);
+        vp = this.viewports[3];
+        MB.GlobalState.setViewport(vp);
         MB.PostProcess.render();
+        // Bottom-left
+        prog.sendUniform1b("op", true);
+        vp = this.viewports[0];
+        MB.GlobalState.setViewport(vp);
+        MB.PostProcess.render();
+        // Integer textures
+        prog = MB.ProgramManager.get("progI");
+        prog.use();
+        prog.sendUniform1i("tex", 0);
+        this.tex2d2.bind(0);
+        // Bottom-right
+        prog.sendUniform1b("op", false);
+        vp = this.viewports[1];
+        MB.GlobalState.setViewport(vp);
+        MB.PostProcess.render();
+        // Top-right
+        prog.sendUniform1b("op", true);
+        vp = this.viewports[2];
+        MB.GlobalState.setViewport(vp);
+        MB.PostProcess.render();
+        /*var prog = MB.ProgramManager.get("progI");
+        prog.use();
+        prog.sendUniform1i("tex", 0);
+        this.tex2d2.bind(0);
+        var vp = this.viewports[3];
+        MB.GlobalState.setViewport(vp);
+        MB.PostProcess.render();
+        vp = this.viewports[0];
+        MB.GlobalState.setViewport(vp);
+        MB.PostProcess.render();*/
+        /*for (var i = 0; i < 4; ++i) {
+            if (i < 2) {
+                this.tex2d.bind(0);
+            } else {
+                this.tex2d2.bind(0);
+            }
+            var vp = this.viewports[i];
+            MB.GlobalState.setViewport(vp);
+            MB.PostProcess.render();
+        }*/
     };
     ;
     MyScene.prototype.cameraUpdate = function () {
