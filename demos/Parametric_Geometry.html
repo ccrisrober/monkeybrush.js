@@ -88,7 +88,7 @@
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
 
-                MB.GlobalState.setCullingStatus(false);
+                MB.GlobalState.culling.setStatus(false);
 
                 this.parametricModel.render();
             };

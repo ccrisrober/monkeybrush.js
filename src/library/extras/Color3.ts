@@ -36,9 +36,9 @@ namespace MB {
          * @param {number} b Blue channel
          */
         constructor(r: number, g: number, b: number) {
-            this.r = Mathf.clamp01(r);
-            this.g = Mathf.clamp01(g);
-            this.b = Mathf.clamp01(b);
+            this._color.x = Mathf.clamp01(r);
+            this._color.y = Mathf.clamp01(g);
+            this._color.z = Mathf.clamp01(b);
         };
         /**
          * Check if another color is equals than current color.

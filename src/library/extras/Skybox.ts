@@ -187,12 +187,12 @@ namespace MB {
          * @param {MB.Mat4} view       View matrix
          * @param {MB.Mat4} projection Projection matrix
          */
-        public render(view: MB.Mat4, projection: MB.Mat4) {
-            const gl: WebGLRenderingContext = MB.Core.getInstance().getGL();
+        public render(view: Mat4, projection: Mat4) {
+            const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
-            let currDepthComp = MB.GlobalState.getCurrentDepthComparisonFunc();
+            let currDepthComp = GlobalState.depth.getCurrentComparisonFunc();
 
-            MB.GlobalState.setDepthComparisonFunc(MB.ctes.ComparisonFunc.LessEqual);
+            GlobalState.depth.setFunc(ctes.ComparisonFunc.LessEqual);
             this._prog.use();
 
             // Remove any translation
@@ -207,7 +207,7 @@ namespace MB {
             gl.drawArrays(gl.TRIANGLES, 0, 36);
             this._VertexArray.unbind();
 
-            MB.GlobalState.setDepthComparisonFunc(currDepthComp);
+            GlobalState.depth.setFunc(currDepthComp);
         }
        /**
         * Destroy skybox.

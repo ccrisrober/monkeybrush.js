@@ -79,31 +79,31 @@ var webserver = require('gulp-webserver');
 
 gulp.task("build-debug", function() {
     var tsResult = gulp.src(config.core.ts_files)
-        .pipe(sourcemaps.init()) // This means sourcemaps will be generated
+        //.pipe(sourcemaps.init()) // This means sourcemaps will be generated
         .pipe(ts({
             sortOutput: true,
             target: "ES5",
             experimentalDecorators: true,
             removeComments: true
         }))
-        .on("error", notify.onError({
+        /*.on("error", notify.onError({
             message: "Error: <%= error.message %>",
             title: "Error running something"
-        }));
+        }))*/;
 
     return tsResult.js
         .pipe(concat('output.js'))
-        .pipe(cleants())
+        //.pipe(cleants())
         //.pipe(replace(/var\s__extends[\s\S]+?\};/g, ""))
         //.pipe(replace(/var\s__decorate[\s\S]+?\};/g, ""))
         //.pipe(addModuleExports("MonkeyBrush"))
-        .pipe(sourcemaps.write())
+        //.pipe(sourcemaps.write())
         .pipe(gulp.dest(config.build.outputDirectory))
-        .pipe(notify({
+        /*.pipe(notify({
             title: "monkeybrush.js",
             message: "Code OK",
             icon: path.join(__dirname, '_images/logo.png')
-        }));
+        }))*/;
 });
 gulp.task("watch-ts", ["build-debug", "webserver"], function() {
     gulp.watch(config.core.typescript, ["build-debug"]);
