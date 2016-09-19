@@ -36,6 +36,68 @@ if (Math["trunc"] === undefined) {
 "use strict";
 var MB;
 (function (MB) {
+    var Node = (function () {
+        function Node(obj, next, prev) {
+            if (obj === void 0) { obj = null; }
+            if (next === void 0) { next = null; }
+            if (prev === void 0) { prev = null; }
+            this.obj = obj;
+            this.next = next;
+            this.prev = prev;
+        }
+        return Node;
+    }());
+    MB.Node = Node;
+    ;
+    var List = (function () {
+        function List() {
+            this.root = new Node();
+            this.root.next = this.root;
+            this.root.prev = this.root;
+        }
+        ;
+        List.prototype.first = function () {
+            return this.root.next;
+        };
+        List.prototype.last = function () {
+            return this.root.prev;
+        };
+        List.prototype.pop = function () {
+            var ret = this.last().obj;
+            this.remove(this.last());
+            return ret;
+        };
+        List.prototype.isEmpty = function () {
+            return this.root.next === this.root;
+        };
+        List.prototype.insertNodeBefore = function (node, ref) {
+            if (ref === void 0) { ref = this.root.next; }
+            node.next = ref;
+            node.prev = ref.prev;
+            node.prev.next = node;
+            ref.prev = node;
+        };
+        List.prototype.insertBefore = function (node, ref) {
+            if (ref === void 0) { ref = this.root.next; }
+            this.insertNodeBefore(new Node(node), ref);
+        };
+        List.prototype.remove = function (ref) {
+            if (ref === this.root)
+                return;
+            ref.next.prev = ref.prev;
+            ref.prev.next = ref.next;
+            return ref;
+        };
+        return List;
+    }());
+    MB.List = List;
+    ;
+})(MB || (MB = {}));
+;
+
+"use strict";
+var MB;
+(function (MB) {
     var Box2D = (function () {
         function Box2D(min, max) {
             if (min === void 0) { min = new MB.Vect2(Infinity, Infinity); }
@@ -1471,6 +1533,60 @@ var MB;
     }());
     MB.Quat = Quat;
     ;
+})(MB || (MB = {}));
+;
+
+"use strict";
+var MB;
+(function (MB) {
+    var Sphere2D = (function () {
+        function Sphere2D(center, radius) {
+            this._center = center;
+            this._radius = radius;
+        }
+        Sphere2D.prototype.containtsPoint = function (p) {
+            var x = this._center.x - p.x;
+            var y = this._center.y - p.y;
+            var dist = Math.sqrt((x * x) + (y * y));
+            return (Math.abs(this._radius - dist) > 0.001);
+        };
+        Sphere2D.prototype.intersectsSphere = function (s) {
+            var x = this._center.x - s._center.x;
+            var y = this._center.y - s._center.y;
+            var dist = Math.sqrt((x * x) + (y * y));
+            return (this._radius + s._radius > dist);
+        };
+        return Sphere2D;
+    }());
+    MB.Sphere2D = Sphere2D;
+})(MB || (MB = {}));
+;
+
+"use strict";
+var MB;
+(function (MB) {
+    var Sphere3D = (function () {
+        function Sphere3D(center, radius) {
+            this._center = center;
+            this._radius = radius;
+        }
+        Sphere3D.prototype.containtsPoint = function (p) {
+            var x = this._center.x - p.x;
+            var y = this._center.y - p.y;
+            var z = this._center.z - p.z;
+            var dist = Math.sqrt((x * x) + (y * y) + (z * z));
+            return (Math.abs(this._radius - dist) > 0.001);
+        };
+        Sphere3D.prototype.intersectsSphere = function (s) {
+            var x = this._center.x - s._center.x;
+            var y = this._center.y - s._center.y;
+            var z = this._center.z - s._center.z;
+            var dist = Math.sqrt((x * x) + (y * y) + (z * z));
+            return (this._radius + s._radius > dist);
+        };
+        return Sphere3D;
+    }());
+    MB.Sphere3D = Sphere3D;
 })(MB || (MB = {}));
 ;
 

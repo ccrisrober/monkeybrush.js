@@ -21,6 +21,100 @@
 
 namespace MB {
     export abstract class OrthographicCamera /*extends Camera*/ {
+        protected _view: Float32Array;
+        protected _projection: Float32Array;
+        protected _fov: number;
+        protected _ar: number;
+        protected _near: number;
+        protected _far: number;
+        protected _isDirty: boolean;
 
+        constructor(width: number, height: number,
+            fov: number, near: number, far: number) {
+            this._projection = mat4.create();
+            this._isDirty = true;
+        };
+        /**
+         * Returns true if the state of the projection matrix
+         * has changed since last call to "getProjectionMatrix".
+         * @return {boolean}
+         */
+        get isDirty(): boolean {
+            return this._isDirty;
+        }
+        /**
+         * Returns current projection matrix from camera.
+         * @return {Float32Array}
+         */
+        public getProjectionMatrix(): Float32Array {
+            if (this._isDirty) {
+                const yMin = -this._near * Math.tan(this._fov * Math.PI / 360.0);
+                const yMax = -yMin;
+                const xMin = yMin + this.aspRatio;
+                const xMax = yMax + this.aspRatio;
+                mat4.ortho(this._projection, xMin, xMax, yMin, yMax, this._near, this._far);
+                this._isDirty = false;
+            }
+            return this._projection;
+        };
+        /**
+         * Get current near of view from camera
+         * @return {number}
+         */
+        get near(): number { return this._near; };
+        /**
+         * Get current far of view from camera
+         * @return {number}
+         */
+        get far(): number { return this._far; };
+        /**
+         * Get current field of view from camera
+         * @return {number}
+         */
+        get fov(): number { return this._fov; };
+        /**
+         * Get current aspect radio from camera
+         * @return {number}
+         */
+        get aspRatio(): number { return this._ar; };
+        /**
+         * Sets near clip plane distance.
+         * @param {number} near: New near value
+         */
+        set near(near: number) {
+            if (this._near !== near) {
+                this._near = near;
+                this._isDirty = true;
+            }};
+        /**
+         * Sets far clip plane distance.
+         * @param {number} far: New far value
+         */
+        set far(far: number) {
+            if (this._far !== far) {
+                this._far = far;
+                this._isDirty = true;
+            }
+        };
+        /**
+         * Set camera field of view
+         * @param {number} fovy: New field of view value
+         */
+        set fov(fovy: number) {
+            if (this._fov !== fovy) {
+                this._fov = fovy;
+                this._isDirty = true;
+            }
+        };
+        /**
+         * Set aspect ratio
+         * @param {number} ar: New aspect ratio value
+         */
+        set aspRatio(ar: number) {
+            if (this._ar !== ar) {
+                this._ar = ar;
+                this._isDirty = true;
+            }
+        };
     }
 }; // namespace MB
