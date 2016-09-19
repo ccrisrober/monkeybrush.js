@@ -23,19 +23,19 @@ namespace MB {
 
     declare var WebGL2RenderingContext: any;
 
-    export class DepthTexture extends Texture {
+    export class DepthTexture /* extends Texture*/ {
         /**
          * DepthTexture constructor
          * @param {() => void = null} onSuccess Optional callback that runs when creating DepthTexture.
          */
         constructor(onSuccess: () => void = null) {
-            super(MB.ctes.TextureTarget.Texture2D);
+            /*super(MB.ctes.TextureTarget.Texture2D);
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             if (gl instanceof WebGL2RenderingContext) {
                 this._internalformat_ = gl.DEPTH_COMPONENT32F;
             } else {
                 this._internalformat_ = gl.DEPTH_COMPONENT16;
-            }
+            }*/
         };
     };
 };

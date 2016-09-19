@@ -20,7 +20,7 @@
 "use strict";
 
 namespace MB {
-    class CullingState {
+    export class CullingState {
         protected _currentFrontFace: ctes.FaceDir = null;
         protected _cullingEnabled: boolean = false;
         protected _cullingFaceMode: ctes.FaceSide = MB.ctes.FaceSide.FrontAndBack;
@@ -76,7 +76,7 @@ namespace MB {
             this._cullingFaceMode = MB.ctes.FaceSide.FrontAndBack;
         };
     };
-    class DepthState {
+    export class DepthState {
         protected _depthEnabled: boolean = false;
         protected _currentDepthMask: boolean = false;
         protected _currentDepthFunc: ctes.ComparisonFunc = ctes.ComparisonFunc.LessEqual;
@@ -164,7 +164,7 @@ namespace MB {
             }
         };
     };
-    class ColorState {
+    export class ColorState {
         protected _currentColorMask: Vector4<boolean>;
         protected _currentColorClear: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);
 
@@ -204,7 +204,7 @@ namespace MB {
             gl.clear(gl.COLOR_BUFFER_BIT);
         }
     };
-    class ScissorsState {
+    export class ScissorsState {
         protected _scissorsEnabled: boolean = false;
         protected _scissorsBox: MB.Box2D = new MB.Box2D();
 
@@ -263,7 +263,7 @@ namespace MB {
             return this._scissorsEnabled === true;
         }
     };
-    class StencilState {
+    export class StencilState {
         protected _stencilEnabled: boolean = false;
         protected _currentStencilMask: number = 0;
         protected _currentStencilFunc: MB.ctes.ComparisonFunc = null;
@@ -399,7 +399,7 @@ namespace MB {
             // TODO
         };
     };
-    class BlendingState {
+    export class BlendingState {
         protected _blendingEnabled: boolean = false;
         protected _blendingMode: MB.ctes.BlendingEq; // TODO
         /**

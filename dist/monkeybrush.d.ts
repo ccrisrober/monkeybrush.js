@@ -9,6 +9,26 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    class Node<T> {
+        obj: T;
+        next: Node<T>;
+        prev: Node<T>;
+        constructor(obj?: T, next?: Node<T>, prev?: Node<T>);
+    }
+    class List<T> {
+        private root;
+        constructor();
+        first(): Node<T>;
+        last(): Node<T>;
+        pop(): T;
+        isEmpty(): boolean;
+        insertNodeBefore(node: Node<T>, ref?: Node<T>): void;
+        insertBefore(node: T, ref?: Node<T>): void;
+        remove(ref: Node<T>): Node<T>;
+    }
+}
+
+declare namespace MB {
     /**
      * Box2D class
      * @class Box2D
@@ -277,6 +297,28 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    enum RotSeq {
+        zyx = 0,
+        zyz = 1,
+        zxy = 2,
+        zxz = 3,
+        yxz = 4,
+        yxy = 5,
+        yzx = 6,
+        yzy = 7,
+        xyz = 8,
+        xyx = 9,
+        xzy = 10,
+        xzx = 11,
+    }
+    class EulerAngle {
+        protected static _twoaxisrot(r11: number, r12: number, r21: number, r31: number, r32: number): Vect3;
+        protected static _threeaxisrot(r11: number, r12: number, r21: number, r31: number, r32: number): Vect3;
+        static fromQuaternion(q: Quat, order?: RotSeq): Vect3;
+    }
+}
+
+declare namespace MB {
     /**
      * Mat2 class
      * @class Mat2
@@ -457,7 +499,7 @@ declare namespace MB {
          */
         function nearestPOT(v: number): number;
         /**
-         * Clamps a value between a minimum float and maximum float value.
+         * Clamps a value to be between a minimum and maximum value.
          * @param  {number} v   Value to clamp.
          * @param  {number} min Minimum value.
          * @param  {number} max Maximum value
@@ -657,6 +699,34 @@ declare namespace MB {
         inverse(): Quat;
         conjugate(): Quat;
         static fromAxis(axis: Vect3, angle: number, dest?: Quat): Quat;
+    }
+}
+
+declare namespace MB {
+    /**
+     * Sphere2D class
+     * @class Sphere2D
+     */
+    class Sphere2D {
+        protected _center: Vect2;
+        protected _radius: number;
+        constructor(center: Vect2, radius: number);
+        containtsPoint(p: Vect2): boolean;
+        intersectsSphere(s: Sphere2D): boolean;
+    }
+}
+
+declare namespace MB {
+    /**
+     * Sphere3D class
+     * @class Sphere3D
+     */
+    class Sphere3D {
+        protected _center: Vect3;
+        protected _radius: number;
+        constructor(center: Vect3, radius: number);
+        containtsPoint(p: Vect3): boolean;
+        intersectsSphere(s: Sphere3D): boolean;
     }
 }
 
@@ -1502,6 +1572,8 @@ declare namespace MB {
          * @param {T} z: Fourth value
          */
         constructor(x: T, y: T, z: T, w: T);
+        copy(v: Vector4<T>): Vector4<T>;
+        clone(): Vector4<T>;
         /**
          * Check if two Vector4<T> are equals
          * @param  {Vector4<T>} other: Second vector
@@ -2151,7 +2223,6 @@ declare namespace MB {
         constructor();
         initialize(color: Array<number>): void;
         clearColorAndDepth(): void;
-        changeViewport(x: number, y: number, w: number, h: number): void;
         canvas(): HTMLCanvasElement;
         protected init(): void;
         static getInstance(): Core;
@@ -2236,75 +2307,133 @@ declare namespace MB {
 }
 
 declare namespace MB {
-    /**
-     * GlobalState class
-     * @class GlobalState
-     *
-     * This class is used to manage the WebGL state
-     *     machine through a common API.
-     */
-    class GlobalState {
-        static initializeAll(): void;
-        static _bgColor: MB.Color4;
-        static _currentColorMask: MB.Vector4<boolean>;
-        static _currentColorClear: MB.Color4;
-        static setMask(colorMask: MB.Vector4<boolean>): void;
+    class CullingState {
+        protected _currentFrontFace: ctes.FaceDir;
+        protected _cullingEnabled: boolean;
+        protected _cullingFaceMode: ctes.FaceSide;
         /**
-         * Set new clear color value
-         * @param {number} r Red channel value
-         * @param {number} g Green channel value
-         * @param {number} b Blue channel value
-         * @param {number = 1.0} a Alpha channel value
+         * Cull face enable/disable
+         * @param {boolean} enabled True if cull face enable
          */
-        static setClearColor(r: number, g: number, b: number, a?: number): void;
-        static resetColors(): void;
-        static _depthEnabled: boolean;
-        static _currentDepthMask: boolean;
-        static _currentDepthFunc: MB.ctes.ComparisonFunc;
-        static _currentDepthClear: any;
-        static getDepthComparison(): MB.ctes.ComparisonFunc;
+        setStatus(enabled: boolean): void;
+        setFlipSided(flipSided: ctes.FaceDir): void;
+        /**
+         * Get current cullFace mode
+         * @return {MB.ctes.FaceSide}: Current cullFace mode
+         */
+        getMode(): MB.ctes.FaceSide;
+        /**
+         * Specify whether front/back-facing facets can be culled.
+         * @param {MB.ctes.FaceSide} mode: Cull face mode
+         */
+        setMode(mode: MB.ctes.FaceSide): void;
+        /**
+         * Checks if cullFace is activated
+         * @return {boolean}: True if activated
+         */
+        isEnabled(): boolean;
+        resetCulling(): void;
+    }
+    class DepthState {
+        protected _depthEnabled: boolean;
+        protected _currentDepthMask: boolean;
+        protected _currentDepthFunc: ctes.ComparisonFunc;
+        protected _currentDepthClear: any;
+        protected _znear: number;
+        protected _zfar: number;
+        /**
+         * Checks if depth test is activated
+         * @return {boolean}: True if activated
+         */
+        isEnabled(): boolean;
+        isMask(): boolean;
+        getCurrentComparisonFunc(): ctes.ComparisonFunc;
+        /**
+         * Specify the mode used for depth buffer comparisons.
+         * @param {MB.ctes.ComparisonFunc} compFunc: Comparisor mode.
+         */
+        setFunc(depthFunc: ctes.ComparisonFunc): void;
+        setStatus(enabled: boolean): void;
+        setMask(mask: boolean): void;
+        setClear(depth: number): void;
+        /**
+         * Clear depth buffer.
+         */
+        clearBuffer(): void;
+        reset(): void;
         /**
          * Specify mapping of depth values from normalized device coordinates to window coordinates.
          * @param {number = 0.0} znear: Specifies the mapping of the near clipping plane to window coordinates.
          * @param {number = 1.0} zfar: Specifies the mapping of the far clipping plane to window coordinates.
          */
-        static depthRange(znear?: number, zfar?: number): void;
-        static setDepthStatus(enabled: boolean): void;
+        depthRange(znear?: number, zfar?: number): void;
+    }
+    class ColorState {
+        protected _currentColorMask: Vector4<boolean>;
+        protected _currentColorClear: Color4;
+        setMask(colorMask: MB.Vector4<boolean>): void;
         /**
-         * Checks if depth test is activated
+         * Set new clear color value TODO (bad text)
+         * @param {number} r Red channel value
+         * @param {number} g Green channel value
+         * @param {number} b Blue channel value
+         * @param {number = 1.0} a Alpha channel value
+         */
+        setClearColor(bgColor: Color4): void;
+        reset(): void;
+        /**
+         * Clear color values
+         */
+        clearBuffer(): void;
+    }
+    class ScissorsState {
+        protected _scissorsEnabled: boolean;
+        protected _scissorsBox: MB.Box2D;
+        status: boolean;
+        /**
+         * Define the scissor box.
+         * @param {number} x: Specifying the horizontal coordinate for the lower left corner of the box.
+         * @param {number} y: Specifying the vertical coordinate for the lower left corner of the box.
+         * @param {number} width: Specifying the width of the scissor box.
+         * @param {number} height: Specifying the height of the scissor box.
+         */
+        setRectangle(x: number, y: number, width: number, height: number): void;
+        /**
+         * Define the scissor box.
+         * @param {number} x: Specifying the horizontal coordinate for the lower left corner of the box.
+         * @param {number} y: Specifying the vertical coordinate for the lower left corner of the box.
+         * @param {number} width: Specifying the width of the scissor box.
+         * @param {number} height: Specifying the height of the scissor box.
+         */
+        setRectangleBox2D(b: MB.Box2D): void;
+        /**
+         * Get scissor rectangle in use.
+         * @return {MB.Box2D}: Scissor box size
+         */
+        getRectangle(): MB.Box2D;
+        /**
+         * Checks if scissor test is activated
          * @return {boolean}: True if activated
          */
-        static isDepthEnabled(): boolean;
-        static isDepthMask(): boolean;
-        static setDepthMask(mask: boolean): void;
-        /**
-         * Specify the mode used for depth buffer comparisons.
-         * @param {MB.ctes.ComparisonFunc} compFunc: Comparisor mode.
-         */
-        static setDepthComparisonFunc(depthFunc: MB.ctes.ComparisonFunc): void;
-        static getCurrentDepthComparisonFunc(): MB.ctes.ComparisonFunc;
-        static setDepthClear(depth: number): void;
-        static resetDepth(): void;
-        /**
-         * Clear depth buffer.
-         */
-        static clearDepth(): void;
-        static _stencilEnabled: boolean;
-        static _currentStencilMask: number;
-        static _currentStencilFunc: MB.ctes.ComparisonFunc;
-        static _currentStencilRef: number;
-        static _currentStencilFuncMask: number;
-        static _currentStencilFail: MB.ctes.StencilOp;
-        static _currentStencilZFail: MB.ctes.StencilOp;
-        static _currentStencilZPass: MB.ctes.StencilOp;
-        static _currentStencilClear: number;
-        static setStencilTest(enabled: boolean): void;
+        isEnabled(): boolean;
+    }
+    class StencilState {
+        protected _stencilEnabled: boolean;
+        protected _currentStencilMask: number;
+        protected _currentStencilFunc: MB.ctes.ComparisonFunc;
+        protected _currentStencilRef: number;
+        protected _currentStencilFuncMask: number;
+        protected _currentStencilFail: MB.ctes.StencilOp;
+        protected _currentStencilZFail: MB.ctes.StencilOp;
+        protected _currentStencilZPass: MB.ctes.StencilOp;
+        protected _currentStencilClear: number;
+        setTest(enabled: boolean): void;
         /**
          * Control the front and back writing of individual bits in the stencil planes
          * @param {number} mask Specifies a bit mask to enable and disable writing of
          *    individual bits in the stencil planes.
          */
-        static setStencilMask(mask: number): void;
+        setMaskValue(mask: number): void;
         /**
          * Set front and back function and reference value for stencil testing
          * @param {MB.ctes.ComparisonFunc} compFunc Specifies the test function.
@@ -2312,7 +2441,7 @@ declare namespace MB {
          * @param {number} mask Specifies a mask that is ANDed with both the
          *    reference value and the stored stencil value when the test is done.
          */
-        static setStencilFunc(compFun: MB.ctes.ComparisonFunc, ref: number, mask: number): void;
+        setFunc(compFun: MB.ctes.ComparisonFunc, ref: number, mask: number): void;
         /**
          * Set front and back stencil test actions.
          * @param {MB.ctes.StencilOp} fail Action to take when the stencil test fails.
@@ -2321,78 +2450,57 @@ declare namespace MB {
          * @param {MB.ctes.StencilOp} zpass Specifies the stencil action when both the stencil
          *    and depth test passes.
          */
-        static setStencilOp(fail: MB.ctes.StencilOp, zfail: MB.ctes.StencilOp, zpass: MB.ctes.StencilOp): void;
-        static getStencilMask(mask: number): number;
-        static setStencilClear(s: number): void;
+        setOp(fail: MB.ctes.StencilOp, zfail: MB.ctes.StencilOp, zpass: MB.ctes.StencilOp): void;
+        getMasValue(mask: number): number;
+        setClearValue(s: number): void;
         /**
          * Control the front and/or back writing of individual bits in the stencil planes
          * @param {MB.ctes.FaceSide} face Specifies whether the front and/or back stencil writemask is updated
          * @param {number} mask Specifies a bit mask to enable and disable writing of individual
          *    bits in the stencil planes.
          */
-        static setStencilMaskFace(face: MB.ctes.FaceSide, mask: number): void;
+        setMaskFace(face: MB.ctes.FaceSide, mask: number): void;
         /**
          * Get front write mask
          * @return {number}
          */
-        static getStencilFrontWriteMask(): number;
+        getFrontWriteMask(): number;
         /**
          * Get back write mask
          * @return {number}
          */
-        static getStencilBackWriteMask(): number;
+        getBackWriteMask(): number;
         /**
          * Get stencil bits
          * @return {number}
          */
-        static getStencilBits(): number;
+        getBits(): number;
         /**
          * Clear stencil values
          */
-        static clearStencil(): void;
+        clearBuffer(): void;
         /**
          * Checks if stencil test is activated
          * @return {boolean} True if activated
          */
-        static isStencilEnabled(): boolean;
-        static resetStencil(): void;
-        static _cullingEnabled: boolean;
-        static _cullingFaceMode: MB.ctes.FaceSide;
-        /**
-         * Cull face enable/disable
-         * @param {boolean} enabled True if cull face enable
-         */
-        static setCullingStatus(enabled: boolean): void;
-        /**
-         * Get current cullFace mode
-         * @return {MB.ctes.FaceSide}: Current cullFace mode
-         */
-        static getCullingMode(): MB.ctes.FaceSide;
-        /**
-         * Specify whether front/back-facing facets can be culled.
-         * @param {MB.ctes.FaceSide} mode: Cull face mode
-         */
-        static setCullingMode(mode: MB.ctes.FaceSide): void;
-        /**
-         * Checks if cullFace is activated
-         * @return {boolean}: True if activated
-         */
-        static isCullingEnabled(): boolean;
-        static resetCulling(): void;
-        static _blendingEnabled: boolean;
-        static _blendingMode: MB.ctes.BlendingEq;
+        isEnabled(): boolean;
+        reset(): void;
+    }
+    class BlendingState {
+        protected _blendingEnabled: boolean;
+        protected _blendingMode: MB.ctes.BlendingEq;
         /**
          * Change blending status (eables or disabled)
          * @param {boolean} enabled Enable/disable blending
          */
-        static setBlendingStatus(enabled: boolean): void;
+        setStatus(enabled: boolean): void;
         /**
          * Specify the equation used for both the RGB blend equation and
          *     the Alpha blend equation
          * @param {MB.ctes.BlendingEq} mode Specifies how source and destination
          *     colors are combined
          */
-        static setBlendingEquation(mode: MB.ctes.BlendingEq): void;
+        setEquation(mode: MB.ctes.BlendingEq): void;
         /**
          * Set the RGB blend equation and the alpha blend equation separately
          * @param {MB.ctes.BlendingEq} modeRGB Specifies the RGB blend equation,
@@ -2402,9 +2510,9 @@ declare namespace MB {
          *      how the alpha component of the source and destination colors
          *      are combined.
          */
-        static blendingEquationSeparate(modeRGB: MB.ctes.BlendingEq, modeAlpha: MB.ctes.BlendingEq): void;
-        getBlendingEquationRGB(): MB.ctes.BlendingEq;
-        getBlendingEquationAlpha(): MB.ctes.BlendingEq;
+        equationSeparate(modeRGB: MB.ctes.BlendingEq, modeAlpha: MB.ctes.BlendingEq): void;
+        getquationRGB(): MB.ctes.BlendingEq;
+        getEquationAlpha(): MB.ctes.BlendingEq;
         /**
          * Set the blend color
          * @param {number = 0.0} red
@@ -2412,7 +2520,7 @@ declare namespace MB {
          * @param {number = 0.0} blue
          * @param {number = 0.0} alpha
          */
-        static setBlendingColor(red?: number, green?: number, blue?: number, alpha?: number): void;
+        setColor(red?: number, green?: number, blue?: number, alpha?: number): void;
         /**
          * Specify pixel arithmetic.
          * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} sfactor Specifies how the red,
@@ -2420,7 +2528,7 @@ declare namespace MB {
          * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dfactor Specifies how the red,
          *     green, blue, and alpha destination blending factors are computed.
          */
-        static setBlendingFunc(sfactor?: MB.ctes.BlendingType, dfactor?: MB.ctes.BlendingType): void;
+        setFunc(sfactor?: MB.ctes.BlendingType, dfactor?: MB.ctes.BlendingType): void;
         /**
          * Specify pixel arithmetic for RGB and alpha components separately.
          * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} rcRGB Specifies how the red, green,
@@ -2432,43 +2540,45 @@ declare namespace MB {
          * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dstAlpha Specified how the alpha destination
          *      blending factor is computed.
          */
-        static setBlendingFuncSeparate(srcRGB?: MB.ctes.BlendingType, dstRGB?: MB.ctes.BlendingType, srcAlpha?: MB.ctes.BlendingType, dstAlpha?: MB.ctes.BlendingType): void;
+        setFuncSeparate(srcRGB?: MB.ctes.BlendingType, dstRGB?: MB.ctes.BlendingType, srcAlpha?: MB.ctes.BlendingType, dstAlpha?: MB.ctes.BlendingType): void;
         /**
          * Checks if blending is activated
          * @return {boolean} True if activated
          */
-        static isBlendingEnabled(): boolean;
-        static _scissorsEnabled: boolean;
-        static _scissorsBox: MB.Box2D;
-        static setScissorStatus(enabled: boolean): void;
-        /**
-         * Define the scissor box.
-         * @param {number} x: Specifying the horizontal coordinate for the lower left corner of the box.
-         * @param {number} y: Specifying the vertical coordinate for the lower left corner of the box.
-         * @param {number} width: Specifying the width of the scissor box.
-         * @param {number} height: Specifying the height of the scissor box.
-         */
-        static setScissorsRectangle(x: number, y: number, width: number, height: number): void;
-        /**
-         * Define the scissor box.
-         * @param {number} x: Specifying the horizontal coordinate for the lower left corner of the box.
-         * @param {number} y: Specifying the vertical coordinate for the lower left corner of the box.
-         * @param {number} width: Specifying the width of the scissor box.
-         * @param {number} height: Specifying the height of the scissor box.
-         */
-        static setScissorsRectangleBox2D(b: MB.Box2D): void;
-        /**
-         * Get scissor rectangle in use.
-         * @return {MB.Box2D}: Scissor box size
-         */
-        static getScissorsRectangle(): MB.Box2D;
-        /**
-         * Checks if scissor test is activated
-         * @return {boolean}: True if activated
-         */
-        static isScissorsEnabled(): boolean;
+        isEnabled(): boolean;
+    }
+    /**
+     * GlobalState class
+     * @class GlobalState
+     *
+     * This class is used to manage the WebGL state
+     *     machine through a common API.
+     */
+    class GlobalState {
+        static initializeAll(): void;
+        static depth: DepthState;
+        static culling: CullingState;
+        static color: ColorState;
+        static stencil: StencilState;
+        static blending: BlendingState;
         static _currentLineWidth: number;
         static setLineWidth(width: number): void;
+        static _viewport: Vector4<number>;
+        static setViewport(viewport: Vector4<number>): void;
+        static _poligonOffsetEnable: boolean;
+        static _currentPolygonOffsetFactor: number;
+        static _currentPolygonOffsetUnits: number;
+        /**
+         * Specifies the scale factors and units to calculate depth values.
+         * The offset is added before the depth test is performed and
+         *     before the value is written into the depth buffer.
+         * @param {boolean} enable [description]
+         * @param {number}  factor [description]
+         * @param {number}  units  [description]
+         */
+        static setPolygonOffset(enable: boolean, factor: number, units: number): void;
+        static clearBuffers(): void;
+        static clearAllBuffers(): void;
     }
 }
 
@@ -3103,14 +3213,18 @@ declare namespace MB {
          *     call to "varyings" method.
          * @param  {Program}         program [description]
          * @param  {number}          idx     [description]
-         * @return {Object}         [description]
+         * @return {VaryingInfo}         [description]
          */
-        getVarying(program: Program, idx: number): Object;
+        getVarying(program: Program, idx: number): VaryingInfo;
         /**
          * Return true if this object is a valid TransformFeedback object.
          * @return {boolean} [description]
          */
         isValid(): boolean;
+    }
+    interface VaryingInfo {
+        name: string;
+        type: string;
     }
 }
 
@@ -3364,6 +3478,129 @@ declare namespace MB {
         static bind(): void;
         static draw(position: Float32Array, opts: BillboardOpts): void;
         static unbind(): void;
+    }
+}
+
+declare namespace MB {
+    /**
+     * BufferAttribute class
+     * @class BufferAttribute
+     */
+    class BufferAttribute {
+        protected _arr: ArrayLike<number>;
+        protected _size: number;
+        /**
+         * BufferAttribute constructor
+         * @param {ArrayLike<number>} arr  [description]
+         * @param {number}            size [description]
+         */
+        constructor(arr: ArrayLike<number>, size: number);
+        /**
+         * Return buffer attribute inner array
+         * @return {ArrayLike<number>} [description]
+         */
+        array: ArrayLike<number>;
+        /**
+         * Return how many items of the inner array are
+         *     associated with a particular vect[size].
+         * @return {number} [description]
+         */
+        size: number;
+        /**
+         * Return total buffer number of elements in the inner array.
+         * @return {number} [description]
+         */
+        count: number;
+        /**
+         * Return x value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getX(index: number): number;
+        /**
+         * Return y value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getY(index: number): number;
+        /**
+         * Return z value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getZ(index: number): number;
+        /**
+         * Return w value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getW(index: number): number;
+        /**
+         * Return [x, y] values from specifies vect[size] index
+         * @param  {number}        index [description]
+         * @return {ArrayLike<number>}       [description]
+         */
+        getXY(index: number): ArrayLike<number>;
+        /**
+         * Return [x, y, z] values from specifies vect[size] index
+         * @param  {number}        index [description]
+         * @return {ArrayLike<number>}       [description]
+         */
+        getXYZ(index: number): ArrayLike<number>;
+        /**
+         * Return [x, y, z, w] values from specifies vect[size] index
+         * @param  {number}        index [description]
+         * @return {ArrayLike<number>}       [description]
+         */
+        getXYZW(index: number): ArrayLike<number>;
+        /**
+         * Sets the x value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setX(index: number, value: number): void;
+        /**
+         * Sets the y value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setY(index: number, value: number): void;
+        /**
+         * Sets the z value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setZ(index: number, value: number): void;
+        /**
+         * Sets the w value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setW(index: number, value: number): void;
+        /**
+         * Sets the x and y values from specifies vect[size] index
+         * @param {number} index  [description]
+         * @param {number} xValue [description]
+         * @param {number} yValue [description]
+         */
+        setXY(index: number, xValue: number, yValue: number): void;
+        /**
+         * Sets the x, y and z values from specifies vect[size] index
+         * @param {number} index  [description]
+         * @param {number} xValue [description]
+         * @param {number} yValue [description]
+         * @param {number} zValue [description]
+         */
+        setXYZ(index: number, xValue: number, yValue: number, zValue: number): void;
+        /**
+         * Sets the x, y, z and w values from specifies vect[size] index
+         * @param {number} index  [description]
+         * @param {number} xValue [description]
+         * @param {number} yValue [description]
+         * @param {number} zValue [description]
+         * @param {number} wValue [description]
+         */
+        setXYZW(index: number, xValue: number, yValue: number, zValue: number, wValue: number): void;
     }
 }
 
@@ -4089,6 +4326,18 @@ declare namespace MB {
 
 declare namespace MB {
     /**
+     * InstancedInterleavedBuffer class
+     * @class InstancedInterleavedBuffer
+     */
+    class InstancedInterleavedBuffer extends BufferAttribute {
+        protected _meshPerAttr: number;
+        constructor(arr: ArrayLike<number>, stride: number, meshPerAttr?: number);
+        meshPerAttr: number;
+    }
+}
+
+declare namespace MB {
+    /**
      * Noise namespace
      * @namespace Noise
      */
@@ -4332,7 +4581,7 @@ declare namespace MB {
          * @param {MB.Mat4} view       View matrix
          * @param {MB.Mat4} projection Projection matrix
          */
-        render(view: MB.Mat4, projection: MB.Mat4): void;
+        render(view: Mat4, projection: Mat4): void;
         /**
          * Destroy skybox.
          */
@@ -4382,144 +4631,6 @@ declare namespace MB {
 }
 
 declare namespace MB {
-    /**
-     * BufferAttribute class
-     * @class BufferAttribute
-     */
-    class BufferAttribute {
-        protected _arr: ArrayLike<number>;
-        protected _size: number;
-        /**
-         * BufferAttribute constructor
-         * @param {ArrayLike<number>} arr  [description]
-         * @param {number}            size [description]
-         */
-        constructor(arr: ArrayLike<number>, size: number);
-        /**
-         * Return buffer attribute inner array
-         * @return {ArrayLike<number>} [description]
-         */
-        array: ArrayLike<number>;
-        /**
-         * Return how many items of the inner array are
-         *     associated with a particular vect[size].
-         * @return {number} [description]
-         */
-        size: number;
-        /**
-         * Return total buffer number of elements in the inner array.
-         * @return {number} [description]
-         */
-        count: number;
-        /**
-         * Return x value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getX(index: number): number;
-        /**
-         * Return y value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getY(index: number): number;
-        /**
-         * Return z value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getZ(index: number): number;
-        /**
-         * Return w value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getW(index: number): number;
-        /**
-         * Return [x, y] values from specifies vect[size] index
-         * @param  {number}        index [description]
-         * @return {ArrayLike<number>}       [description]
-         */
-        getXY(index: number): ArrayLike<number>;
-        /**
-         * Return [x, y, z] values from specifies vect[size] index
-         * @param  {number}        index [description]
-         * @return {ArrayLike<number>}       [description]
-         */
-        getXYZ(index: number): ArrayLike<number>;
-        /**
-         * Return [x, y, z, w] values from specifies vect[size] index
-         * @param  {number}        index [description]
-         * @return {ArrayLike<number>}       [description]
-         */
-        getXYZW(index: number): ArrayLike<number>;
-        /**
-         * Sets the x value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setX(index: number, value: number): void;
-        /**
-         * Sets the y value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setY(index: number, value: number): void;
-        /**
-         * Sets the z value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setZ(index: number, value: number): void;
-        /**
-         * Sets the w value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setW(index: number, value: number): void;
-        /**
-         * Sets the x and y values from specifies vect[size] index
-         * @param {number} index  [description]
-         * @param {number} xValue [description]
-         * @param {number} yValue [description]
-         */
-        setXY(index: number, xValue: number, yValue: number): void;
-        /**
-         * Sets the x, y and z values from specifies vect[size] index
-         * @param {number} index  [description]
-         * @param {number} xValue [description]
-         * @param {number} yValue [description]
-         * @param {number} zValue [description]
-         */
-        setXYZ(index: number, xValue: number, yValue: number, zValue: number): void;
-        /**
-         * Sets the x, y, z and w values from specifies vect[size] index
-         * @param {number} index  [description]
-         * @param {number} xValue [description]
-         * @param {number} yValue [description]
-         * @param {number} zValue [description]
-         * @param {number} wValue [description]
-         */
-        setXYZW(index: number, xValue: number, yValue: number, zValue: number, wValue: number): void;
-    }
-    /**
-     * InstancedBufferAttribute class
-     * @class InstancedBufferAttribute
-     */
-    class InstancedBufferAttribute extends BufferAttribute {
-        protected _meshPerAttr: number;
-        constructor(arr: ArrayLike<number>, size: number, meshPerAttr?: number);
-        meshPerAttr: number;
-    }
-    /**
-     * InstancedInterleavedBuffer class
-     * @class InstancedInterleavedBuffer
-     */
-    class InstancedInterleavedBuffer extends BufferAttribute {
-        protected _meshPerAttr: number;
-        constructor(arr: ArrayLike<number>, stride: number, meshPerAttr?: number);
-        meshPerAttr: number;
-    }
     /**
      * VertexBufferGeometry class
      * @class VertexBufferGeometry
@@ -5438,39 +5549,40 @@ declare namespace MB {
 
 declare namespace MB {
     interface TexOptions {
-        internalFormat?: MB.ctes.TextureFormat;
-        type?: MB.ctes.TextureFormat;
+        internalFormat?: ctes.TextureFormat;
+        type?: ctes.TextureFormat;
         level?: number;
-        minFilter?: MB.ctes.TextureType;
-        magFilter?: MB.ctes.TextureType;
+        minFilter?: ctes.TextureType;
+        magFilter?: ctes.TextureType;
         flipY?: boolean;
-        wrap?: MB.ctes.WrapMode;
-        wrapS?: MB.ctes.WrapMode;
-        wrapT?: MB.ctes.WrapMode;
-        wrapR?: MB.ctes.WrapMode;
+        wrap?: ctes.WrapMode;
+        wrapS?: ctes.WrapMode;
+        wrapT?: ctes.WrapMode;
+        wrapR?: ctes.WrapMode;
         minLOD?: number;
         maxLOD?: number;
         autoMipMap?: boolean;
-        format?: MB.ctes.TextureFormat;
+        format?: ctes.TextureFormat;
         border?: number;
         compressed?: boolean;
+        anisotropic?: number;
         offsets?: Array<number>;
     }
     abstract class Texture {
         protected _anisotropy_: number;
-        protected _internalformat_: MB.ctes.TextureFormat;
-        protected _format_: MB.ctes.TextureFormat;
-        protected _wrapS_: MB.ctes.WrapMode;
-        protected _wrapT_: MB.ctes.WrapMode;
-        protected _wrapR_: MB.ctes.WrapMode;
-        protected _minFilter_: MB.ctes.TextureType;
-        protected _magFilter_: MB.ctes.TextureType;
-        protected _type_: MB.ctes.TextureFormat;
+        protected _internalformat_: ctes.TextureFormat;
+        protected _format_: ctes.TextureFormat;
+        protected _wrapS_: ctes.WrapMode;
+        protected _wrapT_: ctes.WrapMode;
+        protected _wrapR_: ctes.WrapMode;
+        protected _minFilter_: ctes.TextureType;
+        protected _magFilter_: ctes.TextureType;
+        protected _type_: ctes.TextureFormat;
         protected _flipY_: boolean;
         protected _generateMipMaps_: boolean;
         protected _premultiplyAlpha_: boolean;
         protected _unpackAlignment_: number;
-        protected _target_: MB.ctes.TextureTarget;
+        protected _target_: ctes.TextureTarget;
         protected _minLOD_: number;
         protected _maxLOD_: number;
         protected _level_: number;
@@ -5481,15 +5593,37 @@ declare namespace MB {
          */
         protected _handle_: WebGLTexture;
         /**
-         * Change texture minification filter
-         * @param {MB.ctes.TextureType} filter: Minification filter type
+         * Returns false if gl.LINEAR is not supported as a texture
+         *     filter mode for textures of type gl.FLOAT.
+         * @return {boolean} [description]
          */
-        minFilter(filter: MB.ctes.TextureType): void;
+        static canUseFloatingPointTextures(): boolean;
+        static canUseFloatingPointLinearFiltering(): boolean;
+        /**
+         * Returns false if gl.HALF_FLOAT_OES is not supported as a
+         *     texture type.
+         * WebGL2 supports this without extension.
+         * @return {boolean} [description]
+         */
+        static canUseHalfFloatingPointTextures(): boolean;
+        /**
+         * Returns false if gl.LINEAR is not supported as a texture
+         *     filter mode for textures of type gl.HALF_FLOAT_OES.
+         * WebGL2 supports this without extension.
+         * @return {boolean} [description]
+         */
+        static canUseHalfFloatingPointLinearFiltering(): boolean;
+        constructor(target: ctes.TextureTarget, options: TexOptions);
+        /**
+         * Change texture minification filter
+         * @param {ctes.TextureType} filter: Minification filter type
+         */
+        minFilter(filter: ctes.TextureType): void;
         /**
          * Change texture magnification filter
-         * @param {MB.ctes.TextureType} filter: Magnification filter type
+         * @param {ctes.TextureType} filter: Magnification filter type
          */
-        magFilter(filter: MB.ctes.TextureType): void;
+        magFilter(filter: ctes.TextureType): void;
         wrap(modes: Array<number>): void;
         /**
          * Generate mipmap to this texture.
@@ -5507,10 +5641,9 @@ declare namespace MB {
          */
         destroy(): void;
         preventNPOT(): void;
-        constructor(target: MB.ctes.TextureTarget);
         target: number;
         handler: WebGLTexture;
-        resize(size: MB.Vect2): void;
+        resize(size: Vect2): void;
         setLOD(minLOD: number, maxLOD: number): void;
         getWidth(): number;
         getHeight(): number;
@@ -5560,7 +5693,7 @@ declare namespace MB {
 }
 
 declare namespace MB {
-    class DepthTexture extends Texture {
+    class DepthTexture {
         /**
          * DepthTexture constructor
          * @param {() => void = null} onSuccess Optional callback that runs when creating DepthTexture.
@@ -5570,11 +5703,21 @@ declare namespace MB {
 }
 
 declare namespace MB {
-    class RenderBufferMultisampleTexture {
+    abstract class RenderBuffer {
         protected _handle: WebGLRenderbuffer;
         protected _size: MB.Vect2;
         protected _samples: number;
         protected _format: number;
+        constructor(size: MB.Vect2, format: number, attachment: number, samples?: number);
+        abstract bind(): any;
+        abstract unbind(): any;
+        abstract destroy(): any;
+        abstract resize(size: MB.Vect2): any;
+    }
+}
+
+declare namespace MB {
+    class RenderBufferMultisampleTexture extends RenderBuffer {
         constructor(size: MB.Vect2, format: number, attachment: number, samples?: number);
         bind(): void;
         unbind(): void;
@@ -5584,10 +5727,7 @@ declare namespace MB {
 }
 
 declare namespace MB {
-    class RenderBufferTexture {
-        protected _handle: WebGLRenderbuffer;
-        protected _size: MB.Vect2;
-        protected _format: number;
+    class RenderBufferTexture extends RenderBuffer {
         constructor(size: MB.Vect2, format: number, attachment: number);
         bind(): void;
         unbind(): void;
@@ -5644,13 +5784,15 @@ declare namespace MB {
     class Texture2DArray extends Texture {
         protected _layer_: number;
         protected _numTex_: number;
+        protected _size_: Vector2<number>;
         /**
          * [constructor description]
+         * @param {Vector2<number>} size   [description]
          * @param {Array<any>}    images [description]
          * @param {TexOptions =      {}}        options [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2DArray.
          */
-        constructor(images: Array<any>, options?: TexOptions, onSuccess?: () => void);
+        constructor(size: Vector2<number>, images: Array<any>, options?: TexOptions, onSuccess?: () => void);
         layer: number;
         incLayer(): void;
     }

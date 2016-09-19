@@ -4179,6 +4179,7 @@ var MB;
         ;
         return CullingState;
     }());
+    MB.CullingState = CullingState;
     ;
     var DepthState = (function () {
         function DepthState() {
@@ -4267,6 +4268,7 @@ var MB;
         ;
         return DepthState;
     }());
+    MB.DepthState = DepthState;
     ;
     var ColorState = (function () {
         function ColorState() {
@@ -4301,6 +4303,7 @@ var MB;
         };
         return ColorState;
     }());
+    MB.ColorState = ColorState;
     ;
     var ScissorsState = (function () {
         function ScissorsState() {
@@ -4350,6 +4353,7 @@ var MB;
         };
         return ScissorsState;
     }());
+    MB.ScissorsState = ScissorsState;
     ;
     var StencilState = (function () {
         function StencilState() {
@@ -4445,6 +4449,7 @@ var MB;
         ;
         return StencilState;
     }());
+    MB.StencilState = StencilState;
     ;
     var BlendingState = (function () {
         function BlendingState() {
@@ -4517,6 +4522,7 @@ var MB;
         ;
         return BlendingState;
     }());
+    MB.BlendingState = BlendingState;
     ;
     var GlobalState = (function () {
         function GlobalState() {
@@ -10049,7 +10055,6 @@ var MB;
     ;
     var Texture = (function () {
         function Texture(target, options) {
-            if (options === void 0) { options = {}; }
             this._anisotropy_ = 1;
             this._internalformat_ = MB.ctes.TextureFormat.RGBA;
             this._format_ = MB.ctes.TextureFormat.RGBA;
@@ -10321,29 +10326,15 @@ var MB;
 ;
 
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var MB;
 (function (MB) {
-    var DepthTexture = (function (_super) {
-        __extends(DepthTexture, _super);
+    var DepthTexture = (function () {
         function DepthTexture(onSuccess) {
             if (onSuccess === void 0) { onSuccess = null; }
-            _super.call(this, MB.ctes.TextureTarget.Texture2D);
-            var gl = MB.Core.getInstance().getGL();
-            if (gl instanceof WebGL2RenderingContext) {
-                this._internalformat_ = gl.DEPTH_COMPONENT32F;
-            }
-            else {
-                this._internalformat_ = gl.DEPTH_COMPONENT16;
-            }
         }
         ;
         return DepthTexture;
-    }(MB.Texture));
+    }());
     MB.DepthTexture = DepthTexture;
     ;
 })(MB || (MB = {}));
@@ -10641,7 +10632,7 @@ var MB;
 (function (MB) {
     var Texture2DArray = (function (_super) {
         __extends(Texture2DArray, _super);
-        function Texture2DArray(images, options, onSuccess) {
+        function Texture2DArray(size, images, options, onSuccess) {
             var _this = this;
             if (options === void 0) { options = {}; }
             if (onSuccess === void 0) { onSuccess = null; }
@@ -10651,13 +10642,14 @@ var MB;
             }
             _super.call(this, MB.ctes.TextureTarget.Texture2DArray, options);
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+            this._size_ = size;
             this._layer_ = 0;
             gl.texParameteri(this._target_, gl.TEXTURE_BASE_LEVEL, 0);
             gl.texParameteri(this._target_, gl.TEXTURE_MAX_LEVEL, 0);
             this._numTex_ = images.length;
-            gl.texImage3D(gl.TEXTURE_2D_ARRAY, 0, gl.RGB8, this._numTex_, this._numTex_, 16, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+            gl.texImage3D(this.target, this._level_, this._internalformat_, this._size_.x, this._size_.y, this._numTex_, 0, this._format_, this._type_, null);
             images.forEach(function (image, i) {
-                gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, i, _this._numTex_, _this._numTex_, 1, gl.RGB, gl.UNSIGNED_BYTE, image);
+                gl.texSubImage3D(_this.target, 0, 0, 0, i, _this._size_.x, _this._size_.y, 1, _this._format_, _this._type_, image);
             });
             this.wrap([
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,

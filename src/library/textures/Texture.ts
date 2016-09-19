@@ -23,20 +23,20 @@ namespace MB {
     // TODO: hacer unbind al crear textura!!
 
     export interface TexOptions {
-        internalFormat?: MB.ctes.TextureFormat;
-        type?: MB.ctes.TextureFormat;
+        internalFormat?: ctes.TextureFormat;
+        type?: ctes.TextureFormat;
         level?: number;
-        minFilter?: MB.ctes.TextureType;
-        magFilter?: MB.ctes.TextureType;
+        minFilter?: ctes.TextureType;
+        magFilter?: ctes.TextureType;
         flipY?: boolean;
-        wrap?: MB.ctes.WrapMode;
-        wrapS?: MB.ctes.WrapMode;
-        wrapT?: MB.ctes.WrapMode;
-        wrapR?: MB.ctes.WrapMode;
+        wrap?: ctes.WrapMode;
+        wrapS?: ctes.WrapMode;
+        wrapT?: ctes.WrapMode;
+        wrapR?: ctes.WrapMode;
         minLOD?: number;
         maxLOD?: number;
         autoMipMap?: boolean;
-        format?: MB.ctes.TextureFormat;
+        format?: ctes.TextureFormat;
         border?: number;
         compressed?: boolean;
         anisotropic?: number;
@@ -49,23 +49,23 @@ namespace MB {
     export abstract class Texture {
 
         protected _anisotropy_: number = 1;
-        protected _internalformat_: MB.ctes.TextureFormat = MB.ctes.TextureFormat.RGBA;
-        protected _format_: MB.ctes.TextureFormat = MB.ctes.TextureFormat.RGBA;
+        protected _internalformat_: ctes.TextureFormat = ctes.TextureFormat.RGBA;
+        protected _format_: ctes.TextureFormat = ctes.TextureFormat.RGBA;
 
-        protected _wrapS_: MB.ctes.WrapMode = MB.ctes.WrapMode.Clamp2Edge;
-        protected _wrapT_: MB.ctes.WrapMode = MB.ctes.WrapMode.Clamp2Edge;
-        protected _wrapR_: MB.ctes.WrapMode = MB.ctes.WrapMode.Clamp2Edge;
+        protected _wrapS_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
+        protected _wrapT_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
+        protected _wrapR_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
 
-        protected _minFilter_: MB.ctes.TextureType = MB.ctes.TextureType.Linear;
-        protected _magFilter_: MB.ctes.TextureType = MB.ctes.TextureType.Linear;
+        protected _minFilter_: ctes.TextureType = ctes.TextureType.Linear;
+        protected _magFilter_: ctes.TextureType = ctes.TextureType.Linear;
 
-        protected _type_: MB.ctes.TextureFormat; // TODO = gl.UNSIGNED_BYTE;
+        protected _type_: ctes.TextureFormat; // TODO = gl.UNSIGNED_BYTE;
         protected _flipY_: boolean = true;
         protected _generateMipMaps_: boolean = false;
         protected _premultiplyAlpha_: boolean = false;
 
         protected _unpackAlignment_: number = 4;
-        protected _target_: MB.ctes.TextureTarget;
+        protected _target_: ctes.TextureTarget;
         protected _minLOD_: number;
         protected _maxLOD_: number;
 
@@ -87,12 +87,12 @@ namespace MB {
             if (gl instanceof WebGL2RenderingContext) {
                 return true;
             } else {
-                return !!MB.Extensions.get("OES_texture_float");
+                return !!Extensions.get("OES_texture_float");
             }
         };
 
         public static canUseFloatingPointLinearFiltering(): boolean {
-            return !!MB.Extensions.get("ES_texture_float_linear");
+            return !!Extensions.get("ES_texture_float_linear");
         };
 
         /**
@@ -106,7 +106,7 @@ namespace MB {
             if (gl instanceof WebGL2RenderingContext) {
                 return true;
             } else {
-                return !!MB.Extensions.get("OES_texture_half_float");
+                return !!Extensions.get("OES_texture_half_float");
             }
         };
 
@@ -121,19 +121,19 @@ namespace MB {
             if (gl instanceof WebGL2RenderingContext) {
                 return true;
             } else {
-                return !!MB.Extensions.get("OES_texture_half_float_linear");
+                return !!Extensions.get("OES_texture_half_float_linear");
             }
         };
 
-        constructor(target: MB.ctes.TextureTarget, options: TexOptions = {}) {
+        constructor(target: ctes.TextureTarget, options: TexOptions) {
             this._target_ = target;
 
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             this._handle_ = gl.createTexture();
 
             this._flipY_ = Boolean(options.flipY || false);
-            this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
-            this._format_ = options.format || MB.ctes.TextureFormat.RGBA;
+            this._internalformat_ = options.internalFormat || ctes.TextureFormat.RGBA;
+            this._format_ = options.format || ctes.TextureFormat.RGBA;
             this._type_ = options.type || gl.UNSIGNED_BYTE;
             this._level_ = options.level || 0;
 
@@ -141,8 +141,8 @@ namespace MB {
 
             this.bind();
 
-            this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
+            this.minFilter(options.minFilter || ctes.TextureType.Nearest);
+            this.magFilter(options.minFilter || ctes.TextureType.Nearest);
 
             this._minLOD_ = options.minLOD || -1000;
             this._maxLOD_ = options.maxLOD || 1000;
@@ -156,8 +156,8 @@ namespace MB {
                 if (!Texture.canUseFloatingPointTextures()) {
                     throw new Error('OES_texture_float is required but not supported');
                 }
-                if ((this._minFilter_ !== MB.ctes.TextureType.Nearest
-                    || this._magFilter_ !== MB.ctes.TextureType.Nearest) &&
+                if ((this._minFilter_ !== ctes.TextureType.Nearest
+                    || this._magFilter_ !== ctes.TextureType.Nearest) &&
                     !Texture.canUseFloatingPointLinearFiltering()) {
                     throw new Error('OES_texture_float_linear is required but not supported');
                 }
@@ -165,8 +165,8 @@ namespace MB {
                 if (!Texture.canUseHalfFloatingPointTextures()) {
                     throw new Error('OES_texture_half_float is required but not supported');
                 }
-                if ((this._minFilter_ !== MB.ctes.TextureType.Nearest
-                    || this._magFilter_ !== MB.ctes.TextureType.Nearest) &&
+                if ((this._minFilter_ !== ctes.TextureType.Nearest
+                    || this._magFilter_ !== ctes.TextureType.Nearest) &&
                     !Texture.canUseHalfFloatingPointLinearFiltering()) {
                     throw new Error('OES_texture_half_float_linear is required but not supported');
                 }
@@ -175,21 +175,21 @@ namespace MB {
 
         /**
          * Change texture minification filter
-         * @param {MB.ctes.TextureType} filter: Minification filter type
+         * @param {ctes.TextureType} filter: Minification filter type
          */
-        public minFilter(filter: MB.ctes.TextureType) {
+        public minFilter(filter: ctes.TextureType) {
             this.bind();
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, filter);
             this._minFilter_ = filter;
         };
         /**
          * Change texture magnification filter
-         * @param {MB.ctes.TextureType} filter: Magnification filter type
+         * @param {ctes.TextureType} filter: Magnification filter type
          */
-        public magFilter(filter: MB.ctes.TextureType) {
+        public magFilter(filter: ctes.TextureType) {
             this.bind();
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, filter);
             this._magFilter_ = filter;
         };
@@ -197,7 +197,7 @@ namespace MB {
             if (modes.length < 2) {
                 throw new Error("Must specify wrapS, wrapT modes");
             }
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             this.bind();
             gl.texParameteri(this._target_, gl.TEXTURE_WRAP_S, modes[0]);
             gl.texParameteri(this._target_, gl.TEXTURE_WRAP_T, modes[1]);
@@ -212,7 +212,7 @@ namespace MB {
          * Generate mipmap to this texture.
          */
         public generateMipMap() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             this.bind();
             this._generateMipMaps_ = true;
             // TODO: Check NPOT??
@@ -223,42 +223,42 @@ namespace MB {
          * @param {number = 0} level: Anisotropic level
          */
         public setAnisotropic(level: number = 0) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             level = Math.floor(level);
             // const ext = Extensions.get("EXT_texture_filter_anisotropic");
-            const max_anisotropy = MB.Capabilities.getMaxAnisotropy();
+            const max_anisotropy = Capabilities.getMaxAnisotropy();
             if (max_anisotropy < level && this._anisotropy_ !== level) {
                 this._anisotropy_ = level;
                 gl.texParameterf(this._target_, 0x84FE/*ext.TEXTURE_MAX_ANISOTROPY_EXT*/, level);
             }
         };
         public bind(slot?: number) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             if (typeof slot === "number") {
                 gl.activeTexture(gl.TEXTURE0 + slot);
             }
             gl.bindTexture(this._target_, this._handle_);
         }
         public unbind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.bindTexture(this._target_, null);
         }
         /**
          * Destroy texture
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.deleteTexture(this._handle_);
             this._handle_ = null;
         }
         public preventNPOT() {
             /*this.wrap([
                 // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-                MB.ctes.TextureType.Linear,
+                ctes.TextureType.Linear,
                 // Prevents s-coordinate wrapping (repeating).
-                MB.ctes.WrapMode.Clamp2Edge,
+                ctes.WrapMode.Clamp2Edge,
                 // Prevents t-coordinate wrapping (repeating).
-                MB.ctes.WrapMode.Clamp2Edge
+                ctes.WrapMode.Clamp2Edge
             ]);*/
         }
         get target(): number { return this._target_; }
@@ -268,12 +268,12 @@ namespace MB {
             return this._handle_;
         };
 
-        public resize(size: MB.Vect2) {
+        public resize(size: Vect2) {
             // Nothing to do here
         }
 
         public setLOD(minLOD: number, maxLOD: number) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             if (gl instanceof WebGL2RenderingContext) {
                 this._minLOD_ = minLOD;
                 this._maxLOD_ = maxLOD;

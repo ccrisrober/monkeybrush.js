@@ -32,19 +32,24 @@ namespace MB {
     export class Texture2DArray extends Texture {
         protected _layer_: number;
         protected _numTex_: number;
+        protected _size_: Vector2<number>
         /**
          * [constructor description]
+         * @param {Vector2<number>} size   [description]
          * @param {Array<any>}    images [description]
          * @param {TexOptions =      {}}        options [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2DArray.
          */
-        constructor(images: Array<any>, options: TexOptions = {}, onSuccess: () => void = null) {
+        constructor(size: Vector2<number>, images: Array<any>, options: TexOptions = {}, onSuccess: () => void = null) {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             if (!(gl instanceof WebGL2RenderingContext)) {
                 throw new Error("Must provide a WebGL2 context ...");
             }
-            super(MB.ctes.TextureTarget.Texture2DArray, options);
+            super(ctes.TextureTarget.Texture2DArray, options);
+
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+
+            this._size_ = size;
 
             this._layer_ = 0;
 
@@ -55,18 +60,18 @@ namespace MB {
             gl.texParameteri(this._target_, gl.TEXTURE_MAX_LEVEL, 0);
 
             this._numTex_ = images.length;
+
             // TODO: Hardcoded
             gl.texImage3D(
-                gl.TEXTURE_2D_ARRAY, 0, gl.RGB8,
-                this._numTex_, this._numTex_, 16, 0,
-                gl.RGB, gl.UNSIGNED_BYTE, null
+                this.target, this._level_, this._internalformat_,
+                this._size_.x, this._size_.y, this._numTex_, 0,
+                this._format_, this._type_, null
            );
 
             images.forEach((image: any, i: number) => {
-                gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0,
-                    0, 0, i,
-                    this._numTex_, this._numTex_, 1,
-                    gl.RGB, gl.UNSIGNED_BYTE, image);
+                gl.texSubImage3D(
+                    this.target, 0, 0, 0, i, this._size_.x, this._size_.y, 1,
+                        this._format_, this._type_, image);
             });
 
             this.wrap([
