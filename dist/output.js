@@ -2479,6 +2479,17 @@ var MB;
             this._w = w;
         }
         ;
+        Vector4.prototype.copy = function (v) {
+            this._x = v._x;
+            this._y = v._y;
+            this._z = v._z;
+            this._w = v._w;
+            return this;
+        };
+        Vector4.prototype.clone = function () {
+            return new Vector4(this.x, this.y, this.z, this.w);
+        };
+        ;
         Vector4.prototype.isEqual = function (other) {
             return this.x === other.x && this.y === other.y
                 && this.z === other.z && this.w === other.w;
@@ -2844,7 +2855,7 @@ var MB;
                 canvas.height !== displayHeight) {
                 canvas.width = displayWidth;
                 canvas.height = displayHeight;
-                MB.Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
+                MB.GlobalState.setViewport(new MB.Vector4(0, 0, canvas.width, canvas.height));
                 this.cameraUpdate();
             }
         };
@@ -2956,7 +2967,7 @@ var MB;
                 canvas.height !== displayHeight) {
                 canvas.width = displayWidth;
                 canvas.height = displayHeight;
-                MB.Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
+                MB.GlobalState.setViewport(new MB.Vector4(0, 0, canvas.width, canvas.height));
                 this.cameraUpdateCb();
             }
         };
@@ -3793,15 +3804,12 @@ var MB;
                 });
                 console.log("All WebGL1 extensions enabled");
             }
-            this.init();
             MB.GlobalState.initializeAll();
-            MB.GlobalState.setClearColor(color[0], color[1], color[2], color[3]);
+            MB.GlobalState.color.setClearColor(new MB.Color4(0.0, 0.0, 0.0, 1.0));
+            this.init();
         };
         Core.prototype.clearColorAndDepth = function () {
-            this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
-        };
-        Core.prototype.changeViewport = function (x, y, w, h) {
-            this._gl.viewport(x, y, w, h);
+            MB.GlobalState.clearBuffers();
         };
         Core.prototype.canvas = function () {
             return this._gl.canvas;
@@ -3809,10 +3817,10 @@ var MB;
         Core.prototype.init = function () {
             MB.Input.initialize();
             MB.PostProcess.initialize();
-            MB.GlobalState.setDepthStatus(true);
-            MB.GlobalState.setDepthComparisonFunc(MB.ctes.ComparisonFunc.Less);
-            MB.GlobalState.setCullingStatus(true);
-            MB.GlobalState.setBlendingStatus(false);
+            MB.GlobalState.depth.setStatus(true);
+            MB.GlobalState.depth.setFunc(MB.ctes.ComparisonFunc.Less);
+            MB.GlobalState.culling.setStatus(true);
+            MB.GlobalState.blending.setStatus(false);
         };
         Core.getInstance = function () {
             if (!Core._instance) {
@@ -4006,194 +4014,13 @@ var MB;
 "use strict";
 var MB;
 (function (MB) {
-    var GlobalState = (function () {
-        function GlobalState() {
+    var CullingState = (function () {
+        function CullingState() {
+            this._currentFrontFace = null;
+            this._cullingEnabled = false;
+            this._cullingFaceMode = MB.ctes.FaceSide.FrontAndBack;
         }
-        GlobalState.initializeAll = function () {
-            this.resetColors();
-        };
-        GlobalState.setMask = function (colorMask) {
-            if (this._currentColorMask.isEqual(colorMask) === false) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.colorMask(colorMask.x, colorMask.y, colorMask.z, colorMask.w);
-                this._currentColorMask = colorMask;
-            }
-        };
-        ;
-        GlobalState.setClearColor = function (r, g, b, a) {
-            if (a === void 0) { a = 1.0; }
-            this._bgColor.r = r;
-            this._bgColor.g = g;
-            this._bgColor.b = b;
-            this._bgColor.a = a;
-            if (this._currentColorClear.isEquals(this._bgColor) === false) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.clearColor(r, g, b, a);
-                this._currentColorClear.copy(this._bgColor);
-            }
-        };
-        ;
-        GlobalState.resetColors = function () {
-            this._bgColor = new MB.Color4(0.0, 0.0, 0.0, 1.0);
-            this._currentColorMask = new MB.Vector4(true, true, true, true);
-            this._currentColorClear = this._bgColor = new MB.Color4(0.0, 0.0, 0.0, 1);
-        };
-        ;
-        GlobalState.getDepthComparison = function () {
-            return this._currentDepthFunc;
-        };
-        ;
-        GlobalState.depthRange = function (znear, zfar) {
-            if (znear === void 0) { znear = 0.0; }
-            if (zfar === void 0) { zfar = 1.00; }
-            var gl = MB.Core.getInstance().getGL();
-            if (znear > zfar || znear < 0.0 || zfar > 1.0) {
-                console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
-                return;
-            }
-            gl.depthRange(znear, zfar);
-        };
-        GlobalState.setDepthStatus = function (enabled) {
-            if (this._depthEnabled !== enabled) {
-                var gl = MB.Core.getInstance().getGL();
-                if (enabled === true) {
-                    gl.enable(gl.DEPTH_TEST);
-                }
-                else {
-                    gl.disable(gl.DEPTH_TEST);
-                }
-                this._depthEnabled = enabled;
-            }
-        };
-        ;
-        GlobalState.isDepthEnabled = function () {
-            return this._depthEnabled === true;
-        };
-        ;
-        GlobalState.isDepthMask = function () {
-            return this._currentDepthMask === true;
-        };
-        ;
-        GlobalState.setDepthMask = function (mask) {
-            if (this._currentDepthMask !== mask) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.depthMask(mask);
-                this._currentDepthMask = mask;
-            }
-        };
-        ;
-        GlobalState.setDepthComparisonFunc = function (depthFunc) {
-            if (this._currentDepthFunc !== depthFunc) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.depthFunc(depthFunc);
-                this._currentDepthFunc = depthFunc;
-            }
-        };
-        ;
-        GlobalState.getCurrentDepthComparisonFunc = function () {
-            return this._currentDepthFunc;
-        };
-        GlobalState.setDepthClear = function (depth) {
-            if (this._currentDepthClear !== depth) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.clearDepth(depth);
-                this._currentDepthClear = depth;
-            }
-        };
-        ;
-        GlobalState.resetDepth = function () {
-            this._depthEnabled = true;
-            this._currentDepthMask = true;
-            this._currentDepthFunc = MB.ctes.ComparisonFunc.LessEqual;
-            this._currentDepthClear = null;
-        };
-        ;
-        GlobalState.clearDepth = function () {
-            var gl = MB.Core.getInstance().getGL();
-            gl.clear(gl.DEPTH_BUFFER_BIT);
-        };
-        ;
-        GlobalState.setStencilTest = function (enabled) {
-            if (this._stencilEnabled !== enabled) {
-                var gl = MB.Core.getInstance().getGL();
-                if (enabled === true) {
-                    gl.enable(gl.STENCIL_TEST);
-                }
-                else {
-                    gl.disable(gl.STENCIL_TEST);
-                }
-                this._stencilEnabled = enabled;
-            }
-        };
-        ;
-        GlobalState.setStencilMask = function (mask) {
-            if (this._currentStencilMask !== mask) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.stencilMask(mask);
-                this._currentStencilMask = mask;
-            }
-        };
-        ;
-        GlobalState.setStencilFunc = function (compFun, ref, mask) {
-            if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
-                && this._currentStencilFuncMask !== mask) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.stencilFunc(compFun, ref, mask);
-                this._currentStencilFunc = compFun;
-                this._currentStencilRef = ref;
-                this._currentStencilFuncMask = mask;
-            }
-        };
-        ;
-        GlobalState.setStencilOp = function (fail, zfail, zpass) {
-            if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
-                && this._currentStencilZPass !== zpass) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.stencilOp(fail, zfail, zpass);
-                this._currentStencilFail = fail;
-                this._currentStencilZFail = zfail;
-                this._currentStencilZPass = zpass;
-            }
-        };
-        GlobalState.getStencilMask = function (mask) {
-            return this._currentStencilMask;
-        };
-        GlobalState.setStencilClear = function (s) {
-            if (this._currentStencilClear !== s) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.clearStencil(s);
-                this._currentStencilClear = s;
-            }
-        };
-        ;
-        GlobalState.setStencilMaskFace = function (face, mask) {
-            var gl = MB.Core.getInstance().getGL();
-            gl.stencilMaskSeparate(face, mask);
-        };
-        GlobalState.getStencilFrontWriteMask = function () {
-            var gl = MB.Core.getInstance().getGL();
-            return gl.getParameter(gl.STENCIL_WRITEMASK);
-        };
-        GlobalState.getStencilBackWriteMask = function () {
-            var gl = MB.Core.getInstance().getGL();
-            return gl.getParameter(gl.STENCIL_BACK_WRITEMASK);
-        };
-        GlobalState.getStencilBits = function () {
-            var gl = MB.Core.getInstance().getGL();
-            return gl.getParameter(gl.STENCIL_BITS);
-        };
-        GlobalState.clearStencil = function () {
-            var gl = MB.Core.getInstance().getGL();
-            gl.clear(gl.STENCIL_BUFFER_BIT);
-        };
-        GlobalState.isStencilEnabled = function () {
-            var gl = MB.Core.getInstance().getGL();
-            return gl.isEnabled(gl.STENCIL_TEST);
-        };
-        GlobalState.resetStencil = function () {
-        };
-        ;
-        GlobalState.setCullingStatus = function (enabled) {
+        CullingState.prototype.setStatus = function (enabled) {
             if (this._cullingEnabled !== enabled) {
                 var gl = MB.Core.getInstance().getGL();
                 if (enabled === true) {
@@ -4206,27 +4033,308 @@ var MB;
             }
         };
         ;
-        GlobalState.getCullingMode = function () {
+        CullingState.prototype.setFlipSided = function (flipSided) {
+            if (this._currentFrontFace !== flipSided) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.frontFace(flipSided);
+                this._currentFrontFace = flipSided;
+            }
+        };
+        ;
+        CullingState.prototype.getMode = function () {
             return this._cullingFaceMode;
         };
         ;
-        GlobalState.setCullingMode = function (mode) {
+        CullingState.prototype.setMode = function (mode) {
             if (this._cullingFaceMode !== mode) {
                 var gl = MB.Core.getInstance().getGL();
                 gl.cullFace(mode);
                 this._cullingFaceMode = mode;
             }
         };
-        GlobalState.isCullingEnabled = function () {
+        CullingState.prototype.isEnabled = function () {
             return this._cullingEnabled === true;
         };
         ;
-        GlobalState.resetCulling = function () {
+        CullingState.prototype.resetCulling = function () {
             this._cullingEnabled = false;
             this._cullingFaceMode = MB.ctes.FaceSide.FrontAndBack;
         };
         ;
-        GlobalState.setBlendingStatus = function (enabled) {
+        return CullingState;
+    }());
+    ;
+    var DepthState = (function () {
+        function DepthState() {
+            this._depthEnabled = false;
+            this._currentDepthMask = false;
+            this._currentDepthFunc = MB.ctes.ComparisonFunc.LessEqual;
+            this._currentDepthClear = null;
+            this._znear = 0.0;
+            this._zfar = 1.0;
+        }
+        DepthState.prototype.isEnabled = function () {
+            return this._depthEnabled === true;
+        };
+        ;
+        DepthState.prototype.isMask = function () {
+            return this._currentDepthMask === true;
+        };
+        ;
+        DepthState.prototype.getCurrentComparisonFunc = function () {
+            return this._currentDepthFunc;
+        };
+        ;
+        DepthState.prototype.setFunc = function (depthFunc) {
+            if (this._currentDepthFunc !== depthFunc) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.depthFunc(depthFunc);
+                this._currentDepthFunc = depthFunc;
+            }
+        };
+        ;
+        DepthState.prototype.setStatus = function (enabled) {
+            if (this._depthEnabled !== enabled) {
+                var gl = MB.Core.getInstance().getGL();
+                if (enabled === true) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                else {
+                    gl.disable(gl.DEPTH_TEST);
+                }
+                this._depthEnabled = enabled;
+            }
+        };
+        ;
+        DepthState.prototype.setMask = function (mask) {
+            if (this._currentDepthMask !== mask) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.depthMask(mask);
+                this._currentDepthMask = mask;
+            }
+        };
+        ;
+        DepthState.prototype.setClear = function (depth) {
+            if (this._currentDepthClear !== depth) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.clearDepth(depth);
+                this._currentDepthClear = depth;
+            }
+        };
+        ;
+        DepthState.prototype.clearBuffer = function () {
+            var gl = MB.Core.getInstance().getGL();
+            gl.clear(gl.DEPTH_BUFFER_BIT);
+        };
+        ;
+        DepthState.prototype.reset = function () {
+            this._depthEnabled = true;
+            this._currentDepthMask = true;
+            this._currentDepthFunc = MB.ctes.ComparisonFunc.LessEqual;
+            this._currentDepthClear = null;
+        };
+        ;
+        DepthState.prototype.depthRange = function (znear, zfar) {
+            if (znear === void 0) { znear = 0.0; }
+            if (zfar === void 0) { zfar = 1.0; }
+            if (!(znear === this._znear && zfar === this._zfar)) {
+                var gl = MB.Core.getInstance().getGL();
+                if (znear > zfar || znear < 0.0 || zfar > 1.0) {
+                    console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
+                    return;
+                }
+                gl.depthRange(znear, zfar);
+                this._znear = znear;
+                this._zfar = zfar;
+            }
+        };
+        ;
+        return DepthState;
+    }());
+    ;
+    var ColorState = (function () {
+        function ColorState() {
+            this._currentColorClear = new MB.Color4(0.0, 0.0, 0.0, 1.0);
+        }
+        ColorState.prototype.setMask = function (colorMask) {
+            if (!this._currentColorMask || this._currentColorMask.isEqual(colorMask) === false) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.colorMask(colorMask.x, colorMask.y, colorMask.z, colorMask.w);
+                this._currentColorMask = colorMask.clone();
+            }
+        };
+        ;
+        ColorState.prototype.setClearColor = function (bgColor) {
+            console.log(bgColor);
+            if (!this._currentColorClear || this._currentColorClear.isEquals(bgColor) === false) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.clearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+                this._currentColorClear = bgColor.clone();
+            }
+        };
+        ColorState.prototype.reset = function () {
+            this._currentColorMask = null;
+            this.setMask(new MB.Vector4(true, true, true, true));
+            this._currentColorClear = null;
+            this.setClearColor(new MB.Color4(0.0, 0.0, 0.0, 1.0));
+        };
+        ;
+        ColorState.prototype.clearBuffer = function () {
+            var gl = MB.Core.getInstance().getGL();
+            gl.clear(gl.COLOR_BUFFER_BIT);
+        };
+        return ColorState;
+    }());
+    ;
+    var ScissorsState = (function () {
+        function ScissorsState() {
+            this._scissorsEnabled = false;
+            this._scissorsBox = new MB.Box2D();
+        }
+        Object.defineProperty(ScissorsState.prototype, "status", {
+            set: function (enabled) {
+                if (this._scissorsEnabled !== enabled) {
+                    var gl = MB.Core.getInstance().getGL();
+                    if (enabled === true) {
+                        gl.enable(gl.SCISSOR_TEST);
+                    }
+                    else {
+                        gl.disable(gl.SCISSOR_TEST);
+                    }
+                    this._scissorsEnabled = enabled;
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ScissorsState.prototype.setRectangle = function (x, y, width, height) {
+            var b = new MB.Box2D(new MB.Vect2(x, y), new MB.Vect2(width, height));
+            if (!this._scissorsBox.isEqual(b)) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
+                this._scissorsBox = b;
+            }
+        };
+        ;
+        ScissorsState.prototype.setRectangleBox2D = function (b) {
+            if (!this._scissorsBox.isEqual(b)) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
+                this._scissorsBox = b;
+            }
+        };
+        ;
+        ScissorsState.prototype.getRectangle = function () {
+            return this._scissorsBox;
+        };
+        ;
+        ScissorsState.prototype.isEnabled = function () {
+            return this._scissorsEnabled === true;
+        };
+        return ScissorsState;
+    }());
+    ;
+    var StencilState = (function () {
+        function StencilState() {
+            this._stencilEnabled = false;
+            this._currentStencilMask = 0;
+            this._currentStencilFunc = null;
+            this._currentStencilRef = null;
+            this._currentStencilFuncMask = null;
+            this._currentStencilFail = null;
+            this._currentStencilZFail = null;
+            this._currentStencilZPass = null;
+            this._currentStencilClear = null;
+        }
+        StencilState.prototype.setTest = function (enabled) {
+            if (this._stencilEnabled !== enabled) {
+                var gl = MB.Core.getInstance().getGL();
+                if (enabled === true) {
+                    gl.enable(gl.STENCIL_TEST);
+                }
+                else {
+                    gl.disable(gl.STENCIL_TEST);
+                }
+                this._stencilEnabled = enabled;
+            }
+        };
+        ;
+        StencilState.prototype.setMaskValue = function (mask) {
+            if (this._currentStencilMask !== mask) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.stencilMask(mask);
+                this._currentStencilMask = mask;
+            }
+        };
+        ;
+        StencilState.prototype.setFunc = function (compFun, ref, mask) {
+            if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
+                && this._currentStencilFuncMask !== mask) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.stencilFunc(compFun, ref, mask);
+                this._currentStencilFunc = compFun;
+                this._currentStencilRef = ref;
+                this._currentStencilFuncMask = mask;
+            }
+        };
+        ;
+        StencilState.prototype.setOp = function (fail, zfail, zpass) {
+            if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
+                && this._currentStencilZPass !== zpass) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.stencilOp(fail, zfail, zpass);
+                this._currentStencilFail = fail;
+                this._currentStencilZFail = zfail;
+                this._currentStencilZPass = zpass;
+            }
+        };
+        StencilState.prototype.getMasValue = function (mask) {
+            return this._currentStencilMask;
+        };
+        StencilState.prototype.setClearValue = function (s) {
+            if (this._currentStencilClear !== s) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.clearStencil(s);
+                this._currentStencilClear = s;
+            }
+        };
+        ;
+        StencilState.prototype.setMaskFace = function (face, mask) {
+            var gl = MB.Core.getInstance().getGL();
+            gl.stencilMaskSeparate(face, mask);
+        };
+        StencilState.prototype.getFrontWriteMask = function () {
+            var gl = MB.Core.getInstance().getGL();
+            return gl.getParameter(gl.STENCIL_WRITEMASK);
+        };
+        StencilState.prototype.getBackWriteMask = function () {
+            var gl = MB.Core.getInstance().getGL();
+            return gl.getParameter(gl.STENCIL_BACK_WRITEMASK);
+        };
+        StencilState.prototype.getBits = function () {
+            var gl = MB.Core.getInstance().getGL();
+            return gl.getParameter(gl.STENCIL_BITS);
+        };
+        StencilState.prototype.clearBuffer = function () {
+            var gl = MB.Core.getInstance().getGL();
+            gl.clear(gl.STENCIL_BUFFER_BIT);
+        };
+        StencilState.prototype.isEnabled = function () {
+            var gl = MB.Core.getInstance().getGL();
+            return gl.isEnabled(gl.STENCIL_TEST);
+        };
+        StencilState.prototype.reset = function () {
+        };
+        ;
+        return StencilState;
+    }());
+    ;
+    var BlendingState = (function () {
+        function BlendingState() {
+            this._blendingEnabled = false;
+        }
+        BlendingState.prototype.setStatus = function (enabled) {
             if (this._blendingEnabled !== enabled) {
                 var gl = MB.Core.getInstance().getGL();
                 if (enabled === true) {
@@ -4239,7 +4347,7 @@ var MB;
             }
         };
         ;
-        GlobalState.setBlendingEquation = function (mode) {
+        BlendingState.prototype.setEquation = function (mode) {
             if (mode !== this._blendingMode) {
                 var gl = MB.Core.getInstance().getGL();
                 gl.blendEquation(mode);
@@ -4247,22 +4355,22 @@ var MB;
             }
         };
         ;
-        GlobalState.blendingEquationSeparate = function (modeRGB, modeAlpha) {
+        BlendingState.prototype.equationSeparate = function (modeRGB, modeAlpha) {
             var gl = MB.Core.getInstance().getGL();
             gl.blendEquationSeparate(modeRGB, modeAlpha);
         };
         ;
-        GlobalState.prototype.getBlendingEquationRGB = function () {
+        BlendingState.prototype.getquationRGB = function () {
             var gl = MB.Core.getInstance().getGL();
             return gl.getParameter(gl.BLEND_EQUATION_RGB);
         };
         ;
-        GlobalState.prototype.getBlendingEquationAlpha = function () {
+        BlendingState.prototype.getEquationAlpha = function () {
             var gl = MB.Core.getInstance().getGL();
             return gl.getParameter(gl.BLEND_EQUATION_ALPHA);
         };
         ;
-        GlobalState.setBlendingColor = function (red, green, blue, alpha) {
+        BlendingState.prototype.setColor = function (red, green, blue, alpha) {
             if (red === void 0) { red = 0.0; }
             if (green === void 0) { green = 0.0; }
             if (blue === void 0) { blue = 0.0; }
@@ -4271,14 +4379,14 @@ var MB;
             gl.blendColor(red, green, blue, alpha);
         };
         ;
-        GlobalState.setBlendingFunc = function (sfactor, dfactor) {
+        BlendingState.prototype.setFunc = function (sfactor, dfactor) {
             if (sfactor === void 0) { sfactor = MB.ctes.BlendingType.One; }
             if (dfactor === void 0) { dfactor = MB.ctes.BlendingType.Zero; }
             var gl = MB.Core.getInstance().getGL();
             gl.blendFunc(sfactor, dfactor);
         };
         ;
-        GlobalState.setBlendingFuncSeparate = function (srcRGB, dstRGB, srcAlpha, dstAlpha) {
+        BlendingState.prototype.setFuncSeparate = function (srcRGB, dstRGB, srcAlpha, dstAlpha) {
             if (srcRGB === void 0) { srcRGB = MB.ctes.BlendingType.One; }
             if (dstRGB === void 0) { dstRGB = MB.ctes.BlendingType.Zero; }
             if (srcAlpha === void 0) { srcAlpha = MB.ctes.BlendingType.One; }
@@ -4287,47 +4395,25 @@ var MB;
             gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
         };
         ;
-        GlobalState.isBlendingEnabled = function () {
+        BlendingState.prototype.isEnabled = function () {
             return this._blendingEnabled === true;
         };
         ;
-        GlobalState.setScissorStatus = function (enabled) {
-            if (this._scissorsEnabled !== enabled) {
-                var gl = MB.Core.getInstance().getGL();
-                if (enabled === true) {
-                    gl.enable(gl.SCISSOR_TEST);
-                }
-                else {
-                    gl.disable(gl.SCISSOR_TEST);
-                }
-                this._scissorsEnabled = enabled;
-            }
+        return BlendingState;
+    }());
+    ;
+    var GlobalState = (function () {
+        function GlobalState() {
+        }
+        GlobalState.initializeAll = function () {
+            this.depth = new DepthState();
+            this.culling = new CullingState();
+            this.color = new ColorState();
+            this.color.reset();
+            this.stencil = new StencilState();
+            this.blending = new BlendingState();
         };
         ;
-        GlobalState.setScissorsRectangle = function (x, y, width, height) {
-            var b = new MB.Box2D(new MB.Vect2(x, y), new MB.Vect2(width, height));
-            if (!this._scissorsBox.isEqual(b)) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
-                this._scissorsBox = b;
-            }
-        };
-        ;
-        GlobalState.setScissorsRectangleBox2D = function (b) {
-            if (!this._scissorsBox.isEqual(b)) {
-                var gl = MB.Core.getInstance().getGL();
-                gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
-                this._scissorsBox = b;
-            }
-        };
-        ;
-        GlobalState.getScissorsRectangle = function () {
-            return this._scissorsBox;
-        };
-        ;
-        GlobalState.isScissorsEnabled = function () {
-            return this._scissorsEnabled === true;
-        };
         GlobalState.setLineWidth = function (width) {
             if (width !== this._currentLineWidth) {
                 var gl = MB.Core.getInstance().getGL();
@@ -4335,25 +4421,44 @@ var MB;
                 this._currentLineWidth = width;
             }
         };
-        GlobalState._depthEnabled = false;
-        GlobalState._currentDepthMask = false;
-        GlobalState._currentDepthFunc = MB.ctes.ComparisonFunc.LessEqual;
-        GlobalState._currentDepthClear = null;
-        GlobalState._stencilEnabled = false;
-        GlobalState._currentStencilMask = 0;
-        GlobalState._currentStencilFunc = null;
-        GlobalState._currentStencilRef = null;
-        GlobalState._currentStencilFuncMask = null;
-        GlobalState._currentStencilFail = null;
-        GlobalState._currentStencilZFail = null;
-        GlobalState._currentStencilZPass = null;
-        GlobalState._currentStencilClear = null;
-        GlobalState._cullingEnabled = false;
-        GlobalState._cullingFaceMode = MB.ctes.FaceSide.FrontAndBack;
-        GlobalState._blendingEnabled = false;
-        GlobalState._scissorsEnabled = false;
-        GlobalState._scissorsBox = new MB.Box2D();
+        ;
+        GlobalState.setViewport = function (viewport) {
+            if (this._viewport.isEqual(viewport) === false) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.viewport(viewport.x, viewport.y, viewport.z, viewport.w);
+                this._viewport = viewport.clone();
+            }
+        };
+        ;
+        GlobalState.setPolygonOffset = function (enable, factor, units) {
+            if (enable) {
+                var gl = MB.Core.getInstance().getGL();
+                gl.enable(gl.POLYGON_OFFSET_FILL);
+                if (this._currentPolygonOffsetFactor !== factor
+                    || this._currentPolygonOffsetUnits !== units) {
+                    gl.polygonOffset(factor, units);
+                    this._currentPolygonOffsetFactor = factor;
+                    this._currentPolygonOffsetUnits = units;
+                }
+            }
+            else {
+                var gl = MB.Core.getInstance().getGL();
+                gl.disable(gl.POLYGON_OFFSET_FILL);
+            }
+        };
+        ;
+        GlobalState.clearBuffers = function () {
+            var gl = MB.Core.getInstance().getGL();
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        };
+        ;
+        GlobalState.clearAllBuffers = function () {
+            var gl = MB.Core.getInstance().getGL();
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BITS);
+        };
+        ;
         GlobalState._currentLineWidth = 1.0;
+        GlobalState._viewport = new MB.Vector4(0.0, 0.0, 0.0, 0.0);
         return GlobalState;
     }());
     MB.GlobalState = GlobalState;
@@ -5993,9 +6098,9 @@ var MB;
     var Color3 = (function () {
         function Color3(r, g, b) {
             this._color = new MB.Vect3();
-            this.r = MB.Mathf.clamp01(r);
-            this.g = MB.Mathf.clamp01(g);
-            this.b = MB.Mathf.clamp01(b);
+            this._color.x = MB.Mathf.clamp01(r);
+            this._color.y = MB.Mathf.clamp01(g);
+            this._color.z = MB.Mathf.clamp01(b);
         }
         ;
         Color3.prototype.isEquals = function (c) {
@@ -6154,10 +6259,10 @@ var MB;
     var Color4 = (function () {
         function Color4(r, g, b, a) {
             this._color = new MB.Vect4(0.0, 0.0, 0.0, 1.0);
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
+            this._color.x = r;
+            this._color.y = g;
+            this._color.z = b;
+            this._color.w = a;
         }
         ;
         Color4.prototype.isEquals = function (c) {
@@ -7481,8 +7586,8 @@ var MB;
         ;
         Skybox.prototype.render = function (view, projection) {
             var gl = MB.Core.getInstance().getGL();
-            var currDepthComp = MB.GlobalState.getCurrentDepthComparisonFunc();
-            MB.GlobalState.setDepthComparisonFunc(MB.ctes.ComparisonFunc.LessEqual);
+            var currDepthComp = MB.GlobalState.depth.getCurrentComparisonFunc();
+            MB.GlobalState.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
             this._prog.use();
             var auxView = view.toMat3().toMat4();
             this._prog.sendUniformMat4("view", auxView._value);
@@ -7491,7 +7596,7 @@ var MB;
             this._VertexArray.bind();
             gl.drawArrays(gl.TRIANGLES, 0, 36);
             this._VertexArray.unbind();
-            MB.GlobalState.setDepthComparisonFunc(currDepthComp);
+            MB.GlobalState.depth.setFunc(currDepthComp);
         };
         Skybox.prototype.destroy = function () {
             this._cubeMapTexture.destroy();

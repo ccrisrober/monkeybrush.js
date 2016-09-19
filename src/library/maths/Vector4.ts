@@ -42,6 +42,17 @@ namespace MB {
             this._z = z;
             this._w = w;
         };
+        public copy(v: Vector4<T>): Vector4<T> {
+            this._x = v._x;
+            this._y = v._y;
+            this._z = v._z;
+            this._w = v._w;
+
+            return this;
+        }
+        public clone(): Vector4<T> {
+            return new Vector4<T>(this.x, this.y, this.z, this.w);
+        };
         /**
          * Check if two Vector4<T> are equals
          * @param  {Vector4<T>} other: Second vector

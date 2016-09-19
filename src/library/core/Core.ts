@@ -70,16 +70,13 @@ namespace MB {
                 console.log("All WebGL1 extensions enabled");
             }
 
-            this.init();
             GlobalState.initializeAll();
-            GlobalState.setClearColor(color[0], color[1], color[2], color[3]);
+            GlobalState.color.setClearColor(new Color4(0.0, 0.0, 0.0, 1.0));
+            this.init();
         }
 
         public clearColorAndDepth() {
-            this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
-        }
-        public changeViewport(x: number, y: number, w: number, h: number) {
-            this._gl.viewport(x, y, w, h);
+            GlobalState.clearBuffers();
         }
         public canvas(): HTMLCanvasElement {
             return this._gl.canvas;
@@ -88,11 +85,11 @@ namespace MB {
             Input.initialize();
             MB.PostProcess.initialize();
 
-            GlobalState.setDepthStatus(true);
-            GlobalState.setDepthComparisonFunc(MB.ctes.ComparisonFunc.Less);
+            GlobalState.depth.setStatus(true);
+            GlobalState.depth.setFunc(ctes.ComparisonFunc.Less);
 
-            GlobalState.setCullingStatus(true);
-            GlobalState.setBlendingStatus(false);
+            GlobalState.culling.setStatus(true);
+            GlobalState.blending.setStatus(false);
         }
 
         public static getInstance(): Core {

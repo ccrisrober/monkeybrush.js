@@ -37,10 +37,10 @@ namespace MB {
          * @param {number} a Alpha channel
          */
         constructor(r: number, g: number, b: number, a: number) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
+            this._color.x = r;
+            this._color.y = g;
+            this._color.z = b;
+            this._color.w = a;
         };
         /**
          * Check if another color is equals than current color.

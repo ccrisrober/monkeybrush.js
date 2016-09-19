@@ -129,7 +129,7 @@ namespace MB {
             return Math.pow(2, Math.round(Math.log(v) / Math.LN2));
         };
         /**
-         * Clamps a value between a minimum float and maximum float value.
+         * Clamps a value to be between a minimum and maximum value.
          * @param  {number} v   Value to clamp.
          * @param  {number} min Minimum value.
          * @param  {number} max Maximum value

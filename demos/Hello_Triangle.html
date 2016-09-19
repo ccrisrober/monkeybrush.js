@@ -37,7 +37,6 @@
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
-                this.pos = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             }
@@ -86,10 +85,11 @@
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(10.0, 10.0, 10.0));
                 prog.sendUniformMat4("model", this.model);
 
-                MB.GlobalState.setCullingStatus(false);
+                MB.GlobalState.culling.setStatus(false);
 
                 this.triangleModel.render();
             };

@@ -168,7 +168,7 @@ namespace MB {
                 canvas.height = displayHeight;
 
                 // Set the viewport to match
-                MB.Core.getInstance().changeViewport(0, 0, canvas.width, canvas.height);
+                MB.GlobalState.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
 
                 this.cameraUpdateCb();
             }
