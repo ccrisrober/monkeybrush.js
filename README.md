@@ -162,6 +162,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Shader uniforms and attributes extraction
 - [x] Clean project generator (Simple project gen.) (https://github.com/maldicion069/monkeybrush-generator)
 - [ ] MonkeyBrush-frags (Two triangles rendering!) (https://github.com/maldicion069/monkeybrush-frags)
+- [ ] ESDOC integration
 
 ### Demos
 - [x] Rim Lighting

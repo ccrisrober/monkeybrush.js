@@ -68,8 +68,6 @@ namespace MB {
                 19,  5, 14,     19, 14,  4,     19,  4, 17,
                  1, 12, 14,      1, 14,  5,      1,  5,  9
             ];
-
-
             super(verts, el, radius, subdivisions);
         };
     };

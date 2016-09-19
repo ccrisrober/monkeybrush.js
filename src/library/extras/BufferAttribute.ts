@@ -196,6 +196,7 @@ namespace MB {
          */
         public setXYZ(index: number, xValue: number, yValue: number, zValue: number) {
             if (this.size < 3) throw new Error("Z value is not defined");
+            index *= this._size;
             (<any>this.array)[index] = xValue;
             (<any>this.array)[index + 1] = yValue;
             (<any>this.array)[index + 2] = zValue;
@@ -210,6 +211,7 @@ namespace MB {
          */
         public setXYZW(index: number, xValue: number, yValue: number, zValue: number, wValue: number) {
             if (this.size < 4) throw new Error("W value is not defined");
+            index *= this._size;
             (<any>this.array)[index] = xValue;
             (<any>this.array)[index + 1] = yValue;
             (<any>this.array)[index + 2] = zValue;

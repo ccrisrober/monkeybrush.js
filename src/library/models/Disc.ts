@@ -31,10 +31,10 @@ namespace MB {
          * @param {number} divisions: Disc base subdivison (num. of triangles)
          * @param {number = 1.0} stacks: Radial subdivisions around disc.
          * @param {number = 0.0} innerRadius: Inner radius of disc
-         * @param {number} stackInc: Width inc/dec around center.
+         * @param {number = 0.0} stackInc: Width inc/dec around center.
          */
         constructor(radius: number, divisions: number, stacks: number = 1.0,
-            innerRadius: number = 0.0, stackInc: number) {
+            innerRadius: number = 0.0, stackInc: number = 0.0) {
 
             super();
 
@@ -97,6 +97,9 @@ namespace MB {
 
                 idx += divisions + 1;
             }
+
+            console.log(stacks * divisions * 3);
+            console.log(verts.length);
 
             this._handle = [];
             this._vao.bind();

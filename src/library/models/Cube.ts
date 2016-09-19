@@ -33,7 +33,7 @@ namespace MB {
             super();
             const side2 = side / 2.0;
 
-            this._geometry.addAttr("vertices", new MB.BufferAttribute(new Float32Array([
+            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array([
                 // Front
                -side2, -side2, side2,
                 side2, -side2, side2,
@@ -65,8 +65,7 @@ namespace MB {
                 side2,  side2, -side2,
                -side2,  side2, -side2
             ]), 3));
-
-            this._geometry.addAttr("normals", new MB.BufferAttribute(new Float32Array([
+            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array([
                 // Front
                 0.0, 0.0, 1.0,
                 0.0, 0.0, 1.0,
@@ -98,8 +97,7 @@ namespace MB {
                 0.0, 1.0, 0.0,
                 0.0, 1.0, 0.0
             ]), 3));
-
-            this._geometry.addAttr("texCoords", new MB.BufferAttribute(new Float32Array([
+            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array([
                 // Front
                 0.0, 0.0,
                 1.0, 0.0,
@@ -148,9 +146,9 @@ namespace MB {
 
             this.addElementArray(this._geometry.indices);
 
-            this.addBufferArray(0, <Float32Array>this._geometry.getAttr("vertices").array, 3);
-            this.addBufferArray(1, <Float32Array>this._geometry.getAttr("normals").array, 3);
-            this.addBufferArray(2, <Float32Array>this._geometry.getAttr("texCoords").array, 2);
+            this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
+            this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+            this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
 
             this._indicesLen = this._geometry.indices.length;
         }

@@ -52,10 +52,10 @@ namespace MB {
 
             const nv = (radialSubDiv + 1) * (heightSubDiv + 1 + extra);
 
-            let verts = new Array(3 * nv);
-            let norms = new Array(3 * nv);
-            let tex = new Array(2 * nv);
-            let el = new Array(3 * radialSubDiv * (heightSubDiv + extra) * 2);
+            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array(2 * nv), 2));
+            let el = new Uint16Array(3 * radialSubDiv * (heightSubDiv + extra) * 2);
 
             const vertsAroundEdge = radialSubDiv + 1;
 
@@ -67,10 +67,9 @@ namespace MB {
             const start = createTopBase ? -2 : 0;
             const end = heightSubDiv + (createBottomBase ? 2 : 0);
 
-            let vv = 0;
-            let nn = 0;
-            let tt = 0;
-
+            let NVIDX = 0;
+            let NNIDX = 0;
+            let NTIDX = 0;
             for (let yy = start; yy <= end; ++yy) {
                 let v = yy / heightSubDiv;
                 let y = height * v;
@@ -97,38 +96,37 @@ namespace MB {
                     let sin = Math.sin(ii * Math.PI * 2 / radialSubDiv);
                     let cos = Math.cos(ii * Math.PI * 2 / radialSubDiv);
 
-                    verts[vv++] = sin * ringRadius;
-                    verts[vv++] = y;
-                    verts[vv++] = cos * ringRadius;
-
-                    norms[nn++] = (yy < 0 || yy > heightSubDiv) ? 0 : (sin * cSlantH);
-                    norms[nn++] = (yy < 0) ? -1 : (yy > heightSubDiv ? 1 : sSlantH);
-                    norms[nn++] = (yy < 0 || yy > heightSubDiv) ? 0 : (cos * cSlantH);
-
-                    tex[tt++] = (ii / radialSubDiv);
-                    tex[tt++] = 1.0 - v;
+                    this._geometry.getAttr(VBType.VBVertices).setXYZ(NVIDX++, sin * ringRadius, y, cos * ringRadius);
+                    this._geometry.getAttr(VBType.VBNormals).setXYZ(NNIDX++,
+                        (yy < 0 || yy > heightSubDiv) ? 0 : (sin * cSlantH),
+                        (yy < 0) ? -1 : (yy > heightSubDiv ? 1 : sSlantH),
+                        (yy < 0 || yy > heightSubDiv) ? 0 : (cos * cSlantH));
+                    this._geometry.getAttr(VBType.VBTexCoord).setXY(NTIDX++, (ii / radialSubDiv), 1.0 - v);
                 }
             }
 
+            // Generate the element list
+            let idx = 0;
             for (let yy = 0; yy < heightSubDiv + extra; ++yy) {
                 for (let ii = 0; ii < radialSubDiv; ++ii) {
-                    el.push(vertsAroundEdge * (yy + 0) + 0 + ii,
-                                             vertsAroundEdge * (yy + 0) + 1 + ii,
-                                             vertsAroundEdge * (yy + 1) + 1 + ii);
-                    el.push(vertsAroundEdge * (yy + 0) + 0 + ii,
-                                             vertsAroundEdge * (yy + 1) + 1 + ii,
-                                             vertsAroundEdge * (yy + 1) + 0 + ii);
+                    el[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 0) + 1 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
+
+                    el[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 1) + 0 + ii;
                 }
             }
 
             this._handle = [];
             this._vao.bind();
 
-            this.addElementArray(new Uint16Array(el));
+            this.addElementArray(el);
 
-            this.addBufferArray(0, new Float32Array(verts), 3);
-            this.addBufferArray(1, new Float32Array(norms), 3);
-            this.addBufferArray(2, new Float32Array(tex), 2);
+            this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
+            this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+            this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
 
             this._indicesLen = el.length;
         }

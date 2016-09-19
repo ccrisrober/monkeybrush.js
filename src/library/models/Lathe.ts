@@ -67,15 +67,11 @@ namespace MB {
                         points[j].x * sin,
                         points[j].y,
                         points[j].x * cos
-                  ));
+                    ));
 
                     buffUV.setXY(UV++,
                         i / segments,
                         j / (points.length - 1));
-                    /*uvs.push(new Vect2(
-                        i / segments,
-                        j / (points.length - 1)
-                  ));*/
                 }
             }
 

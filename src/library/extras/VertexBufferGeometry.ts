@@ -20,8 +20,12 @@
 "use strict";
 
 namespace MB {
-    // type VBAttribute = "vertices" | "normals" | "texCoords";
-    // // | "colors" | "tangents" | "bitangents" | "offset";
+    export namespace VBType {
+        export const VBVertices: string = "vertices";
+        export const VBNormals: string = "normals";
+        export const VBTexCoord: string = "texCoords";
+    };
+    //"" | "" | "colors" | "tangents" | "bitangents" | "offset";
     /**
      * VertexBufferGeometry class
      * @class VertexBufferGeometry

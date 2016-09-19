@@ -90,3 +90,5 @@ tslintwarnings*
 .vscode
 
 _unused_.zip
+doc
+docs

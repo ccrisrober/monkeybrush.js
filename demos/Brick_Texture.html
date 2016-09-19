@@ -27,7 +27,9 @@
             return {
                 resume: true,
                 brickW: 25,
-                brickH: 15
+                brickH: 15,
+                brickColor: "#ff7800",
+                jointColor: "#ffffff"
             }
         };
         var MyScene = (function (_super) {
@@ -37,19 +39,9 @@
                 this.mainShader = "prog";
             }
             MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/bergsjostolen.jpg", "tex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("tex");
-                this.tex = new MB.Texture2D(myTexture, {
-                    flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
-                    wrapT: MB.ctes.WrapMode.Clamp2Edge
-                });
 
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
@@ -57,10 +49,12 @@
                     prog.addShader("../shaders/procedurals/brick.glsl", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["brickSize"]);
+                    prog.addUniforms(["brickSize", "brickColor", "jointColor"]);
                     console.log(prog);
                     return prog;
                 });
+                this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
+                this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
@@ -71,6 +65,8 @@
                 prog.use();
 
                 prog.sendUniform2f("brickSize", this.text.brickW, this.text.brickH);
+                prog.sendUniform3f("brickColor", this.brickColor.r, this.brickColor.g, this.brickColor.b);
+                prog.sendUniform3f("jointColor", this.jointColor.r, this.jointColor.g, this.jointColor.b);
 
                 MB.PostProcess.render();
             };
@@ -79,6 +75,12 @@
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "brickW", 10, 50);
                 gui.add(this.text, "brickH", 10, 50);
+                gui.addColor(this.text, "brickColor").onChange(function() {
+                    this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
+                }.bind(this));
+                gui.addColor(this.text, "jointColor").onChange(function() {
+                    this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
+                }.bind(this));
             };
             return MyScene;
         }(MB.Scene));

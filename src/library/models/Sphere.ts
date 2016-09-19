@@ -40,10 +40,10 @@ namespace MB {
             let nv = (slices + 1) * (stacks + 1);
             let elements = (slices * 2 * (stacks - 1)) * 3;
 
-            let verts = new Array(3 * nv);
-            let norms = new Array(3 * nv);
-            let tex = new Array(2 * nv);
-            let el = new Array(elements);
+            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array(2 * nv), 2));
+            let el = new Uint16Array(elements);
 
             // Generate the vertex data
             // Generate positions and normals
@@ -51,7 +51,10 @@ namespace MB {
             let thetaFac = Math.PI * 2.0 / slices;
             let phiFac = Math.PI / stacks;
             let nx, ny, nz, s, t;
-            let idx = 0, tIdx = 0;
+
+            let NVIDX = 0;
+            let NNIDX = 0;
+            let NTIDX = 0;
             for (let i = 0; i <= slices; ++i) {
                 theta = i * thetaFac;
                         s = i / slices;
@@ -61,18 +64,15 @@ namespace MB {
                     nx = Math.sin(phi) * Math.cos(theta);
                     ny = Math.sin(phi) * Math.sin(theta);
                     nz = Math.cos(phi);
-                    verts[idx] = radius * nx; verts[idx + 1] = radius * ny; verts[idx + 2] = radius * nz;
-                    norms[idx] = nx; norms[idx + 1] = ny; norms[idx + 2] = nz;
-                    idx += 3;
 
-                    tex[tIdx] = s;
-                    tex[tIdx + 1] = t;
-                    tIdx += 2;
+                    this._geometry.getAttr(VBType.VBVertices).setXYZ(NVIDX++, radius * nx, radius * ny, radius * nz);
+                    this._geometry.getAttr(VBType.VBNormals).setXYZ(NNIDX++, nx, ny, nz);
+                    this._geometry.getAttr(VBType.VBTexCoord).setXY(NTIDX++, s, t);
                 }
             }
 
             // Generate the element list
-            idx = 0;
+            let idx = 0;
             for (let i = 0; i < slices; ++i) {
                 let stackStart = i * (stacks + 1);
                 let nextStackStart = (i + 1) * (stacks + 1);
@@ -102,11 +102,11 @@ namespace MB {
             this._handle = [];
             this._vao.bind();
 
-            this.addElementArray(new Uint16Array(el));
+            this.addElementArray(el);
 
-            this.addBufferArray(0, new Float32Array(verts), 3);
-            this.addBufferArray(1, new Float32Array(norms), 3);
-            this.addBufferArray(2, new Float32Array(tex), 2);
+            this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
+            this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+            this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
 
             this._indicesLen = el.length;
         };
