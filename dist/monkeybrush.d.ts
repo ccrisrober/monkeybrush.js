@@ -4631,6 +4631,11 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    namespace VBType {
+        const VBVertices: string;
+        const VBNormals: string;
+        const VBTexCoord: string;
+    }
     /**
      * VertexBufferGeometry class
      * @class VertexBufferGeometry
@@ -5066,9 +5071,9 @@ declare namespace MB {
          * @param {number} divisions: Disc base subdivison (num. of triangles)
          * @param {number = 1.0} stacks: Radial subdivisions around disc.
          * @param {number = 0.0} innerRadius: Inner radius of disc
-         * @param {number} stackInc: Width inc/dec around center.
+         * @param {number = 0.0} stackInc: Width inc/dec around center.
          */
-        constructor(radius: number, divisions: number, stacks: number, innerRadius: number, stackInc: number);
+        constructor(radius: number, divisions: number, stacks?: number, innerRadius?: number, stackInc?: number);
     }
 }
 
