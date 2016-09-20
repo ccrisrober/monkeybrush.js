@@ -148,6 +148,7 @@
                 vp = this.viewports[2];
                 MB.GlobalState.setViewport(vp);
                 MB.PostProcess.render();
+                this.text.resume = false;
             };
             ;
             MyScene.prototype.cameraUpdate = function () {
@@ -157,7 +158,7 @@
             };
             ;
             return MyScene;
-        }(MB.Scene));
+        }(MB.App));
         ;
         var myScene;
         window.onload = function () {
