@@ -24,7 +24,7 @@ namespace MB {
      * WebcamTexture class
      * @class WebcamTexture
      */
-    class WebcamTexture extends VideoTexture {
+    export class WebcamTexture extends VideoTexture {
         /**
          * WebcamTexture constructor.
          * @param {MB.Vect2 = [320, 320]} size Webcam viewport size.
