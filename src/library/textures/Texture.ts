@@ -154,21 +154,21 @@ namespace MB {
 
             if (this._type_ === gl.FLOAT) {
                 if (!Texture.canUseFloatingPointTextures()) {
-                    throw new Error('OES_texture_float is required but not supported');
+                    throw new Error("OES_texture_float is required but not supported.");
                 }
                 if ((this._minFilter_ !== ctes.TextureType.Nearest
                     || this._magFilter_ !== ctes.TextureType.Nearest) &&
                     !Texture.canUseFloatingPointLinearFiltering()) {
-                    throw new Error('OES_texture_float_linear is required but not supported');
+                    throw new Error("OES_texture_float_linear is required but not supported.");
                 }
             } else if (this._type_ === gl.HALF_FLOAT) {
                 if (!Texture.canUseHalfFloatingPointTextures()) {
-                    throw new Error('OES_texture_half_float is required but not supported');
+                    throw new Error("OES_texture_half_float is required but not supported.");
                 }
                 if ((this._minFilter_ !== ctes.TextureType.Nearest
                     || this._magFilter_ !== ctes.TextureType.Nearest) &&
                     !Texture.canUseHalfFloatingPointLinearFiltering()) {
-                    throw new Error('OES_texture_half_float_linear is required but not supported');
+                    throw new Error("OES_texture_half_float_linear is required but not supported.");
                 }
             }
         };

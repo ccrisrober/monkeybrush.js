@@ -14,6 +14,17 @@ var merge = require("merge2");
 var notify = require("gulp-notify");
 var path = require("path");
 
+var tslint = require("gulp-tslint");
+
+gulp.task("tslint", function () {
+    return gulp.src("./src/library/**/*.ts")
+        .pipe(tslint({
+            formatter: "verbose",
+            configuration: "./tslint.json"
+        }))
+        .pipe(tslint.report());
+});
+
 gulp.task("gen-dts", function () {
 
     var tsResult = gulp.src(config.core.typescript).

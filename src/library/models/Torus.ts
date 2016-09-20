@@ -38,24 +38,19 @@ namespace MB {
             let faces = sides * rings;
             let nv  = sides * (rings + 1);   // One extra ring to duplicate first ring
 
-            //let verts = new Array(3 * nVerts);
-            //let norms = new Array(3 * nVerts);
-            //let tex = new Array(2 * nVerts);
-
             this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
             this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
             this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array(2 * nv), 2));
             let el = new Uint16Array(6 * faces);
 
             // Generate the vertex data
-
             let NVIDX = 0;
             let NNIDX = 0;
             let NTIDX = 0;
 
             let ringFactor = (Math.PI * 2.0) / rings;
             let sideFactor = (Math.PI * 2.0) / sides;
-            var norms = new Array(3);
+            let norms = new Array(3);
             for (let ring = 0; ring <= rings; ring++) {
                 let u = ring * ringFactor;
                 let cu = Math.cos(u);

@@ -55,9 +55,15 @@ namespace MB {
         public webglVersion(): number {
             return this._webglVersion;
         }
-        public loadAssets()  {}
-        public cameraUpdate() {}
-        public textCB(g: dat.GUI) {}
+        public loadAssets()  {
+            // Empty methods. Override if necessary
+        }
+        public cameraUpdate() {
+            // Empty methods. Override if necessary
+        }
+        public textCB(g: dat.GUI) {
+            // Empty methods. Override if necessary
+        }
 
         abstract initialize();
         abstract update(dt: number);

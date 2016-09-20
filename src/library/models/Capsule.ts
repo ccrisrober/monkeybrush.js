@@ -42,7 +42,8 @@ namespace MB {
 
             const bodyIncr = 1.0 / (ringsBody - 1);
             const ringIncr = 1.0 / (subHeight - 1);
-            const nv = ((Math.round(subHeight / 2) * numSegm) + (ringsBody * numSegm) + Math.round(subHeight / 2) * numSegm);
+            const nv = ((Math.round(subHeight / 2) * numSegm) +
+                (ringsBody * numSegm) + Math.round(subHeight / 2) * numSegm);
 
             let verts = new MB.BufferAttribute(new Float32Array(3 * nv), 3);
             let norms = new MB.BufferAttribute(new Float32Array(3 * nv), 3);

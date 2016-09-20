@@ -32,7 +32,7 @@ namespace MB {
     export class Texture2DArray extends Texture {
         protected _layer_: number;
         protected _numTex_: number;
-        protected _size_: Vector2<number>
+        protected _size_: Vector2<number>;
         /**
          * [constructor description]
          * @param {Vector2<number>} size   [description]

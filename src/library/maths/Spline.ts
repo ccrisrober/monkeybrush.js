@@ -157,7 +157,7 @@ namespace MB {
             const p1: Vect3 = this.evaluate(currentDT);
 
             const angle = Math.atan2(p1.z - p0.z, p1.x - p0.x);
-            return Mathf.degToRad(angle);;
+            return Mathf.degToRad(angle);
         };
     };
 };

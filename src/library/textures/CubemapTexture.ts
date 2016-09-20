@@ -29,7 +29,6 @@ namespace MB {
          * @param {TexOptions = {}} options: Texture options
          */
         constructor(options: TexOptions = {}) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             super(MB.ctes.TextureTarget.TextureCubeMap, options);
 
             this.finished = false;

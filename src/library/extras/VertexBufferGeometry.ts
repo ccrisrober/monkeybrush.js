@@ -25,7 +25,7 @@ namespace MB {
         export const VBNormals: string = "normals";
         export const VBTexCoord: string = "texCoords";
     };
-    //"" | "" | "colors" | "tangents" | "bitangents" | "offset";
+    // "" | "" | "colors" | "tangents" | "bitangents" | "offset";
     /**
      * VertexBufferGeometry class
      * @class VertexBufferGeometry
