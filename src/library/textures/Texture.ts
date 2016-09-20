@@ -24,7 +24,7 @@ namespace MB {
 
     export interface TexOptions {
         internalFormat?: ctes.TextureFormat;
-        type?: ctes.TextureFormat;
+        type?: ctes.TextureFormat; // TODO: No puede ser el mismo ...
         level?: number;
         minFilter?: ctes.TextureType;
         magFilter?: ctes.TextureType;
@@ -36,7 +36,7 @@ namespace MB {
         minLOD?: number;
         maxLOD?: number;
         autoMipMap?: boolean;
-        format?: ctes.TextureFormat;
+        format?: ctes.TextureFormat; // TODO: No puede ser el mismo ...
         border?: number;
         compressed?: boolean;
         anisotropic?: number;

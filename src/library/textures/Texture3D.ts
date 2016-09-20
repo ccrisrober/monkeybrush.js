@@ -37,8 +37,9 @@ namespace MB {
                 throw new Error("Must provide a WebGL2 context ...");
             }
             super(MB.ctes.TextureTarget.Texture3D, options);
+            this.bind();
 
-            // TODO: WRAP
+            // TODO: gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
             if (this._compressed_) {
                 gl.compressedTexImage3D(
@@ -63,19 +64,19 @@ namespace MB {
                     this._format_,
                     this._type_,
                     data
-               );
+                );
             }
 
-            this.wrap([
-                options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
-                options.wrapT || MB.ctes.WrapMode.Clamp2Edge,
-                options.wrapR || MB.ctes.WrapMode.Clamp2Edge
-            ]);
+            // TODO: FAILED TEX IF USED!! this.wrap([
+            // TODO: FAILED TEX IF USED!!     options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
+            // TODO: FAILED TEX IF USED!!     options.wrapT || MB.ctes.WrapMode.Clamp2Edge,
+            // TODO: FAILED TEX IF USED!!     options.wrapR || MB.ctes.WrapMode.Clamp2Edge
+            // TODO: FAILED TEX IF USED!! ]);
+            gl.generateMipmap(gl.TEXTURE_3D);
 
             if (this._flipY_) {
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
             }
-
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
             if (onSuccess) {

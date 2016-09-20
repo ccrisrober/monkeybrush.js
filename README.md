@@ -191,3 +191,5 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 
 ## Changelog
 - (09/17/2016) Release first version
+- (09/19/2016) Completed Depth, Color, Stencil, Culling and Blending in GlobalState.
+- (09/20/2016) Added VertexBufferGeometry to models
