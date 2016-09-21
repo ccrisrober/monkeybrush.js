@@ -467,31 +467,31 @@ namespace MB {
         };
         /**
          * Specify pixel arithmetic.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} sfactor Specifies how the red,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.One} sfactor Specifies how the red,
          *     green, blue, and alpha source blending factors are computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dfactor Specifies how the red,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero} dfactor Specifies how the red,
          *     green, blue, and alpha destination blending factors are computed.
          */
-        public setFunc(sfactor: MB.ctes.BlendingType = MB.ctes.BlendingType.One,
-            dfactor: MB.ctes.BlendingType = MB.ctes.BlendingType.Zero) {
+        public setFunc(sfactor: MB.ctes.BlendingMode = MB.ctes.BlendingMode.One,
+            dfactor: MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.blendFunc(sfactor, dfactor); // TODO: Cache
         };
         /**
          * Specify pixel arithmetic for RGB and alpha components separately.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} rcRGB Specifies how the red, green,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.One} rcRGB Specifies how the red, green,
          *      and blue blending factors are computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dstRGB Specifies how the red, green,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero} dstRGB Specifies how the red, green,
          *      and blue destination blending factors are computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} srcAlpha Specified how the alpha source
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.One} srcAlpha Specified how the alpha source
          *      blending factor is computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dstAlpha Specified how the alpha destination
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero} dstAlpha Specified how the alpha destination
          *      blending factor is computed.
          */
-        public setFuncSeparate(srcRGB: MB.ctes.BlendingType = MB.ctes.BlendingType.One,
-            dstRGB: MB.ctes.BlendingType = MB.ctes.BlendingType.Zero,
-            srcAlpha: MB.ctes.BlendingType = MB.ctes.BlendingType.One,
-            dstAlpha: MB.ctes.BlendingType = MB.ctes.BlendingType.Zero) {
+        public setFuncSeparate(srcRGB: MB.ctes.BlendingMode = MB.ctes.BlendingMode.One,
+            dstRGB: MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero,
+            srcAlpha: MB.ctes.BlendingMode = MB.ctes.BlendingMode.One,
+            dstAlpha: MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha); // TODO: Cache
         };

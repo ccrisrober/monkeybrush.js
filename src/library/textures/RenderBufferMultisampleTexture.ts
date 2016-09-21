@@ -30,23 +30,12 @@ namespace MB {
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
             gl.bindRenderbuffer(gl.RENDERBUFFER, null);
         };
-        public bind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-        };
-        public unbind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-        }
-        public destroy() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.deleteTexture(this._handle);
-        };
         public resize(size: MB.Vect2) {
             if (!size.exactEquals(this._size)) {
                 const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-                gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+                this.bind();
                 gl.renderbufferStorageMultisample(gl.RENDERBUFFER, this._format, size.x, size.y, this._samples);
+                this.unbind();
             }
         }
     };

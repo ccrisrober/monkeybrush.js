@@ -97,7 +97,7 @@
                 prog.sendUniformMat4("transform", mm);
                 prog.sendUniform1i("lod", this.text.lod);
                 prog.sendUniform1i("numPoints", this.text.numPoints);
-                gl.drawArrays(gl.LINE_STRIP, 0, this.text.lod * (this.text.numPoints + 1) + 1);
+                gl.drawArrays(MB.ctes.RenderMode.LineStrip, 0, this.text.lod * (this.text.numPoints + 1) + 1);
             };
             ;
             MyScene.prototype.cameraUpdate = function () {

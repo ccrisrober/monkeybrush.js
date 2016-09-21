@@ -49,18 +49,18 @@
 
                 this.tex2d = new MB.Texture2D(MB.ResourceMap.retrieveAsset("diffuseMap"), {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.TextureType.Clamp2Edge,
-                    wrapT: MB.ctes.TextureType.Clamp2Edge
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
                 this.tex2d2 = new MB.Texture2D(MB.ResourceMap.retrieveAsset("normalMap"), {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.TextureType.Clamp2Edge,
-                    wrapT: MB.ctes.TextureType.Clamp2Edge
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
                 MB.ProgramManager.addWithFun("prog", function () {

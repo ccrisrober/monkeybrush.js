@@ -23,8 +23,9 @@ namespace MB {
     /**
      * CustomPingPong class.
      * This class may be used, for example, for purposes that require
-     *   a previous step, as the Path Tracing algorithm.
-     * @class PingPong
+     *   a previous step, as the Path Tracing algorithm, swap functions,
+     *   swap textures, ...
+     * @class CustomPingPong
      */
     export class CustomPingPong<T> {
         protected _elems1: T;

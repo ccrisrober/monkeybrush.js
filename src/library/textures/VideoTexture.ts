@@ -39,8 +39,8 @@ namespace MBX {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
             super(MB.ctes.TextureTarget.Texture2D, {
-                internalFormat: MB.ctes.TextureFormat.RGBA,
-                format: MB.ctes.TextureFormat.RGBA,
+                internalFormat: MB.ctes.PixelFormat.RGBA,
+                format: MB.ctes.PixelFormat.RGBA,
                 type: gl.UNSIGNED_BYTE,
                 flipY: true
             });
@@ -51,7 +51,7 @@ namespace MBX {
 
             this.update();
 
-            // this.wrap([MB.ctes.TextureType.Linear, MB.ctes.TextureType.Clamp2Edge]);
+            // this.wrap([MB.ctes.TextureFilter.Linear, MB.ctes.TextureFilter.Clamp2Edge]);
 
             if (this._flipY_) {
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);

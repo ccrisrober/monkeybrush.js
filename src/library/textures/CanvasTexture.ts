@@ -24,7 +24,7 @@ namespace MBX {
      * CanvasTexture class
      * @class CanvasTexture
      *
-     * This class uses an image of a canvas like texture
+     * This class uses an canvas image like texture
      */
     export class CanvasTexture extends MB.Texture {
         /**
@@ -45,14 +45,12 @@ namespace MBX {
 
             this._domCanvas = domCanvas;
 
-            this._compressed_ = Boolean(options.compressed || false);
-
             gl.texImage2D(
                 this._target_,
                 this._level_,
                 this._internalformat_,
-                this._format_, // Format
-                this._type_, // Size of each channel
+                this._format_,
+                this._type_,
                 this._domCanvas
             );
 

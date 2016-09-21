@@ -96,21 +96,21 @@ namespace MB {
         public render() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderType.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
             this._vao.unbind();
         };
 
         public render2() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderType.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
             this._vao.unbind();
         };
 
         public render3() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderType.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
             this._vao.unbind();
         };
 

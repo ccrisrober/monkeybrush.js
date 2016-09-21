@@ -23,11 +23,11 @@ namespace MB {
     // TODO: hacer unbind al crear textura!!
 
     export interface TexOptions {
-        internalFormat?: ctes.TextureFormat;
-        type?: ctes.TextureFormat; // TODO: No puede ser el mismo ...
+        internalFormat?: ctes.PixelFormat;
+        type?: ctes.PixelFormat; // TODO: No puede ser el mismo ...
         level?: number;
-        minFilter?: ctes.TextureType;
-        magFilter?: ctes.TextureType;
+        minFilter?: ctes.TextureFilter;
+        magFilter?: ctes.TextureFilter;
         flipY?: boolean;
         wrap?: ctes.WrapMode;
         wrapS?: ctes.WrapMode;
@@ -36,7 +36,7 @@ namespace MB {
         minLOD?: number;
         maxLOD?: number;
         autoMipMap?: boolean;
-        format?: ctes.TextureFormat; // TODO: No puede ser el mismo ...
+        format?: ctes.PixelFormat; // TODO: No puede ser el mismo ...
         border?: number;
         compressed?: boolean;
         anisotropic?: number;
@@ -49,17 +49,17 @@ namespace MB {
     export abstract class Texture {
 
         protected _anisotropy_: number = 1;
-        protected _internalformat_: ctes.TextureFormat = ctes.TextureFormat.RGBA;
-        protected _format_: ctes.TextureFormat = ctes.TextureFormat.RGBA;
+        protected _internalformat_: ctes.PixelFormat = ctes.PixelFormat.RGBA;
+        protected _format_: ctes.PixelFormat = ctes.PixelFormat.RGBA;
 
         protected _wrapS_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
         protected _wrapT_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
         protected _wrapR_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
 
-        protected _minFilter_: ctes.TextureType = ctes.TextureType.Linear;
-        protected _magFilter_: ctes.TextureType = ctes.TextureType.Linear;
+        protected _minFilter_: ctes.TextureFilter = ctes.TextureFilter.Linear;
+        protected _magFilter_: ctes.TextureFilter = ctes.TextureFilter.Linear;
 
-        protected _type_: ctes.TextureFormat; // TODO = gl.UNSIGNED_BYTE;
+        protected _type_: ctes.PixelFormat; // TODO = gl.UNSIGNED_BYTE;
         protected _flipY_: boolean = true;
         protected _generateMipMaps_: boolean = false;
         protected _premultiplyAlpha_: boolean = false;
@@ -132,8 +132,8 @@ namespace MB {
             this._handle_ = gl.createTexture();
 
             this._flipY_ = Boolean(options.flipY || false);
-            this._internalformat_ = options.internalFormat || ctes.TextureFormat.RGBA;
-            this._format_ = options.format || ctes.TextureFormat.RGBA;
+            this._internalformat_ = options.internalFormat || ctes.PixelFormat.RGBA;
+            this._format_ = options.format || ctes.PixelFormat.RGBA;
             this._type_ = options.type || gl.UNSIGNED_BYTE;
             this._level_ = options.level || 0;
 
@@ -141,8 +141,8 @@ namespace MB {
 
             this.bind();
 
-            this.minFilter(options.minFilter || ctes.TextureType.Nearest);
-            this.magFilter(options.minFilter || ctes.TextureType.Nearest);
+            this.minFilter(options.minFilter || ctes.TextureFilter.Nearest);
+            this.magFilter(options.minFilter || ctes.TextureFilter.Nearest);
 
             this._minLOD_ = options.minLOD || -1000;
             this._maxLOD_ = options.maxLOD || 1000;
@@ -156,8 +156,8 @@ namespace MB {
                 if (!Texture.canUseFloatingPointTextures()) {
                     throw new Error("OES_texture_float is required but not supported.");
                 }
-                if ((this._minFilter_ !== ctes.TextureType.Nearest
-                    || this._magFilter_ !== ctes.TextureType.Nearest) &&
+                if ((this._minFilter_ !== ctes.TextureFilter.Nearest
+                    || this._magFilter_ !== ctes.TextureFilter.Nearest) &&
                     !Texture.canUseFloatingPointLinearFiltering()) {
                     throw new Error("OES_texture_float_linear is required but not supported.");
                 }
@@ -165,8 +165,8 @@ namespace MB {
                 if (!Texture.canUseHalfFloatingPointTextures()) {
                     throw new Error("OES_texture_half_float is required but not supported.");
                 }
-                if ((this._minFilter_ !== ctes.TextureType.Nearest
-                    || this._magFilter_ !== ctes.TextureType.Nearest) &&
+                if ((this._minFilter_ !== ctes.TextureFilter.Nearest
+                    || this._magFilter_ !== ctes.TextureFilter.Nearest) &&
                     !Texture.canUseHalfFloatingPointLinearFiltering()) {
                     throw new Error("OES_texture_half_float_linear is required but not supported.");
                 }
@@ -175,9 +175,9 @@ namespace MB {
 
         /**
          * Change texture minification filter
-         * @param {ctes.TextureType} filter: Minification filter type
+         * @param {ctes.TextureFilter} filter: Minification filter type
          */
-        public minFilter(filter: ctes.TextureType) {
+        public minFilter(filter: ctes.TextureFilter) {
             this.bind();
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, filter);
@@ -185,9 +185,9 @@ namespace MB {
         };
         /**
          * Change texture magnification filter
-         * @param {ctes.TextureType} filter: Magnification filter type
+         * @param {ctes.TextureFilter} filter: Magnification filter type
          */
-        public magFilter(filter: ctes.TextureType) {
+        public magFilter(filter: ctes.TextureFilter) {
             this.bind();
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, filter);
@@ -254,7 +254,7 @@ namespace MB {
         public preventNPOT() {
             /*this.wrap([
                 // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-                ctes.TextureType.Linear,
+                ctes.TextureFilter.Linear,
                 // Prevents s-coordinate wrapping (repeating).
                 ctes.WrapMode.Clamp2Edge,
                 // Prevents t-coordinate wrapping (repeating).

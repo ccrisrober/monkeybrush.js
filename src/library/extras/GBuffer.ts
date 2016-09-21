@@ -39,11 +39,11 @@ namespace MBX {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
             const configTex: MB.TexOptions = {
-                internalFormat: MB.ctes.TextureFormat.RGB,
-                format: MB.ctes.TextureFormat.RGB,
+                internalFormat: MB.ctes.PixelFormat.RGB,
+                format: MB.ctes.PixelFormat.RGB,
                 type: gl.FLOAT,
-                minFilter: MB.ctes.TextureType.Nearest,
-                magFilter: MB.ctes.TextureType.Nearest
+                minFilter: MB.ctes.TextureFilter.Nearest,
+                magFilter: MB.ctes.TextureFilter.Nearest
             };
 
             this.Framebuffer = new MB.Framebuffer([

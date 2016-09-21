@@ -61,7 +61,6 @@
             ;
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                var gl = MB.Core.getInstance().getGL();
                 MB.ProgramManager.addWithFun("progF", function () {
                     var prog = new MB.Program();
                     prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
@@ -85,18 +84,18 @@
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
                 this.tex2d = new MB.Texture2D(myTexture, {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge,
                     autoMipMap: true
                 });
                 this.tex2d2 = new MB.Texture2D(myTexture, {
                     flipY: false,
-                    internalFormat: gl.RGBA8UI,
-                    format: gl.RGBA_INTEGER,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
+                    internalFormat: MB.ctes.PixelFormat.RGBA8UI,
+                    format: MB.ctes.PixelFormat.RGBA_INTEGER,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
@@ -104,11 +103,11 @@
             ;
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
-                var gl = MB.Core.getInstance().getGL();
-                this.viewports[0] = new MB.Vector4(0, 0, gl.canvas.width / 2, gl.canvas.height / 2);
-                this.viewports[1] = new MB.Vector4(gl.canvas.width / 2, 0, gl.canvas.width / 2, gl.canvas.height / 2);
-                this.viewports[2] = new MB.Vector4(gl.canvas.width / 2, gl.canvas.height / 2, gl.canvas.width / 2, gl.canvas.height / 2);
-                this.viewports[3] = new MB.Vector4(0, gl.canvas.height / 2, gl.canvas.width / 2, gl.canvas.height / 2);
+                var canvas = MB.Core.getInstance().canvas();
+                this.viewports[0] = new MB.Vector4(0, 0, canvas.width / 2, canvas.height / 2);
+                this.viewports[1] = new MB.Vector4(canvas.width / 2, 0, canvas.width / 2, canvas.height / 2);
+                this.viewports[2] = new MB.Vector4(canvas.width / 2, canvas.height / 2, canvas.width / 2, canvas.height / 2);
+                this.viewports[3] = new MB.Vector4(0, canvas.height / 2, canvas.width / 2, canvas.height / 2);
                 this.__resize__();
             };
             ;

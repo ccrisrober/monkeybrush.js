@@ -21,20 +21,60 @@
 
 namespace MB {
     export abstract class RenderBuffer {
+        /**
+         * Renderbuffer interla handler
+         * @type {WebGLRenderbuffer}
+         */
         protected _handle: WebGLRenderbuffer;
+        /**
+         * Renderbuffer size (width and height).
+         * @type {MB.Vect2}
+         */
         protected _size: MB.Vect2;
+        /**
+         * Rendebuffer samples
+         * @type {number}
+         */
         protected _samples: number;
+        /**
+         * Renderbuffer internal format.
+         * @type {number}
+         */
         protected _format: number;
+        /**
+         * Renderbuffer attachment point (p.e. COLOR_ATTACHMENT or DEPTH_STENCL_ATTACHMENT)
+         * @type {number}
+         */
+        protected _attachment: number;
         constructor(size: MB.Vect2, format: number, attachment: number, samples: number = 4) {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             this._handle = gl.createRenderbuffer();
             this._size = size;
             this._format = format;
             this._samples = samples;
+            this._attachment = attachment;
         };
-        public abstract bind();
-        public abstract unbind();
-        public abstract destroy();
+        /**
+         * Bind renderbuffer.
+         */
+        public bind() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+        };
+        /**
+         * Unbind render buffer.
+         */
+        public unbind() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+        };
+        /**
+         * Destroy renderbuffer texture.
+         */
+        public destroy() {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.deleteTexture(this._handle);
+        };
         public abstract resize(size: MB.Vect2);
     };
 };

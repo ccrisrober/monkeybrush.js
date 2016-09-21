@@ -44,8 +44,8 @@
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
                 this.tex2d = new MB.Texture2D(myTexture, {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Linear,
-                    magFilter: MB.ctes.TextureType.Linear,
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
