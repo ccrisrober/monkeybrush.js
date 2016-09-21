@@ -19,7 +19,7 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * GBuffer class
      * This class lets you use deferred shading technique.

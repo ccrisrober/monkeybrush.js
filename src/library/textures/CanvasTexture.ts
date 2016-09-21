@@ -19,14 +19,14 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * CanvasTexture class
      * @class CanvasTexture
      *
      * This class uses an image of a canvas like texture
      */
-    export class CanvasTexture extends Texture {
+    export class CanvasTexture extends MB.Texture {
         /**
          * Canvas that contains the image texture
          * @type {HTMLCanvasElement}
@@ -38,7 +38,7 @@ namespace MB {
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
          */
-        constructor(domCanvas: HTMLCanvasElement, options: TexOptions = {}, onSuccess: () => void = null) {
+        constructor(domCanvas: HTMLCanvasElement, options: MB.TexOptions = {}, onSuccess: () => void = null) {
             super(MB.ctes.TextureTarget.Texture2D, options);
 
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();

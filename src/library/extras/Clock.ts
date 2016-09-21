@@ -82,15 +82,15 @@ namespace MB {
          * Return the seconds passed since the clock started.
          * @return {number} Elapsed time.
          */
-        get elapsedTime(): number {
-            this.delta;
+        public elapsedTime(): number {
+            this.delta();
             return this._elapsed;
         }
         /**
          * Return the seconds passed since the last call of this method.
          * @return {number} Delta time.
          */
-        get delta(): number {
+        public delta(): number {
             let diff = 0;
             if (this._autostart && !this._running) {
                 this.start();

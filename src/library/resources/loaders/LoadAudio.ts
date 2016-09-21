@@ -50,5 +50,12 @@ namespace MB {
                 request.send();
             }
         };
+        /**
+         * [unloadAudio description]
+         * @param {string} clipName [description]
+         */
+        export function unloadAudio(clipName: string) {
+            ResourceMap.unloadAsset(clipName);
+        };
     };
 };

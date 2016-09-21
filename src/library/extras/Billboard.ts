@@ -20,7 +20,7 @@
 "use strict";
 /// <reference path="../../typings/gl-matrix.d.ts" />
 
-namespace MB {
+namespace MBX {
 
 export interface BillboardOpts {
     texture: MB.Texture2D;

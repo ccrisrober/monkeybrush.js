@@ -19,12 +19,12 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * VideoTexture class
      * @class VideoTexture
      */
-    export class VideoTexture extends Texture {
+    export class VideoTexture extends MB.Texture {
         protected _video: HTMLVideoElement;
         /**
          * [constructor description]

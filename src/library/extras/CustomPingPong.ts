@@ -20,6 +20,27 @@
 "use strict";
 
 namespace MB {
-    export abstract class OrbitCamera /*extends Camera*/ {
-    }
-}; // namespace MB
+    /**
+     * CustomPingPong class.
+     * This class may be used, for example, for purposes that require
+     *   a previous step, as the Path Tracing algorithm.
+     * @class PingPong
+     */
+    export class CustomPingPong<T> {
+        protected _elems1: T;
+        protected _elems2: T;
+        constructor(elem1: T, elem2: T) {
+            this._elems1 = elem1;
+            this._elems2 = elem2;
+        };
+        public swap() {
+            this._elems2 = [this._elems1, this._elems1 = this._elems2][0];
+        };
+        public first(): T {
+            return this._elems1;
+        };
+        public last(): T {
+            return this._elems2;
+        }
+    };
+};
