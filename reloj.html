@@ -1,0 +1,24 @@
+<script>
+var cache = {
+    "value.html": "OLA K ASE",
+    "shader.glsl": "MY SHADER",
+	"common": "COMUN"
+};
+function parse(str) {
+    var regex = /#import +<([\w\d.]+)>/g;
+    function replace(match, include) {
+		console.log(include);
+        var replace = cache[include]; // Acceso al fichero de turno;
+        if (replace === undefined) {
+            throw new Error("Can not resolve #import <" + include + ">");
+        }
+        return parse(replace);
+    }
+    return str.replace(regex, replace);
+}
+var source = "#version 300 es\n#import <value.html>\nout vec4 fragColor;\n" +
+	"void main() {\n\tfragColor = vec4(1.0);\n	#import <common>\n}\n";
+var str = parse(source);
+console.log(source);
+console.log(str);
+</script>

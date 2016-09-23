@@ -28,20 +28,27 @@ namespace MB {
      *     queries of certain kinds of information.
      */
     export class Query {
-        protected _handle: WebGLQuery;
         /**
-         * Query constructor
+         * Query internal handler.
+         * 
+         * @protected
+         * @type {WebGLQuery}
+         * @memberOf Query
+         */
+        protected _handler: WebGLQuery;
+        /**
+         * Query constructor.
          */
         constructor() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            this._handle = gl.createQuery();
+            this._handler = gl.createQuery();
         };
         /**
          * Delete query object
          */
         public destroy() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.deleteQuery(this._handle);
+            gl.deleteQuery(this._handler);
         };
         /**
          * Start the asynchronous query.
@@ -49,7 +56,7 @@ namespace MB {
          */
         public begin(target: MB.ctes.QueryTarget) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.beginQuery(target, this._handle);
+            gl.beginQuery(target, this._handler);
         };
         /**
          * Marks the end of a given query target.
@@ -80,7 +87,7 @@ namespace MB {
          */
         public getParameter(param: MB.ctes.QueryParams): any {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            return gl.getQueryParameter(this._handle, param);
+            return gl.getQueryParameter(this._handler, param);
         };
         /**
          * Return a boolean indicating whether or not a query

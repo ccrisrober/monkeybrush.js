@@ -25,6 +25,10 @@ namespace MB {
      * @class Capsule
      */
     export class Capsule extends Drawable {
+        protected _radius: number;
+        protected _height: number;
+        protected _subHeight: number;
+        protected _numSegm: number;
         /**
          * Capsule constructor
          * @param {number = 0.5} radius Capsule radius
@@ -36,6 +40,11 @@ namespace MB {
             subHeight: number = 12, numSegm: number = 12) {
 
             super();
+
+            this._radius = radius;
+            this._height = height;
+            this._subHeight = subHeight;
+            this._numSegm = numSegm;
 
             const ringsBody = subHeight + 1;
             const ringsTotal = subHeight + ringsBody;

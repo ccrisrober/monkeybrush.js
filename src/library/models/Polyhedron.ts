@@ -25,6 +25,8 @@ namespace MB {
      * @class Polyhedron
      */
     export abstract class Polyhedron extends Drawable {
+        protected _radius: number;
+        protected _subdivisions: number;
         /**
          * Polyhedron abstract constructor
          * @param {Array<number>} verts List of vertices
@@ -36,6 +38,10 @@ namespace MB {
             radius: number, subdivisions: number) {
 
             super();
+
+            this._radius = radius;
+            this._subdivisions = subdivisions;
+
             let norms = new Array();
             let tex = new Array();
             // Normalize

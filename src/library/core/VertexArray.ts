@@ -25,25 +25,25 @@ namespace MB {
 
     export class VertexArray {
         /**
-         * [_handle description]
+         * [_handler description]
          * @type {WebGLVertexArrayObject}
          */
-        protected _handle: WebGLVertexArrayObject;
+        protected _handler: WebGLVertexArrayObject;
         /**
          * Vertex array constructor
          * @param {WebGLVertexArrayObject} vao [description]
          */
-        constructor(vao?: any /**/) {
+        constructor(vao?: WebGLVertexArrayObject) {
             if (vao !== undefined) {
-                this._handle = vao;
+                this._handler = vao;
             } else {
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                 if (gl instanceof WebGL2RenderingContext) {
-                    this._handle = gl.createVertexArray();
+                    this._handler = gl.createVertexArray();
                 } else {
-                    const ext = MB.Extensions.get("OES_vertex_array_object");
+                    const ext = Extensions.get("OES_vertex_array_object");
                     if (ext) {
-                        this._handle = ext.createVertexArrayOES();
+                        this._handler = ext.createVertexArrayOES();
                     }
                 }
             }
@@ -62,12 +62,12 @@ namespace MB {
         public bind() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             if (gl instanceof WebGL2RenderingContext) {
-                gl.bindVertexArray(this._handle);
+                gl.bindVertexArray(this._handler);
                 return;
             }
-            const ext = MB.Extensions.get("OES_vertex_array_object");
+            const ext = Extensions.get("OES_vertex_array_object");
             if (ext) {
-                ext.bindVertexArrayOES(this._handle);
+                ext.bindVertexArrayOES(this._handler);
             }
         }
         /**
@@ -79,7 +79,7 @@ namespace MB {
                 gl.bindVertexArray(null);
                 return;
             }
-            const ext = MB.Extensions.get("OES_vertex_array_object");
+            const ext = Extensions.get("OES_vertex_array_object");
             if (ext) {
                 ext.bindVertexArrayOES(null);
             }
@@ -91,12 +91,12 @@ namespace MB {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             this.bind();
             if (gl instanceof WebGL2RenderingContext) {
-                gl.deleteVertexArray(this._handle);
+                gl.deleteVertexArray(this._handler);
                 return;
             }
-            const ext = MB.Extensions.get("OES_vertex_array_object");
+            const ext = Extensions.get("OES_vertex_array_object");
             if (ext) {
-                ext.deleteVertexArrayOES(this._handle);
+                ext.deleteVertexArrayOES(this._handler);
             }
         }
         /**
@@ -106,19 +106,7 @@ namespace MB {
         public static isSupported(): boolean {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             return gl instanceof WebGL2RenderingContext ||
-                MB.Extensions.get("OES_vertex_array_object");
+                Extensions.get("OES_vertex_array_object");
         }
-        /**
-        public is(): boolean {
-            if (gl instanceof WebGL2RenderingContext) {
-                return gl.isVertexArray(this._handle);
-            }
-            const ext = MB.Extensions.get("OES_vertex_array_object");
-            if (ext) {
-                return ext.isVertexArrayOES(this._handle);
-            }
-            return false;
-        }
-        /**/
     };
 };

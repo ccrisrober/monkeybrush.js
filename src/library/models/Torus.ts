@@ -25,6 +25,10 @@ namespace MB {
      * @class Torus
      */
     export class Torus extends Drawable {
+        protected _outerRadius: number;
+        protected _innerRadius: number;
+        protected _sides: number;
+        protected _rings: number;
         /**
          * Torus constructor
          * @param {number = 1.0} outerRadius: Outer ring radius
@@ -35,6 +39,12 @@ namespace MB {
         constructor(outerRadius: number = 1.0, innerRadius: number = 0.5,
             sides: number = 4, rings: number = 10) {
             super();
+
+            this._outerRadius = outerRadius;
+            this._innerRadius = innerRadius;
+            this._sides = sides;
+            this._rings = rings;
+
             let faces = sides * rings;
             let nv  = sides * (rings + 1);   // One extra ring to duplicate first ring
 

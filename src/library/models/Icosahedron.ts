@@ -40,7 +40,7 @@ namespace MB {
 
             const t = (1 + Math.sqrt(5)) / 2;
 
-            let verts = [
+            super([
                 -1,  t,  0,
                  1,  t,  0,
                 -1, -t,  0,
@@ -55,8 +55,7 @@ namespace MB {
                  t,  0,  1,
                 -t,  0, -1,
                 -t,  0,  1
-            ];
-            let el = [
+            ], [
                  0, 11,  5,
                  0,  5,  1,
                  0,  1,  7,
@@ -77,9 +76,7 @@ namespace MB {
                  6,  2, 10,
                  8,  6,  7,
                  9,  8,  1
-            ];
-            console.log(subdivisions);
-            super(verts, el, radius, subdivisions);
+            ], radius, subdivisions);
         };
     };
 };

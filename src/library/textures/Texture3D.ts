@@ -41,11 +41,11 @@ namespace MB {
 
             // TODO: gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
-            if (this._compressed_) {
+            if (this._compressed) {
                 gl.compressedTexImage3D(
-                    this._target_,
-                    this._level_,
-                    this._format_,
+                    this._target,
+                    this._level,
+                    this._format,
                     size.x,
                     size.y,
                     size.z,
@@ -54,15 +54,15 @@ namespace MB {
                );
             } else {
                 gl.texImage3D(
-                    this._target_,
-                    this._level_,
-                    this._internalformat_,
+                    this._target,
+                    this._level,
+                    this._internalformat,
                     size.x,
                     size.y,
                     size.z,
                     0,
-                    this._format_,
-                    this._type_,
+                    this._format,
+                    this._type,
                     data
                 );
             }

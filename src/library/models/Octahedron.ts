@@ -33,14 +33,15 @@ namespace MB {
         constructor(radius: number, subdivisions: number) {
             const a: number = 1 / (2 * Math.sqrt(2));
             const b: number = 1 / 2;
-            let verts = [
+            
+            super([
                  a,  0,  0,
                 -a,  0,  0,
                  0,  b,  0,
                  0, -b,  0,
                  0,  0,  a,
-                 0,  0, -a];
-            let el = [
+                 0,  0, -a
+            ], [
                 0, 2, 4,
                 0, 4, 3,
                 0, 3, 5,
@@ -49,10 +50,7 @@ namespace MB {
                 1, 5, 3,
                 1, 3, 4,
                 1, 4, 2
-            ];
-
-
-            super(verts, el, radius, subdivisions);
+            ], radius, subdivisions);
         };
     };
 };

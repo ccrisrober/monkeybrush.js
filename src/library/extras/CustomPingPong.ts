@@ -30,16 +30,32 @@ namespace MB {
     export class CustomPingPong<T> {
         protected _elems1: T;
         protected _elems2: T;
+        /**
+         * CustomPingPong<T> constructor.
+         * @param {T} elem1 First element.
+         * @param {T} elem2 Second element.
+         */
         constructor(elem1: T, elem2: T) {
             this._elems1 = elem1;
             this._elems2 = elem2;
         };
+        /**
+         * Swap ping pong inner objects.
+         */
         public swap() {
             this._elems2 = [this._elems1, this._elems1 = this._elems2][0];
         };
+        /**
+         * Returns first object.
+         * @return {T} 
+         */
         public first(): T {
             return this._elems1;
         };
+        /**
+         * Returns last object.
+         * @return {T} 
+         */
         public last(): T {
             return this._elems2;
         }

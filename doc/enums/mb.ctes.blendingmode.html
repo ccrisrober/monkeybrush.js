@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BlendingMode | my-project</title>
+	<title>BlendingMode | Monkey Brush</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">my-project</a>
+					<a href="../index.html" class="title">Monkey Brush</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -73,6 +73,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>WebGL constants to specify blending mode</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
@@ -81,11 +88,26 @@
 							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#additive" class="tsd-kind-icon">Additive</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#ctealpha" class="tsd-kind-icon">Cte<wbr>Alpha</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#ctecolor" class="tsd-kind-icon">Cte<wbr>Color</a></li>
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#custom" class="tsd-kind-icon">Custom</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#dstalpha" class="tsd-kind-icon">Dst<wbr>Alpha</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#dstcolor" class="tsd-kind-icon">Dst<wbr>Color</a></li>
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#multiply" class="tsd-kind-icon">Multiply</a></li>
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#none" class="tsd-kind-icon">None</a></li>
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#normal" class="tsd-kind-icon">Normal</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#one" class="tsd-kind-icon">One</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#oneminusctealpha" class="tsd-kind-icon">One<wbr>Minus<wbr>Cte<wbr>Alpha</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#oneminusctecolor" class="tsd-kind-icon">One<wbr>Minus<wbr>Cte<wbr>Color</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#oneminusdstalpha" class="tsd-kind-icon">One<wbr>Minus<wbr>Dst<wbr>Alpha</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#oneminusdstcolor" class="tsd-kind-icon">One<wbr>Minus<wbr>Dst<wbr>Color</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#oneminussrcalpha" class="tsd-kind-icon">One<wbr>Minus<wbr>Src<wbr>Alpha</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#oneminussrccolor" class="tsd-kind-icon">One<wbr>Minus<wbr>Src<wbr>Color</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#srcalpha" class="tsd-kind-icon">Src<wbr>Alpha</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#srcalphasaturate" class="tsd-kind-icon">Src<wbr>Alpha<wbr>Saturate</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#srccolor" class="tsd-kind-icon">Src<wbr>Color</a></li>
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#substractive" class="tsd-kind-icon">Substractive</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="mb.ctes.blendingmode.html#zero" class="tsd-kind-icon">Zero</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,9 +121,49 @@
 					<div class="tsd-signature tsd-kind-icon">Additive<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/c253e07/src/library/constants/Constants.ts#L42">library/constants/Constants.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L525">library/constants/Constants.ts:525</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="ctealpha" class="tsd-anchor"></a>
+					<h3>Cte<wbr>Alpha</h3>
+					<div class="tsd-signature tsd-kind-icon">Cte<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;32771</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L111">library/constants/Constants.ts:111</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Specify a constant alpha blend function.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="ctecolor" class="tsd-anchor"></a>
+					<h3>Cte<wbr>Color</h3>
+					<div class="tsd-signature tsd-kind-icon">Cte<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;32769</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L101">library/constants/Constants.ts:101</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Specify a constant color blend function.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
 					<a name="custom" class="tsd-anchor"></a>
@@ -109,9 +171,49 @@
 					<div class="tsd-signature tsd-kind-icon">Custom<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/c253e07/src/library/constants/Constants.ts#L52">library/constants/Constants.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L535">library/constants/Constants.ts:535</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="dstalpha" class="tsd-anchor"></a>
+					<h3>Dst<wbr>Alpha</h3>
+					<div class="tsd-signature tsd-kind-icon">Dst<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;772</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L75">library/constants/Constants.ts:75</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by the destination&#39;s alpha.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="dstcolor" class="tsd-anchor"></a>
+					<h3>Dst<wbr>Color</h3>
+					<div class="tsd-signature tsd-kind-icon">Dst<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;774</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L85">library/constants/Constants.ts:85</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by the destination&#39;s color.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
 					<a name="multiply" class="tsd-anchor"></a>
@@ -119,7 +221,7 @@
 					<div class="tsd-signature tsd-kind-icon">Multiply<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/c253e07/src/library/constants/Constants.ts#L50">library/constants/Constants.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L533">library/constants/Constants.ts:533</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -129,7 +231,7 @@
 					<div class="tsd-signature tsd-kind-icon">None<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/c253e07/src/library/constants/Constants.ts#L34">library/constants/Constants.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L517">library/constants/Constants.ts:517</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -139,9 +241,200 @@
 					<div class="tsd-signature tsd-kind-icon">Normal<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/c253e07/src/library/constants/Constants.ts#L38">library/constants/Constants.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L521">library/constants/Constants.ts:521</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="one" class="tsd-anchor"></a>
+					<h3>One</h3>
+					<div class="tsd-signature tsd-kind-icon">One<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L50">library/constants/Constants.ts:50</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="oneminusctealpha" class="tsd-anchor"></a>
+					<h3>One<wbr>Minus<wbr>Cte<wbr>Alpha</h3>
+					<div class="tsd-signature tsd-kind-icon">One<wbr>Minus<wbr>Cte<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;32772</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L116">library/constants/Constants.ts:116</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Specify one minus a constant alpha blend function.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="oneminusctecolor" class="tsd-anchor"></a>
+					<h3>One<wbr>Minus<wbr>Cte<wbr>Color</h3>
+					<div class="tsd-signature tsd-kind-icon">One<wbr>Minus<wbr>Cte<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;32770</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L106">library/constants/Constants.ts:106</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Specify one minus a constant color blend function.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="oneminusdstalpha" class="tsd-anchor"></a>
+					<h3>One<wbr>Minus<wbr>Dst<wbr>Alpha</h3>
+					<div class="tsd-signature tsd-kind-icon">One<wbr>Minus<wbr>Dst<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;773</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L80">library/constants/Constants.ts:80</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by one minus the destination&#39;s alpha.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="oneminusdstcolor" class="tsd-anchor"></a>
+					<h3>One<wbr>Minus<wbr>Dst<wbr>Color</h3>
+					<div class="tsd-signature tsd-kind-icon">One<wbr>Minus<wbr>Dst<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;775</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L90">library/constants/Constants.ts:90</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by one minus the destination&#39;s color.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="oneminussrcalpha" class="tsd-anchor"></a>
+					<h3>One<wbr>Minus<wbr>Src<wbr>Alpha</h3>
+					<div class="tsd-signature tsd-kind-icon">One<wbr>Minus<wbr>Src<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;771</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L70">library/constants/Constants.ts:70</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by one minus the source&#39;s alpha.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="oneminussrccolor" class="tsd-anchor"></a>
+					<h3>One<wbr>Minus<wbr>Src<wbr>Color</h3>
+					<div class="tsd-signature tsd-kind-icon">One<wbr>Minus<wbr>Src<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;769</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L60">library/constants/Constants.ts:60</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by one minus the source elements color.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="srcalpha" class="tsd-anchor"></a>
+					<h3>Src<wbr>Alpha</h3>
+					<div class="tsd-signature tsd-kind-icon">Src<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;770</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L65">library/constants/Constants.ts:65</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by the source&#39;s alpha.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="srcalphasaturate" class="tsd-anchor"></a>
+					<h3>Src<wbr>Alpha<wbr>Saturate</h3>
+					<div class="tsd-signature tsd-kind-icon">Src<wbr>Alpha<wbr>Saturate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;776</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L96">library/constants/Constants.ts:96</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by the minimum of source&#39;s alpha or
+							one minus the destination&#39;s alpha.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="srccolor" class="tsd-anchor"></a>
+					<h3>Src<wbr>Color</h3>
+					<div class="tsd-signature tsd-kind-icon">Src<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;768</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L55">library/constants/Constants.ts:55</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Multiply a component by the source elements color.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{number}</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
 					<a name="substractive" class="tsd-anchor"></a>
@@ -149,7 +442,17 @@
 					<div class="tsd-signature tsd-kind-icon">Substractive<span class="tsd-signature-symbol">:</span> </div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/c253e07/src/library/constants/Constants.ts#L46">library/constants/Constants.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L529">library/constants/Constants.ts:529</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="zero" class="tsd-anchor"></a>
+					<h3>Zero</h3>
+					<div class="tsd-signature tsd-kind-icon">Zero<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;0</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/maldicion069/monkeybrush.js/blob/0dc11bf/src/library/constants/Constants.ts#L49">library/constants/Constants.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,41 +468,66 @@
 						<a href="../modules/mb.html">MB</a>
 						<ul>
 							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.capabilities.html">Capabilities</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
 								<a href="../modules/mb.decorators.html">Decorators</a>
 							</li>
 							<li class=" tsd-kind-module tsd-parent-kind-module">
-								<a href="../modules/mb.core.html">core</a>
+								<a href="../modules/mb.encodings.html">Encodings</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.geometry.html">Geometry</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.interpolation.html">Interpolation</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.loaders.html">Loaders</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.mathf.html">Mathf</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.noise.html">Noise</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.objloader.html">Obj<wbr>Loader</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.randomgenerator.html">Random<wbr>Generator</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.resourcemap.html">Resource<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.sourcefrags.html">Source<wbr>Frags</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.timer.html">Timer</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.utils.html">Utils</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.vbtype.html">VBType</a>
 							</li>
 							<li class="current tsd-kind-module tsd-parent-kind-module">
 								<a href="../modules/mb.ctes.html">ctes</a>
-								<ul>
-									<li class=" tsd-kind-module tsd-parent-kind-module">
-										<a href="../modules/mb.ctes.programcte.html">Program<wbr>Cte</a>
-									</li>
-								</ul>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-module">
+								<a href="../modules/mb.curves.html">curves</a>
 							</li>
 							<li class=" tsd-kind-module tsd-parent-kind-module">
 								<a href="../modules/mb.exceptions.html">exceptions</a>
 							</li>
-							<li class=" tsd-kind-module tsd-parent-kind-module">
-								<a href="../modules/mb.extras.html">extras</a>
-							</li>
-							<li class=" tsd-kind-module tsd-parent-kind-module">
-								<a href="../modules/mb.lights.html">lights</a>
-							</li>
-							<li class=" tsd-kind-module tsd-parent-kind-module">
-								<a href="../modules/mb.maths.html">maths</a>
-							</li>
-							<li class=" tsd-kind-module tsd-parent-kind-module">
-								<a href="../modules/mb.models.html">models</a>
-							</li>
-							<li class=" tsd-kind-module tsd-parent-kind-module">
-								<a href="../modules/mb.resources.html">resources</a>
-							</li>
-							<li class=" tsd-kind-module tsd-parent-kind-module">
-								<a href="../modules/mb.textures.html">textures</a>
-							</li>
 						</ul>
+					</li>
+					<li class=" tsd-kind-module tsd-is-not-exported">
+						<a href="../modules/mbs.html">MBS</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-not-exported">
+						<a href="../modules/mbx.html">MBX</a>
 					</li>
 					<li class=" tsd-kind-module tsd-is-not-exported">
 						<a href="../modules/vanillatoasts.html">Vanilla<wbr>Toasts</a>
@@ -226,7 +554,19 @@
 								<a href="mb.ctes.blendingmode.html#additive" class="tsd-kind-icon">Additive</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#ctealpha" class="tsd-kind-icon">Cte<wbr>Alpha</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#ctecolor" class="tsd-kind-icon">Cte<wbr>Color</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
 								<a href="mb.ctes.blendingmode.html#custom" class="tsd-kind-icon">Custom</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#dstalpha" class="tsd-kind-icon">Dst<wbr>Alpha</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#dstcolor" class="tsd-kind-icon">Dst<wbr>Color</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
 								<a href="mb.ctes.blendingmode.html#multiply" class="tsd-kind-icon">Multiply</a>
@@ -238,17 +578,50 @@
 								<a href="mb.ctes.blendingmode.html#normal" class="tsd-kind-icon">Normal</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#one" class="tsd-kind-icon">One</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#oneminusctealpha" class="tsd-kind-icon">One<wbr>Minus<wbr>Cte<wbr>Alpha</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#oneminusctecolor" class="tsd-kind-icon">One<wbr>Minus<wbr>Cte<wbr>Color</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#oneminusdstalpha" class="tsd-kind-icon">One<wbr>Minus<wbr>Dst<wbr>Alpha</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#oneminusdstcolor" class="tsd-kind-icon">One<wbr>Minus<wbr>Dst<wbr>Color</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#oneminussrcalpha" class="tsd-kind-icon">One<wbr>Minus<wbr>Src<wbr>Alpha</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#oneminussrccolor" class="tsd-kind-icon">One<wbr>Minus<wbr>Src<wbr>Color</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#srcalpha" class="tsd-kind-icon">Src<wbr>Alpha</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#srcalphasaturate" class="tsd-kind-icon">Src<wbr>Alpha<wbr>Saturate</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#srccolor" class="tsd-kind-icon">Src<wbr>Color</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
 								<a href="mb.ctes.blendingmode.html#substractive" class="tsd-kind-icon">Substractive</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="mb.ctes.blendingmode.html#zero" class="tsd-kind-icon">Zero</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="mb.ctes.blendingtype.html" class="tsd-kind-icon">Blending<wbr>Type</a>
+						<a href="mb.ctes.buffertype.html" class="tsd-kind-icon">Buffer<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="mb.ctes.buffertype.html" class="tsd-kind-icon">Buffer<wbr>Type</a>
+						<a href="mb.ctes.clearbuffer.html" class="tsd-kind-icon">Clear<wbr>Buffer</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.comparisonfunc.html" class="tsd-kind-icon">Comparison<wbr>Func</a>
@@ -269,13 +642,22 @@
 						<a href="mb.ctes.faceside.html" class="tsd-kind-icon">Face<wbr>Side</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="mb.ctes.glerrors.html" class="tsd-kind-icon">GLErrors</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="mb.ctes.glparameters.html" class="tsd-kind-icon">GLParameters</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="mb.ctes.glstates.html" class="tsd-kind-icon">GLStates</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.keystate.html" class="tsd-kind-icon">Key<wbr>State</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.mousebutton.html" class="tsd-kind-icon">Mouse<wbr>Button</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="mb.ctes.pixeltype.html" class="tsd-kind-icon">Pixel<wbr>Type</a>
+						<a href="mb.ctes.pixelformat.html" class="tsd-kind-icon">Pixel<wbr>Format</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.queryparams.html" class="tsd-kind-icon">Query<wbr>Params</a>
@@ -284,10 +666,16 @@
 						<a href="mb.ctes.querytarget.html" class="tsd-kind-icon">Query<wbr>Target</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="mb.ctes.rendertype.html" class="tsd-kind-icon">Render<wbr>Type</a>
+						<a href="mb.ctes.readmode.html" class="tsd-kind-icon">Read<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="mb.ctes.rendermode.html" class="tsd-kind-icon">Render<wbr>Mode</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.samplerparameter.html" class="tsd-kind-icon">Sampler<wbr>Parameter</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="mb.ctes.shadertype.html" class="tsd-kind-icon">Shader<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.shadingmode.html" class="tsd-kind-icon">Shading<wbr>Mode</a>
@@ -317,13 +705,10 @@
 						<a href="mb.ctes.tftarget.html" class="tsd-kind-icon">TFTarget</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="mb.ctes.textureformat.html" class="tsd-kind-icon">Texture<wbr>Format</a>
+						<a href="mb.ctes.texturefilter.html" class="tsd-kind-icon">Texture<wbr>Filter</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.texturetarget.html" class="tsd-kind-icon">Texture<wbr>Target</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="mb.ctes.texturetype.html" class="tsd-kind-icon">Texture<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-module">
 						<a href="mb.ctes.usagetype.html" class="tsd-kind-icon">Usage<wbr>Type</a>

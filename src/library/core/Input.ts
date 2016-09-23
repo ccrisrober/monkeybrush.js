@@ -43,6 +43,7 @@ namespace MB {
             }
 
             let self = Input;
+            
             // Register handles
             window.addEventListener("keyup", function(ev: KeyboardEvent) {
                 if (ev.keyCode === 40 || ev.keyCode === 38) {

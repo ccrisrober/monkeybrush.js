@@ -25,7 +25,7 @@ namespace MB {
          * Renderbuffer interla handler
          * @type {WebGLRenderbuffer}
          */
-        protected _handle: WebGLRenderbuffer;
+        protected _handler: WebGLRenderbuffer;
         /**
          * Renderbuffer size (width and height).
          * @type {MB.Vect2}
@@ -48,7 +48,7 @@ namespace MB {
         protected _attachment: number;
         constructor(size: MB.Vect2, format: number, attachment: number, samples: number = 4) {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            this._handle = gl.createRenderbuffer();
+            this._handler = gl.createRenderbuffer();
             this._size = size;
             this._format = format;
             this._samples = samples;
@@ -59,7 +59,7 @@ namespace MB {
          */
         public bind() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
         };
         /**
          * Unbind render buffer.
@@ -73,7 +73,7 @@ namespace MB {
          */
         public destroy() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.deleteTexture(this._handle);
+            gl.deleteTexture(this._handler);
         };
         public abstract resize(size: MB.Vect2);
     };

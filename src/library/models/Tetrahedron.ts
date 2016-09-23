@@ -31,19 +31,17 @@ namespace MB {
          * @param {number} subdivisions: Tetrahedron subdivisions from base tetrahedron.
          */
         constructor(radius: number, subdivisions: number) {
-            let verts = [
+            super([
                  1,  1,  1,
                 -1, -1,  1,
                 -1,  1, -1,
                  1, -1, -1
-            ];
-            let el = [
-                2, 1, 0,
-                0, 3, 2,
-                1, 3, 0,
-                2, 3, 1
-            ];
-            super(verts, el, radius, subdivisions);
+            ], [
+                 2,  1,  0,
+                 0,  3,  2,
+                 1,  3,  0,
+                 2,  3,  1
+            ], radius, subdivisions);
         };
     };
 };

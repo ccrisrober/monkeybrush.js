@@ -25,9 +25,9 @@ namespace MB {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             super(size, format, attachment);
 
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-            gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, size.x, size.y);
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
+            gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, this._size.x, this._size.y);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handler);
             gl.bindRenderbuffer(gl.RENDERBUFFER, null);
         };
         public resize(size: MB.Vect2) {

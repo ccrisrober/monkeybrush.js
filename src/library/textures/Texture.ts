@@ -48,34 +48,34 @@ namespace MB {
 
     export abstract class Texture {
 
-        protected _anisotropy_: number = 1;
-        protected _internalformat_: ctes.PixelFormat = ctes.PixelFormat.RGBA;
-        protected _format_: ctes.PixelFormat = ctes.PixelFormat.RGBA;
+        protected _anisotropy: number = 1;
+        protected _internalformat: ctes.PixelFormat = ctes.PixelFormat.RGBA;
+        protected _format: ctes.PixelFormat = ctes.PixelFormat.RGBA;
 
-        protected _wrapS_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
-        protected _wrapT_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
-        protected _wrapR_: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
+        protected _wrapS: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
+        protected _wrapT: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
+        protected _wrapR: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
 
-        protected _minFilter_: ctes.TextureFilter = ctes.TextureFilter.Linear;
-        protected _magFilter_: ctes.TextureFilter = ctes.TextureFilter.Linear;
+        protected _minFilter: ctes.TextureFilter = ctes.TextureFilter.Linear;
+        protected _magFilter: ctes.TextureFilter = ctes.TextureFilter.Linear;
 
-        protected _type_: ctes.PixelFormat; // TODO = gl.UNSIGNED_BYTE;
-        protected _flipY_: boolean = true;
-        protected _generateMipMaps_: boolean = false;
-        protected _premultiplyAlpha_: boolean = false;
+        protected _type: ctes.PixelFormat; // TODO = gl.UNSIGNED_BYTE;
+        protected _flipY: boolean = true;
+        protected _generateMipMaps: boolean = false;
+        protected _premultiplyAlpha: boolean = false;
 
         protected _unpackAlignment_: number = 4;
-        protected _target_: ctes.TextureTarget;
-        protected _minLOD_: number;
-        protected _maxLOD_: number;
+        protected _target: ctes.TextureTarget;
+        protected _minLOD: number;
+        protected _maxLOD: number;
 
-        protected _level_: number = 0;
-        protected _compressed_: boolean = false;
+        protected _level: number = 0;
+        protected _compressed: boolean = false;
         /**
          * Internal WebGLTexture handler.
          * @type {WebGLTexture}
          */
-        protected _handle_: WebGLTexture;
+        protected _handler: WebGLTexture;
 
         /**
          * Returns false if gl.LINEAR is not supported as a texture
@@ -126,47 +126,47 @@ namespace MB {
         };
 
         constructor(target: ctes.TextureTarget, options: TexOptions) {
-            this._target_ = target;
+            this._target = target;
 
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            this._handle_ = gl.createTexture();
+            this._handler = gl.createTexture();
 
-            this._flipY_ = Boolean(options.flipY || false);
-            this._internalformat_ = options.internalFormat || ctes.PixelFormat.RGBA;
-            this._format_ = options.format || ctes.PixelFormat.RGBA;
-            this._type_ = options.type || gl.UNSIGNED_BYTE;
-            this._level_ = options.level || 0;
+            this._flipY = Boolean(options.flipY || false);
+            this._internalformat = options.internalFormat || ctes.PixelFormat.RGBA;
+            this._format = options.format || ctes.PixelFormat.RGBA;
+            this._type = options.type || gl.UNSIGNED_BYTE;
+            this._level = options.level || 0;
 
-            this._compressed_ = Boolean(options.compressed || false);
+            this._compressed = Boolean(options.compressed || false);
 
             this.bind();
 
             this.minFilter(options.minFilter || ctes.TextureFilter.Nearest);
             this.magFilter(options.minFilter || ctes.TextureFilter.Nearest);
 
-            this._minLOD_ = options.minLOD || -1000;
-            this._maxLOD_ = options.maxLOD || 1000;
-            this._anisotropy_ = options.anisotropic || 1;
+            this._minLOD = options.minLOD || -1000;
+            this._maxLOD = options.maxLOD || 1000;
+            this._anisotropy = options.anisotropic || 1;
 
             /*
             TEXTURE_MAX_LEVEL 1000
             */
 
-            if (this._type_ === gl.FLOAT) {
+            if (this._type === gl.FLOAT) {
                 if (!Texture.canUseFloatingPointTextures()) {
                     throw new Error("OES_texture_float is required but not supported.");
                 }
-                if ((this._minFilter_ !== ctes.TextureFilter.Nearest
-                    || this._magFilter_ !== ctes.TextureFilter.Nearest) &&
+                if ((this._minFilter !== ctes.TextureFilter.Nearest
+                    || this._magFilter !== ctes.TextureFilter.Nearest) &&
                     !Texture.canUseFloatingPointLinearFiltering()) {
                     throw new Error("OES_texture_float_linear is required but not supported.");
                 }
-            } else if (this._type_ === gl.HALF_FLOAT) {
+            } else if (this._type === gl.HALF_FLOAT) {
                 if (!Texture.canUseHalfFloatingPointTextures()) {
                     throw new Error("OES_texture_half_float is required but not supported.");
                 }
-                if ((this._minFilter_ !== ctes.TextureFilter.Nearest
-                    || this._magFilter_ !== ctes.TextureFilter.Nearest) &&
+                if ((this._minFilter !== ctes.TextureFilter.Nearest
+                    || this._magFilter !== ctes.TextureFilter.Nearest) &&
                     !Texture.canUseHalfFloatingPointLinearFiltering()) {
                     throw new Error("OES_texture_half_float_linear is required but not supported.");
                 }
@@ -180,8 +180,8 @@ namespace MB {
         public minFilter(filter: ctes.TextureFilter) {
             this.bind();
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, filter);
-            this._minFilter_ = filter;
+            gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, filter);
+            this._minFilter = filter;
         };
         /**
          * Change texture magnification filter
@@ -190,8 +190,8 @@ namespace MB {
         public magFilter(filter: ctes.TextureFilter) {
             this.bind();
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, filter);
-            this._magFilter_ = filter;
+            gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, filter);
+            this._magFilter = filter;
         };
         public wrap(modes: Array<number>) {
             if (modes.length < 2) {
@@ -199,14 +199,14 @@ namespace MB {
             }
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             this.bind();
-            gl.texParameteri(this._target_, gl.TEXTURE_WRAP_S, modes[0]);
-            gl.texParameteri(this._target_, gl.TEXTURE_WRAP_T, modes[1]);
+            gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, modes[0]);
+            gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, modes[1]);
             if (modes.length > 2) {
-                gl.texParameteri(this._target_, gl.TEXTURE_WRAP_R, modes[2]);
-                this._wrapR_ = modes[2];
+                gl.texParameteri(this._target, gl.TEXTURE_WRAP_R, modes[2]);
+                this._wrapR = modes[2];
             }
-            this._wrapS_ = modes[0];
-            this._wrapT_ = modes[1];
+            this._wrapS = modes[0];
+            this._wrapT = modes[1];
         }
         /**
          * Generate mipmap to this texture.
@@ -214,9 +214,9 @@ namespace MB {
         public generateMipMap() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             this.bind();
-            this._generateMipMaps_ = true;
+            this._generateMipMaps = true;
             // TODO: Check NPOT??
-            gl.generateMipmap(this._target_);
+            gl.generateMipmap(this._target);
         }
         /**
          * Set texture anisotropic level
@@ -227,9 +227,9 @@ namespace MB {
             level = Math.floor(level);
             // const ext = Extensions.get("EXT_texture_filter_anisotropic");
             const max_anisotropy = Capabilities.getMaxAnisotropy();
-            if (max_anisotropy < level && this._anisotropy_ !== level) {
-                this._anisotropy_ = level;
-                gl.texParameterf(this._target_, 0x84FE/*ext.TEXTURE_MAX_ANISOTROPY_EXT*/, level);
+            if (max_anisotropy < level && this._anisotropy !== level) {
+                this._anisotropy = level;
+                gl.texParameterf(this._target, 0x84FE/*ext.TEXTURE_MAX_ANISOTROPY_EXT*/, level);
             }
         };
         public bind(slot?: number) {
@@ -237,19 +237,19 @@ namespace MB {
             if (typeof slot === "number") {
                 gl.activeTexture(gl.TEXTURE0 + slot);
             }
-            gl.bindTexture(this._target_, this._handle_);
+            gl.bindTexture(this._target, this._handler);
         }
         public unbind() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.bindTexture(this._target_, null);
+            gl.bindTexture(this._target, null);
         }
         /**
          * Destroy texture
          */
         public destroy() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.deleteTexture(this._handle_);
-            this._handle_ = null;
+            gl.deleteTexture(this._handler);
+            this._handler = null;
         }
         public preventNPOT() {
             /*this.wrap([
@@ -261,29 +261,26 @@ namespace MB {
                 ctes.WrapMode.Clamp2Edge
             ]);*/
         }
-        get target(): number { return this._target_; }
-
-
-        get handler(): WebGLTexture {
-            return this._handle_;
+        get target(): number { 
+            return this._target;
         };
-
+        get handler(): WebGLTexture {
+            return this._handler;
+        };
         public resize(size: Vect2) {
             // Nothing to do here
-        }
-
+        };
         public setLOD(minLOD: number, maxLOD: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             if (gl instanceof WebGL2RenderingContext) {
-                this._minLOD_ = minLOD;
-                this._maxLOD_ = maxLOD;
-                gl.texParameterf(this._target_, gl.TEXTURE_MIN_LOD, this._minLOD_);
-                gl.texParameterf(this._target_, gl.TEXTURE_MAX_LOD, this._maxLOD_);
+                this._minLOD = minLOD;
+                this._maxLOD = maxLOD;
+                gl.texParameterf(this._target, gl.TEXTURE_MIN_LOD, this._minLOD);
+                gl.texParameterf(this._target, gl.TEXTURE_MAX_LOD, this._maxLOD);
             } else {
                 console.log("TEXTURE LOD isn´t supported");
             }
-        }
-
+        };
         // TODO: Move to abstract methods
         public getWidth(): number { return -1; }
         public getHeight(): number { return -1; }

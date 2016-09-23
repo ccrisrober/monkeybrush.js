@@ -25,10 +25,10 @@ namespace MB {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             super(size, format, attachment);
 
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
             gl.renderbufferStorage(gl.RENDERBUFFER, this._format, this._size.x, this._size.y);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, this._attachment,
-                gl.RENDERBUFFER, this._handle);
+                gl.RENDERBUFFER, this._handler);
             gl.bindRenderbuffer(gl.RENDERBUFFER, null);
         };
         /**

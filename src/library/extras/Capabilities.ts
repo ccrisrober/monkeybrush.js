@@ -97,18 +97,20 @@ namespace MB {
             }
             return _capabilities["maxColorAttachments"];
         };
+        declare var WebGL2RenderingContext: any;
+        export function isTextureFloat(): boolean {
+            const gl = Core.getInstance().getGL();
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            } else {
+                return !!Extensions.get("OES_texture_float");
+            }
+        };
         /**
         TODO
         var logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true
             && !! extensions.get('EXT_frag_depth');
-        var maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
-        var maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
-        var maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
-        var maxFragmentUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
 
-        var vertexTextures = maxVertexTextures > 0;
-        var floatFragmentTextures = !! extensions.get('OES_texture_float');
-        var floatVertexTextures = vertexTextures && floatFragmentTextures;
 
         MAX_COMBINED_TEXTURE_IMAGE_UNITS
         MAX_VERTEX_TEXTURE_IMAGE_UNITS

@@ -35,11 +35,11 @@ namespace MB {
             this.bind();
 
             gl.texImage2D(
-                this._target_,
-                this._level_, // Level of details
-                this._internalformat_, // Internal format
-                this._format_, // Format
-                this._type_, // Size of each channel
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
                 data
             );
 
@@ -47,10 +47,8 @@ namespace MB {
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
                 options.wrapT || MB.ctes.WrapMode.Clamp2Edge
             ]);
-
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);

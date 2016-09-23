@@ -79,40 +79,40 @@ namespace MB {
             gl.bindTexture(gl.TEXTURE_3D, null);*/
 
             if (this._offsets_ && this._offsets_.length === 3) {
-                if (this._compressed_) {
+                if (this._compressed) {
                     gl.compressedTexSubImage3D(
-                        this._target_,
-                        this._level_,
+                        this._target,
+                        this._level,
                         this._offsets_[0],
                         this._offsets_[1],
                         this._offsets_[2],
                         size.x,
                         size.y,
                         size.z,
-                        this._format_,
+                        this._format,
                         data
                    );
                 } else {
                     gl.texSubImage3D(
-                        this._target_,
-                        this._level_,
+                        this._target,
+                        this._level,
                         this._offsets_[0],
                         this._offsets_[1],
                         this._offsets_[2],
                         size.x,
                         size.y,
                         size.z,
-                        this._format_,
-                        this._type_,
+                        this._format,
+                        this._type,
                         data
                    );
                 }
             } else {
-                if (this._compressed_) {
+                if (this._compressed) {
                     gl.compressedTexImage3D(
-                        this._target_,
-                        this._level_,
-                        this._format_,
+                        this._target,
+                        this._level,
+                        this._format,
                         size.x,
                         size.y,
                         size.z,
@@ -121,15 +121,15 @@ namespace MB {
                    );
                 } else {
                     gl.texImage3D(
-                        this._target_,
-                        this._level_,
-                        this._internalformat_,
+                        this._target,
+                        this._level,
+                        this._internalformat,
                         size.x,
                         size.y,
                         size.z,
                         0,
-                        this._format_,
-                        this._type_,
+                        this._format,
+                        this._type,
                         data
                    );
                 }
@@ -141,10 +141,8 @@ namespace MB {
                 options.wrapR || MB.ctes.WrapMode.Clamp2Edge
             ]);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
-
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
+            
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
             if (onSuccess) {

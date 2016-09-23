@@ -32,31 +32,31 @@ namespace MB {
      */
     export class TransformFeedback {
         /**
-         * TransformFeedback object handler
+         * TransformFeedback object handler.
          * @type {WebGLTransformFeedback}
          */
-        protected _handle: WebGLTransformFeedback;
+        protected _handler: WebGLTransformFeedback;
         /**
-         * Create and initializes a TransformFeedback object
+         * Create and initializes a TransformFeedback object.
          */
         constructor() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            this._handle = gl.createTransformFeedback();
+            this._handler = gl.createTransformFeedback();
         };
         /**
          * Delete TransformFeedback object.
          */
         public destroy() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.deleteTransformFeedback(this._handle);
-            this._handle = null;
+            gl.deleteTransformFeedback(this._handler);
+            this._handler = null;
         };
         /**
          * Bind this TransformFeedback object to current GL state.
          */
         public bind() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.bindTransformFeedback(MB.ctes.TFTarget.TransformFeedback, this._handle);
+            gl.bindTransformFeedback(MB.ctes.TFTarget.TransformFeedback, this._handler);
         };
         /**
          * Unbind this TransformFeedback object to current GL state.
@@ -114,12 +114,12 @@ namespace MB {
         };
         /**
          * Specifies values to record in TransformFeedback buffers.
-         * @param {Program}       program    [description]
+         * @param {Program}       program    Program targe object.
          * @param {Array<string>} varyings   [description]
-         * @param {MB.ctes.TFMode}        bufferMode [description]
+         * @param {ctes.TFMode}        bufferMode [description]
          */
         public static varyings(program: Program, varyings: Array<string>,
-            bufferMode: MB.ctes.TFMode) {
+            bufferMode: ctes.TFMode) {
 
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.transformFeedbackVaryings(program.id(), varyings, bufferMode);
@@ -146,9 +146,25 @@ namespace MB {
          */
         public isValid(): boolean {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            return gl.isTransformFeedback(this._handle);
+            return gl.isTransformFeedback(this._handler);
+        };
+        /**
+         * Returns current data from transform feedback buffer.
+         * @param  {number}         numElems [description]
+         * @return {Float32Array}         [description]
+         */
+        // TODO: Improve in Point_TF demo
+        public extractData(numElems: number): Float32Array {
+            let arrBuffer = new ArrayBuffer(numElems * Float32Array.BYTES_PER_ELEMENT);
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            gl.getBufferSubData(gl.TRANSFORM_FEEDBACK_BUFFER, 0, arrBuffer);
+            return new Float32Array(arrBuffer);
         };
     };
+    /**
+     * Contains type and name attributes for transform feedback.
+     * @interface VaryingInfo
+     */
     export interface VaryingInfo {
         name: string;
         type: string;

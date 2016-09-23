@@ -51,7 +51,7 @@ namespace MB {
             this._shaders = [];
             this._isLinked = false;
         };
-        private _compiledShader: WebGLProgram;
+        private _handler: WebGLProgram;
         private _shaders: Array<WebGLShader>;
         private _isLinked: boolean;
 
@@ -84,7 +84,7 @@ namespace MB {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             for (let attr in attrs) {
                 attr = attrs[attr];
-                const attrID = gl.getAttribLocation(this._compiledShader, attr);
+                const attrID = gl.getAttribLocation(this._handler, attr);
                 if (attrID < 0) {
                     console.error(attr + " undefined");
                     continue;
@@ -107,7 +107,7 @@ namespace MB {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             for (let unif in unifs) {
                 unif = unifs[unif];
-                const unifID: WebGLUniformLocation = gl.getUniformLocation(this._compiledShader, unif);
+                const unifID: WebGLUniformLocation = gl.getUniformLocation(this._handler, unif);
                 if (unifID < 0) {
                     console.error(unif + " undefined");
                     continue;
@@ -120,7 +120,7 @@ namespace MB {
          * @return {WebGLProgram} [description]
          */
         public id(): WebGLProgram {
-            return this._compiledShader;
+            return this._handler;
         };
         /**
          * Attach a new shader to this program.
@@ -148,9 +148,9 @@ namespace MB {
         public _compile() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             // Create and compile shader
-            this._compiledShader = gl.createProgram();
+            this._handler = gl.createProgram();
             for (let i = 0; i < this._shaders.length; ++i) {
-                gl.attachShader(this._compiledShader, this._shaders[i]);
+                gl.attachShader(this._handler, this._shaders[i]);
             }
         };
         /**
@@ -159,12 +159,12 @@ namespace MB {
          */
         public _link(): boolean {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.linkProgram(this._compiledShader);
+            gl.linkProgram(this._handler);
 
             // Checkin errors
-            if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
+            if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._compiledShader));
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
                 console.log({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
@@ -181,16 +181,16 @@ namespace MB {
         public compile(): boolean {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             // Create and compile shader
-            this._compiledShader = gl.createProgram();
+            this._handler = gl.createProgram();
             for (let i = 0; i < this._shaders.length; ++i) {
-                gl.attachShader(this._compiledShader, this._shaders[i]);
+                gl.attachShader(this._handler, this._shaders[i]);
             }
-            gl.linkProgram(this._compiledShader);
+            gl.linkProgram(this._handler);
 
             // Checkin errors
-            if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
+            if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._compiledShader));
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
                 console.log({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
@@ -297,7 +297,7 @@ namespace MB {
          */
         public use() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.useProgram(this._compiledShader);
+            gl.useProgram(this._handler);
         };
         /**
          * Destroy program.
@@ -307,7 +307,7 @@ namespace MB {
             this._shaders.forEach((shader) => {
                 gl.detachShader(this.compileShader, shader);
             });
-            gl.deleteShader(this._compiledShader);
+            gl.deleteShader(this._handler);
         };
         /**
          * Send uniform float value.
@@ -542,10 +542,10 @@ namespace MB {
             };
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             console.log("UNIFORMS");
-            const numUniforms = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_UNIFORMS);
+            const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
             let result = [];
             for (let i = 0; i < numUniforms; ++i) {
-                const info = gl.getActiveUniform(this._compiledShader, i);
+                const info = gl.getActiveUniform(this._handler, i);
                 console.log(info);
                 const type = Program.getType(gl, info.type);
                 if (info.size > 1) {
@@ -566,10 +566,10 @@ namespace MB {
             }
             console.log(ret.uniforms);
             console.log("ATTRIBUTES");
-            const numAttributes = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_ATTRIBUTES);
+            const numAttributes = gl.getProgramParameter(this._handler, gl.ACTIVE_ATTRIBUTES);
             result = [];
             for (let i = 0; i < numAttributes; ++i) {
-                const info = gl.getActiveAttrib(this._compiledShader, i);
+                const info = gl.getActiveAttrib(this._handler, i);
                 if (info) {
                     ret.attributes.push({
                         name: info.name,

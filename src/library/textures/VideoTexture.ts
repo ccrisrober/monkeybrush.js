@@ -53,9 +53,7 @@ namespace MBX {
 
             // this.wrap([MB.ctes.TextureFilter.Linear, MB.ctes.TextureFilter.Clamp2Edge]);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
@@ -77,11 +75,11 @@ namespace MBX {
             this.bind();
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             gl.texImage2D(
-                this._target_,
-                this._level_, // Level of details
-                this._internalformat_, // Internal format
-                this._format_, // Format
-                this._type_, // Size of each channel
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
                 this._video
            );
             gl.generateMipmap(gl.TEXTURE_2D);

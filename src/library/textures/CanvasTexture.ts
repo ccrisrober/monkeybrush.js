@@ -46,11 +46,11 @@ namespace MBX {
             this._domCanvas = domCanvas;
 
             gl.texImage2D(
-                this._target_,
-                this._level_,
-                this._internalformat_,
-                this._format_,
-                this._type_,
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
                 this._domCanvas
             );
 
@@ -59,9 +59,7 @@ namespace MBX {
                 options.wrapT || MB.ctes.WrapMode.Clamp2Edge
             ]);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
@@ -77,11 +75,11 @@ namespace MBX {
             this.bind();
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             gl.texImage2D(
-                this._target_,
-                this._level_,
-                this._internalformat_,
-                this._format_,
-                this._type_,
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
                 this._domCanvas
            );
             this.unbind();

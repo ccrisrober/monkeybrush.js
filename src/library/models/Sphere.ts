@@ -25,6 +25,9 @@ namespace MB {
      * @class Sphere
      */
     export class Sphere extends Drawable {
+        protected _radius: number;
+        protected _slices: number;
+        protected _stacks: number;
         /**
          * Sphere constructor
          * @param {number} radius [description]
@@ -33,6 +36,10 @@ namespace MB {
          */
         constructor(radius: number, slices: number, stacks: number) {
             super();
+
+            this._radius = radius;
+            this._slices = slices;
+            this._stacks = stacks;
 
             slices = Math["trunc"](slices);
             stacks = Math["trunc"](stacks);

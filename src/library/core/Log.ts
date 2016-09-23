@@ -20,7 +20,6 @@
 "use strict";
 /// <reference path="../../typings/log4javascript.d.ts" />
 
-
 namespace MB {
     /**
     * This class wraps a logger

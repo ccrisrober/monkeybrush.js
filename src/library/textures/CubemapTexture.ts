@@ -62,13 +62,13 @@ namespace MB {
          */
         public finishTex() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.texParameteri(this._target_, gl.TEXTURE_MAG_FILTER, MB.ctes.TextureFilter.Linear);
-            gl.texParameteri(this._target_, gl.TEXTURE_MIN_FILTER, MB.ctes.TextureFilter.Linear);
-            gl.texParameteri(this._target_, gl.TEXTURE_WRAP_S, MB.ctes.WrapMode.Clamp2Edge);
-            gl.texParameteri(this._target_, gl.TEXTURE_WRAP_T, MB.ctes.WrapMode.Clamp2Edge);
+            gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, MB.ctes.WrapMode.Clamp2Edge);
+            gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, MB.ctes.WrapMode.Clamp2Edge);
 
             if (gl.TEXTURE_WRAP_R) {
-                gl.texParameteri(this._target_, gl.TEXTURE_WRAP_R, MB.ctes.WrapMode.Clamp2Edge);
+                gl.texParameteri(this._target, gl.TEXTURE_WRAP_R, MB.ctes.WrapMode.Clamp2Edge);
             }
 
             this._finished = true;
