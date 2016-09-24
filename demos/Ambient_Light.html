@@ -46,17 +46,11 @@
                 this.cubito = new MB.Cube(15.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
-                    if (_this._webglVersion === 2) {
-                        prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                        prog.addShader("../shaders/demoShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    }
-                    else {
-                        prog.addShader("../shaders/demowebgl1.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                        prog.addShader("../shaders/demowebgl1.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    }
+                    prog.addShader("../shaders/passLight.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/ambiental.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model"]);
+                    prog.addUniforms(["projection", "view", "model", "lightPosition"]);
                     return prog;
                 });
                 this.cameraUpdate();
@@ -78,6 +72,7 @@
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
+                prog.sendUniform3f("lightPosition", 1.2, 1.0, 2.0);
                 this.cubito.render();
             };
             MyScene.prototype.cameraUpdate = function () {

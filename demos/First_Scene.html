@@ -46,17 +46,13 @@
                 this.cubito = new MB.Cube(1.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
-                    if (_this._webglVersion === 2) {
-                        prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                        prog.addShader("../shaders/demoShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    }
-                    else {
-                        prog.addShader("../shaders/demowebgl1.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                        prog.addShader("../shaders/demowebgl1.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    }
+                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/simpleDiffuse.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model"]);
+                    prog.addUniforms(["projection", "view", "model", "viewPos", "color"]);
+
+                    prog.sendUniform3f("color", 1.0, 1.0, 1.0);
                     return prog;
                 });
 

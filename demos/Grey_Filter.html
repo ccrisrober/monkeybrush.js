@@ -25,8 +25,8 @@
         };
         var SimpleConfig = function () {
             return {
-                resume: true/*,
-                twirl: 5.0*/
+                resume: true,
+                amount: 0.5
             };
         };
         var MyScene = (function (_super) {
@@ -56,7 +56,7 @@
                     prog.addShader("../shaders/greyFilter.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex"]);
+                    prog.addUniforms(["tex", "amount"]);
                     console.log(prog);
                     return prog;
                 });
@@ -70,6 +70,7 @@
                 prog.use();
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
+                prog.sendUniform1f("amount", this.text.amount);
 
                 MB.PostProcess.render();
                 this.text.render = false;
@@ -77,7 +78,7 @@
             MyScene.prototype.cameraUpdate = function () {
             };
             MyScene.prototype.textCB = function (gui) {
-                // gui.add(this.text, "twirl", -10, 10);
+                gui.add(this.text, "amount", 0.0, 1.0);
             };
             return MyScene;
         }(MB.App));

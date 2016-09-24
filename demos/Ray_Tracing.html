@@ -43,7 +43,7 @@
                     prog.addShader("../shaders/rayTracing.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["iGlobalTime"]);
+                    prog.addUniforms(["iGlobalTime", "iResolution"]);
                     console.log(prog);
                     return prog;
                 });
@@ -56,6 +56,8 @@
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniform1f("iGlobalTime", dt);
+                var canvas = MB.Core.getInstance().canvas();
+                prog.sendUniform2f("iResolution", canvas.width, canvas.height);
                 MB.PostProcess.render();
             };
             MyScene.prototype.cameraUpdate = function () {

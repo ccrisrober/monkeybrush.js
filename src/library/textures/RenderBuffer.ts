@@ -73,7 +73,7 @@ namespace MB {
          */
         public destroy() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.deleteTexture(this._handler);
+            gl.deleteRenderbuffer(this._handler);
         };
         public abstract resize(size: MB.Vect2);
     };

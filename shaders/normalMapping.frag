@@ -4,7 +4,7 @@ precision highp float;
 in vec3 outPosition;
 in vec3 outNormal;
 in vec2 outUV;
-in vec3 lp;
+uniform vec3 lightPosition;
 
 out vec4 fragColor;
 
@@ -20,7 +20,7 @@ void main() {
 
     // Diffuse
     vec3 norm = normalize(outNormal);
-    vec3 lightDir = normalize(lp - outPosition);
+    vec3 lightDir = normalize(lightPosition - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = vec3(0.5) * diff;
 
@@ -31,7 +31,7 @@ void main() {
     vec3 specular = vec3(spec);
 
     // Attenuation
-    float dst    = length(lp - outPosition);
+    float dst    = length(lightPosition - outPosition);
     float attenuation = 1.0f / (1.0 + 0.09 * dst + 0.032 * (dst * dst));
 
     ambient  *= attenuation;

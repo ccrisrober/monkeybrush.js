@@ -13,8 +13,6 @@ out vec3 lp;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
-uniform vec3 lightPosition;
-
 
 uniform float Time;
 const float Freq = 2.5;
@@ -35,12 +33,10 @@ void main() {
     n.xy = normalize(vec2(cos( u ), 1.0));
 
     vec4 pp = model * vec4(pos, 1.0);
-    pp = view * pp;
     outPosition = pp.xyz;
     outUV = uv;
     outNormal = normalize(normalMatrix * n);
-    gl_Position = projection * pp;
+    gl_Position = projection * view * pp;
 
     gl_PointSize = 5.0;
-    lp = (view * model * vec4(lightPosition, 1.0)).rgb;
 }

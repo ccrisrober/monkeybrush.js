@@ -275,6 +275,24 @@ namespace MB {
 
             return this.compileShader(shaderSource, shaderType);
         };
+
+        // TODO: HARCODED
+        public _cache = {
+            "msg": "// MESSAGE\n"
+        };
+        public _parse(str) {
+            const regex = /#import +<([\w\d.]+)>/g;
+            function replace(match, include) {
+                console.log(include);
+                const replace = this._cache[include]; // Acceso al fichero de turno;
+                if (replace === undefined) {
+                    throw new Error("Can not resolve #import <" + include + ">");
+                }
+                return this._parse(replace);
+            }
+            return str.replace(regex, replace.bind(this));
+        }
+
         /**
          * Compile shader from shader source.
          * @param {string} shaderSource Raw shader code.
@@ -283,6 +301,8 @@ namespace MB {
         private compileShader(shaderSource: string, shaderType: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             let compiledShader: WebGLShader;
+            
+            shaderSource = this._parse(shaderSource);
 
             if (shaderType === gl.VERTEX_SHADER) {
                 this._vertexSource = shaderSource;

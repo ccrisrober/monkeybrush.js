@@ -4,9 +4,9 @@ precision highp float;
 in vec3 outPosition;
 in vec3 outNormal;
 in vec2 outUV;
-in vec3 lp;
 
 uniform sampler2D noiseTex;
+uniform vec3 lightPosition;
 
 uniform vec3 viewPos;
 
@@ -27,7 +27,7 @@ void main()
 
     // Diffuse
     vec3 norm = normalize(outNormal);
-    vec3 lightDir = normalize(lp - outPosition);
+    vec3 lightDir = normalize(lightPosition - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = vec3(0.5) * diff;
 

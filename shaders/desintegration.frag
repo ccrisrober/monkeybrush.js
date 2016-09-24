@@ -4,11 +4,11 @@ precision highp float;
 in vec3 outPosition;
 in vec3 outNormal;
 in vec2 outUV;
-in vec3 lp;
 
 uniform sampler2D noiseTex;
 
 uniform vec3 viewPos;
+uniform vec3 lightPosition;
 
 layout ( location = 0 ) out vec4 fragColor;
 
@@ -34,7 +34,7 @@ void main()
 
     // Diffuse
     vec3 norm = normalize(outNormal);
-    vec3 lightDir = normalize(lp - outPosition);
+    vec3 lightDir = normalize(lightPosition - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = vec3(0.5) * diff;
 

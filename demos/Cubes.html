@@ -47,10 +47,11 @@
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/uvRender.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/simpleDiffuse.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model"]);
+                    prog.addUniforms(["projection", "view", "model", "viewPos", "color"]);
+                    prog.sendUniform3f("color", 0.5, 0.8, 0.1);
                     return prog;
                 });
                 this.cameraUpdate();
@@ -65,9 +66,9 @@
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
-
-                for (var yy = 0; yy < 11; ++yy) {
-                    for (var xx = 0; xx < 11; ++xx) {
+                var MAX = 25;
+                for (var yy = 0; yy < MAX; ++yy) {
+                    for (var xx = 0; xx < MAX; ++xx) {
                         this.model =
                             this.identityMatrix.clone()
                                 .translate(new MB.Vect3(
@@ -76,6 +77,7 @@
                                     0.0))
                                 .rotate(this.angle + xx * 0.21 + yy * 0.37, MB.Vect3.zAxis);
                         prog.sendUniformMat4("model", this.model);
+                        prog.sendUniform3f("color", xx/MAX, yy/MAX, 0.1);
                         this.cubito.render();
                     }
                 }

@@ -69,18 +69,18 @@ namespace MB {
                 speed = 2.5;
             }
 
-            if (MB.Input.isKeyPressed(MB.ctes.KeyState.Z)) {
-                if (this.fov > 30.0) {
+            /*if (MB.Input.isKeyClicked(MB.ctes.KeyState.Z)) {
+                if (this.fov > 30.0 && this.fov < 90.) {
                     this.fov -= 0.5;
                     this._updateCamera = true;
                 }
             }
-            if (MB.Input.isKeyPressed(MB.ctes.KeyState.X)) {
-                if (this.fov < 90.0) {
+            if (MB.Input.isKeyClicked(MB.ctes.KeyState.X)) {
+                if (this.fov > 30.0 && this.fov < 90.) {
                     this.fov += 0.5;
                     this._updateCamera = true;
                 }
-            }
+            }*/
 
             if (MB.Input.isKeyPressed(MB.ctes.KeyState.W)) {
                 this.processKeyboard(4, speed);

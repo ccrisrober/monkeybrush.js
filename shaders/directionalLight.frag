@@ -5,33 +5,24 @@ in vec3 outPosition;
 in vec3 outNormal;
 in vec2 outUV;
 
-uniform sampler2D noiseTex;
-uniform vec3 lightPosition;
+out vec4 fragColor;
+
+uniform sampler2D tex;
 
 uniform vec3 viewPos;
 
-layout ( location = 0 ) out vec4 fragColor;
+uniform vec3 lightDirection;
 
-uniform float Threshold;
-
-void main()
-{
-    vec4 noise = texture(noiseTex, outUV);
-
-    if (noise.a < Threshold) discard;
-
-    vec3 color = vec3(1.0, 0.8, 0.0);
-
-    if (!gl_FrontFacing) {
-        color = vec3(0.0, 0.3, 1.0);
-    }
-
-    // Ambient
-    vec3 ambient = vec3(0.5);
+void main() {
+    vec3 color = vec3(0.0, 1.0, 0.0);
+    vec3 lightColor = vec3(1.0, 0.0, 0.0);
+    
+    float ambientStrength = 0.5f;
+    vec3 ambient = ambientStrength * lightColor;
 
     // Diffuse
     vec3 norm = normalize(outNormal);
-    vec3 lightDir = normalize(lightPosition - outPosition);
+    vec3 lightDir = normalize(-lightDirection);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = vec3(0.5) * diff;
 
