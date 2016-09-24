@@ -47,9 +47,9 @@ void main() {
     float dst    = length(lp - outPosition);
     float attenuation = 1.0f / (1.0 + 0.09 * dst + 0.032 * (dst * dst));
 
-    ambient  *= attenuation;
-    diffuse  *= attenuation;
-    specular *= attenuation;
+    //ambient  *= attenuation;
+    //diffuse  *= attenuation;
+    //specular *= attenuation;
 
     fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
 

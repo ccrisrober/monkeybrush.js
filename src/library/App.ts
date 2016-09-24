@@ -83,6 +83,7 @@ namespace MB {
 
             this._stats = new Stats();
             this._stats.setMode(0);
+            this._stats.domElement.style.top = "24px";
             document.body.appendChild(this._stats.domElement);
 
             this.loadAssets();

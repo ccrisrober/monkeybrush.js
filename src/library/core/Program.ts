@@ -51,10 +51,21 @@ namespace MB {
             this._shaders = [];
             this._isLinked = false;
         };
+        /**
+         * Program internal handler.
+         * @type {WebGLProgram}
+         */
         private _handler: WebGLProgram;
+        /**
+         * Shaders vector.
+         * @type {Array<WebGLShader>}
+         */
         private _shaders: Array<WebGLShader>;
+        /**
+         * Program status.
+         * @type {boolean}
+         */
         private _isLinked: boolean;
-
         /**
          * Vertex shader raw code.
          * @type {string}
@@ -65,10 +76,16 @@ namespace MB {
          * @type {string}
          */
         public _fragmentSource: string;
-
+        /**
+         * Program cacheable uniforms
+         * @type { [key: string]: WebGLUniformLocation; }
+         */
         public uniformLocations: { [key: string]: WebGLUniformLocation; } = {};
+        /**
+         * Program cacheable attributes
+         * @type { [key: string]: number; }
+         */
         public attribLocations: { [key: string]: number; } = {};
-
         /**
          * Caches a list of attributes using varying arguments
          * @param {string[]} ...attrs Attributes names
@@ -531,6 +548,34 @@ namespace MB {
             }
             return Program.GL_TABLE[type];
         };
+        /**
+         * Autocatching all actives uniforms and attributes for program.
+         */
+        public autocatching() {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
+            let unifs: Array<string> = [];
+            for (let i = 0; i < numUniforms; ++i) {
+                const info = gl.getActiveUniform(this._handler, i);
+                if (info.size > 1) {
+                    for (let j = 0; j < info.size; ++j) {
+                        unifs.push(info.name.replace("[0]", `[${j}]`));
+                    }
+                } else {
+                    unifs.push(info.name);
+                }
+            }
+            this.addUniforms(unifs);
+            const numAttributes = gl.getProgramParameter(this._handler, gl.ACTIVE_ATTRIBUTES);
+            let attrs: Array<string> = [];
+            for (let i = 0; i < numAttributes; ++i) {
+                const info = gl.getActiveAttrib(this._handler, i);
+                if (info) {
+                    attrs.push(info.name);
+                }
+            }
+            this.addAttributes(attrs);
+        }
         /**
          * Return a object that contains active attributes and uniforms in program.
          * @return {ICachedUnifAttr}

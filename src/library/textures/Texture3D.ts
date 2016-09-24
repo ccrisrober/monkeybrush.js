@@ -74,9 +74,8 @@ namespace MB {
             // TODO: FAILED TEX IF USED!! ]);
             gl.generateMipmap(gl.TEXTURE_3D);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
+
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
             if (onSuccess) {

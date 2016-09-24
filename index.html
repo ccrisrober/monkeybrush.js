@@ -14,8 +14,8 @@
   <style> html { font-family: "PT Serif", Georgia, serif; } :focus { outline-color: #A85641; } .font-accent { font-family: "Roboto Slab", "PT Serif", Georgia, serif; } .content a, .related-posts li a:hover { color: #A85641; } ::selection { color: #fff; background: #A85641; } ::-moz-selection { color: #fff; background: #A85641; } .sidebar { background-image: url('/hydejack/public/img/nap.jpg'); }</style>
 
   <!-- Icons -->
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://qwtel.com/hydejack/public/apple-touch-icon-144-precomposed.png">
-  <link rel="shortcut icon" href="http://qwtel.com/hydejack/public/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="./favicon.ico">
+  <link rel="shortcut icon" href="./favicon.ico">
   <!-- RSS -->
   <link rel="alternate" type="application/atom+xml" title="Hydejack" href="http://qwtel.com/hydejack/atom.xml">
 </head>
@@ -23,166 +23,100 @@
     <main class="content container">
       <article id="post-2016/03/08/introducing-hydejack" class="post">
         <h1 class="post-title">
-          <a href="/hydejack/2016/03/08/introducing-hydejack/">
+          <a href="./index.html">
             Introducing MonkeyBrush
           </a>
         </h1>
         <hr/>
-        <p>Hydejack is a pretentious two-column <a href="http://jekyllrb.com">Jekyll</a> theme, stolen by <a href="https://twitter.com/qwtel"><code class="highlighter-rouge">@qwtel</code></a> from <a href="http:/hyde.getpoole.com">Hyde</a>. You could say it was.. <a href="http://media3.giphy.com/media/makedRIckZBW8/giphy.gif">hydejacked</a>.</p>
-        <h2 id="features">Features</h2>
-        <p>Unlike Hyde, it’s very opinionated about how you are going to use it.</p>
+        <p>Developed by <a href="https://github.com/maldicion069" target="_blank"><code class="highlighter-rouge">@maldicion069</code></a>, MonkeyBrush is a <a href="https://www.typescriptlang.org/" target="_blank">Typescript</a> based library for creating scenes based on WebGL using OOP.</p>
+        <p>Because of its design, MonkeyBrush allows an almost native access to calls WebGL.</p>
         <p>Features include:</p>
         <ul>
           <li>OOP to WebGL2.</li>
           <li>It´s free!</li>
         </ul>
-
-        <h3 id="configuration">Configuration</h3>
-        <p>You can configure important aspects of the theme via <a href="https://github.com/qwtel/hydejack/blob/master/_config.yml"><code class="highlighter-rouge">_config.yml</code></a>. This includes:</p>
-
       </article>
-      <br/>
+      <hr/>
+      <article id="simple-scene" class="scene">
+        <h1>Simple scene</h1>
+        <div class="language-ts highlighter-rouge"><pre class="highlight"><code>
+let SimpleConfig = function() {
+  return {
+    resume: true
+  };
+};
 
-<!--<article id="post-2012/02/07/example-content" class="post">
-  <h1 class="post-title">
-  <a href="/hydejack/2012/02/07/example-content/">
-    Example content
-  </a>
-  </h1>
-    <p class="message">Howdy! This is an example blog post that shows several types of HTML content supported in this theme.</p>
+class MyScene extends MB.App {
+  protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
+  protected camera = new MB.Camera2(this.homePoint);
 
+  protected cubito: MB.Drawable;
+  protected view: MB.Mat4;
+  protected projection: MB.Mat4;
 
+  protected identityMatrix: MB.Mat4 = MB.Mat4.identity.clone();
+  protected model = new MB.Mat4();
+  protected angle = 0;
 
-  <hr/>
+  constructor() {
+    super(SimpleConfig(), "App", 2);
+  }
+  protected mainShader: string = "prog";
+  loadAssets() { }
+  initialize() {
+    this.cubito = new MB.models.Cube(15.0);
+    MB.resources.ProgramManager.addWithFun("prog", (): MB.Program => {
+      let prog: MB.Program = new MB.Program();
+      prog.addShader("shaders/demoShader.vert",
+          M.ctes.shader_type.vertex, MB.ctes.mode.read_file);
+      prog.addShader("shaders/demoShader.frag",
+          MB.ctes.shader_type.fragment, MB.ctes.mode.read_file);
+      prog.compile();
+      prog.use();
+      prog.addUniforms(["projection", "view", "model"]);
+      return prog;
+    });
+    this.cameraUpdate();
+  }
+  update(dt: number) {
+    this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+    this.camera.update(this.cameraUpdate.bind(this));
+    this.angle += MB.Timer.deltaTime() * 0.001;
+  }
+  draw(dt?: number) {
+    MB.Core.getInstance().clearColorAndDepth();
+    let prog = MB.ProgramManager.get(this.mainShader);
+    prog.use();
+    this.model =
+      this.identityMatrix.clone()
+        .translate(new MB.Vect3(i * 1.0, j * 1.0, k * 1.0))
+        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+        .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
+        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+    prog.sendUniformMat4("model", this.model);
+    this.cubito.render();
+    this.skybox.render(this.view, this.projection);
+  }
+  public pos = 0;
+  cameraUpdate() {
+    let canvas = MB.Core.getInstance().canvas();
+    this.view = this.camera.GetViewMatrix();
+    this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+    let prog = MB.resources.ProgramManager.get(this.mainShader);
+    prog.use();
+    prog.sendUniformVec3("viewPos", this.camera.GetPos());
+    prog.sendUniformMat4("projection", this.projection);
+    prog.sendUniformMat4("view", this.view);
+  }
+  textCB(gui: dat.GUI) { }
+};
 
-  <p>Cum sociis natoque penatibus et magnis <a href="#">dis parturient montes</a>, nascetur ridiculus mus. <em>Aenean eu leo quam.</em> Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet fermentum.</p>
-
-<blockquote>
-  <p>Curabitur blandit tempus porttitor. Nullam quis risus eget urna mollis ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-</blockquote>
-
-<p>Etiam porta <strong>sem malesuada magna</strong> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-
-<h2 id="inline-html-elements">Inline <abbr title="HyperText Markup Language">HTML</abbr> elements</h2>
-
-<p><abbr title="HyperText Markup Language">HTML</abbr> defines a long list of available inline tags, a complete list of which can be found on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">Mozilla Developer Network</a>.</p>
-
-<ul>
-  <li><strong>To bold text</strong>, use <code class="highlighter-rouge">**To bold text**</code>.</li>
-  <li><em>To italicize text</em>, use <code class="highlighter-rouge">*To italicize text*</code>.</li>
-  <li>Abbreviations, like <abbr title="HyperText Markup Language">HTML</abbr> should be defined like this <code class="highlighter-rouge">*[HTML]: HyperText Markup Language</code>.</li>
-  <li>Citations, like <cite>— Mark otto</cite>, should use <code class="highlighter-rouge">&lt;cite&gt;</code>.</li>
-  <li><del>Deleted</del> text should use <code class="highlighter-rouge">~~deleted~~</code> and <ins>inserted</ins> text should use <code class="highlighter-rouge">&lt;ins&gt;</code>.</li>
-  <li>Superscript <sup>text</sup> uses <code class="highlighter-rouge">&lt;sup&gt;</code> and subscript <sub>text</sub> uses <code class="highlighter-rouge">&lt;sub&gt;</code><sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>.</li>
-</ul>
-
-<p>Most of these elements are styled by browsers with few modifications on our part.</p>
-
-<h2 id="heading">Heading</h2>
-
-<p>Vivamus sagittis lacus vel augue rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-
-<h3 id="code">Code</h3>
-
-<p>Cum sociis natoque penatibus et magnis dis <code class="highlighter-rouge">code element</code> montes, nascetur ridiculus mus.</p>
-
-<div class="language-js highlighter-rouge"><pre class="highlight"><code><span class="c1">// Example can be run directly in your JavaScript console</span>
-
-<span class="c1">// Create a function that takes two arguments and returns the sum of those</span>
-<span class="c1">// arguments</span>
-<span class="kd">var</span> <span class="nx">adder</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"return a + b"</span><span class="p">);</span>
-
-<span class="c1">// Call the function</span>
-<span class="nx">adder</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
-<span class="c1">// &gt; 8</span>
-</code></pre>
-</div>
-
-<h3 id="lists">Lists</h3>
-
-<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-
-<ul>
-  <li>Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</li>
-  <li>Donec id elit non mi porta gravida at eget metus.</li>
-  <li>Nulla vitae elit libero, a pharetra augue.</li>
-</ul>
-
-<p>Donec ullamcorper nulla non metus auctor fringilla. Nulla vitae elit libero, a pharetra augue.</p>
-
-<ol>
-  <li>Vestibulum id ligula porta felis euismod semper.</li>
-  <li>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</li>
-  <li>Maecenas sed diam eget risus varius blandit sit amet non magna.</li>
-</ol>
-
-<p>Cras mattis consectetur purus sit amet fermentum. Sed posuere consectetur est at lobortis.</p>
-
-<dl>
-  <dt>HyperText Markup Language (<abbr title="HyperText Markup Language">HTML</abbr>)</dt>
-  <dd>The language used to describe and define the content of a Web page</dd>
-  <dt>Cascading Style Sheets (<abbr title="Cascading Style Sheets">CSS</abbr>)</dt>
-  <dd>Used to describe the appearance of Web content</dd>
-  <dt>JavaScript (<abbr title="JavaScript">JS</abbr>)</dt>
-  <dd>The programming language used to build advanced Web sites and applications</dd>
-</dl>
-
-<p>Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
-
-<h3 id="images">Images</h3>
-
-<p>Quisque consequat sapien eget quam rhoncus, sit amet laoreet diam tempus. Aliquam aliquam metus erat, a pulvinar turpis suscipit at.</p>
-
-<p><img src="http://placehold.it/800x400" alt="placeholder" title="Large example image" />
-<img src="http://placehold.it/400x200" alt="placeholder" title="Medium example image" />
-<img src="http://placehold.it/200x200" alt="placeholder" title="Small example image" />
-<img src="http://placehold.it/200x200" alt="placeholder" title="Small example image" />
-</p>
-
-<h3 id="tables">Tables</h3>
-
-<p>Aenean lacinia bibendum nulla sed consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Upvotes</th>
-      <th>Downvotes</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Alice</td>
-      <td>10</td>
-      <td>11</td>
-    </tr>
-    <tr>
-      <td>Bob</td>
-      <td>4</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <td>Charlie</td>
-      <td>7</td>
-      <td>9</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td>Totals</td>
-      <td>21</td>
-      <td>23</td>
-    </tr>
-  </tfoot>
-</table>
-</article>
-
-  <blockquote>
-    <p>Jekyll is a simple, blog aware, static site generator. It takes a template directory […] and spits out a complete, static website suitable for serving with Apache or your favorite web server. This is also the engine behind GitHub Pages, which you can use to host your project’s page or blog right here from GitHub.</p>
-  </blockquote>
-  <br/>
-  <br/>-->
+window.onload = () => {
+  new MyScene().start();
+};
+          </code></pre>
+          </div>
+      </article>
     </main>
 <div id="_backdrop" class="backdrop"></div>
 <a id="_menu" class="menu" href="#_sidebar">☰</a>
@@ -190,7 +124,7 @@
   <div class="container sidebar-sticky">
     <div class="sidebar-about">
       <h1 class="font-accent"><a href="./index.html">MonkeyBrush</a></h1>
-      <p>A pretentious two-column <a href="http://jekyllrb.com/">Jekyll</a> theme, stolen by <a href="https://twitter.com/qwtel"><code class="highlighter-rouge">@qwtel</code></a> from <a href="http:/hyde.getpoole.com">Hyde</a>. You could say it was.. <a href="http://media3.giphy.com/media/makedRIckZBW8/giphy.gif">hydejacked</a>.</p>
+      <p>Object oriented programming for WebGL2 applications.</p>
     </div>
     <nav class="sidebar-nav font-accent">
       <ul>
@@ -207,12 +141,6 @@
     </nav>
     <div class="sidebar-social" style="text-align: center">
     <a href="https://github.com/maldicion069/monkeybrush.js" target="_link"><span class="icon-github"></span></a>
-    <!--
-    <a href="https://facebook.com/<username>"><span class="icon-facebook"></span></a>
-    <a href="https://twitter.com/<username>"><span class="icon-twitter"></span></a>
-    <a href="https://plus.google.com/<number>"><span class="icon-google"></span></a>
-    <a href="https://vk.com/<username>"><span class="icon-vk"></span></a>
-    <a href="https://www.youtube.com/channel/<string>_<string>_<string>"><span class="icon-youtube"></span></a>-->
     </div>
   </div>
 </aside>

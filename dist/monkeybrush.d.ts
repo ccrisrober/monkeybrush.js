@@ -1678,29 +1678,26 @@ declare namespace MB {
 }
 
 declare namespace MB {
-    interface IApp {
-        title?: string;
-        webglVersion?: number;
-        loadAssets: () => void;
-        initialize: (app_: App) => void;
-        update: (app_: App, dt: number) => void;
-        draw: (app_: App, dt?: number) => void;
-        cameraUpdate: () => void;
-        textCB: (gui: dat.GUI) => void;
-    }
-    class App {
-        protected stats: Stats;
-        protected gui: dat.GUI;
-        protected cameraUpdateCb: any;
-        constructor(init: IApp, text: any);
+    abstract class App {
+        protected _stats: Stats;
+        protected _gui: dat.GUI;
+        protected _webglVersion: any;
+        protected text: any;
+        constructor(text: any, title?: string, webglVersion?: number);
         webglVersion(): number;
+        loadAssets(): void;
+        cameraUpdate(): void;
+        textCB(g: dat.GUI): void;
+        abstract initialize(): any;
+        abstract update(dt: number): any;
+        abstract draw(dt?: number): any;
         private __init__(text);
+        stats: Stats;
         start(): this;
         pause(): void;
         resume(): void;
         protected _resume: boolean;
         protected __resize__(): void;
-        protected _appFunctions: IApp;
     }
 }
 
@@ -1759,6 +1756,8 @@ declare namespace MB {
      * @class Polyhedron
      */
     abstract class Polyhedron extends Drawable {
+        protected _radius: number;
+        protected _subdivisions: number;
         /**
          * Polyhedron abstract constructor
          * @param {Array<number>} verts List of vertices
@@ -1776,6 +1775,13 @@ declare namespace MB {
      * @class Cone
      */
     class Cone extends Drawable {
+        protected _bottomRadius: number;
+        protected _topRadius: number;
+        protected _height: number;
+        protected _radialSubDiv: number;
+        protected _heightSubDiv: number;
+        protected _createTopBase: boolean;
+        protected _createBottomBase: boolean;
         /**
          * Cone constructor
          * @param {number} bottomRadius: Cone bottom radius
@@ -1792,38 +1798,144 @@ declare namespace MB {
 
 declare namespace MB {
     namespace ctes {
-        enum BlendingEq {
-            Add = 32774,
-            Substract = 32778,
-            RevSubstract = 32779,
-            Min = 32775,
-            Max = 32776,
+        /**
+         * WebGL constants to clear buffer masks.
+         */
+        enum ClearBuffer {
+            DepthBuffer = 256,
+            StencilBuffer = 1024,
+            ColorBuffer = 16384,
         }
+        /**
+         * WebGL constants primitives render modes
+         */
+        enum RenderMode {
+            Points = 0,
+            Lines = 1,
+            LineLoop = 2,
+            LineStrip = 3,
+            Triangles = 4,
+            TriangleStrip = 5,
+            TriangleFan = 6,
+        }
+        /**
+         * WebGL constants to specify blending mode
+         */
         enum BlendingMode {
-            None = 0,
-            Normal = 1,
-            Additive = 2,
-            Substractive = 3,
-            Multiply = 4,
-            Custom = 5,
-        }
-        enum BlendingType {
             Zero = 0,
             One = 1,
+            /**
+             * Multiply a component by the source elements color.
+             * @type {number}
+             */
             SrcColor = 768,
+            /**
+             * Multiply a component by one minus the source elements color.
+             * @type {number}
+             */
             OneMinusSrcColor = 769,
+            /**
+             * Multiply a component by the source's alpha.
+             * @type {number}
+             */
             SrcAlpha = 770,
+            /**
+             * Multiply a component by one minus the source's alpha.
+             * @type {number}
+             */
             OneMinusSrcAlpha = 771,
+            /**
+             * Multiply a component by the destination's alpha.
+             * @type {number}
+             */
             DstAlpha = 772,
+            /**
+             * Multiply a component by one minus the destination's alpha.
+             * @type {number}
+             */
             OneMinusDstAlpha = 773,
+            /**
+             * Multiply a component by the destination's color.
+             * @type {number}
+             */
             DstColor = 774,
+            /**
+             * Multiply a component by one minus the destination's color.
+             * @type {number}
+             */
             OneMinusDstColor = 775,
+            /**
+             * Multiply a component by the minimum of source's alpha or
+             *     one minus the destination's alpha.
+             * @type {number}
+             */
             SrcAlphaSaturate = 776,
+            /**
+             * Specify a constant color blend function.
+             * @type {number}
+             */
             CteColor = 32769,
+            /**
+             * Specify one minus a constant color blend function.
+             * @type {number}
+             */
             OneMinusCteColor = 32770,
+            /**
+             * Specify a constant alpha blend function.
+             * @type {number}
+             */
             CteAlpha = 32771,
+            /**
+             * Specify one minus a constant alpha blend function.
+             * @type {number}
+             */
             OneMinusCteAlpha = 32772,
         }
+        /**
+         * WebGL constants to control how the blending
+         *     is calculated (for both, RBG and alpha, or separately).
+         */
+        enum BlendingEq {
+            /**
+             * Set an addition blend function.
+             * @type {number}
+             */
+            Add = 32774,
+            /**
+             * Specify a subtraction blend function (source - destination).
+             * @type {number}
+             */
+            Substract = 32778,
+            /**
+             * Specify a reverse subtraction blend function (destination - source).
+             * @type {number}
+             */
+            RevSubstract = 32779,
+            /**
+             * Produces the minimum color components of the source and destination colors.
+             * @type {number}
+             */
+            Min = 32775,
+            /**
+             * Produces the maximum color components of the source and destination colors.
+             * @type {number}
+             */
+            Max = 32776,
+        }
+        /**
+         * WebGL constants to specify what information to return.
+         * Example: gl.getParameter(ctes.GLParameters.BlendEq)
+         */
+        enum GLParameters {
+            /**
+             * Get the current RGB blend function.
+             * @type {number}
+             */
+            BlendEq = 32777,
+        }
+        /**
+         * WebGL constants used with buffer management.
+         */
         enum BufferType {
             Array = 34962,
             ElementArray = 34963,
@@ -1834,6 +1946,141 @@ declare namespace MB {
             CopyRead = 36662,
             CopyWrite = 36663,
         }
+        enum FaceSide {
+            /**
+             * Cull front-facing primitives.
+             */
+            Front = 1028,
+            /**
+             * Cull back-facing primitives.
+             */
+            Back = 1029,
+            /**
+             * Cull Front and back-facing primitives.
+             */
+            FrontAndBack = 1032,
+        }
+        /**
+         * WebGL constants used by enable and disable capabilites for context.
+         * Example: gl.getParameter(ctes.GLParameters.BlendEq)
+         */
+        enum GLStates {
+            Blend = 3042,
+            DepthTest = 2929,
+            Dither = 3024,
+            PolygonOffsetFill = 32823,
+            SAMPLE_ALPHA_TO_COVERAGE = 32926,
+            SAMPLE_COVERAGE = 32928,
+            ScissorTest = 3089,
+            StencilTest = 2960,
+        }
+        /**
+         * WebGL constants returned by gl.getError() method.
+         */
+        enum GLErrors {
+            NO_ERROR = 0,
+            INVALID_ENUM = 1280,
+            INVALID_VALUE = 1281,
+            INVALID_OPERATION = 1282,
+            OUT_OF_MEMORY = 1285,
+            CONTEXT_LOST_WEBGL = 37442,
+        }
+        /**
+         * WebGL constants to specify front face direction.
+         */
+        enum FaceDir {
+            Clockwise = 2304,
+            InvClockwise = 2305,
+        }
+        /**
+         * WebGL constants to specify data type.
+         */
+        enum DataType {
+            UnsignedByte = 5121,
+            Byte = 5120,
+            Short = 5122,
+            UnsignedShort = 5123,
+            Int = 5124,
+            UnsignedInt = 5125,
+            Float = 5126,
+            HalfFloat = 5131,
+        }
+        /**
+         * WebGL constants to specify pixel format.
+         */
+        enum PixelFormat {
+            DepthComponent = 6402,
+            Alpha = 6406,
+            RGB = 6407,
+            RGBA = 6408,
+            Luminance = 6409,
+            LuminanceAlpha = 6410,
+            UNSIGNED_INT_2_10_10_10_REV = 33640,
+            UNSIGNED_INT_10F_11F_11F_REV = 35899,
+            UNSIGNED_INT_5_9_9_9_REV = 35902,
+            FLOAT_32_UNSIGNED_INT_24_8_REV = 36269,
+            UNSIGNED_INT_24_8 = 34042,
+            HALF_FLOAT = 5131,
+            RG = 33319,
+            RG_INTEGER = 33320,
+            INT_2_10_10_10_REV = 36255,
+            RED = 6403,
+            RGB8 = 32849,
+            RGBA8 = 32856,
+            RGB9_E5 = 35901,
+            RGBA32UI = 36208,
+            RGB32UI = 36209,
+            RGBA16UI = 36214,
+            RGB16UI = 36215,
+            RGBA8UI = 36220,
+            RGB8UI = 36221,
+            RGBA32I = 36226,
+            RGB32I = 36227,
+            RGBA16I = 36232,
+            RGB16I = 36233,
+            RGBA8I = 36238,
+            RGB8I = 36239,
+            RED_INTEGER = 36244,
+            RGB_INTEGER = 36248,
+            RGBA_INTEGER = 36249,
+            R8 = 33321,
+            RG8 = 33323,
+            R16F = 33325,
+            R32F = 33326,
+            RG16F = 33327,
+            RG32F = 33328,
+            R8I = 33329,
+            R8UI = 33330,
+            R16I = 33331,
+            R16UI = 33332,
+            R32I = 33333,
+            R32UI = 33334,
+            RG8I = 33335,
+            RG8UI = 33336,
+            RG16I = 33337,
+            RG16UI = 33338,
+            RG32I = 33339,
+            RG32UI = 33340,
+            R8_SNORM = 36756,
+        }
+        /**
+         * WebGL constants to specify shader type.
+         */
+        enum ShaderType {
+            vertex = 35633,
+            fragment = 35632,
+        }
+        /**
+         * WebGL constants to specify read mode.
+         */
+        enum ReadMode {
+            read_file = 0,
+            read_script = 1,
+            read_text = 2,
+        }
+        /**
+         * WebGL constants used by depth and stencil tests.
+         */
         enum ComparisonFunc {
             /**
              * Comparison always fails.
@@ -1868,27 +2115,42 @@ declare namespace MB {
              */
             Always = 519,
         }
-        enum CompressedTex {
-            R11EAC = 37488,
-            SignedR11EAC = 37489,
-            RG11EAC = 37490,
-            SignedRG11EAC = 37491,
-            RGB8ETC2 = 37492,
-            SRGB8ETC2 = 37493,
-            RGB8PunchAlphaETC2 = 37494,
-            SRGB8PunchAlphaETC = 37495,
-            RGBA8ETC2EAC = 37496,
-            SRGBA8ETC2EAC = 37497,
-        }
-        enum DataType {
-            UnsignedByte = 5121,
-            Byte = 5120,
-            Short = 5122,
-            UnsignedShort = 5123,
-            Int = 5124,
-            UnsignedInt = 5125,
-            Float = 5126,
-            HalfFloat = 5131,
+        /**
+         * WebGL constants used by stencil operations.
+         */
+        enum StencilOp {
+            /**
+             * Keep the stencil value.
+             */
+            Keep = 7680,
+            /**
+             * Set the stencil value to zero.
+             */
+            Zero = 0,
+            /**
+             * Replace the stencil value with the reference value.
+             */
+            Replace = 7681,
+            /**
+             * Increase the stencil value by one, wrap if necessary.
+             */
+            Increase = 7682,
+            /**
+             * Increase the stencil value by one, clamp if necessary.
+             */
+            IncreaseSaturate = 34055,
+            /**
+             * Decrease the stencil value by one, wrap if necessary.
+             */
+            Decrease = 7683,
+            /**
+             * Decrease the stencil value by one, clamp if necessary.
+             */
+            DecreaseSaturate = 34056,
+            /**
+             * Invert the stencil data (bitwise not).
+             */
+            Invert = 5386,
         }
         enum DrawBuffer {
             MaxDrawBuffers = 34852,
@@ -1926,42 +2188,6 @@ declare namespace MB {
             ColorAttach14 = 36078,
             ColorAttach15 = 36079,
         }
-        enum FaceDir {
-            Clockwise = 2304,
-            InvClockwise = 2305,
-        }
-        enum FaceSide {
-            /**
-             * Cull front-facing primitives.
-             */
-            Front = 1028,
-            /**
-             * Cull back-facing primitives.
-             */
-            Back = 1029,
-            /**
-             * Cull Front and back-facing primitives.
-             */
-            FrontAndBack = 1032,
-        }
-        enum PixelType {
-            Byte = 5120,
-            UByte = 5121,
-            Short = 5122,
-            UShort = 5123,
-            Int = 5124,
-            UInt = 5125,
-            Float = 5126,
-        }
-        enum ShaderType {
-            vertex = 35633,
-            fragment = 35632,
-        }
-        enum ReadMode {
-            read_file = 0,
-            read_script = 1,
-            read_text = 2,
-        }
         enum QueryParams {
             QueryResult = 34918,
             QueryResultAvailable = 34919,
@@ -1982,15 +2208,6 @@ declare namespace MB {
              */
             TransformFeedbackPrimitivesWritten = 35976,
         }
-        enum RenderType {
-            Points = 0,
-            Lines = 1,
-            LineLoop = 2,
-            LineStrip = 3,
-            Triangles = 4,
-            TriangleStrip = 5,
-            TriangleFan = 6,
-        }
         enum SamplerParameter {
             TextureCompareFunc = 34893,
             TextureCompareMode = 34892,
@@ -2001,45 +2218,6 @@ declare namespace MB {
             TextureWrapR = 32882,
             TextureWrapS = 10242,
             TextureWrapT = 10243,
-        }
-        enum ShadingMode {
-            None = 0,
-            Smooth = 1,
-            Flat = 2,
-        }
-        enum StencilOp {
-            /**
-             * Keep the stencil value.
-             */
-            Keep = 7680,
-            /**
-             * Set the stencil value to zero.
-             */
-            Zero = 0,
-            /**
-             * Replace the stencil value with the reference value.
-             */
-            Replace = 7681,
-            /**
-             * Increase the stencil value by one, wrap if necessary.
-             */
-            Increase = 7682,
-            /**
-             * Increase the stencil value by one, clamp if necessary.
-             */
-            IncreaseSaturate = 34055,
-            /**
-             * Decrease the stencil value by one, wrap if necessary.
-             */
-            Decrease = 7683,
-            /**
-             * Decrease the stencil value by one, clamp if necessary.
-             */
-            DecreaseSaturate = 34056,
-            /**
-             * Invert the stencil data (bitwise not).
-             */
-            Invert = 5386,
         }
         enum SyncCondition {
             GPUCommandsComplete = 37143,
@@ -2057,21 +2235,13 @@ declare namespace MB {
             TimeoutExpired = 37147,
             WaitFailed = 37149,
         }
-        enum TextureFormat {
-            RGB = 6407,
-            RGBA = 6408,
-            RED = 6403,
-            LUMINANCE = 6409,
-            LUMINANCEALPHA = 6410,
-            ALPHA = 6406,
-        }
         enum TextureTarget {
             Texture2D = 3553,
             Texture3D = 32879,
             Texture2DArray = 35866,
             TextureCubeMap = 34067,
         }
-        enum TextureType {
+        enum TextureFilter {
             Nearest = 9728,
             Linear = 9729,
             NearestMMNearest = 9984,
@@ -2106,6 +2276,74 @@ declare namespace MB {
             Clamp2Edge = 33071,
             Repeat = 10497,
             MirroredRepeat = 33648,
+        }
+        enum BlendingMode {
+            None = 0,
+            Normal = 1,
+            Additive = 2,
+            Substractive = 3,
+            Multiply = 4,
+            Custom = 5,
+        }
+        enum CompressedTex {
+            /**
+             * One-channel (red) unsigned format compression.
+             * @type {number}
+             */
+            R11EAC = 37488,
+            /**
+             * One-channel (red) signed format compression.
+             * @type {number}
+             */
+            SignedR11EAC = 37489,
+            /**
+             * Two-channel (red and green) unsigned format compression.
+             * @type {number}
+             */
+            RG11EAC = 37490,
+            /**
+             * Two-channel (red and green) signed format compression.
+             * @type {number}
+             */
+            SignedRG11EAC = 37491,
+            /**
+             * Compresses RBG8 data with no alpha channel.
+             * @type {number}
+             */
+            RGB8ETC2 = 37492,
+            /**
+             * Compresses RGBA8 data. The RGB part is encoded the same as RGB8ETC2,
+             *     but the alpha part is encoded separately.
+             * @type {number}
+             */
+            SRGB8ETC2 = 37493,
+            /**
+             * Compresses sRBG8 data with no alpha channel.
+             * @type {number}
+             */
+            RGB8PunchAlphaETC2 = 37494,
+            /**
+             * Compresses sRBG8 data with no alpha channel.
+             * @type {number}
+             */
+            SRGB8PunchAlphaETC = 37495,
+            /**
+             * Similar to RGB8ETC2, but with ability to punch through the alpha channel,
+             *     which means to make it completely opaque or transparent.
+             * @type {number}
+             */
+            RGBA8ETC2EAC = 37496,
+            /**
+             * Similar to SRGB8ETC2, but with ability to punch through the alpha channel,
+             *     which means to make it completely opaque or transparent.
+             * @type {number}
+             */
+            SRGBA8ETC2EAC = 37497,
+        }
+        enum ShadingMode {
+            None = 0,
+            Smooth = 1,
+            Flat = 2,
         }
         enum KeyState {
             Delete = 8,
@@ -2255,7 +2493,7 @@ declare namespace MB {
      */
     class Framebuffer {
         protected _size: MB.Vect2;
-        protected _handle: WebGLFramebuffer;
+        protected _handler: WebGLFramebuffer;
         protected _attachments: Array<MB.Texture>;
         _renderBuffer: MB.RenderBufferTexture;
         _depth: MB.SimpleTexture2D;
@@ -2523,24 +2761,24 @@ declare namespace MB {
         setColor(red?: number, green?: number, blue?: number, alpha?: number): void;
         /**
          * Specify pixel arithmetic.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} sfactor Specifies how the red,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.One} sfactor Specifies how the red,
          *     green, blue, and alpha source blending factors are computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dfactor Specifies how the red,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero} dfactor Specifies how the red,
          *     green, blue, and alpha destination blending factors are computed.
          */
-        setFunc(sfactor?: MB.ctes.BlendingType, dfactor?: MB.ctes.BlendingType): void;
+        setFunc(sfactor?: MB.ctes.BlendingMode, dfactor?: MB.ctes.BlendingMode): void;
         /**
          * Specify pixel arithmetic for RGB and alpha components separately.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} rcRGB Specifies how the red, green,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.One} rcRGB Specifies how the red, green,
          *      and blue blending factors are computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dstRGB Specifies how the red, green,
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero} dstRGB Specifies how the red, green,
          *      and blue destination blending factors are computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.One} srcAlpha Specified how the alpha source
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.One} srcAlpha Specified how the alpha source
          *      blending factor is computed.
-         * @param {MB.ctes.BlendingType = MB.ctes.BlendingType.Zero} dstAlpha Specified how the alpha destination
+         * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero} dstAlpha Specified how the alpha destination
          *      blending factor is computed.
          */
-        setFuncSeparate(srcRGB?: MB.ctes.BlendingType, dstRGB?: MB.ctes.BlendingType, srcAlpha?: MB.ctes.BlendingType, dstAlpha?: MB.ctes.BlendingType): void;
+        setFuncSeparate(srcRGB?: MB.ctes.BlendingMode, dstRGB?: MB.ctes.BlendingMode, srcAlpha?: MB.ctes.BlendingMode, dstAlpha?: MB.ctes.BlendingMode): void;
         /**
          * Checks if blending is activated
          * @return {boolean} True if activated
@@ -2701,7 +2939,7 @@ declare namespace MB {
          * Program constructor
          */
         constructor();
-        private _compiledShader;
+        private _handler;
         private _shaders;
         private _isLinked;
         /**
@@ -2931,6 +3169,10 @@ declare namespace MB {
          */
         static getType(gl: WebGL2RenderingContext, type: number): string;
         /**
+         * Autocatching all actives uniforms and attributes for program.
+         */
+        autocatching(): void;
+        /**
          * Return a object that contains active attributes and uniforms in program.
          * @return {ICachedUnifAttr}
          */
@@ -2964,9 +3206,16 @@ declare namespace MB {
      *     queries of certain kinds of information.
      */
     class Query {
-        protected _handle: WebGLQuery;
         /**
-         * Query constructor
+         * Query internal handler.
+         *
+         * @protected
+         * @type {WebGLQuery}
+         * @memberOf Query
+         */
+        protected _handler: WebGLQuery;
+        /**
+         * Query constructor.
          */
         constructor();
         /**
@@ -3030,42 +3279,42 @@ declare namespace MB {
      *     parameters for a Texture access inside of a shader.
      */
     class Sampler {
-        _handle: WebGLSampler;
+        _handler: WebGLSampler;
         constructor();
         /**
-         * Set a list of texture parameters (filters, wraps, LOD, ...)
-         * @param {SamplerParams} params SamplerParams interface
+         * Set a list of texture parameters (filters, wraps, LOD, ...).
+         * @param {SamplerParams} params SamplerParams interface.
          */
         setParams(params: SamplerParams): void;
         /**
-         * Bind (active) sampler
+         * Bind (active) sampler.
          * @param {number} unit Specifying the index of the texture
-         *                       to which to bind the sampler
+         *                       to which to bind the sampler.
          */
         bind(unit: number): void;
         /**
-         * Unbind (disable) sampler
+         * Unbind (disable) sampler.
          * @param {number} unit Specifying the index of the texture
-         *                       to which to unbind the sampler
+         *                       to which to unbind the sampler.
          */
         unbind(unit: number): void;
         /**
-         * Set a unique texture parameter
-         * @param {MB.ctes.SamplerParameter} name  Parameter name
-         * @param {number} param Parameter value
+         * Set a unique texture parameter.
+         * @param {ctes.SamplerParameter} name  Parameter name.
+         * @param {number} param Parameter value.
          */
-        parameteri(name: MB.ctes.SamplerParameter, param: number): void;
+        parameteri(name: ctes.SamplerParameter, param: number): void;
         /**
-         * Set a unique texture parameter
-         * @param {MB.ctes.SamplerParameter} name  Parameter name
-         * @param {number} param Parameter value
+         * Set a unique texture parameter.
+         * @param {ctes.SamplerParameter} name  Parameter name.
+         * @param {number} param Parameter value.
          */
-        parameterf(name: MB.ctes.SamplerParameter, param: number): void;
+        parameterf(name: ctes.SamplerParameter, param: number): void;
         /**
          * Return parameter for this sampler object.
-         * @param {MB.ctes.SamplerParameter} name  Parameter name
+         * @param {ctes.SamplerParameter} name  Parameter name.
          */
-        getParameter(name: MB.ctes.SamplerParameter): any;
+        getParameter(name: ctes.SamplerParameter): any;
         /**
          * Destroy sampler object.
          */
@@ -3089,20 +3338,20 @@ declare namespace MB {
      * but sync objects allow for much finer grained control.
      */
     class Sync {
-        protected _handle: WebGLSync;
+        protected _handler: WebGLSync;
         /**
-         * Sync constructor
-         * @param {MB.ctes.SyncCondition = MB.ctes.SyncCondition.GPUCommandsComplete} condition Sync condition
+         * Sync constructor.
+         * @param {ctes.SyncCondition = ctes.SyncCondition.GPUCommandsComplete} condition Sync condition.
          */
-        constructor(condition?: MB.ctes.SyncCondition);
-        clientWait(timeout: number): MB.ctes.SyncWaitResult;
+        constructor(condition?: ctes.SyncCondition);
+        clientWait(timeout: number): ctes.SyncWaitResult;
         /**
-         * Destroy sync object
+         * Destroy sync object.
          */
         destroy(): void;
         /**
-         * Return if sync object is a valid sync
-         * @return {boolean} True if sync object is valid
+         * Return if sync object is a valid sync.
+         * @return {boolean} True if sync object is valid.
          */
         isValid(): boolean;
         /**
@@ -3112,30 +3361,30 @@ declare namespace MB {
          */
         wait(timeout?: number): void;
         /**
-         * Return current sync status.
-         * @return {MB.ctes.SyncStatus} Current sync status.
+         * Returns current sync status.
+         * @return {ctes.SyncStatus} Current sync status.
          */
-        status(): MB.ctes.SyncStatus;
+        status(): ctes.SyncStatus;
         /**
-         * Return current sync condition.
-         * @return {MB.ctes.SyncStatus} Current sync condition.
+         * Returns current sync condition.
+         * @return {ctes.SyncStatus} Current sync condition.
          */
-        condition(): MB.ctes.SyncCondition;
+        condition(): ctes.SyncCondition;
         /**
-         * Return current sync type.
-         * @return {MB.ctes.SyncStatus} Current sync type.
+         * Returns current sync type.
+         * @return {ctes.SyncStatus} Current sync type.
          */
-        type(): MB.ctes.SyncType;
+        type(): ctes.SyncType;
         /**
-         * Check if sync is signaled.
+         * Checks if sync is signaled.
          * @return {boolean}
          */
         isSignaled(): boolean;
         /**
-         * Return sync status.
-         * @return {MB.ctes.SyncStatus}
+         * Returns current sync status.
+         * @return {ctes.SyncStatus}
          */
-        signaled: MB.ctes.SyncStatus;
+        signaled: ctes.SyncStatus;
     }
 }
 
@@ -3152,12 +3401,12 @@ declare namespace MB {
      */
     class TransformFeedback {
         /**
-         * TransformFeedback object handler
+         * TransformFeedback object handler.
          * @type {WebGLTransformFeedback}
          */
-        protected _handle: WebGLTransformFeedback;
+        protected _handler: WebGLTransformFeedback;
         /**
-         * Create and initializes a TransformFeedback object
+         * Create and initializes a TransformFeedback object.
          */
         constructor();
         /**
@@ -3203,11 +3452,11 @@ declare namespace MB {
         resume(): void;
         /**
          * Specifies values to record in TransformFeedback buffers.
-         * @param {Program}       program    [description]
+         * @param {Program}       program    Program targe object.
          * @param {Array<string>} varyings   [description]
-         * @param {MB.ctes.TFMode}        bufferMode [description]
+         * @param {ctes.TFMode}        bufferMode [description]
          */
-        static varyings(program: Program, varyings: Array<string>, bufferMode: MB.ctes.TFMode): void;
+        static varyings(program: Program, varyings: Array<string>, bufferMode: ctes.TFMode): void;
         /**
          * Return information about varying variables specifies in the previous
          *     call to "varyings" method.
@@ -3221,7 +3470,17 @@ declare namespace MB {
          * @return {boolean} [description]
          */
         isValid(): boolean;
+        /**
+         * Returns current data from transform feedback buffer.
+         * @param  {number}         numElems [description]
+         * @return {Float32Array}         [description]
+         */
+        extractData(numElems: number): Float32Array;
     }
+    /**
+     * Contains type and name attributes for transform feedback.
+     * @interface VaryingInfo
+     */
     interface VaryingInfo {
         name: string;
         type: string;
@@ -3306,15 +3565,15 @@ declare namespace MB {
 declare namespace MB {
     class VertexArray {
         /**
-         * [_handle description]
+         * [_handler description]
          * @type {WebGLVertexArrayObject}
          */
-        protected _handle: WebGLVertexArrayObject;
+        protected _handler: WebGLVertexArrayObject;
         /**
          * Vertex array constructor
          * @param {WebGLVertexArrayObject} vao [description]
          */
-        constructor(vao?: any);
+        constructor(vao?: WebGLVertexArrayObject);
         /**
          * [wrap description]
          * @param {WebGLVertexArrayObject} vao [description]
@@ -3341,39 +3600,43 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    /**
+     * VertexBuffer class
+     * @class VertexBuffer
+     */
     class VertexBuffer {
         /**
-         * [_buffer description]
+         * VertexBuffer internal buffer handler.
          * @type {WebGLBuffer}
          */
-        protected _buffer: WebGLBuffer;
+        protected _handler: WebGLBuffer;
         /**
-         * [_type description]
-         * @type {MB.ctes.BufferType}
+         * VertexBuffer internal type
+         * @type {ctes.BufferType}
          */
-        protected _type: MB.ctes.BufferType;
+        protected _type: ctes.BufferType;
         /**
          * Vertex buffer constructor
-         * @param {MB.ctes.BufferType = MB.ctes.BufferType.Array}
+         * @param {ctes.BufferType = ctes.BufferType.Array}
          */
-        constructor(type?: MB.ctes.BufferType);
+        constructor(type?: ctes.BufferType);
         /**
-         * [bind description]
-         * @param {MB.ctes.BufferType} type [description]
+         * Bind vertex buffer.
+         * @param {MB.ctes.BufferType} type
          */
         bind(type?: MB.ctes.BufferType): void;
         /**
-         * [unbind description]
+         * Unbind vertex buffer.
          */
         unbind(): void;
         /**
-         * [getBufferType description]
-         * @return {MB.ctes.BufferType} [description]
+         * Returns interla buffer type.
+         * @return {ctes.BufferType}
          */
-        getBufferType(): MB.ctes.BufferType;
+        getBufferType(): ctes.BufferType;
         /**
-         * [getBuffer description]
-         * @return {WebGLBuffer} [description]
+         * Returns internal buffer handler.
+         * @return {WebGLBuffer}
          */
         getBuffer(): WebGLBuffer;
         /**
@@ -3383,7 +3646,7 @@ declare namespace MB {
         /**
          * [bufferData description]
          * @param {Float32Array | Uint16Array | number}          data  [description]
-         * @param {MB.ctes.UsageType    = MB.ctes.UsageType.StaticDraw} usage [description]
+         * @param {ctes.UsageType =B.ctes.UsageType.StaticDraw} usage [description]
          */
         bufferData(data: Float32Array | Uint16Array | number, usage?: MB.ctes.UsageType): void;
         /**
@@ -3403,6 +3666,14 @@ declare namespace MB {
          * @param {number  =              0}           offset     [description]
          */
         vertexAttribPointer(attribLocation: number, numElems: number, type: number, normalized?: boolean, offset?: number): void;
+        /**
+         * [copySub description]
+         * @param {number}     readTarget [description]
+         * @param {number}     writeTarget [description]
+         * @param {number}     readOffset [description]
+         * @param {number}     writeOffset [description]
+         * @param {number}     size [description]
+         */
         copySub(readTarget: number, writeTarget: number, readOffset: number, writeOffset: number, size: number): void;
         bindBufferBase(target: number, index?: number): void;
     }
@@ -3428,7 +3699,6 @@ declare namespace MB {
          * Bind Uniform Buffer Object.
          */
         bind(): void;
-        bindBB(): void;
         /**
          * Update UBO values.
          * @param {Float32Array} data [description]
@@ -3460,7 +3730,11 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
+    /**
+     * BillboardOpts interface.
+     * @interface BillboardOpts
+     */
     interface BillboardOpts {
         texture: MB.Texture2D;
         hi?: Array<number>;
@@ -3471,6 +3745,10 @@ declare namespace MB {
         view?: Float32Array;
         projection?: Float32Array;
     }
+    /**
+     * Billboard class.
+     * @class Billboard
+     */
     class Billboard {
         static mesh: MB.CustomModel;
         static program: MB.Program;
@@ -3626,12 +3904,13 @@ declare namespace MB {
         function getMaxPrecision(): string;
         function getMaxDrawBuffers(): number;
         function getMaxColorAttachments(): number;
+        function isTextureFloat(): boolean;
     }
 }
 
 declare namespace MB {
     /**
-     * Clock class
+     * Cloc_k class
      * @class Clock
      */
     class Clock {
@@ -3672,15 +3951,15 @@ declare namespace MB {
          */
         stop(): void;
         /**
-         * Return the seconds passed since the clock started.
+         * Returns the seconds passed since the clock started.
          * @return {number} Elapsed time.
          */
-        elapsedTime: number;
+        elapsedTime(): number;
         /**
-         * Return the seconds passed since the last call of this method.
+         * Returns the seconds passed since the last call of this method (Call this onRenderLoop)
          * @return {number} Delta time.
          */
-        delta: number;
+        delta(): number;
     }
 }
 
@@ -3974,6 +4253,40 @@ declare namespace MB {
 
 declare namespace MB {
     /**
+     * CustomPingPong class.
+     * This class may be used, for example, for purposes that require
+     *   a previous step, as the Path Tracing algorithm, swap functions,
+     *   swap textures, ...
+     * @class CustomPingPong
+     */
+    class CustomPingPong<T> {
+        protected _elems1: T;
+        protected _elems2: T;
+        /**
+         * CustomPingPong<T> constructor.
+         * @param {T} elem1 First element.
+         * @param {T} elem2 Second element.
+         */
+        constructor(elem1: T, elem2: T);
+        /**
+         * Swap ping pong inner objects.
+         */
+        swap(): void;
+        /**
+         * Returns first object.
+         * @return {T}
+         */
+        first(): T;
+        /**
+         * Returns last object.
+         * @return {T}
+         */
+        last(): T;
+    }
+}
+
+declare namespace MBX {
+    /**
      * Easing namespace
      * @namespace Easing
      */
@@ -4239,7 +4552,7 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * GBuffer class
      * This class lets you use deferred shading technique.
@@ -4493,7 +4806,7 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * Ray class
      * @class Ray
@@ -4971,6 +5284,10 @@ declare namespace MB {
      * @class Capsule
      */
     class Capsule extends Drawable {
+        protected _radius: number;
+        protected _height: number;
+        protected _subHeight: number;
+        protected _numSegm: number;
         /**
          * Capsule constructor
          * @param {number = 0.5} radius Capsule radius
@@ -4988,6 +5305,7 @@ declare namespace MB {
      * @class Cube
      */
     class Cube extends Drawable {
+        protected _side: number;
         /**
          * Cube constructor
          * @param {number = 1.0} side: Size length
@@ -5188,6 +5506,9 @@ declare namespace MB {
      * @class ParametricGeom
      */
     class ParametricGeom extends Drawable {
+        protected _slices: number;
+        protected _stacks: number;
+        protected _func: (u: number, v: number) => MB.Vect3;
         /**
          * ParametricGeom
          * @param {number) => MB.Vect3} func Function generator (u, v) => MB.Vect3
@@ -5242,6 +5563,9 @@ declare namespace MB {
      * @class Sphere
      */
     class Sphere extends Drawable {
+        protected _radius: number;
+        protected _slices: number;
+        protected _stacks: number;
         /**
          * Sphere constructor
          * @param {number} radius [description]
@@ -5273,6 +5597,10 @@ declare namespace MB {
      * @class Torus
      */
     class Torus extends Drawable {
+        protected _outerRadius: number;
+        protected _innerRadius: number;
+        protected _sides: number;
+        protected _rings: number;
         /**
          * Torus constructor
          * @param {number = 1.0} outerRadius: Outer ring radius
@@ -5299,20 +5627,10 @@ declare namespace MB {
          */
         function _getAlias(src: string, alias?: string): string;
         /**
-         * [unloadVideo description]
-         * @param {string} imageSrc [description]
-         */
-        function unloadVideo(videoSrc: string): void;
-        /**
          * [unloadImage description]
          * @param {string} imageSrc [description]
          */
         function unloadImage(imageSrc: string): void;
-        /**
-         * [unloadAudio description]
-         * @param {string} clipName [description]
-         */
-        function unloadAudio(clipName: string): void;
         /**
          * [loadHDRImage description]
          * @param {string}    imageSrc [description]
@@ -5335,31 +5653,31 @@ declare namespace MB {
 
 declare namespace MB {
     interface ProgramCallback {
-        (): MB.Program;
+        (): Program;
     }
     interface ProgramUseCallback {
-        (prog: MB.Program): void;
+        (prog: Program): void;
     }
     /**
-     * MB.Program manager class
-     * @class ProgramManaager
+     * Program manager class
+     * @class ProgramManager
      */
     class ProgramManager {
         /**
-         * MB.Program cache dictionary
+         * Program cache dictionary
          */
         static _progDictionary: {
             [key: string]: MB.Program;
         };
         /**
          * Return cached program from name
-         * @param  {string} name: MB.Program name
-         * @return {MB.Program}
+         * @param  {string} name: Program name
+         * @return {Program}
          */
-        static get(name: string): MB.Program;
+        static get(name: string): Program;
         /**
          * Execute a callback function using the specified program (name).
-         * @param  {string} name: MB.Program name
+         * @param  {string} name: Program name
          * @param {ProgramUseCallback}: Function to execute
          */
         static getCB(name: string, cb: ProgramUseCallback): void;
@@ -5478,6 +5796,11 @@ declare namespace MB {
          * @param {string =        ""}          alias [description]
          */
         function loadAudio(clipName: string, alias?: string): void;
+        /**
+         * [unloadAudio description]
+         * @param {string} clipName [description]
+         */
+        function unloadAudio(clipName: string): void;
     }
 }
 
@@ -5526,6 +5849,11 @@ declare namespace MB {
          * @param {string =        ""}          alias [description]
          */
         function loadVideo(videoSrc: string, alias?: string): void;
+        /**
+         * [unloadVideo description]
+         * @param {string} imageSrc [description]
+         */
+        function unloadVideo(videoSrc: string): void;
     }
 }
 
@@ -5554,11 +5882,11 @@ declare namespace MB {
 
 declare namespace MB {
     interface TexOptions {
-        internalFormat?: ctes.TextureFormat;
-        type?: ctes.TextureFormat;
+        internalFormat?: ctes.PixelFormat;
+        type?: ctes.PixelFormat;
         level?: number;
-        minFilter?: ctes.TextureType;
-        magFilter?: ctes.TextureType;
+        minFilter?: ctes.TextureFilter;
+        magFilter?: ctes.TextureFilter;
         flipY?: boolean;
         wrap?: ctes.WrapMode;
         wrapS?: ctes.WrapMode;
@@ -5567,36 +5895,36 @@ declare namespace MB {
         minLOD?: number;
         maxLOD?: number;
         autoMipMap?: boolean;
-        format?: ctes.TextureFormat;
+        format?: ctes.PixelFormat;
         border?: number;
         compressed?: boolean;
         anisotropic?: number;
         offsets?: Array<number>;
     }
     abstract class Texture {
-        protected _anisotropy_: number;
-        protected _internalformat_: ctes.TextureFormat;
-        protected _format_: ctes.TextureFormat;
-        protected _wrapS_: ctes.WrapMode;
-        protected _wrapT_: ctes.WrapMode;
-        protected _wrapR_: ctes.WrapMode;
-        protected _minFilter_: ctes.TextureType;
-        protected _magFilter_: ctes.TextureType;
-        protected _type_: ctes.TextureFormat;
-        protected _flipY_: boolean;
-        protected _generateMipMaps_: boolean;
-        protected _premultiplyAlpha_: boolean;
+        protected _anisotropy: number;
+        protected _internalformat: ctes.PixelFormat;
+        protected _format: ctes.PixelFormat;
+        protected _wrapS: ctes.WrapMode;
+        protected _wrapT: ctes.WrapMode;
+        protected _wrapR: ctes.WrapMode;
+        protected _minFilter: ctes.TextureFilter;
+        protected _magFilter: ctes.TextureFilter;
+        protected _type: ctes.PixelFormat;
+        protected _flipY: boolean;
+        protected _generateMipMaps: boolean;
+        protected _premultiplyAlpha: boolean;
         protected _unpackAlignment_: number;
-        protected _target_: ctes.TextureTarget;
-        protected _minLOD_: number;
-        protected _maxLOD_: number;
-        protected _level_: number;
-        protected _compressed_: boolean;
+        protected _target: ctes.TextureTarget;
+        protected _minLOD: number;
+        protected _maxLOD: number;
+        protected _level: number;
+        protected _compressed: boolean;
         /**
          * Internal WebGLTexture handler.
          * @type {WebGLTexture}
          */
-        protected _handle_: WebGLTexture;
+        protected _handler: WebGLTexture;
         /**
          * Returns false if gl.LINEAR is not supported as a texture
          *     filter mode for textures of type gl.FLOAT.
@@ -5621,14 +5949,14 @@ declare namespace MB {
         constructor(target: ctes.TextureTarget, options: TexOptions);
         /**
          * Change texture minification filter
-         * @param {ctes.TextureType} filter: Minification filter type
+         * @param {ctes.TextureFilter} filter: Minification filter type
          */
-        minFilter(filter: ctes.TextureType): void;
+        minFilter(filter: ctes.TextureFilter): void;
         /**
          * Change texture magnification filter
-         * @param {ctes.TextureType} filter: Magnification filter type
+         * @param {ctes.TextureFilter} filter: Magnification filter type
          */
-        magFilter(filter: ctes.TextureType): void;
+        magFilter(filter: ctes.TextureFilter): void;
         wrap(modes: Array<number>): void;
         /**
          * Generate mipmap to this texture.
@@ -5656,14 +5984,14 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * CanvasTexture class
      * @class CanvasTexture
      *
-     * This class uses an image of a canvas like texture
+     * This class uses an canvas image like texture
      */
-    class CanvasTexture extends Texture {
+    class CanvasTexture extends MB.Texture {
         /**
          * Canvas that contains the image texture
          * @type {HTMLCanvasElement}
@@ -5675,7 +6003,7 @@ declare namespace MB {
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
          */
-        constructor(domCanvas: HTMLCanvasElement, options?: TexOptions, onSuccess?: () => void);
+        constructor(domCanvas: HTMLCanvasElement, options?: MB.TexOptions, onSuccess?: () => void);
         /**
          * Updates the texture based on the current image of the canvas
          * that was referenced in the class constructor
@@ -5685,14 +6013,31 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    /**
+     * CubeMapTexture class
+     * @class CubeMapTexture
+     */
     class CubeMapTexture extends Texture {
-        protected finished: boolean;
+        protected _finished: boolean;
+        /**
+         * Returns if the cubemap is completed.
+         * @return {boolean}
+         */
+        isFinished(): boolean;
         /**
          * CubeMapTexture constructor
          * @param {TexOptions = {}} options: Texture options
          */
         constructor(options?: TexOptions);
+        /**
+         * Add new image to cubemap
+         * @param {number} i    Index
+         * @param {[type]} data Image or buffer data.
+         */
         addImage(i: number, data: any): void;
+        /**
+         * Finalize cubemap texture
+         */
         finishTex(): void;
     }
 }
@@ -5709,14 +6054,44 @@ declare namespace MB {
 
 declare namespace MB {
     abstract class RenderBuffer {
-        protected _handle: WebGLRenderbuffer;
+        /**
+         * Renderbuffer interla handler
+         * @type {WebGLRenderbuffer}
+         */
+        protected _handler: WebGLRenderbuffer;
+        /**
+         * Renderbuffer size (width and height).
+         * @type {MB.Vect2}
+         */
         protected _size: MB.Vect2;
+        /**
+         * Rendebuffer samples
+         * @type {number}
+         */
         protected _samples: number;
+        /**
+         * Renderbuffer internal format.
+         * @type {number}
+         */
         protected _format: number;
+        /**
+         * Renderbuffer attachment point (p.e. COLOR_ATTACHMENT or DEPTH_STENCL_ATTACHMENT)
+         * @type {number}
+         */
+        protected _attachment: number;
         constructor(size: MB.Vect2, format: number, attachment: number, samples?: number);
-        abstract bind(): any;
-        abstract unbind(): any;
-        abstract destroy(): any;
+        /**
+         * Bind renderbuffer.
+         */
+        bind(): void;
+        /**
+         * Unbind render buffer.
+         */
+        unbind(): void;
+        /**
+         * Destroy renderbuffer texture.
+         */
+        destroy(): void;
         abstract resize(size: MB.Vect2): any;
     }
 }
@@ -5724,9 +6099,6 @@ declare namespace MB {
 declare namespace MB {
     class RenderBufferMultisampleTexture extends RenderBuffer {
         constructor(size: MB.Vect2, format: number, attachment: number, samples?: number);
-        bind(): void;
-        unbind(): void;
-        destroy(): void;
         resize(size: MB.Vect2): void;
     }
 }
@@ -5734,9 +6106,10 @@ declare namespace MB {
 declare namespace MB {
     class RenderBufferTexture extends RenderBuffer {
         constructor(size: MB.Vect2, format: number, attachment: number);
-        bind(): void;
-        unbind(): void;
-        destroy(): void;
+        /**
+         * Resize renderbuffer size
+         * @param {MB.Vect2} size New size
+         */
         resize(size: MB.Vect2): void;
     }
 }
@@ -5816,12 +6189,12 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * VideoTexture class
      * @class VideoTexture
      */
-    class VideoTexture extends Texture {
+    class VideoTexture extends MB.Texture {
         protected _video: HTMLVideoElement;
         /**
          * [constructor description]
@@ -5836,7 +6209,7 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * WebcamTexture class
      * @class WebcamTexture
@@ -5848,5 +6221,56 @@ declare namespace MB {
          * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
          */
         constructor(size?: MB.Vect2, onSuccess?: () => void);
+    }
+}
+
+declare namespace MBS {
+    class Engine {
+        _scenes: Array<Scene>;
+    }
+}
+
+declare namespace MBS {
+    class Node {
+        _scene: Scene;
+        _parentNode: Node;
+        _children: Array<Node>;
+        parent: Node;
+        protected _name: string;
+        protected _id: string;
+        constructor(name: string, scene: Scene);
+        getScene(): Scene;
+        getEngine(): Engine;
+        protected _generateUUID(): string;
+    }
+}
+
+declare namespace MBS {
+    class Scene {
+        protected clearColor: MB.Color3;
+        protected _lights: MB.Light[];
+        protected _engine: Engine;
+        constructor(engine: Engine);
+        getEngine(): Engine;
+    }
+}
+
+declare namespace MBS {
+    class Transform {
+        protected _quat: Float32Array;
+        protected _position: Float32Array;
+        protected _scale: Float32Array;
+        setRotationFromAxis(angle: number, axis: Float32Array): void;
+        rotateOnAxis(angle: number, axis: Float32Array): void;
+        rotateX(angle: number): void;
+        rotateY(angle: number): void;
+        rotateZ(angle: number): void;
+        translateOnAxis(dist: number, axis: Float32Array): void;
+        translateX(angle: number): void;
+        translateY(angle: number): void;
+        translateZ(angle: number): void;
+        protected _rotationQuat: Float32Array;
+        rotate(axis: Float32Array, amount: number, space?: any): void;
+        translate(axis: Float32Array, distance: number, space?: any): void;
     }
 }

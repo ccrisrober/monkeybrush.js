@@ -32,7 +32,15 @@ namespace MB {
      * used as the destination for rendering.
      */
     export class Framebuffer {
+        /**
+         * Framebuffer size.
+         * @type {MB.Vect2}
+         */
         protected _size: MB.Vect2;
+        /**
+         * Framebuffer internal handler.
+         * @type {WebGLFramebuffer}
+         */
         protected _handler: WebGLFramebuffer;
         protected _attachments: Array<MB.Texture>;
         public _renderBuffer: MB.RenderBufferTexture;
