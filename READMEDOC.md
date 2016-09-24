@@ -12,16 +12,16 @@ let SimpleConfig = function() {
     };
 };
 
-class MyScene extends MonkeyBrush.Scene {
-    protected homePoint = new MonkeyBrush.maths.Vect3(-2.7, -1.4, 11.8);
-    protected camera = new MonkeyBrush.Camera2(this.homePoint);
+class MyScene extends MB.Scene {
+    protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
+    protected camera = new MB.Camera2(this.homePoint);
 
-    protected cubito: MonkeyBrush.models.Drawable;
-    protected view: MonkeyBrush.maths.Mat4;
-    protected projection: MonkeyBrush.maths.Mat4;
+    protected cubito: MB.models.Drawable;
+    protected view: MB.Mat4;
+    protected projection: MB.Mat4;
 
-    protected identityMatrix: MonkeyBrush.maths.Mat4 = MonkeyBrush.maths.Mat4.identity.clone();
-    protected model = new MonkeyBrush.maths.Mat4();
+    protected identityMatrix: MB.Mat4 = MB.Mat4.identity.clone();
+    protected model = new MB.Mat4();
     protected angle = 0;
 
     constructor() {
@@ -30,13 +30,13 @@ class MyScene extends MonkeyBrush.Scene {
     protected mainShader: string = "prog";
     loadAssets() { }
     initialize() {
-        this.cubito = new MonkeyBrush.models.Cube(15.0);
-        MonkeyBrush.resources.ProgramManager.addWithFun("prog", (): MonkeyBrush.core.Program => {
-            let prog: MonkeyBrush.core.Program = new MonkeyBrush.core.Program();
+        this.cubito = new MB.models.Cube(15.0);
+        MB.resources.ProgramManager.addWithFun("prog", (): MB.core.Program => {
+            let prog: MB.core.Program = new MB.core.Program();
             prog.addShader("shaders/demoShader.vert",
-                MonkeyBrush.constants.ProgramCte.shader_type.vertex, MonkeyBrush.constants.ProgramCte.mode.read_file);
+                MB.constants.ProgramCte.shader_type.vertex, MB.constants.ProgramCte.mode.read_file);
             prog.addShader("shaders/demoShader.frag",
-                MonkeyBrush.constants.ProgramCte.shader_type.fragment, MonkeyBrush.constants.ProgramCte.mode.read_file);
+                MB.constants.ProgramCte.shader_type.fragment, MB.constants.ProgramCte.mode.read_file);
             prog.compile();
             prog.use();
             prog.addUniforms(["projection", "view", "model"]);
@@ -45,30 +45,30 @@ class MyScene extends MonkeyBrush.Scene {
         this.cameraUpdate();
     }
     update(dt: number) {
-        this.camera.timeElapsed = MonkeyBrush.extras.Timer.deltaTime() / 10.0;
+        this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
         this.camera.update(this.cameraUpdate.bind(this));
-        this.angle += MonkeyBrush.extras.Timer.deltaTime() * 0.001;
+        this.angle += MB.extras.Timer.deltaTime() * 0.001;
     }
     draw(dt?: number) {
-        MonkeyBrush.core.Core.getInstance().clearColorAndDepth();
-        let prog = MonkeyBrush.resources.ProgramManager.get(this.mainShader);
+        MB.core.Core.getInstance().clearColorAndDepth();
+        let prog = MB.resources.ProgramManager.get(this.mainShader);
         prog.use();
         this.model =
             this.identityMatrix.clone()
-                .translate(new MonkeyBrush.maths.Vect3(i * 1.0, j * 1.0, k * 1.0))
-                .rotate(90.0 * Math.PI / 180, MonkeyBrush.maths.Vect3.yAxis)
-                .rotate(this.angle * 0.5 * dd, MonkeyBrush.maths.Vect3.yAxis)
-                .scale(new MonkeyBrush.maths.Vect3(0.25, 0.25, 0.25));
+                .translate(new MB.Vect3(i * 1.0, j * 1.0, k * 1.0))
+                .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
+                .scale(new MB.Vect3(0.25, 0.25, 0.25));
         prog.sendUniformMat4("model", this.model);
         this.cubito.render();
         this.skybox.render(this.view, this.projection);
     }
     public pos = 0;
     cameraUpdate() {
-        let canvas = MonkeyBrush.core.Core.getInstance().canvas();
+        let canvas = MB.core.Core.getInstance().canvas();
         this.view = this.camera.GetViewMatrix();
         this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-        let prog = MonkeyBrush.resources.ProgramManager.get(this.mainShader);
+        let prog = MB.resources.ProgramManager.get(this.mainShader);
         prog.use();
         prog.sendUniformVec3("viewPos", this.camera.GetPos());
         prog.sendUniformMat4("projection", this.projection);

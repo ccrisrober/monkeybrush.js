@@ -32,27 +32,27 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.maths.Vect3(0.08, 0.16, 20.25);
+                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
-                this.identityMatrix = MB.maths.Mat4.identity.clone();
-                this.model = new MB.maths.Mat4();
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
             }
             MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.models.Cube(1.0);
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
+                this.cubito = new MB.Cube(1.0);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
                     if (_this._webglVersion === 2) {
-                        prog.addShader("../shaders/demoShader.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                        prog.addShader("../shaders/demoShader.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                        prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                        prog.addShader("../shaders/demoShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     }
                     else {
-                        prog.addShader("../shaders/demowebgl1.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                        prog.addShader("../shaders/demowebgl1.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                        prog.addShader("../shaders/demowebgl1.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                        prog.addShader("../shaders/demowebgl1.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     }
                     prog.compile();
                     prog.use();
@@ -62,14 +62,14 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
                 this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.extras.Timer.deltaTime() * 0.001;
+                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.model =
                     this.identityMatrix.clone()
@@ -78,17 +78,17 @@
 
                 this.model =
                     this.model
-                        .translate(new MB.maths.Vect3(0.0, -1.0, 0.0))
-                        .scale(new MB.maths.Vect3(1.0, -1.0, 1.0));
+                        .translate(new MB.Vect3(0.0, -1.0, 0.0))
+                        .scale(new MB.Vect3(1.0, -1.0, 1.0));
                 prog.sendUniformMat4("model", this.model);
                 this.cubito.render();
 
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.core.Core.getInstance().canvas();
+                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
                 this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());
                 prog.sendUniformMat4("projection", this.projection);
@@ -97,7 +97,7 @@
             MyScene.prototype.textCB = function (gui) {
             };
             return MyScene;
-        }(MB.Scene));
+        }(MB.App));
         ;
         window.onload = function () {
             var myScene = new MyScene();

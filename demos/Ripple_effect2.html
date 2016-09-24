@@ -34,20 +34,20 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.maths.Vect3(-0.18, 1.60, 25.23);
+                this.homePoint = new MB.Vect3(-0.18, 1.60, 25.23);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.mainShader = "prog";
-                this.identityMatrix = MB.maths.Mat4.identity.clone();
-                this.model = new MB.maths.Mat4();
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
             }
             MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.plane = new MB.models.Plane(36.0, 36.0, 36, 36); // TODO: Using even-odd triangulation
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
-                    prog.addShader("../shaders/ripple2.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
+                this.plane = new MB.Plane(36.0, 36.0, 36, 36); // TODO: Using even-odd triangulation
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/ripple2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.setFooFragment();
                     prog.compile();
                     prog.use();
@@ -57,20 +57,20 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
                 this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.extras.Timer.deltaTime() * 0.001;
+                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.maths.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.maths.Vect3.yAxis)
-                        .scale(new MB.maths.Vect3(0.25, 0.25, 0.25));
+                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
+                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
                 prog.sendUniform1f("time", dt);
                 prog.sendUniform1f("amplitude", this.text.amplitude);
@@ -78,10 +78,10 @@
                 this.plane.render2();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.core.Core.getInstance().canvas();
+                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
                 this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformMat4("projection", this.projection);
                 prog.sendUniformMat4("view", this.view);
@@ -91,7 +91,7 @@
                 gui.add(this.text, "frequency", 0.001, 0.03);
             };
             return MyScene;
-        }(MB.Scene));
+        }(MB.App));
         ;
         window.onload = function () {
             var myScene = new MyScene();

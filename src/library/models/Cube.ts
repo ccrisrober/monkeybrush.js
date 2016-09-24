@@ -20,142 +20,141 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Cube class
+     * @class Cube
+     */
+    export class Cube extends Drawable {
+        protected _side: number;
         /**
-         * Cube class
-         * @class Cube
+         * Cube constructor
+         * @param {number = 1.0} side: Size length
          */
-        export class Cube extends Drawable {
-            /**
-             * Cube constructor
-             * @param {number = 1.0} side: Size length
-             */
-            constructor(side: number = 1.0) {
-                super();
-                const side2 = side / 2.0;
+        constructor(side: number = 1.0) {
+            super();
 
-                this._geometry.addAttr("vertices", new MB.extras.BufferAttribute(new Float32Array([
-                    // Front
-                   -side2, -side2, side2,
-                    side2, -side2, side2,
-                    side2,  side2, side2,
-                   -side2,  side2, side2,
-                   // Right
-                    side2, -side2, side2,
-                    side2, -side2, -side2,
-                    side2,  side2, -side2,
-                    side2,  side2, side2,
-                   // Back
-                   -side2, -side2, -side2,
-                   -side2,  side2, -side2,
-                    side2,  side2, -side2,
-                    side2, -side2, -side2,
-                   // Left
-                   -side2, -side2, side2,
-                   -side2,  side2, side2,
-                   -side2,  side2, -side2,
-                   -side2, -side2, -side2,
-                   // Bottom
-                   -side2, -side2, side2,
-                   -side2, -side2, -side2,
-                    side2, -side2, -side2,
-                    side2, -side2, side2,
-                   // Top
-                   -side2,  side2, side2,
-                    side2,  side2, side2,
-                    side2,  side2, -side2,
-                   -side2,  side2, -side2
-                ]), 3));
+            this._side = side;
+            const side2 = side / 2.0;
 
-                this._geometry.addAttr("normals", new MB.extras.BufferAttribute(new Float32Array([
-                    // Front
-                    0.0, 0.0, 1.0,
-                    0.0, 0.0, 1.0,
-                    0.0, 0.0, 1.0,
-                    0.0, 0.0, 1.0,
-                    // Right
-                    1.0, 0.0, 0.0,
-                    1.0, 0.0, 0.0,
-                    1.0, 0.0, 0.0,
-                    1.0, 0.0, 0.0,
-                    // Back
-                    0.0, 0.0, -1.0,
-                    0.0, 0.0, -1.0,
-                    0.0, 0.0, -1.0,
-                    0.0, 0.0, -1.0,
-                    // Left
-                    -1.0, 0.0, 0.0,
-                    -1.0, 0.0, 0.0,
-                    -1.0, 0.0, 0.0,
-                    -1.0, 0.0, 0.0,
-                    // Bottom
-                    0.0, -1.0, 0.0,
-                    0.0, -1.0, 0.0,
-                    0.0, -1.0, 0.0,
-                    0.0, -1.0, 0.0,
-                    // Top
-                    0.0, 1.0, 0.0,
-                    0.0, 1.0, 0.0,
-                    0.0, 1.0, 0.0,
-                    0.0, 1.0, 0.0
-                ]), 3));
+            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array([
+                // Front
+               -side2, -side2, side2,
+                side2, -side2, side2,
+                side2,  side2, side2,
+               -side2,  side2, side2,
+               // Right
+                side2, -side2, side2,
+                side2, -side2, -side2,
+                side2,  side2, -side2,
+                side2,  side2, side2,
+               // Back
+               -side2, -side2, -side2,
+               -side2,  side2, -side2,
+                side2,  side2, -side2,
+                side2, -side2, -side2,
+               // Left
+               -side2, -side2, side2,
+               -side2,  side2, side2,
+               -side2,  side2, -side2,
+               -side2, -side2, -side2,
+               // Bottom
+               -side2, -side2, side2,
+               -side2, -side2, -side2,
+                side2, -side2, -side2,
+                side2, -side2, side2,
+               // Top
+               -side2,  side2, side2,
+                side2,  side2, side2,
+                side2,  side2, -side2,
+               -side2,  side2, -side2
+            ]), 3));
+            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array([
+                // Front
+                0.0, 0.0, 1.0,
+                0.0, 0.0, 1.0,
+                0.0, 0.0, 1.0,
+                0.0, 0.0, 1.0,
+                // Right
+                1.0, 0.0, 0.0,
+                1.0, 0.0, 0.0,
+                1.0, 0.0, 0.0,
+                1.0, 0.0, 0.0,
+                // Back
+                0.0, 0.0, -1.0,
+                0.0, 0.0, -1.0,
+                0.0, 0.0, -1.0,
+                0.0, 0.0, -1.0,
+                // Left
+                -1.0, 0.0, 0.0,
+                -1.0, 0.0, 0.0,
+                -1.0, 0.0, 0.0,
+                -1.0, 0.0, 0.0,
+                // Bottom
+                0.0, -1.0, 0.0,
+                0.0, -1.0, 0.0,
+                0.0, -1.0, 0.0,
+                0.0, -1.0, 0.0,
+                // Top
+                0.0, 1.0, 0.0,
+                0.0, 1.0, 0.0,
+                0.0, 1.0, 0.0,
+                0.0, 1.0, 0.0
+            ]), 3));
+            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array([
+                // Front
+                0.0, 0.0,
+                1.0, 0.0,
+                1.0, 1.0,
+                0.0, 1.0,
+                // Right
+                0.0, 0.0,
+                1.0, 0.0,
+                1.0, 1.0,
+                0.0, 1.0,
+                // Back
+                0.0, 0.0,
+                1.0, 0.0,
+                1.0, 1.0,
+                0.0, 1.0,
+                // Left
+                0.0, 0.0,
+                1.0, 0.0,
+                1.0, 1.0,
+                0.0, 1.0,
+                // Bottom
+                0.0, 0.0,
+                1.0, 0.0,
+                1.0, 1.0,
+                0.0, 1.0,
+                // Top
+                0.0, 0.0,
+                1.0, 0.0,
+                1.0, 1.0,
+                0.0, 1.0
+            ]), 2));
 
-                this._geometry.addAttr("texCoords", new MB.extras.BufferAttribute(new Float32Array([
-                    // Front
-                    0.0, 0.0,
-                    1.0, 0.0,
-                    1.0, 1.0,
-                    0.0, 1.0,
-                    // Right
-                    0.0, 0.0,
-                    1.0, 0.0,
-                    1.0, 1.0,
-                    0.0, 1.0,
-                    // Back
-                    0.0, 0.0,
-                    1.0, 0.0,
-                    1.0, 1.0,
-                    0.0, 1.0,
-                    // Left
-                    0.0, 0.0,
-                    1.0, 0.0,
-                    1.0, 1.0,
-                    0.0, 1.0,
-                    // Bottom
-                    0.0, 0.0,
-                    1.0, 0.0,
-                    1.0, 1.0,
-                    0.0, 1.0,
-                    // Top
-                    0.0, 0.0,
-                    1.0, 0.0,
-                    1.0, 1.0,
-                    0.0, 1.0
-                ]), 2));
+            this._geometry.setIndex(new Uint16Array([
+                0, 1, 2, 0, 2, 3,
+                4, 5, 6, 4, 6, 7,
+                8, 9, 10, 8, 10, 11,
+                12, 13, 14, 12, 14, 15,
+                16, 17, 18, 16, 18, 19,
+                20, 21, 22, 20, 22, 23
+            ]));
 
-                this._geometry.setIndex(new Uint16Array([
-                    0, 1, 2, 0, 2, 3,
-                    4, 5, 6, 4, 6, 7,
-                    8, 9, 10, 8, 10, 11,
-                    12, 13, 14, 12, 14, 15,
-                    16, 17, 18, 16, 18, 19,
-                    20, 21, 22, 20, 22, 23
-                ]));
+            // this.createWireframe();
 
-                // this.createWireframe();
+            this._handle = [];
+            this._vao.bind();
 
-                this._handle = [];
-                this._vao.bind();
+            this.addElementArray(this._geometry.indices);
 
-                this.addElementArray(this._geometry.indices);
+            this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
+            this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+            this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
 
-                this.addBufferArray(0, <Float32Array>this._geometry.getAttr("vertices").array, 3);
-                this.addBufferArray(1, <Float32Array>this._geometry.getAttr("normals").array, 3);
-                this.addBufferArray(2, <Float32Array>this._geometry.getAttr("texCoords").array, 2);
-
-                this._indicesLen = this._geometry.indices.length;
-            }
-        };
+            this._indicesLen = this._geometry.indices.length;
+        }
     };
 };
 

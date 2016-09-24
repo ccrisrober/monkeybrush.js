@@ -32,41 +32,41 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.maths.Vect3(0.08, 0.16, 20.25);
+                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
-                this.identityMatrix = MB.maths.Mat4.identity.clone();
-                this.model = new MB.maths.Mat4();
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
             }
             MyScene.prototype.loadAssets = function () {
-                MB.resources.Loaders.loadImage("../assets/images/moon1024x512.jpg", "diffuseMap");
-                MB.resources.Loaders.loadImage("../assets/images/normal.jpg", "normalMap");
+                MB.Loaders.loadImage("../assets/images/moon1024x512.jpg", "diffuseMap");
+                MB.Loaders.loadImage("../assets/images/normal.jpg", "normalMap");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.models.Sphere(17.5, 45, 45);
+                this.cubito = new MB.Sphere(17.5, 45, 45);
 
-                this.tex2d = new MB.textures.Texture2D(MB.resources.ResourceMap.retrieveAsset("diffuseMap"), {
+                this.tex2d = new MB.Texture2D(MB.ResourceMap.retrieveAsset("diffuseMap"), {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.TextureType.Clamp2Edge,
-                    wrapT: MB.ctes.TextureType.Clamp2Edge
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.tex2d2 = new MB.textures.Texture2D(MB.resources.ResourceMap.retrieveAsset("normalMap"), {
+                this.tex2d2 = new MB.Texture2D(MB.ResourceMap.retrieveAsset("normalMap"), {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.TextureType.Clamp2Edge,
-                    wrapT: MB.ctes.TextureType.Clamp2Edge
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
-                    prog.addShader("../shaders/normalMapping.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                    prog.addShader("../shaders/normalMapping.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/normalMapping.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/normalMapping.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["projection", "view", "model", "texDiffuse", "texNormal", "lightPosition"]);
@@ -75,33 +75,33 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
                 this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.extras.Timer.deltaTime() * 0.001;
+                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
                 this.tex2d2.bind(1);
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.maths.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.maths.Vect3.xAxis)
-                        .rotate(this.angle * 0.5, MB.maths.Vect3.zAxis)
-                        .scale(new MB.maths.Vect3(0.25, 0.25, 0.25));
+                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
+                        .rotate(90.0 * Math.PI / 180, MB.Vect3.xAxis)
+                        .rotate(this.angle * 0.5, MB.Vect3.zAxis)
+                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
                 prog.sendUniform1i("texDiffuse", 0);
                 prog.sendUniform1i("texNormal", 1);
                 this.cubito.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.core.Core.getInstance().canvas();
+                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
                 this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());
                 prog.sendUniformVec3("lightPosition", this.camera.GetPos());
@@ -111,7 +111,7 @@
             MyScene.prototype.textCB = function (gui) {
             };
             return MyScene;
-        }(MB.Scene));
+        }(MB.App));
         ;
         window.onload = function () {
             var myScene = new MyScene();

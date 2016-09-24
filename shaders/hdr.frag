@@ -20,8 +20,7 @@ vec3 decode_pnghdr(const in vec4 color){
 
 void main()
 {
-    vec2 uvv = vec2(uv.x, 1.0 - uv.y);
-    vec4 color = texture(tex, uvv).xyzw;
+    vec4 color = texture(tex, uv).xyzw;
     color.xyz  = decode_pnghdr(color);
     // apply gamma correction and exposure
     fragColor = vec4(pow(exposure * color.xyz, vec3(0.474)), 1.0);

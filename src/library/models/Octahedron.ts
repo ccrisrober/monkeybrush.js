@@ -20,41 +20,37 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Octahedron class
+     * @class Octahedron
+     */
+    export class Octahedron extends Polyhedron {
         /**
-         * Octahedron class
-         * @class Octahedron
+         * Octahedron constructor
+         * @param {number} radius: Octahedron radius
+         * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
          */
-        export class Octahedron extends Polyhedron {
-            /**
-             * Octahedron constructor
-             * @param {number} radius: Octahedron radius
-             * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
-             */
-            constructor(radius: number, subdivisions: number) {
-                const a: number = 1 / (2 * Math.sqrt(2));
-                const b: number = 1 / 2;
-                let verts = [
-                     a,  0,  0,
-                    -a,  0,  0,
-                     0,  b,  0,
-                     0, -b,  0,
-                     0,  0,  a,
-                     0,  0, -a];
-                let el = [
-                    0, 2, 4,
-                    0, 4, 3,
-                    0, 3, 5,
-                    0, 5, 2,
-                    1, 2, 5,
-                    1, 5, 3,
-                    1, 3, 4,
-                    1, 4, 2
-                ];
-
-
-                super(verts, el, radius, subdivisions);
-            };
+        constructor(radius: number, subdivisions: number) {
+            const a: number = 1 / (2 * Math.sqrt(2));
+            const b: number = 1 / 2;
+            
+            super([
+                 a,  0,  0,
+                -a,  0,  0,
+                 0,  b,  0,
+                 0, -b,  0,
+                 0,  0,  a,
+                 0,  0, -a
+            ], [
+                0, 2, 4,
+                0, 4, 3,
+                0, 3, 5,
+                0, 5, 2,
+                1, 2, 5,
+                1, 5, 3,
+                1, 3, 4,
+                1, 4, 2
+            ], radius, subdivisions);
         };
     };
 };

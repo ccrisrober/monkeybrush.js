@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Wood effect</title>
+    <title>Wood effect</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -24,53 +24,53 @@
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
         var SimpleConfig = function () {
-		    return {
-		        resume: true,
-		        ampScale: 100
-		    }
-		};
-		var MyScene = (function (_super) {
-		    __extends(MyScene, _super);
-		    function MyScene() {
-		        _super.call(this, SimpleConfig(), "App", 2);
-		        this.mainShader = "prog";
-		    }
-		    MyScene.prototype.loadAssets = function () {};
-		    MyScene.prototype.initialize = function () {
-		        var _this = this;
-		        MB.resources.ProgramManager.addWithFun("prog", function () {
-		            var prog = new MB.core.Program();
-	                prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-	                prog.addShader("../shaders/woodTex.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
-		            prog.compile();
-		            prog.use();
-		            prog.addUniforms(["ampScale"]);
-		            console.log(prog);
-		            return prog;
-		        });
-		    };
-		    MyScene.prototype.update = function (dt) {
+            return {
+                resume: true,
+                ampScale: 100
+            }
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, SimpleConfig(), "App", 2);
+                this.mainShader = "prog";
+            }
+            MyScene.prototype.loadAssets = function () {};
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/woodTex.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["ampScale"]);
+                    console.log(prog);
+                    return prog;
+                });
+            };
+            MyScene.prototype.update = function (dt) {
                 this.__resize__();
-		    };
-		    MyScene.prototype.draw = function (dt) {
-		        MB.core.Core.getInstance().clearColorAndDepth();
-		        var prog = MB.resources.ProgramManager.get(this.mainShader);
-		        prog.use();
-		        prog.sendUniform1f("ampScale", this.text.ampScale);
-		        MB.extras.PostProcess.render();
-		    };
-		    MyScene.prototype.cameraUpdate = function () {
-		    };
-		    MyScene.prototype.textCB = function (gui) {
-		        gui.add(this.text, "ampScale", 0.0, 150.0);
-		    };
-		    return MyScene;
-		}(MB.Scene));
-		;
-		window.onload = function () {
-		    var myScene = new MyScene();
-		    myScene.start();
-		};
+            };
+            MyScene.prototype.draw = function (dt) {
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                prog.sendUniform1f("ampScale", this.text.ampScale);
+                MB.PostProcess.render();
+            };
+            MyScene.prototype.cameraUpdate = function () {
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "ampScale", 0.0, 150.0);
+            };
+            return MyScene;
+        }(MB.App));
+        ;
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
     </script>
 </body>
 </html>

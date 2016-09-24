@@ -20,58 +20,41 @@
 "use strict";
 
 namespace MB {
-    export namespace textures {
-        export class Texture2D extends Texture {
-            /**
-             * Texture2D constructor
-             * @param {HTMLImageElement} data: Image data
-             * @param {TexOptions = {}} options: Texture options
-             * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
-             */
-            constructor(data: any, options: TexOptions = {}, onSuccess: () => void = null) {
-                super(MB.ctes.TextureTarget.Texture2D);
+    export class Texture2D extends Texture {
+        /**
+         * Texture2D constructor
+         * @param {HTMLImageElement} data: Image data
+         * @param {TexOptions = {}} options: Texture options
+         * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
+         */
+        constructor(data: any, options: TexOptions = {}, onSuccess: () => void = null) {
+            super(MB.ctes.TextureTarget.Texture2D, options);
 
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
-                // TODO: Support compression
+            this.bind();
 
-                this._flipY_ = Boolean(options.flipY || false);
-                this._handle_ = gl.createTexture();
+            gl.texImage2D(
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
+                data
+            );
 
-                this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
-                this._format_ = options.format || MB.ctes.TextureFormat.RGBA;
-                this._type_ = options.type || gl.UNSIGNED_BYTE;
-                this._level_ = options.level || 0;
+            this.wrap([
+                options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
+                options.wrapT || MB.ctes.WrapMode.Clamp2Edge
+            ]);
+            
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
-                this.bind();
-
-                gl.texImage2D(
-                    this._target_,
-                    this._level_, // Level of details
-                    this._internalformat_, // Internal format
-                    this._format_, // Format
-                    this._type_, // Size of each channel
-                    data
-               );
-
-                this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-                this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-
-                this.wrap([
-                    options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
-                    options.wrapT || MB.ctes.WrapMode.Clamp2Edge
-                ]);
-
-                if (this._flipY_) {
-                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-                }
-
-                this.unbind();
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
-                if (onSuccess) {
-                    onSuccess();
-                }
+            this.unbind();
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+            if (onSuccess) {
+                onSuccess();
             }
-        };
+        }
     };
 };

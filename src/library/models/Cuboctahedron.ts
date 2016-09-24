@@ -20,68 +20,63 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Cuboctahedron class
+     * @class Cuboctahedron
+     */
+    export class Cuboctahedron extends Polyhedron {
         /**
-         * Cuboctahedron class
-         * @class Cuboctahedron
+         * Cuboctahedron constructor
+         * @param {number} radius: Cuboctahedron radius
+         * @param {number} subdivisions: Cuboctahedron subdivisions from base icosphere
          */
-        export class Cuboctahedron extends Polyhedron {
-            /**
-             * Cuboctahedron constructor
-             * @param {number} radius: Cuboctahedron radius
-             * @param {number} subdivisions: Cuboctahedron subdivisions from base icosphere
-             */
-            constructor(radius: number = 1.0, subdivisions: number = 1) {
-                // TODO: subdivisions = Math.trunc(subdivisions);
-                subdivisions = Math.floor(subdivisions);
-                if (subdivisions > 10) {
-                    MB.core.Log.warn("Please, don´t use more than 8 subdivisions");
-                    return;
-                }
+        constructor(radius: number = 1.0, subdivisions: number = 1) {
+            subdivisions = Math.floor(subdivisions);
 
-                let verts = [
-                     // Front
-                   -radius, -radius, radius,
-                    radius, -radius, radius,
-                    radius,  radius, radius,
-                   -radius,  radius, radius,
-                   // Right
-                    radius, -radius, radius,
-                    radius, -radius, -radius,
-                    radius,  radius, -radius,
-                    radius,  radius, radius,
-                   // Back
-                   -radius, -radius, -radius,
-                   -radius,  radius, -radius,
-                    radius,  radius, -radius,
-                    radius, -radius, -radius,
-                   // Left
-                   -radius, -radius, radius,
-                   -radius,  radius, radius,
-                   -radius,  radius, -radius,
-                   -radius, -radius, -radius,
-                   // Bottom
-                   -radius, -radius, radius,
-                   -radius, -radius, -radius,
-                    radius, -radius, -radius,
-                    radius, -radius, radius,
-                   // Top
-                   -radius,  radius, radius,
-                    radius,  radius, radius,
-                    radius,  radius, -radius,
-                   -radius,  radius, -radius
-                ];
-                let el = [
-                    0, 1, 2, 0, 2, 3,
-                    4, 5, 6, 4, 6, 7,
-                    8, 9, 10, 8, 10, 11,
-                    12, 13, 14, 12, 14, 15,
-                    16, 17, 18, 16, 18, 19,
-                    20, 21, 22, 20, 22, 23
-                ];
-                console.log(subdivisions);
-                super(verts, el, radius, subdivisions);
-            };
+            if (subdivisions > 10) {
+                MB.Log.warn("Please, don´t use more than 8 subdivisions");
+                return;
+            }
+
+            super([
+                 // Front
+               -radius, -radius, radius,
+                radius, -radius, radius,
+                radius,  radius, radius,
+               -radius,  radius, radius,
+               // Right
+                radius, -radius, radius,
+                radius, -radius, -radius,
+                radius,  radius, -radius,
+                radius,  radius, radius,
+               // Back
+               -radius, -radius, -radius,
+               -radius,  radius, -radius,
+                radius,  radius, -radius,
+                radius, -radius, -radius,
+               // Left
+               -radius, -radius, radius,
+               -radius,  radius, radius,
+               -radius,  radius, -radius,
+               -radius, -radius, -radius,
+               // Bottom
+               -radius, -radius, radius,
+               -radius, -radius, -radius,
+                radius, -radius, -radius,
+                radius, -radius, radius,
+               // Top
+               -radius,  radius, radius,
+                radius,  radius, radius,
+                radius,  radius, -radius,
+               -radius,  radius, -radius
+            ], [
+                0, 1, 2, 0, 2, 3,
+                4, 5, 6, 4, 6, 7,
+                8, 9, 10, 8, 10, 11,
+                12, 13, 14, 12, 14, 15,
+                16, 17, 18, 16, 18, 19,
+                20, 21, 22, 20, 22, 23
+            ], radius, subdivisions);
         };
     };
 };

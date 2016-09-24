@@ -20,119 +20,131 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Cone class
+     * @class Cone
+     */
+    export class Cone extends Drawable {
+        protected _bottomRadius: number;
+        protected _topRadius: number;
+        protected _height: number;
+        protected _radialSubDiv: number;
+        protected _heightSubDiv: number;
+        protected _createTopBase: boolean;
+        protected _createBottomBase: boolean;
         /**
-         * Cone class
-         * @class Cone
+         * Cone constructor
+         * @param {number} bottomRadius: Cone bottom radius
+         * @param {number} topRadius: Cone top radius
+         * @param {number} height: Cone height
+         * @param {number = 3.0} radialSubDiv: Radial subdivisions around Cone
+         * @param {number = 1.0} heightSubDiv Height subdivisions
+         * @param {boolean = true} createTopBase: Create top base
+         * @param {boolean = true} createBottomBase: Create bottom base
          */
-        export class Cone extends Drawable {
-            /**
-             * Cone constructor
-             * @param {number} bottomRadius: Cone bottom radius
-             * @param {number} topRadius: Cone top radius
-             * @param {number} height: Cone height
-             * @param {number = 3.0} radialSubDiv: Radial subdivisions around Cone
-             * @param {number = 1.0} heightSubDiv Height subdivisions
-             * @param {boolean = true} createTopBase: Create top base
-             * @param {boolean = true} createBottomBase: Create bottom base
-             */
-            constructor(bottomRadius: number, topRadius: number,
-                height: number, radialSubDiv: number = 3.0, heightSubDiv: number = 1.0,
-                createTopBase: boolean = true, createBottomBase: boolean = true) {
-                super();
+        constructor(bottomRadius: number, topRadius: number,
+            height: number, radialSubDiv: number = 3.0, heightSubDiv: number = 1.0,
+            createTopBase: boolean = true, createBottomBase: boolean = true) {
+            super();
 
-                if (radialSubDiv < 3) {
-                    throw Error("radialSubDiv must be 3 or greater");
-                }
-
-                if (heightSubDiv < 1) {
-                    throw Error("heightSubDiv must be 1 or greater");
-                }
-
-                const extra = (createTopBase ? 2 : 0) + (createBottomBase ? 2 : 0);
-
-                const nv = (radialSubDiv + 1) * (heightSubDiv + 1 + extra);
-
-                let verts = new Array(3 * nv);
-                let norms = new Array(3 * nv);
-                let tex = new Array(2 * nv);
-                let el = new Array(3 * radialSubDiv * (heightSubDiv + extra) * 2);
-
-                const vertsAroundEdge = radialSubDiv + 1;
-
-                // Slant: Distance from the top of a Cone, down the side to a point on the edge of the base.
-                const slantH = Math.atan2(bottomRadius - topRadius, height);
-                const cSlantH = Math.cos(slantH);
-                const sSlantH = Math.sin(slantH);
-
-                const start = createTopBase ? -2 : 0;
-                const end = heightSubDiv + (createBottomBase ? 2 : 0);
-
-                let vv = 0;
-                let nn = 0;
-                let tt = 0;
-
-                for (let yy = start; yy <= end; ++yy) {
-                    let v = yy / heightSubDiv;
-                    let y = height * v;
-                    let ringRadius;
-                    if (yy < 0) {
-                        y = 0;
-                        v = 1;
-                        ringRadius = bottomRadius;
-                    } else if (yy > heightSubDiv) {
-                        y = height;
-                        v = 1;
-                        ringRadius = topRadius;
-                    } else {
-                        ringRadius = bottomRadius +
-                            (topRadius - bottomRadius) * (yy / heightSubDiv);
-                    }
-                    if (yy === -2 || yy === heightSubDiv + 2) {
-                        ringRadius = 0;
-                        v = 0;
-                    }
-                    y -= height / 2;
-
-                    for (let ii = 0; ii < vertsAroundEdge; ++ii) {
-                        let sin = Math.sin(ii * Math.PI * 2 / radialSubDiv);
-                        let cos = Math.cos(ii * Math.PI * 2 / radialSubDiv);
-
-                        verts[vv++] = sin * ringRadius;
-                        verts[vv++] = y;
-                        verts[vv++] = cos * ringRadius;
-
-                        norms[nn++] = (yy < 0 || yy > heightSubDiv) ? 0 : (sin * cSlantH);
-                        norms[nn++] = (yy < 0) ? -1 : (yy > heightSubDiv ? 1 : sSlantH);
-                        norms[nn++] = (yy < 0 || yy > heightSubDiv) ? 0 : (cos * cSlantH);
-
-                        tex[tt++] = (ii / radialSubDiv);
-                        tex[tt++] = 1.0 - v;
-                    }
-                }
-
-                for (let yy = 0; yy < heightSubDiv + extra; ++yy) {
-                    for (let ii = 0; ii < radialSubDiv; ++ii) {
-                        el.push(vertsAroundEdge * (yy + 0) + 0 + ii,
-                                                 vertsAroundEdge * (yy + 0) + 1 + ii,
-                                                 vertsAroundEdge * (yy + 1) + 1 + ii);
-                        el.push(vertsAroundEdge * (yy + 0) + 0 + ii,
-                                                 vertsAroundEdge * (yy + 1) + 1 + ii,
-                                                 vertsAroundEdge * (yy + 1) + 0 + ii);
-                    }
-                }
-
-                this._handle = [];
-                this._vao.bind();
-
-                this.addElementArray(new Uint16Array(el));
-
-                this.addBufferArray(0, new Float32Array(verts), 3);
-                this.addBufferArray(1, new Float32Array(norms), 3);
-                this.addBufferArray(2, new Float32Array(tex), 2);
-
-                this._indicesLen = el.length;
+            if (radialSubDiv < 3) {
+                throw Error("radialSubDiv must be 3 or greater");
             }
-        };
+
+            if (heightSubDiv < 1) {
+                throw Error("heightSubDiv must be 1 or greater");
+            }
+            
+            this._bottomRadius = bottomRadius;
+            this._topRadius = topRadius;
+            this._height = height;
+            this._radialSubDiv = radialSubDiv;
+            this. _heightSubDiv = heightSubDiv;
+            this._createTopBase = createTopBase;
+            this._createBottomBase = createBottomBase;
+
+
+            const extra = (createTopBase ? 2 : 0) + (createBottomBase ? 2 : 0);
+
+            const nv = (radialSubDiv + 1) * (heightSubDiv + 1 + extra);
+
+            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array(2 * nv), 2));
+            let el = new Uint16Array(3 * radialSubDiv * (heightSubDiv + extra) * 2);
+
+            const vertsAroundEdge = radialSubDiv + 1;
+
+            // Slant: Distance from the top of a Cone, down the side to a point on the edge of the base.
+            const slantH = Math.atan2(bottomRadius - topRadius, height);
+            const cSlantH = Math.cos(slantH);
+            const sSlantH = Math.sin(slantH);
+
+            const start = createTopBase ? -2 : 0;
+            const end = heightSubDiv + (createBottomBase ? 2 : 0);
+
+            let NVIDX = 0;
+            let NNIDX = 0;
+            let NTIDX = 0;
+            for (let yy = start; yy <= end; ++yy) {
+                let v = yy / heightSubDiv;
+                let y = height * v;
+                let ringRadius;
+                if (yy < 0) {
+                    y = 0;
+                    v = 1;
+                    ringRadius = bottomRadius;
+                } else if (yy > heightSubDiv) {
+                    y = height;
+                    v = 1;
+                    ringRadius = topRadius;
+                } else {
+                    ringRadius = bottomRadius +
+                        (topRadius - bottomRadius) * (yy / heightSubDiv);
+                }
+                if (yy === -2 || yy === heightSubDiv + 2) {
+                    ringRadius = 0;
+                    v = 0;
+                }
+                y -= height / 2;
+
+                for (let ii = 0; ii < vertsAroundEdge; ++ii) {
+                    let sin = Math.sin(ii * Math.PI * 2 / radialSubDiv);
+                    let cos = Math.cos(ii * Math.PI * 2 / radialSubDiv);
+
+                    this._geometry.getAttr(VBType.VBVertices).setXYZ(NVIDX++, sin * ringRadius, y, cos * ringRadius);
+                    this._geometry.getAttr(VBType.VBNormals).setXYZ(NNIDX++,
+                        (yy < 0 || yy > heightSubDiv) ? 0 : (sin * cSlantH),
+                        (yy < 0) ? -1 : (yy > heightSubDiv ? 1 : sSlantH),
+                        (yy < 0 || yy > heightSubDiv) ? 0 : (cos * cSlantH));
+                    this._geometry.getAttr(VBType.VBTexCoord).setXY(NTIDX++, (ii / radialSubDiv), 1.0 - v);
+                }
+            }
+
+            // Generate the element list
+            let idx = 0;
+            for (let yy = 0; yy < heightSubDiv + extra; ++yy) {
+                for (let ii = 0; ii < radialSubDiv; ++ii) {
+                    el[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 0) + 1 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
+
+                    el[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
+                    el[idx++] = vertsAroundEdge * (yy + 1) + 0 + ii;
+                }
+            }
+
+            this._handle = [];
+            this._vao.bind();
+
+            this.addElementArray(el);
+
+            this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
+            this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+            this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
+
+            this._indicesLen = el.length;
+        }
     };
 };

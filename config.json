@@ -8,6 +8,7 @@
   "core": {
     "ts_files": [
       "./src/typings/**/*.d.ts",
+      "./src/library/MonkeyBrush.ts",
       "./src/library/polyfills.ts",
 
       "./src/library/others/**/*.ts",
@@ -38,12 +39,17 @@
 
       "./src/library/textures/Texture.ts",
       "./src/library/textures/**/*.ts",
+
+
+      "./src/library/scene/**/*.ts",
+      "./src/library/Transform.ts",
 
       "!node_modules/**"
     ],
     "typescript": [
       "./src/typings/**/*.d.ts",
       "./src/library/polyfills.ts",
+      "./src/library/MonkeyBrush.ts",
 
       "./src/library/others/**/*.ts",
 
@@ -73,6 +79,10 @@
 
       "./src/library/textures/Texture.ts",
       "./src/library/textures/**/*.ts",
+
+
+      "./src/library/scene/**/*.ts",
+      "./src/library/Transform.ts",
 
       "../../external references/**/*.d.ts"
     ],

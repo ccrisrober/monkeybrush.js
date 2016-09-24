@@ -20,7 +20,6 @@
 "use strict";
 
 namespace MB {
-    export namespace extras {
     /**
      * PingPong class.
      * This class may be used, for example, for purposes that require
@@ -28,58 +27,57 @@ namespace MB {
      * @class PingPong
      */
     export class PingPong {
-      protected _size: MB.maths.Vect2;
-      protected _fbo: MB.core.Framebuffer;
-      protected _flag: boolean;
-      protected _tex1: MB.textures.SimpleTexture2D;
-      protected _tex2: MB.textures.SimpleTexture2D;
-      /**
-       * PingProng constructor
-       * @param {MB.maths.Vect2} size Framebuffer/texture size
-       */
-      constructor(size: MB.maths.Vect2) {
-        const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-        this._flag = true;
-        this._size = size;
+        protected _size: MB.Vect2;
+        protected _fbo: MB.Framebuffer;
+        protected _flag: boolean;
+        protected _tex1: MB.SimpleTexture2D;
+        protected _tex2: MB.SimpleTexture2D;
+        /**
+         * PingProng constructor
+         * @param {MB.Vect2} size Framebuffer/texture size
+         */
+        constructor(size: MB.Vect2) {
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._flag = true;
+            this._size = size;
 
-        this._tex1 = this._tex2 =
-          new MB.textures.SimpleTexture2D(size, {
-            internalFormat: MB.ctes.TextureFormat.RGBA,
-            format: MB.ctes.TextureFormat.RGBA,
-            type: gl.FLOAT,
-            minFilter: MB.ctes.TextureType.Nearest,
-            magFilter: MB.ctes.TextureType.Nearest
-          });
+            this._tex1 = this._tex2 =
+                new MB.SimpleTexture2D(size, {
+                    internalFormat: MB.ctes.PixelFormat.RGBA,
+                    format: MB.ctes.PixelFormat.RGBA,
+                    type: gl.FLOAT,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest
+                });
 
-        this._fbo = new MB.core.Framebuffer([this._tex1], size);
-      };
-      /**
-       * Replace textures.
-       */
-      public pingpong() {
-        if (this._flag) {
-          this._tex1.bind();
-          this._fbo.replaceTexture(this._tex1, 0);
-        } else {
-          this._tex2.bind();
-          this._fbo.replaceTexture(this._tex2, 0);
+            this._fbo = new MB.Framebuffer([this._tex1], size);
+        };
+        /**
+         * Replace textures.
+         */
+        public pingpong() {
+            if (this._flag) {
+                this._tex1.bind();
+                this._fbo.replaceTexture(this._tex1, 0);
+            } else {
+                this._tex2.bind();
+                this._fbo.replaceTexture(this._tex2, 0);
+            }
+            this._flag = !this._flag;
+        };
+        /**
+         * Resize ping pong texture
+         * @param {MB.Vect2} size New size
+         */
+        public resize(size: MB.Vect2) {
+            if (!this._size.exactEquals(size)) {
+                this._fbo.rebuild(size);
+                if (this._flag) {
+                    this._tex2.resize(size);
+                } else {
+                    this._tex1.resize(size);
+                }
+            }
         }
-        this._flag = !this._flag;
-      };
-      /**
-       * Resize ping pong texture
-       * @param {MB.maths.Vect2} size New size
-       */
-      public resize(size: MB.maths.Vect2) {
-        if (!this._size.exactEquals(size)) {
-          this._fbo.rebuild(size);
-          if (this._flag) {
-            this._tex2.resize(size);
-          } else {
-            this._tex1.resize(size);
-          }
-        }
-      }
     };
-  };
 };

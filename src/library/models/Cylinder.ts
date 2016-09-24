@@ -20,28 +20,26 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Cylinder class
+     * @class Cylinder
+     */
+    export class Cylinder extends Cone {
         /**
-         * Cylinder class
-         * @class Cylinder
+         * Cylinder constructor
+         * @param {number} radius: Cylinder radius
+         * @param {number} height: Cylinder height
+         * @param {number = 15.0} radialSubDiv: Radial subdivisions around Cylinder
+         * @param {number = 1.0} heightSubDiv Height subdivisions
+         * @param {boolean = true} createTopBase: Create top base
+         * @param {boolean = true} createBottomBase: Create bottom base
          */
-        export class Cylinder extends Cone {
-            /**
-             * Cylinder constructor
-             * @param {number} radius: Cylinder radius
-             * @param {number} height: Cylinder height
-             * @param {number = 15.0} radialSubDiv: Radial subdivisions around Cylinder
-             * @param {number = 1.0} heightSubDiv Height subdivisions
-             * @param {boolean = true} createTopBase: Create top base
-             * @param {boolean = true} createBottomBase: Create bottom base
-             */
-            constructor(radius: number, height: number, radialSubDiv: number = 15.0,
-                heightSubDiv: number = 1.0, createTopBase: boolean = true, createBottomBase: boolean = true) {
-                if (radialSubDiv < 15) {
-                    throw Error("radialSubDiv must be 15 or greater");
-                }
-                super(radius, radius, height, radialSubDiv, heightSubDiv, createTopBase, createBottomBase);
+        constructor(radius: number, height: number, radialSubDiv: number = 15.0,
+            heightSubDiv: number = 1.0, createTopBase: boolean = true, createBottomBase: boolean = true) {
+            if (radialSubDiv < 15) {
+                throw Error("radialSubDiv must be 15 or greater");
             }
-        };
+            super(radius, radius, height, radialSubDiv, heightSubDiv, createTopBase, createBottomBase);
+        }
     };
 };

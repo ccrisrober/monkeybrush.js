@@ -20,33 +20,28 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Tetrahedron class
+     * @class Tetrahedron
+     */
+    export class Tetrahedron extends Polyhedron {
         /**
-         * Tetrahedron class
-         * @class Tetrahedron
+         * Tetrahedron constructor
+         * @param {number} radius: Tetrahedron radius
+         * @param {number} subdivisions: Tetrahedron subdivisions from base tetrahedron.
          */
-        export class Tetrahedron extends Polyhedron {
-            /**
-             * Tetrahedron constructor
-             * @param {number} radius: Tetrahedron radius
-             * @param {number} subdivisions: Tetrahedron subdivisions from base tetrahedron.
-             */
-            constructor(radius: number, subdivisions: number) {
-                let verts = [
-                     1,  1,  1,
-                    -1, -1,  1,
-                    -1,  1, -1,
-                     1, -1, -1
-                ];
-                let el = [
-                    2, 1, 0,
-                    0, 3, 2,
-                    1, 3, 0,
-                    2, 3, 1
-                ];
-
-                super(verts, el, radius, subdivisions);
-            };
+        constructor(radius: number, subdivisions: number) {
+            super([
+                 1,  1,  1,
+                -1, -1,  1,
+                -1,  1, -1,
+                 1, -1, -1
+            ], [
+                 2,  1,  0,
+                 0,  3,  2,
+                 1,  3,  0,
+                 2,  3,  1
+            ], radius, subdivisions);
         };
     };
 };

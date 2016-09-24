@@ -27,7 +27,9 @@
             return {
                 resume: true,
                 brickW: 25,
-                brickH: 15
+                brickH: 15,
+                brickColor: "#ff7800",
+                jointColor: "#ffffff"
             }
         };
         var MyScene = (function (_super) {
@@ -37,51 +39,51 @@
                 this.mainShader = "prog";
             }
             MyScene.prototype.loadAssets = function () {
-                MB.resources.Loaders.loadImage("../assets/images/bergsjostolen.jpg", "tex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                var myTexture = MB.resources.ResourceMap.retrieveAsset("tex");
-                this.tex = new MB.textures.Texture2D(myTexture, {
-                    flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
-                    wrapT: MB.ctes.WrapMode.Clamp2Edge
-                });
-
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                    prog.addShader("../shaders/procedurals/brick.glsl", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/procedurals/brick.glsl", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["brickSize"]);
+                    prog.addUniforms(["brickSize", "brickColor", "jointColor"]);
                     console.log(prog);
                     return prog;
                 });
+                this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
+                this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
 
                 prog.sendUniform2f("brickSize", this.text.brickW, this.text.brickH);
+                prog.sendUniform3f("brickColor", this.brickColor.r, this.brickColor.g, this.brickColor.b);
+                prog.sendUniform3f("jointColor", this.jointColor.r, this.jointColor.g, this.jointColor.b);
 
-                MB.extras.PostProcess.render();
+                MB.PostProcess.render();
             };
             MyScene.prototype.cameraUpdate = function () {
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "brickW", 10, 50);
                 gui.add(this.text, "brickH", 10, 50);
+                gui.addColor(this.text, "brickColor").onChange(function() {
+                    this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
+                }.bind(this));
+                gui.addColor(this.text, "jointColor").onChange(function() {
+                    this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
+                }.bind(this));
             };
             return MyScene;
-        }(MB.Scene));
+        }(MB.App));
         ;
         window.onload = function () {
             var myScene = new MyScene();

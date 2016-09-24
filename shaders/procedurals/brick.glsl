@@ -5,8 +5,8 @@ out vec4 fragColor;
 in vec2 uv;
 
 uniform vec2 brickSize;
-/* uniform */ vec3 brickColor = vec3(1.0, 0.3, 0.2);
-/* uniform */ vec3 jointColor = vec3(0.85, 0.86, 0.84);
+uniform vec3 brickColor;
+uniform vec3 jointColor;
 
 float rand(vec2 n) {
 	return fract(cos(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);

@@ -20,391 +20,389 @@
 "use strict";
 
 namespace MB {
-    export namespace maths {
+    /**
+     * Vect2 class
+     * @class Vect2
+     */
+    export class Vect2 {
+        protected _value: Float32Array;
         /**
-         * Vect2 class
-         * @class Vect2
+         * Vect2 constructor
+         * @param {number = 0.0} x First component
+         * @param {number = 0.0} y Second component
          */
-        export class Vect2 {
-            protected _value: Float32Array;
-            /**
-             * Vect2 constructor
-             * @param {number = 0.0} x First component
-             * @param {number = 0.0} y Second component
-             */
-            constructor(x: number = 0.0, y: number = 0.0) {
-                this._value = new Float32Array([x, y]);
-            };
-            /**
-             * Create a new Vect2 initialized with the given values
-             * @param  {ArrayLike<number>} values Array of values (minLength 2)
-             * @return {Vect2} a new Vect2
-             */
-            static create(values: ArrayLike<number>): Vect2 {
-                return new Vect2(values[0], values[1]);
-            };
-            /**
-             * Create a new Vect2 initialized with the given value.
-             * All Vect2 component set with same value.
-             * @param  {number} value Simple value
-             * @return {Vect2} a new Vect2
-             */
-            static createFromScalar(value: number): Vect2 {
-                return new Vect2(value, value);
-            };
-            /**
-             * Create a new Vect2 initialized with values from current Vect2
-             * @return {Vect2} a new Vect2
-             */
-            public clone(): Vect2 {
-                return new Vect2(this.x, this.y);
-            };
-            /**
-             * Adds current Vect2 with another Vect2
-             * @param  {Vect2} v Second vector
-             * @return {Vect2} a new Vect2
-             */
-            public add(v: Vect2): Vect2 {
-                this.x += v.x;
-                this.y += v.y;
+        constructor(x: number = 0.0, y: number = 0.0) {
+            this._value = new Float32Array([x, y]);
+        };
+        /**
+         * Create a new Vect2 initialized with the given values
+         * @param  {ArrayLike<number>} values Array of values (minLength 2)
+         * @return {Vect2} a new Vect2
+         */
+        static create(values: ArrayLike<number>): Vect2 {
+            return new Vect2(values[0], values[1]);
+        };
+        /**
+         * Create a new Vect2 initialized with the given value.
+         * All Vect2 component set with same value.
+         * @param  {number} value Simple value
+         * @return {Vect2} a new Vect2
+         */
+        static createFromScalar(value: number): Vect2 {
+            return new Vect2(value, value);
+        };
+        /**
+         * Create a new Vect2 initialized with values from current Vect2
+         * @return {Vect2} a new Vect2
+         */
+        public clone(): Vect2 {
+            return new Vect2(this.x, this.y);
+        };
+        /**
+         * Adds current Vect2 with another Vect2
+         * @param  {Vect2} v Second vector
+         * @return {Vect2} a new Vect2
+         */
+        public add(v: Vect2): Vect2 {
+            this.x += v.x;
+            this.y += v.y;
 
-                return this;
-            };
-            /**
-             * Substracts current Vect2 with another Vect2
-             * @param  {Vect2} v Second vector
-             * @return {Vect2} a new Vect2
-             */
-            public sub(v: Vect2): Vect2 {
-                this.x -= v.x;
-                this.y -= v.y;
+            return this;
+        };
+        /**
+         * Substracts current Vect2 with another Vect2
+         * @param  {Vect2} v Second vector
+         * @return {Vect2} a new Vect2
+         */
+        public sub(v: Vect2): Vect2 {
+            this.x -= v.x;
+            this.y -= v.y;
 
-                return this;
-            };
-            /**
-             * Multiplies current Vect2 with another Vect2
-             * @param  {Vect2} v Second vector
-             * @return {Vect2} a new Vect2
-             */
-            public mult(v: Vect2): Vect2 {
-                this.x *= v.x;
-                this.y *= v.y;
+            return this;
+        };
+        /**
+         * Multiplies current Vect2 with another Vect2
+         * @param  {Vect2} v Second vector
+         * @return {Vect2} a new Vect2
+         */
+        public mult(v: Vect2): Vect2 {
+            this.x *= v.x;
+            this.y *= v.y;
 
-                return this;
-            };
-            /**
-             * Multiplies current Vect2 with scalar
-             * @param  {number} s Scalar value.
-             * @return {Vect2} a new Vect2
-             */
-            public multByScalar(s: number): Vect2 {
-                this.x *= s;
-                this.y *= s;
+            return this;
+        };
+        /**
+         * Multiplies current Vect2 with scalar
+         * @param  {number} s Scalar value.
+         * @return {Vect2} a new Vect2
+         */
+        public multByScalar(s: number): Vect2 {
+            this.x *= s;
+            this.y *= s;
 
-                return this;
-            };
-            /**
-             * Divides current Vect2 with another Vect2
-             * @param  {Vect2} v Second vector
-             * @return {Vect2} a new Vect2
-             */
-            public div(v: Vect2): Vect2 {
-                this.x /= v.x;
-                this.y /= v.y;
+            return this;
+        };
+        /**
+         * Divides current Vect2 with another Vect2
+         * @param  {Vect2} v Second vector
+         * @return {Vect2} a new Vect2
+         */
+        public div(v: Vect2): Vect2 {
+            this.x /= v.x;
+            this.y /= v.y;
 
-                return this;
-            };
-            /**
-             * Scales a Vect2 by a scalar number
-             * @param  {number} value Amount to scale the vector by
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {Vect2} a new Vect2
-             */
-            public scale(value: number, dest: Vect2 = null): Vect2 {
-                if (!dest) dest = this;
+            return this;
+        };
+        /**
+         * Scales a Vect2 by a scalar number
+         * @param  {number} value Amount to scale the vector by
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {Vect2} a new Vect2
+         */
+        public scale(value: number, dest: Vect2 = null): Vect2 {
+            if (!dest) dest = this;
 
-                dest.x *= value;
-                dest.y *= value;
+            dest.x *= value;
+            dest.y *= value;
 
-                return dest;
-            };
-            /**
-             * Add two Vect2 after scaling the Vect2 given by a scalar value
-             * @param  {Vect2} v Second vector
-             * @param  {number} scale Amount to scale v by before adding
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {Vect2} a new Vect2
-             */
-            public scaleAndAdd(v: Vect2, scale: number, dest: Vect2 = null): Vect2 {
-                if (!dest) dest = this;
+            return dest;
+        };
+        /**
+         * Add two Vect2 after scaling the Vect2 given by a scalar value
+         * @param  {Vect2} v Second vector
+         * @param  {number} scale Amount to scale v by before adding
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {Vect2} a new Vect2
+         */
+        public scaleAndAdd(v: Vect2, scale: number, dest: Vect2 = null): Vect2 {
+            if (!dest) dest = this;
 
-                dest.x = this.x + (v.x * scale);
-                dest.y = this.y + (v.y * scale);
+            dest.x = this.x + (v.x * scale);
+            dest.y = this.y + (v.y * scale);
 
-                return dest;
-            };
-            /**
-             * Calculate the euclidian distance between two Vect2s
-             * @param  {Vect2}  v First Vect2 operand
-             * @param  {Vect2}  v2 Second Vect2 operand
-             * @return {number} Distance between Vect2s
-             */
-            static distance(v: Vect2, v2: Vect2): number {
-                return Math.sqrt(this.squaredDistance(v, v2));
-            };
-            /**
-             * Calculate the squared euclidian distance between two Vect2s
-             * @param  {Vect2}  v First Vect2 operand
-             * @param  {Vect2}  v2 Second Vect2 operand
-             * @return {number} Distance between Vect2s
-             */
-            static squaredDistance(v: Vect2, v2: Vect2): number {
-                const
-                    x = v2.x - v.x,
-                    y = v2.y - v.y;
+            return dest;
+        };
+        /**
+         * Calculate the euclidian distance between two Vect2s
+         * @param  {Vect2}  v First Vect2 operand
+         * @param  {Vect2}  v2 Second Vect2 operand
+         * @return {number} Distance between Vect2s
+         */
+        static distance(v: Vect2, v2: Vect2): number {
+            return Math.sqrt(this.squaredDistance(v, v2));
+        };
+        /**
+         * Calculate the squared euclidian distance between two Vect2s
+         * @param  {Vect2}  v First Vect2 operand
+         * @param  {Vect2}  v2 Second Vect2 operand
+         * @return {number} Distance between Vect2s
+         */
+        static squaredDistance(v: Vect2, v2: Vect2): number {
+            const
+                x = v2.x - v.x,
+                y = v2.y - v.y;
 
-                return (x * x + y * y);
-            };
-            /**
-             * Negates the components of current Vect2
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {Vect2} a new Vect2
-             */
-            public negate(dest: Vect2 = null): Vect2 {
-                if (!dest) dest = this;
+            return (x * x + y * y);
+        };
+        /**
+         * Negates the components of current Vect2
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {Vect2} a new Vect2
+         */
+        public negate(dest: Vect2 = null): Vect2 {
+            if (!dest) dest = this;
 
-                dest.x = -this.x;
-                dest.y = -this.y;
+            dest.x = -this.x;
+            dest.y = -this.y;
 
-                return dest;
-            };
-            /**
-             * Inverse of the components of current Vect2
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {Vect2} a new Vect2
-             */
-            public inverse(dest: Vect2 = null): Vect2 {
-                if (!dest) dest = this;
+            return dest;
+        };
+        /**
+         * Inverse of the components of current Vect2
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {Vect2} a new Vect2
+         */
+        public inverse(dest: Vect2 = null): Vect2 {
+            if (!dest) dest = this;
 
-                dest.x = 1 / this.x;
-                dest.y = 1 / this.y;
+            dest.x = 1 / this.x;
+            dest.y = 1 / this.y;
 
-                return dest;
-            };
-            /**
-             * Normalize current Vect2
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {Vect2} a new Vect2
-             */
-            public normalize(dest: Vect2 = null): Vect2 {
-                if (!dest) dest = this;
+            return dest;
+        };
+        /**
+         * Normalize current Vect2
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {Vect2} a new Vect2
+         */
+        public normalize(dest: Vect2 = null): Vect2 {
+            if (!dest) dest = this;
 
-                let len = this.x * this.x + this.y * this.y;
-                if (len > 0) {
-                    len = 1 / Math.sqrt(len);
-                    dest.x = this.x * len;
-                    dest.y = this.y * len;
-                }
-
-                return dest;
-            };
-            /**
-             * Calculate the dot product of two Vect2´s
-             * @param  {Vect2}  v  First Vect2 operand
-             * @param  {Vect2}  v2 Second Vect2 operand
-             * @return {number} a new Vect2
-             */
-            public static dot(v: Vect2, v2: Vect2): number {
-                return (v.x * v2.x + v.y * v2.y);
-            };
-            /**
-             * Return a string representation of Vect2
-             * @return {String} String representation of Vect2
-             */
-            public toString = () : string => {
-                return `Vect2(${this.x}, ${this.y})`;
-            };
-            /**
-             * Get internal values of Vect2
-             * @return {Float32Array} Interval Vect2 values
-             */
-            get value(): Float32Array {
-                return this._value;
-            };
-            /**
-             * Return x component of Vect2
-             * @return {number} First component of Vect2
-             */
-            get x(): number { return this._value[0]; };
-            /**
-             * Return y component of Vect2
-             * @return {number} Second component of Vect2
-             */
-            get y(): number { return this._value[1]; };
-            /**
-             * Set x component of Vect2
-             * @param {number} value New first component value
-             */
-            set x(value: number) {
-                this._value[0] = value;
-            };
-            /**
-             * Set y component of Vect2
-             * @param {number} value New second component value
-             */
-            set y(value: number) {
-                this._value[1] = value;
-            };
-            /**
-             * Returns whether or not current Vect2 and another Vect2 have exactly the same elements
-             *     in the same position.
-             * @param  {Vect2}   other The second vector
-             * @return {boolean} True if the vectors are equals, false otherwise
-             */
-            public exactEquals(other: Vect2): boolean {
-                return this.x === other.x && this.y === other.y;
+            let len = this.x * this.x + this.y * this.y;
+            if (len > 0) {
+                len = 1 / Math.sqrt(len);
+                dest.x = this.x * len;
+                dest.y = this.y * len;
             }
-            /**
-             * Returns whether or not current Vect2 and another Vect2 have approximately the same elements
-             *     in the same position.
-             * @param  {Vect2}   other The second vector
-             * @param  {boolean} Enable or disable threshold epsilon in values comparison
-             * @return {boolean} True if the vectors are equals, false otherwise
-             */
-            public isEquals(vec: Vect2, threshold: boolean = false): boolean {
-                for (let i = 0; i < 2; ++i) {
-                    if (threshold) {
-                        if (Math.abs(this._value[i] - vec._value[i]) > 0.00001) {
-                            return false;
-                        }
-                    } else {
-                        if (Math.abs(this._value[i] - vec._value[i]) !== 0) {
-                            return false;
-                        }
+
+            return dest;
+        };
+        /**
+         * Calculate the dot product of two Vect2´s
+         * @param  {Vect2}  v  First Vect2 operand
+         * @param  {Vect2}  v2 Second Vect2 operand
+         * @return {number} a new Vect2
+         */
+        public static dot(v: Vect2, v2: Vect2): number {
+            return (v.x * v2.x + v.y * v2.y);
+        };
+        /**
+         * Return a string representation of Vect2
+         * @return {String} String representation of Vect2
+         */
+        public toString = () : string => {
+            return `Vect2(${this.x}, ${this.y})`;
+        };
+        /**
+         * Get internal values of Vect2
+         * @return {Float32Array} Interval Vect2 values
+         */
+        get value(): Float32Array {
+            return this._value;
+        };
+        /**
+         * Return x component of Vect2
+         * @return {number} First component of Vect2
+         */
+        get x(): number { return this._value[0]; };
+        /**
+         * Return y component of Vect2
+         * @return {number} Second component of Vect2
+         */
+        get y(): number { return this._value[1]; };
+        /**
+         * Set x component of Vect2
+         * @param {number} value New first component value
+         */
+        set x(value: number) {
+            this._value[0] = value;
+        };
+        /**
+         * Set y component of Vect2
+         * @param {number} value New second component value
+         */
+        set y(value: number) {
+            this._value[1] = value;
+        };
+        /**
+         * Returns whether or not current Vect2 and another Vect2 have exactly the same elements
+         *     in the same position.
+         * @param  {Vect2}   other The second vector
+         * @return {boolean} True if the vectors are equals, false otherwise
+         */
+        public exactEquals(other: Vect2): boolean {
+            return this.x === other.x && this.y === other.y;
+        }
+        /**
+         * Returns whether or not current Vect2 and another Vect2 have approximately the same elements
+         *     in the same position.
+         * @param  {Vect2}   other The second vector
+         * @param  {boolean} Enable or disable threshold epsilon in values comparison
+         * @return {boolean} True if the vectors are equals, false otherwise
+         */
+        public isEquals(vec: Vect2, threshold: boolean = false): boolean {
+            for (let i = 0; i < 2; ++i) {
+                if (threshold) {
+                    if (Math.abs(this._value[i] - vec._value[i]) > 0.00001) {
+                        return false;
+                    }
+                } else {
+                    if (Math.abs(this._value[i] - vec._value[i]) !== 0) {
+                        return false;
                     }
                 }
-
-                return true;
-            };
-            /**
-             * Adds two Vect2´s
-             * @param  {Vect2}    v  First Vect2 operand
-             * @param  {Vect2}    v2 Second Vect2 operand
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {number} a new Vect2
-             */
-            static add(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
-                if (!dest) dest = new Vect2();
-
-                dest.x = v.x + v2.x;
-                dest.y = v.y + v2.y;
-
-                return dest;
-            };
-            /**
-             * Subtracts two Vect2´s
-             * @param  {Vect2}    v  First Vect2 operand
-             * @param  {Vect2}    v2 Second Vect2 operand
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {number} a new Vect2
-             */
-            static sub(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
-                if (!dest) dest = new Vect2();
-
-                dest.x = v.x - v2.x;
-                dest.y = v.y - v2.y;
-
-                return dest;
-            };
-            /**
-             * Multiplies two Vect2´s
-             * @param  {Vect2}    v  First Vect2 operand
-             * @param  {Vect2}    v2 Second Vect2 operand
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {number} a new Vect2
-             */
-            static mult(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
-                if (!dest) dest = new Vect2();
-
-                dest.x = v.x * v2.x;
-                dest.y = v.y * v2.y;
-
-                return dest;
-            };
-            /**
-             * Divides two Vect2´s
-             * @param  {Vect2}    v  First Vect2 operand
-             * @param  {Vect2}    v2 Second Vect2 operand
-             * @param  {Vect2 = null} dest Destiny Vect2 (optional)
-             * @return {number} a new Vect2
-             */
-            static div(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
-                if (!dest) dest = new Vect2();
-
-                dest.x = v.x / v2.x;
-                dest.y = v.y / v2.y;
-
-                return dest;
-            };
-            /**
-             * Return minimum Vect2 between two Vect2's
-             * @param  {Vect2} v0   First Vect2 operand
-             * @param  {Vect2} v2   Second Vect2 operand
-             * @return {Vect2} a new Vect2 equals to minimum Vect2 entries
-             */
-            public static min(v0: Vect2, v2: Vect2): Vect2 {
-                const x = (v0.x < v2.x) ? v0.x : v2.x;
-                const y = (v0.y < v2.y) ? v0.y : v2.y;
-
-                return new Vect2(x, y);
-            };
-            /**
-             * Return maximum Vect2 between two Vect2's
-             * @param  {Vect2} v0   First Vect2 operand
-             * @param  {Vect2} v2   Second Vect2 operand
-             * @return {Vect2} a new Vect2 equals to maximum Vect2 entries
-             */
-            public static max(v0: Vect2, v2: Vect2): Vect2 {
-                const x = (v0.x > v2.x) ? v0.x : v2.x;
-                const y = (v0.y > v2.y) ? v0.y : v2.y;
-
-                return new Vect2(x, y);
-            };
-            /**
-             * Perform a linear interpolation between two Vect2's
-             * @param  {Vect2}  init First Vec2 operand
-             * @param  {Vect2}  end  Second Vec2 operand
-             * @param  {number} t    Interpolation amount between the two inputs
-             * @return {Vect2}  Interpolant Vect2
-             */
-            public static lerp(init: Vect2, end: Vect2, t: number): Vect2 {
-                const x = init.x + ((end.x - init.x) * t);
-                const y = init.y + ((end.y - init.y) * t);
-
-                return new Vect2(x, y);
-            };
-            /**
-             * Limiting Vect2 between min and max value
-             * @param  {Vect2} value Entry vector
-             * @param  {Vect2} min   Minimum Vect2 vector
-             * @param  {Vect2} max   Maximum Vect2 vector
-             * @return {Vect2}       a new Vect2
-             */
-            public static clamp(value: Vect2, min: Vect2, max: Vect2): Vect2 {
-                const x = (value.x > max.x) ? max.x : (value.x < min.x) ? min.x : value.x;
-                const y = (value.y > max.y) ? max.y : (value.y < min.y) ? min.y : value.y;
-
-                return new Vect2(x, y);
-            };
-            /**
-             * Replace X and Y values from Vect2
-             * @param {number} x New X value
-             * @param {number} y New Y value
-             */
-            public setXY(x: number, y: number) {
-                this.x = x;
-                this.y = y;
             }
+
+            return true;
         };
+        /**
+         * Adds two Vect2´s
+         * @param  {Vect2}    v  First Vect2 operand
+         * @param  {Vect2}    v2 Second Vect2 operand
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {number} a new Vect2
+         */
+        static add(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+            if (!dest) dest = new Vect2();
+
+            dest.x = v.x + v2.x;
+            dest.y = v.y + v2.y;
+
+            return dest;
+        };
+        /**
+         * Subtracts two Vect2´s
+         * @param  {Vect2}    v  First Vect2 operand
+         * @param  {Vect2}    v2 Second Vect2 operand
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {number} a new Vect2
+         */
+        static sub(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+            if (!dest) dest = new Vect2();
+
+            dest.x = v.x - v2.x;
+            dest.y = v.y - v2.y;
+
+            return dest;
+        };
+        /**
+         * Multiplies two Vect2´s
+         * @param  {Vect2}    v  First Vect2 operand
+         * @param  {Vect2}    v2 Second Vect2 operand
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {number} a new Vect2
+         */
+        static mult(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+            if (!dest) dest = new Vect2();
+
+            dest.x = v.x * v2.x;
+            dest.y = v.y * v2.y;
+
+            return dest;
+        };
+        /**
+         * Divides two Vect2´s
+         * @param  {Vect2}    v  First Vect2 operand
+         * @param  {Vect2}    v2 Second Vect2 operand
+         * @param  {Vect2 = null} dest Destiny Vect2 (optional)
+         * @return {number} a new Vect2
+         */
+        static div(v: Vect2, v2: Vect2, dest: Vect2 = null): Vect2 {
+            if (!dest) dest = new Vect2();
+
+            dest.x = v.x / v2.x;
+            dest.y = v.y / v2.y;
+
+            return dest;
+        };
+        /**
+         * Return minimum Vect2 between two Vect2's
+         * @param  {Vect2} v0   First Vect2 operand
+         * @param  {Vect2} v2   Second Vect2 operand
+         * @return {Vect2} a new Vect2 equals to minimum Vect2 entries
+         */
+        public static min(v0: Vect2, v2: Vect2): Vect2 {
+            const x = (v0.x < v2.x) ? v0.x : v2.x;
+            const y = (v0.y < v2.y) ? v0.y : v2.y;
+
+            return new Vect2(x, y);
+        };
+        /**
+         * Return maximum Vect2 between two Vect2's
+         * @param  {Vect2} v0   First Vect2 operand
+         * @param  {Vect2} v2   Second Vect2 operand
+         * @return {Vect2} a new Vect2 equals to maximum Vect2 entries
+         */
+        public static max(v0: Vect2, v2: Vect2): Vect2 {
+            const x = (v0.x > v2.x) ? v0.x : v2.x;
+            const y = (v0.y > v2.y) ? v0.y : v2.y;
+
+            return new Vect2(x, y);
+        };
+        /**
+         * Perform a linear interpolation between two Vect2's
+         * @param  {Vect2}  init First Vec2 operand
+         * @param  {Vect2}  end  Second Vec2 operand
+         * @param  {number} t    Interpolation amount between the two inputs
+         * @return {Vect2}  Interpolant Vect2
+         */
+        public static lerp(init: Vect2, end: Vect2, t: number): Vect2 {
+            const x = init.x + ((end.x - init.x) * t);
+            const y = init.y + ((end.y - init.y) * t);
+
+            return new Vect2(x, y);
+        };
+        /**
+         * Limiting Vect2 between min and max value
+         * @param  {Vect2} value Entry vector
+         * @param  {Vect2} min   Minimum Vect2 vector
+         * @param  {Vect2} max   Maximum Vect2 vector
+         * @return {Vect2}       a new Vect2
+         */
+        public static clamp(value: Vect2, min: Vect2, max: Vect2): Vect2 {
+            const x = (value.x > max.x) ? max.x : (value.x < min.x) ? min.x : value.x;
+            const y = (value.y > max.y) ? max.y : (value.y < min.y) ? min.y : value.y;
+
+            return new Vect2(x, y);
+        };
+        /**
+         * Replace X and Y values from Vect2
+         * @param {number} x New X value
+         * @param {number} y New Y value
+         */
+        public setXY(x: number, y: number) {
+            this.x = x;
+            this.y = y;
+        }
     };
 };

@@ -8,105 +8,101 @@
 let SimpleConfig = function () {
     return {
         resume: true,
-        render: function() {
-            myScene.drawTick = true;
-        }
+        layer: 32
     }
 };
 class MyScene extends MB.Scene {
     constructor() {
         super(SimpleConfig(), "EY", 2);
         this.mainShader = "prog";
+        this.angle = 0;
     }
-    public loadAssets() { };
-    protected tex: MB.textures.Texture2D;
+    protected angle: number;
+    public loadAssets() {
+        MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
+    };
     protected mainShader: string;
 
+    protected tex3d: MB.Texture3D;
+    protected texture: WebGLTexture;
     public initialize() {
         var _this = this;
 
-        MB.resources.ProgramManager.addWithFun("prog", function () {
-            var prog = new MB.core.Program();
-            prog.addShader(`#version 300 es
-            in vec3 aPos;
-            void main(void) {
-                gl_PointSize = 50.0;
-                gl_Position = vec4(-aPos.x, aPos.yz, 1.0);
-            }`, MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_text);
+        var gl = MB.Core.getInstance().getGL();
+
+        MB.ProgramManager.addWithFun("prog", function () {
+            var prog = new MB.Program();
             prog.addShader(`#version 300 es
             precision highp float;
-            out vec4 fragColor;
+            layout(location = 0) in vec3 vertPosition;
+            out vec2 uv;
+            uniform mat4 viewProj;
             void main(void) {
-                fragColor = vec4( 1.,0.,0., 1. );
-            }
-            `, MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_text);
+                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+                gl_Position = vec4(vertPosition, 1.0);
+            }`, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+
+            prog.addShader(`#version 300 es
+            precision highp float;
+            precision highp sampler3D;
+
+            out vec4 fragColor;
+            in vec2 uv;
+
+            uniform sampler3D tex;
+            uniform float layer;
+
+            void main() {
+                float r = texture(tex, vec3(uv, layer)).r;
+                fragColor = vec4(vec3(r), 1.0);
+            }`, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             prog._compile();
-            prog.feedbackVarying(["gl_Position"], MB.ctes.TFMode.Separate);
             prog._link();
             prog.use();
 
-            MB.core.Core.getInstance().getGL().enableVertexAttribArray(0);
-
-            _this.bA = new MB.core.VertexBuffer(MB.ctes.BufferType.Array);
-            _this.bA.bufferData(new Float32Array([0.8, 0.0, 0.0]), MB.ctes.UsageType.DynamicCopy);
-
-            _this.bB = new MB.core.VertexBuffer(MB.ctes.BufferType.Array);
-            _this.bB.bufferData(3 * 4, MB.ctes.UsageType.DynamicCopy);
-
-            _this.ttf = new MB.core.TransformFeedback();
-
-            console.log(_this.ttf.getVarying(prog, 0));
+            prog.addUniforms(["tex", "layer"]);
 
             return prog;
         });
-
+        var size = 64;
+        var data = new Uint8Array(Math.pow(size, 3));
+        for (var k = 0; k < size; ++k) {
+            for (var j = 0; j < size; ++j) {
+                for (var i = 0; i < size; ++i) {
+                    data[i + j * size + k * size * size] = MB.RandomGenerator.random() * 255; //Math.floor(MB.Noise.worley.Euclidean(i, j, k)[0] * 255);
+                }
+            }
+        }
+        this.tex3d = new MB.Texture3D(data, new MB.Vect3(size, size, size), {
+            minFilter: MB.ctes.TextureType.Linear, //_MIPMAP_LINEAR,
+            magFilter: MB.ctes.TextureType.Linear,
+            autoMipMap: true,
+            internalFormat: gl.R8,
+            format: MB.ctes.TextureFormat.RED,
+            type: gl.UNSIGNED_BYTE
+        });
     };
-    public bA: MB.core.VertexBuffer;
-    public bB: MB.core.VertexBuffer;
-
-    public ttf: MB.core.TransformFeedback;
-
     public update(dt: number) {
+        this.angle += MB.Timer.deltaTime() * 0.001;
+
+        var gl = MB.Core.getInstance().getGL();
+        //this.text.layer = Math.random();
+
         this.__resize__();
     };
-    public drawTick: boolean = true;
     public draw(dt: number) {
-        if (this.drawTick === false) {
-            return;
-        }
-        MB.core.Core.getInstance().clearColorAndDepth();
-        var prog = MB.resources.ProgramManager.get(this.mainShader);
+        MB.Core.getInstance().clearColorAndDepth();
+        var prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
-
-        const gl = MB.core.Core.getInstance().getGL();
-        this.ttf.bind();
-
-        this.bA.bind();
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-        this.bB.bindBufferBase(MB.ctes.BufferType.TransformFeedback, 0);
-
-        this.ttf.beginPoints();
-        gl.drawArrays(gl.POINTS, 0, 1);
-        this.ttf.end();
-
-
-        var feedback2 = new ArrayBuffer(3 * Float32Array.BYTES_PER_ELEMENT);
-        gl.getBufferSubData(gl.TRANSFORM_FEEDBACK_BUFFER, 0, feedback2);
-        console.log(new Float32Array(feedback2));
-
-
-        gl.bindBufferBase(MB.ctes.BufferType.TransformFeedback, 0, null);
-
-        this.drawTick = false;
-        var t = this.bA;
-        this.bA = this.bB
-        this.bB = t;
-
+        this.tex3d.bind(0);
+        prog.sendUniform1i("tex", 0);
+        prog.sendUniform1f("layer", this.text.layer * 1.0);
+        MB.PostProcess.render();
     };
     public cameraUpdate() {
     };
     public textCB(gui) {
-        gui.add(this.text, "render");
+        gui.add(this.text, "layer", 0, 64);
     };
 };
 

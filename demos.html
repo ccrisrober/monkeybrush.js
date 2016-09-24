@@ -5,6 +5,9 @@
         <title>MonkeyBrush.js demo</title>
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <meta name="author" value="maldicion069" />
+        <!-- Icons -->
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="./favicon.ico">
+        <link rel="shortcut icon" href="./favicon.ico">
         <style>
             @font-face {
                 font-family: "inconsolata";
@@ -185,7 +188,8 @@
                 "Cubes",
                 "Click_Points",
                 "Stencil_Reflection",
-                "Stencil_Shadow_And_Reflection"
+                "Stencil_Shadow_And_Reflection",
+                "Cartoon"
             ],
             "Views": [
                 "Free_Camera",
@@ -203,12 +207,15 @@
                 "3D_Texture",
                 "Clouds",
                 "Normal_Mapping",
+                "Bump_Mapping",
                 "Parallax_Mapping",
                 "Earth_Map",
                 "Alpha_Maps",
                 "Brick_Texture",
                 "Polka_Texture",
-                "Canvas_Painter"
+                "Canvas_Painter",
+                "Video_Texture",
+                "Webcam_Texture"
             ],
             "Framebuffer": [
                 "Mirror",
@@ -222,7 +229,8 @@
                 "Desintegration_Effect",
                 "PaintSpatter_Effect",
                 "NightVision_Effect",
-                "HDR"
+                "HDR",
+                "Grey_Filter"
             ],
             "Lighting": [
                 "Ambient_Light",
@@ -238,7 +246,8 @@
                 "Random_Hedrons",
                 "Heightmap",
                 "Lathe",
-                "Parametric_Geometry"
+                "Parametric_Geometry",
+                "Vertex_Displacement"
             ],
             "Global Ilumination": [
                 "Deferred_Shading",
@@ -249,6 +258,10 @@
                 "Ray_Tracing",
                 "Path_Tracing",
                 "Ray_Marching"
+            ],
+            "Others": [
+                "Cubes_TexSwap",
+                "Photosphere"
             ],
             "GPGPU": [
                 "Particle_System",
@@ -261,7 +274,8 @@
                 "Flock_TF",
                 "Water_Simulation",
                 "Cloth_Simulation",
-                "Point_TF"
+                "Point_TF",
+                "Ubo_Spline"
             ]
         };
         var panel = document.getElementById("panel");

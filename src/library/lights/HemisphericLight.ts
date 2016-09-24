@@ -20,58 +20,56 @@
 "use strict";
 
 namespace MB {
-    export namespace lights {
+    /**
+     * Hemispheric light class
+     *
+     * Hemispheric light represents a simple and easy way to
+     *     simulate realistic ambient light.
+     * An hemispheric light is defined by a direction to the
+     *     sky and by 3 colors: one for the diffuse (the sky color),
+     *     one for the ground (the color when the pixel is not towards
+     *     the sky) and one for the specular.
+     * @class HemisphericLight
+     */
+    export class HemisphericLight extends Light {
         /**
-         * Hemispheric light class
-         *
-         * Hemispheric light represents a simple and easy way to
-         *     simulate realistic ambient light.
-         * An hemispheric light is defined by a direction to the
-         *     sky and by 3 colors: one for the diffuse (the sky color),
-         *     one for the ground (the color when the pixel is not towards
-         *     the sky) and one for the specular.
-         * @class HemisphericLight
+         * Vector pointing from the surface to the light source.
+         * @type {MB.Vect3}
          */
-        export class HemisphericLight extends Light {
-            /**
-             * Vector pointing from the surface to the light source.
-             * @type {MB.maths.Vect3}
-             */
-            protected _direction: MB.maths.Vect3;
-            /**
-             * HemisphericLight ground color
-             * @type {MB.extras.Color3}
-             */
-            protected _groundColor: MB.extras.Color3;
-            /**
-             * Hemispheric light constructor
-             * @param {MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)} direction Light direction
-             */
-            constructor(direction: MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)) {
-                super();
-                this._direction = direction;
-                this._groundColor = new MB.extras.Color3(0.0, 0.0, 0.0);
-            }
-            /**
-             * Return light direction
-             * @return {MB.maths.Vect3}
-             */
-            get direction(): MB.maths.Vect3 { return this._direction; }
-            /**
-             * Set light direction
-             * @param {MB.maths.Vect3} direction New light direction
-             */
-            set direction(direction: MB.maths.Vect3) { this._direction = direction; }
-            /**
-             * Return light ground color
-             * @return {MB.extras.Color3}
-             */
-            get groundColor(): MB.extras.Color3 { return this._groundColor; }
-            /**
-             * Set light ground color
-             * @param {MB.extras.Color3} color New ground color
-             */
-            set groundColor(color: MB.extras.Color3) { this._groundColor = color; }
-        };
+        protected _direction: MB.Vect3;
+        /**
+         * HemisphericLight ground color
+         * @type {MB.Color3}
+         */
+        protected _groundColor: MB.Color3;
+        /**
+         * Hemispheric light constructor
+         * @param {MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0)} direction Light direction
+         */
+        constructor(direction: MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0)) {
+            super();
+            this._direction = direction;
+            this._groundColor = new MB.Color3(0.0, 0.0, 0.0);
+        }
+        /**
+         * Return light direction
+         * @return {MB.Vect3}
+         */
+        get direction(): MB.Vect3 { return this._direction; }
+        /**
+         * Set light direction
+         * @param {MB.Vect3} direction New light direction
+         */
+        set direction(direction: MB.Vect3) { this._direction = direction; }
+        /**
+         * Return light ground color
+         * @return {MB.Color3}
+         */
+        get groundColor(): MB.Color3 { return this._groundColor; }
+        /**
+         * Set light ground color
+         * @param {MB.Color3} color New ground color
+         */
+        set groundColor(color: MB.Color3) { this._groundColor = color; }
     };
 };

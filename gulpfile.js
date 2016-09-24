@@ -14,6 +14,17 @@ var merge = require("merge2");
 var notify = require("gulp-notify");
 var path = require("path");
 
+var tslint = require("gulp-tslint");
+
+gulp.task("tslint", function () {
+    return gulp.src("./src/library/**/*.ts")
+        .pipe(tslint({
+            formatter: "verbose",
+            configuration: "./tslint.json"
+        }))
+        .pipe(tslint.report());
+});
+
 gulp.task("gen-dts", function () {
 
     var tsResult = gulp.src(config.core.typescript).
@@ -84,26 +95,26 @@ gulp.task("build-debug", function() {
             sortOutput: true,
             target: "ES5",
             experimentalDecorators: true,
-            removeComments: true
+            removeComments: true // TODO: SOURCEMAPS!!
         }))
-        .on("error", notify.onError({
+        /*.on("error", notify.onError({
             message: "Error: <%= error.message %>",
             title: "Error running something"
-        }));
+        }))*/;
 
     return tsResult.js
         .pipe(concat('output.js'))
-        .pipe(cleants())
+        //.pipe(cleants())
         //.pipe(replace(/var\s__extends[\s\S]+?\};/g, ""))
         //.pipe(replace(/var\s__decorate[\s\S]+?\};/g, ""))
         //.pipe(addModuleExports("MonkeyBrush"))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(config.build.outputDirectory))
-        .pipe(notify({
+        /*.pipe(notify({
             title: "monkeybrush.js",
             message: "Code OK",
             icon: path.join(__dirname, '_images/logo.png')
-        }));
+        }))*/;
 });
 gulp.task("watch-ts", ["build-debug", "webserver"], function() {
     gulp.watch(config.core.typescript, ["build-debug"]);
@@ -135,7 +146,7 @@ gulp.task("typedoc", function() {
         out: "./doc",
 
         // TypeDoc options (see typedoc docs)
-        name: "my-project",
+        name: "Monkey Brush",
         readme: "./READMEDOC.md",
         //theme: "minimal",
         mode: "file",

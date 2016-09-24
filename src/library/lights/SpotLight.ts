@@ -20,80 +20,78 @@
 "use strict";
 
 namespace MB {
-    export namespace lights {
+    /**
+     * Spot light class
+     *
+     * A spotlight is a light source that is located somewhere
+     * in the environment that, instead of shooting light rays
+     * in all directions, only shoots them in a specific direction.
+     * The result is that only the objects within a certain radius of
+     * the spotlight's direction are lit and everything else stays dark.
+     * A good example of a spotlight would be a street lamp or a flashlight.
+     * @class SpotLight
+     */
+    export class SpotLight extends Light {
         /**
-         * Spot light class
-         *
-         * A spotlight is a light source that is located somewhere
-         * in the environment that, instead of shooting light rays
-         * in all directions, only shoots them in a specific direction.
-         * The result is that only the objects within a certain radius of
-         * the spotlight's direction are lit and everything else stays dark.
-         * A good example of a spotlight would be a street lamp or a flashlight.
-         * @class SpotLight
+         * Light source position.
+         * @type {MB.Vect3}
          */
-        export class SpotLight extends Light {
-            /**
-             * Light source position.
-             * @type {MB.maths.Vect3}
-             */
-            protected _position: MB.maths.Vect3;
-            /**
-             * Vector pointing from the surface to the light source.
-             * @type {MB.maths.Vect3}
-             */
-            protected _direction: MB.maths.Vect3;
-            /**
-             * Specifies the spotlight´s radius. Everything outside
-             * this angle is not lit by the spotlight.
-             * @type {number}
-             */
-            protected _cutOff: number;
+        protected _position: MB.Vect3;
+        /**
+         * Vector pointing from the surface to the light source.
+         * @type {MB.Vect3}
+         */
+        protected _direction: MB.Vect3;
+        /**
+         * Specifies the spotlight´s radius. Everything outside
+         * this angle is not lit by the spotlight.
+         * @type {number}
+         */
+        protected _cutOff: number;
 
-            /**
-             * SpotLight constructor
-             * @param {MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)} position  SpotLight position
-             * @param {MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0)} direction Spotlight direction
-             * @param {number = 1.0} cuttoff Spotlight radius
-             */
-            constructor(position: MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0),
-                direction: MB.maths.Vect3 = new MB.maths.Vect3(0.0, 0.0, 0.0), cuttoff: number = 1.0) {
-                super();
-                this._direction = direction;
-                this._position = position;
-                this._cutOff = cuttoff;
-            }
-            /**
-             * Return spotlight´s radius.
-             * @return {number}
-             */
-            get cutoff(): number { return this._cutOff; }
-            /**
-             * Edit spotlight´s radius.
-             * @param {number} v New spotlight radius
-             */
-            set cutoff(v: number) { this._cutOff = v; }
-            /**
-             * Return light source position
-             * @return {MB.maths.Vect3}
-             */
-            get position(): MB.maths.Vect3 { return this._position; }
-            /**
-             * Set light source position
-             * @param {MB.maths.Vect3} New light position
-             */
-            set position(position: MB.maths.Vect3) { this._position = position; }
+        /**
+         * SpotLight constructor
+         * @param {MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0)} position  SpotLight position
+         * @param {MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0)} direction Spotlight direction
+         * @param {number = 1.0} cuttoff Spotlight radius
+         */
+        constructor(position: MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0),
+            direction: MB.Vect3 = new MB.Vect3(0.0, 0.0, 0.0), cuttoff: number = 1.0) {
+            super();
+            this._direction = direction;
+            this._position = position;
+            this._cutOff = cuttoff;
+        }
+        /**
+         * Return spotlight´s radius.
+         * @return {number}
+         */
+        get cutoff(): number { return this._cutOff; }
+        /**
+         * Edit spotlight´s radius.
+         * @param {number} v New spotlight radius
+         */
+        set cutoff(v: number) { this._cutOff = v; }
+        /**
+         * Return light source position
+         * @return {MB.Vect3}
+         */
+        get position(): MB.Vect3 { return this._position; }
+        /**
+         * Set light source position
+         * @param {MB.Vect3} New light position
+         */
+        set position(position: MB.Vect3) { this._position = position; }
 
-            /**
-             * Return light direction
-             * @return {MB.maths.Vect3}
-             */
-            get direction(): MB.maths.Vect3 { return this._direction; }
-            /**
-             * Set light direction
-             * @param {MB.maths.Vect3} New light direciton
-             */
-            set direction(direction: MB.maths.Vect3) { this._direction = direction; }
-        };
+        /**
+         * Return light direction
+         * @return {MB.Vect3}
+         */
+        get direction(): MB.Vect3 { return this._direction; }
+        /**
+         * Set light direction
+         * @param {MB.Vect3} New light direciton
+         */
+        set direction(direction: MB.Vect3) { this._direction = direction; }
     };
 };

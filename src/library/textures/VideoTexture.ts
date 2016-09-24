@@ -19,83 +19,75 @@
 
 "use strict";
 
-namespace MB {
-    export namespace textures {
-        export class VideoTexture extends Texture {
-            protected _video: HTMLVideoElement;
-            /**
-             * [constructor description]
-             * @param {HTMLVideoElement} video [description]
-             * @param {boolean = true} loop [description]
-             * @param {number = 15} frameTime [description]
-             * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
-             */
-            constructor(video: HTMLVideoElement, loop: boolean = true,
-                frameTime: number = 15, onSuccess: () => void = null) {
+namespace MBX {
+    /**
+     * VideoTexture class
+     * @class VideoTexture
+     */
+    export class VideoTexture extends MB.Texture {
+        protected _video: HTMLVideoElement;
+        /**
+         * [constructor description]
+         * @param {HTMLVideoElement} video [description]
+         * @param {boolean = true} loop [description]
+         * @param {number = 15} frameTime [description]
+         * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
+         */
+        constructor(video: HTMLVideoElement, loop: boolean = true,
+            frameTime: number = 15, onSuccess: () => void = null) {
 
-                super(MB.ctes.TextureTarget.Texture2D);
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
+            super(MB.ctes.TextureTarget.Texture2D, {
+                internalFormat: MB.ctes.PixelFormat.RGBA,
+                format: MB.ctes.PixelFormat.RGBA,
+                type: gl.UNSIGNED_BYTE,
+                flipY: true
+            });
 
-                this._video = video;
-                this._video.muted = true;
-                this._video.loop = loop;
+            this._video = video;
+            this._video.muted = true;
+            this._video.loop = loop;
 
-                this._flipY_ = Boolean(true);
-                this._handle_ = gl.createTexture();
+            this.update();
 
-                this._internalformat_ = MB.ctes.TextureFormat.RGBA;
-                this._format_ = MB.ctes.TextureFormat.RGBA;
-                this._type_ = gl.UNSIGNED_BYTE;
-                this._level_ = 0;
+            // this.wrap([MB.ctes.TextureFilter.Linear, MB.ctes.TextureFilter.Clamp2Edge]);
 
-                this.bind();
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
-                this.update();
+            this.unbind();
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
 
-                this.minFilter(MB.ctes.TextureType.LinearMMNearest);
-                this.magFilter(MB.ctes.TextureType.Linear);
-
-                // this.wrap([MB.ctes.TextureType.Linear, MB.ctes.TextureType.Clamp2Edge]);
-
-                if (this._flipY_) {
-                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-                }
-
-                this.unbind();
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
-
-                if (onSuccess) {
-                    onSuccess();
-                }
-
-                this._video.play();
-
-                setInterval(function() {
-                    this.update();
-                }.bind(this), frameTime);
-            };
-            public update() {
-                if (this._video.readyState !== this._video.HAVE_ENOUGH_DATA) return;
-
-                // Update texture
-                this.bind();
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                gl.texImage2D(
-                    this._target_,
-                    this._level_, // Level of details
-                    this._internalformat_, // Internal format
-                    this._format_, // Format
-                    this._type_, // Size of each channel
-                    this._video
-               );
-                gl.generateMipmap(gl.TEXTURE_2D);
-                this.unbind();
-            };
-            public destroy() {
-                super.destroy();
-                this._video.pause();
+            if (onSuccess) {
+                onSuccess();
             }
+
+            this._video.play();
+
+            setInterval(function() {
+                this.update();
+            }.bind(this), frameTime);
         };
+        public update() {
+            if (this._video.readyState !== this._video.HAVE_ENOUGH_DATA) return;
+
+            // Update texture
+            this.bind();
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.texImage2D(
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
+                this._video
+           );
+            gl.generateMipmap(gl.TEXTURE_2D);
+            this.unbind();
+        };
+        public destroy() {
+            super.destroy();
+            this._video.pause();
+        }
     };
 };

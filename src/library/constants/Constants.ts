@@ -22,52 +22,145 @@
 
 namespace MB {
     export namespace ctes {
-        export enum BlendingEq {
-            Add = 0x8006,
-            Substract = 0x800A,
-            RevSubstract = 0x800B,
-            Min = 0x8007,
-            Max = 0x8008
+        /**
+         * WebGL constants to clear buffer masks.
+         */
+        export enum ClearBuffer {
+            DepthBuffer   = 0x00000100,
+            StencilBuffer = 0x00000400,
+            ColorBuffer   = 0x00004000
         };
+        /**
+         * WebGL constants primitives render modes
+         */
+        export enum RenderMode {
+            Points = 0x0000,
+            Lines = 0x0001,
+            LineLoop = 0x0002,
+            LineStrip = 0x0003,
+            Triangles = 0x0004,
+            TriangleStrip = 0x0005,
+            TriangleFan = 0x0006,
+        };
+        /**
+         * WebGL constants to specify blending mode
+         */
         export enum BlendingMode {
-            // gl.disable(gl.BLEND);
-            None,
-            // gl.enable(BLEND)
-            // gl.blenEquation(FuncAdd)
-            // gl.blendFuncSeparate(SrcAlpha, OneMinusSrcAlpha, One, OneMinusSrcAlpha)
-            Normal,
-            // gl.enable(BLEND)
-            // gl.blenEquation(FuncAdd)
-            // gl.blendFunc(SrcAlpha, One)
-            Additive,
-            // gl.enable(BLEND)
-            // gl.blenEquation(FuncAdd)
-            // gl.blendFunc(Zero, OneMinusSrcColor)
-            Substractive,
-            // gl.enable(BLEND)
-            // gl.blenEquation(FuncAdd)
-            // gl.blendFunc(Zero, SrcColor)
-            Multiply,
-            // ???
-            Custom
-        };
-        export enum BlendingType {
             Zero = 0,
             One = 1,
+            /**
+             * Multiply a component by the source elements color.
+             * @type {number}
+             */
             SrcColor = 0x0300,
+            /**
+             * Multiply a component by one minus the source elements color.
+             * @type {number}
+             */
             OneMinusSrcColor = 0x0301,
+            /**
+             * Multiply a component by the source's alpha.
+             * @type {number}
+             */
             SrcAlpha = 0x0302,
+            /**
+             * Multiply a component by one minus the source's alpha.
+             * @type {number}
+             */
             OneMinusSrcAlpha = 0x0303,
+            /**
+             * Multiply a component by the destination's alpha.
+             * @type {number}
+             */
             DstAlpha = 0x0304,
+            /**
+             * Multiply a component by one minus the destination's alpha.
+             * @type {number}
+             */
             OneMinusDstAlpha = 0x0305,
+            /**
+             * Multiply a component by the destination's color.
+             * @type {number}
+             */
             DstColor = 0x0306,
+            /**
+             * Multiply a component by one minus the destination's color.
+             * @type {number}
+             */
             OneMinusDstColor = 0x0307,
+            /**
+             * Multiply a component by the minimum of source's alpha or
+             *     one minus the destination's alpha.
+             * @type {number}
+             */
             SrcAlphaSaturate = 0x0308,
+            /**
+             * Specify a constant color blend function.
+             * @type {number}
+             */
             CteColor = 0x8001,
+            /**
+             * Specify one minus a constant color blend function.
+             * @type {number}
+             */
             OneMinusCteColor = 0x8002,
+            /**
+             * Specify a constant alpha blend function.
+             * @type {number}
+             */
             CteAlpha = 0x8003,
+            /**
+             * Specify one minus a constant alpha blend function.
+             * @type {number}
+             */
             OneMinusCteAlpha = 0x8004
         };
+        /**
+         * WebGL constants to control how the blending
+         *     is calculated (for both, RBG and alpha, or separately).
+         */
+        export enum BlendingEq {
+            /**
+             * Set an addition blend function.
+             * @type {number}
+             */
+            Add = 0x8006,
+            /**
+             * Specify a subtraction blend function (source - destination).
+             * @type {number}
+             */
+            Substract = 0x800A,
+            /**
+             * Specify a reverse subtraction blend function (destination - source).
+             * @type {number}
+             */
+            RevSubstract = 0x800B,
+            /**
+             * Produces the minimum color components of the source and destination colors.
+             * @type {number}
+             */
+            Min = 0x8007,
+            /**
+             * Produces the maximum color components of the source and destination colors.
+             * @type {number}
+             */
+            Max = 0x8008
+        };
+        // TODO: Complete!
+        /**
+         * WebGL constants to specify what information to return.
+         * Example: gl.getParameter(ctes.GLParameters.BlendEq)
+         */
+        export enum GLParameters {
+            /**
+             * Get the current RGB blend function.
+             * @type {number}
+             */
+            BlendEq = 0x8009
+        };
+        /**
+         * WebGL constants used with buffer management.
+         */
         export enum BufferType {
             Array = 0x8892,
             ElementArray = 0x8893,
@@ -78,6 +171,144 @@ namespace MB {
             CopyRead = 0x8F36,
             CopyWrite = 0x8F37,
         };
+        export enum FaceSide {
+            /**
+             * Cull front-facing primitives.
+             */
+            Front = 0x0404,
+            /**
+             * Cull back-facing primitives.
+             */
+            Back = 0x0405,
+            /**
+             * Cull Front and back-facing primitives.
+             */
+            FrontAndBack = 0x0408
+        };
+        /**
+         * WebGL constants used by enable and disable capabilites for context.
+         * Example: gl.getParameter(ctes.GLParameters.BlendEq)
+         */
+        export enum GLStates {
+            Blend = 0x0BE2,
+            DepthTest = 0x0B71,
+            Dither = 0x0BD0,
+            PolygonOffsetFill = 0x8037,
+            SAMPLE_ALPHA_TO_COVERAGE = 0x809E,
+            SAMPLE_COVERAGE = 0x80A0,
+            ScissorTest = 0x0C11,
+            StencilTest = 0x0B90
+        };
+        /**
+         * WebGL constants returned by gl.getError() method.
+         */
+        export enum GLErrors {
+            NO_ERROR = 0,
+            INVALID_ENUM = 0x0500,
+            INVALID_VALUE = 0x0501,
+            INVALID_OPERATION = 0x0502,
+            OUT_OF_MEMORY = 0x0505,
+            CONTEXT_LOST_WEBGL = 0x9242
+        };
+        /**
+         * WebGL constants to specify front face direction.
+         */
+        export enum FaceDir {
+            Clockwise = 0x0900,
+            InvClockwise = 0x0901
+        };
+        /**
+         * WebGL constants to specify data type.
+         */
+        export enum DataType {
+            UnsignedByte = 0x1401,
+            Byte = 0x1400,
+            Short = 0x1402,
+            UnsignedShort = 0x1403,
+            Int = 0x1404,
+            UnsignedInt = 0x1405,
+            Float = 0x1406,
+            HalfFloat = 0x140B
+        };
+        /**
+         * WebGL constants to specify pixel format.
+         */
+        export enum PixelFormat {
+            DepthComponent = 0x1902,
+            Alpha = 0x1906,
+            RGB = 0x1907,
+            RGBA = 0x1908,
+            Luminance = 0x1909,
+            LuminanceAlpha = 0x190A,
+            UNSIGNED_INT_2_10_10_10_REV = 0x8368,
+            UNSIGNED_INT_10F_11F_11F_REV = 0x8C3B,
+            UNSIGNED_INT_5_9_9_9_REV = 0x8C3E,
+            FLOAT_32_UNSIGNED_INT_24_8_REV = 0x8DAD,
+            UNSIGNED_INT_24_8 = 0x84FA,
+            HALF_FLOAT = 0x140B,
+            RG = 0x8227,
+            RG_INTEGER = 0x8228,
+            INT_2_10_10_10_REV = 0x8D9f,
+
+            RED = 0x1903,
+            RGB8 = 0x8051,
+            RGBA8 = 0x8058,
+
+
+            RGB9_E5 = 0x8C3D,
+            RGBA32UI = 0x8D70,
+            RGB32UI = 0x8D71,
+            RGBA16UI = 0x8D76,
+            RGB16UI = 0x8D77,
+            RGBA8UI = 0x8D7C,
+            RGB8UI = 0x8D7D,
+            RGBA32I = 0x8D82,
+            RGB32I = 0x8D83,
+            RGBA16I = 0x8D88,
+            RGB16I = 0x8D89,
+            RGBA8I = 0x8D8E,
+            RGB8I = 0x8D8F,
+            RED_INTEGER = 0x8D94,
+            RGB_INTEGER = 0x8D98,
+            RGBA_INTEGER = 0x8D99,
+            R8 = 0x8229,
+            RG8 = 0x822B,
+            R16F = 0x822D,
+            R32F = 0x822E,
+            RG16F = 0x822F,
+            RG32F = 0x8230,
+            R8I = 0x8231,
+            R8UI = 0x8232,
+            R16I = 0x8233,
+            R16UI = 0x8234,
+            R32I = 0x8235,
+            R32UI = 0x8236,
+            RG8I = 0x8237,
+            RG8UI = 0x8238,
+            RG16I = 0x8239,
+            RG16UI = 0x823A,
+            RG32I = 0x823B,
+            RG32UI = 0x823C,
+            R8_SNORM = 0x8F94
+        };
+        /**
+         * WebGL constants to specify shader type.
+         */
+        export enum ShaderType {
+            vertex = 0x8B31,
+            fragment = 0x8B30
+        };
+        /**
+         * WebGL constants to specify read mode.
+         */
+        export enum ReadMode {
+            read_file,
+            read_script,
+            read_text
+        };
+        /**
+         * WebGL constants used by depth and stencil tests.
+         */
         export enum ComparisonFunc {
             /**
              * Comparison always fails.
@@ -112,27 +343,42 @@ namespace MB {
              */
             Always = 0x0207
         };
-        export enum CompressedTex {
-            R11EAC = 0x9270,
-            SignedR11EAC = 0x9271,
-            RG11EAC = 0x9272,
-            SignedRG11EAC = 0x9273,
-            RGB8ETC2 = 0x9274,
-            SRGB8ETC2 = 0x9275,
-            RGB8PunchAlphaETC2 = 0x9276,
-            SRGB8PunchAlphaETC = 0x9277,
-            RGBA8ETC2EAC = 0x9278,
-            SRGBA8ETC2EAC = 0x9279,
-        };
-        export enum DataType {
-            UnsignedByte = 0x1401,
-            Byte = 0x1400,
-            Short = 0x1402,
-            UnsignedShort = 0x1403,
-            Int = 0x1404,
-            UnsignedInt = 0x1405,
-            Float = 0x1406,
-            HalfFloat = 0x140B
+        /**
+         * WebGL constants used by stencil operations.
+         */
+        export enum StencilOp {
+            /**
+             * Keep the stencil value.
+             */
+            Keep = 0x1E00,
+            /**
+             * Set the stencil value to zero.
+             */
+            Zero = 0,
+            /**
+             * Replace the stencil value with the reference value.
+             */
+            Replace = 0x1E01,
+            /**
+             * Increase the stencil value by one, wrap if necessary.
+             */
+            Increase = 0x1E02,
+            /**
+             * Increase the stencil value by one, clamp if necessary.
+             */
+            IncreaseSaturate = 0x8507,
+            /**
+             * Decrease the stencil value by one, wrap if necessary.
+             */
+            Decrease = 0x1E03,
+            /**
+             * Decrease the stencil value by one, clamp if necessary.
+             */
+            DecreaseSaturate = 0x8508,
+            /**
+             * Invert the stencil data (bitwise not).
+             */
+            Invert = 0x150A
         };
         export enum DrawBuffer {
             MaxDrawBuffers = 0x8824,
@@ -171,44 +417,6 @@ namespace MB {
             ColorAttach14 = 0x8CEE,
             ColorAttach15 = 0x8CEF
         };
-        export enum FaceDir {
-            Clockwise = 0x0900,
-            InvClockwise = 0x0901
-        };
-        export enum FaceSide {
-            /**
-             * Cull front-facing primitives.
-             */
-            Front = 0x0404,
-            /**
-             * Cull back-facing primitives.
-             */
-            Back = 0x0405,
-            /**
-             * Cull Front and back-facing primitives.
-             */
-            FrontAndBack = 0x0408
-        };
-        export enum PixelType {
-            Byte = 0x1400,
-            UByte = 0x1401,
-            Short = 0x1402,
-            UShort = 0x1403,
-            Int = 0x1404,
-            UInt = 0x1405,
-            Float = 0x1406
-        };
-        export namespace ProgramCte {
-            export enum mode {
-                read_file,
-                read_script,
-                read_text
-            };
-            export enum shader_type {
-                vertex = 0x8B31,
-                fragment = 0x8B30
-            }
-        };
         export enum QueryParams {
             QueryResult = 0x8866,
             QueryResultAvailable = 0x8867
@@ -229,15 +437,6 @@ namespace MB {
              */
             TransformFeedbackPrimitivesWritten = 0x8C88
         };
-        export enum RenderType {
-            Points = 0x0000,
-            Lines = 0x0001,
-            LineLoop = 0x0002,
-            LineStrip = 0x0003,
-            Triangles = 0x0004,
-            TriangleStrip = 0x0005,
-            TriangleFan = 0x0006,
-        };
         export enum SamplerParameter {
             TextureCompareFunc = 0x884D,
             TextureCompareMode = 0x884C,
@@ -248,45 +447,6 @@ namespace MB {
             TextureWrapR = 0x8072,
             TextureWrapS = 0x2802,
             TextureWrapT = 0x2803
-        };
-        export enum ShadingMode {
-            None,
-            Smooth,
-            Flat
-        };
-        export enum StencilOp {
-            /**
-             * Keep the stencil value.
-             */
-            Keep = 0x1E00,
-            /**
-             * Set the stencil value to zero.
-             */
-            Zero = 0,
-            /**
-             * Replace the stencil value with the reference value.
-             */
-            Replace = 0x1E01,
-            /**
-             * Increase the stencil value by one, wrap if necessary.
-             */
-            Increase = 0x1E02,
-            /**
-             * Increase the stencil value by one, clamp if necessary.
-             */
-            IncreaseSaturate = 0x8507,
-            /**
-             * Decrease the stencil value by one, wrap if necessary.
-             */
-            Decrease = 0x1E03,
-            /**
-             * Decrease the stencil value by one, clamp if necessary.
-             */
-            DecreaseSaturate = 0x8508,
-            /**
-             * Invert the stencil data (bitwise not).
-             */
-            Invert = 0x150A
         };
         export enum SyncCondition {
             GPUCommandsComplete = 0x9117
@@ -304,21 +464,13 @@ namespace MB {
             TimeoutExpired = 0x911B,
             WaitFailed = 0x911D
         };
-        export enum TextureFormat {
-            RGB = 0x1907,
-            RGBA = 0x1908,
-            RED = 0x1903,
-            LUMINANCE = 0x1909,
-            LUMINANCEALPHA = 0x190A,
-            ALPHA = 0x1906
-        };
         export enum TextureTarget {
             Texture2D = 0x0DE1,
             Texture3D = 0x806F,
             Texture2DArray = 0x8C1A,
             TextureCubeMap = 0x8513
         };
-        export enum TextureType {
+        export enum TextureFilter {
             Nearest = 0x2600,
             Linear = 0x2601,
             NearestMMNearest = 0x2700,
@@ -360,7 +512,88 @@ namespace MB {
 
 
 
-
+        export enum BlendingMode {
+            // gl.disable(gl.BLEND);
+            None,
+            // gl.enable(BLEND)
+            // gl.blenEquation(FuncAdd)
+            // gl.blendFuncSeparate(SrcAlpha, OneMinusSrcAlpha, One, OneMinusSrcAlpha)
+            Normal,
+            // gl.enable(BLEND)
+            // gl.blenEquation(FuncAdd)
+            // gl.blendFunc(SrcAlpha, One)
+            Additive,
+            // gl.enable(BLEND)
+            // gl.blenEquation(FuncAdd)
+            // gl.blendFunc(Zero, OneMinusSrcColor)
+            Substractive,
+            // gl.enable(BLEND)
+            // gl.blenEquation(FuncAdd)
+            // gl.blendFunc(Zero, SrcColor)
+            Multiply,
+            // ???
+            Custom
+        };
+        export enum CompressedTex {
+            /**
+             * One-channel (red) unsigned format compression.
+             * @type {number}
+             */
+            R11EAC = 0x9270,
+            /**
+             * One-channel (red) signed format compression.
+             * @type {number}
+             */
+            SignedR11EAC = 0x9271,
+            /**
+             * Two-channel (red and green) unsigned format compression.
+             * @type {number}
+             */
+            RG11EAC = 0x9272,
+            /**
+             * Two-channel (red and green) signed format compression.
+             * @type {number}
+             */
+            SignedRG11EAC = 0x9273,
+            /**
+             * Compresses RBG8 data with no alpha channel.
+             * @type {number}
+             */
+            RGB8ETC2 = 0x9274,
+            /**
+             * Compresses RGBA8 data. The RGB part is encoded the same as RGB8ETC2,
+             *     but the alpha part is encoded separately.
+             * @type {number}
+             */
+            SRGB8ETC2 = 0x9275,
+            /**
+             * Compresses sRBG8 data with no alpha channel.
+             * @type {number}
+             */
+            RGB8PunchAlphaETC2 = 0x9276,
+            /**
+             * Compresses sRBG8 data with no alpha channel.
+             * @type {number}
+             */
+            SRGB8PunchAlphaETC = 0x9277,
+            /**
+             * Similar to RGB8ETC2, but with ability to punch through the alpha channel,
+             *     which means to make it completely opaque or transparent.
+             * @type {number}
+             */
+            RGBA8ETC2EAC = 0x9278,
+            /**
+             * Similar to SRGB8ETC2, but with ability to punch through the alpha channel,
+             *     which means to make it completely opaque or transparent.
+             * @type {number}
+             */
+            SRGBA8ETC2EAC = 0x9279,
+        };
+        export enum ShadingMode {
+            None,
+            Smooth,
+            Flat
+        };
 
 
 

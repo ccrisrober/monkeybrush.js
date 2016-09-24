@@ -224,7 +224,7 @@ function draw() {
 }
 ```
 
-## Webcamp texture
+## Webcam texture
 ```typescript 
 let webcamTex: MB.VideoTexture;
 function load() {

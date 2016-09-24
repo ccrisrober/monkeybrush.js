@@ -20,97 +20,102 @@
 "use strict";
 
 namespace MB {
-    export namespace models {
+    /**
+     * Sphere class
+     * @class Sphere
+     */
+    export class Sphere extends Drawable {
+        protected _radius: number;
+        protected _slices: number;
+        protected _stacks: number;
         /**
-         * Sphere class
-         * @class Sphere
+         * Sphere constructor
+         * @param {number} radius [description]
+         * @param {number} slices: Number of steps around sphere.
+         * @param {number} stacks: Number of vertically on the sphere.
          */
-        export class Sphere extends Drawable {
-            /**
-             * Sphere constructor
-             * @param {number} radius [description]
-             * @param {number} slices: Number of steps around sphere.
-             * @param {number} stacks: Number of vertically on the sphere.
-             */
-            constructor(radius: number, slices: number, stacks: number) {
-                super();
+        constructor(radius: number, slices: number, stacks: number) {
+            super();
 
-                slices = Math["trunc"](slices);
-                stacks = Math["trunc"](stacks);
+            this._radius = radius;
+            this._slices = slices;
+            this._stacks = stacks;
 
-                let nv = (slices + 1) * (stacks + 1);
-                let elements = (slices * 2 * (stacks - 1)) * 3;
+            slices = Math["trunc"](slices);
+            stacks = Math["trunc"](stacks);
 
-                let verts = new Array(3 * nv);
-                let norms = new Array(3 * nv);
-                let tex = new Array(2 * nv);
-                let el = new Array(elements);
+            let nv = (slices + 1) * (stacks + 1);
+            let elements = (slices * 2 * (stacks - 1)) * 3;
 
-                // Generate the vertex data
-                // Generate positions and normals
-                let theta, phi;
-                let thetaFac = Math.PI * 2.0 / slices;
-                let phiFac = Math.PI / stacks;
-                let nx, ny, nz, s, t;
-                let idx = 0, tIdx = 0;
-                for (let i = 0; i <= slices; ++i) {
-                    theta = i * thetaFac;
-                            s = i / slices;
-                    for (let j = 0; j <= stacks; ++j) {
-                        phi = j * phiFac;
-                        t = j / stacks;
-                        nx = Math.sin(phi) * Math.cos(theta);
-                        ny = Math.sin(phi) * Math.sin(theta);
-                        nz = Math.cos(phi);
-                        verts[idx] = radius * nx; verts[idx + 1] = radius * ny; verts[idx + 2] = radius * nz;
-                        norms[idx] = nx; norms[idx + 1] = ny; norms[idx + 2] = nz;
+            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
+            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array(2 * nv), 2));
+            let el = new Uint16Array(elements);
+
+            // Generate the vertex data
+            // Generate positions and normals
+            let theta, phi;
+            let thetaFac = Math.PI * 2.0 / slices;
+            let phiFac = Math.PI / stacks;
+            let nx, ny, nz, s, t;
+
+            let NVIDX = 0;
+            let NNIDX = 0;
+            let NTIDX = 0;
+            for (let i = 0; i <= slices; ++i) {
+                theta = i * thetaFac;
+                        s = i / slices;
+                for (let j = 0; j <= stacks; ++j) {
+                    phi = j * phiFac;
+                    t = j / stacks;
+                    nx = Math.sin(phi) * Math.cos(theta);
+                    ny = Math.sin(phi) * Math.sin(theta);
+                    nz = Math.cos(phi);
+
+                    this._geometry.getAttr(VBType.VBVertices).setXYZ(NVIDX++, radius * nx, radius * ny, radius * nz);
+                    this._geometry.getAttr(VBType.VBNormals).setXYZ(NNIDX++, nx, ny, nz);
+                    this._geometry.getAttr(VBType.VBTexCoord).setXY(NTIDX++, s, t);
+                }
+            }
+
+            // Generate the element list
+            let idx = 0;
+            for (let i = 0; i < slices; ++i) {
+                let stackStart = i * (stacks + 1);
+                let nextStackStart = (i + 1) * (stacks + 1);
+                for (let j = 0; j < stacks; ++j) {
+                    if (j === 0) {
+                        el[idx] = stackStart;
+                        el[idx + 1] = stackStart + 1;
+                        el[idx + 2] = nextStackStart + 1;
                         idx += 3;
-
-                        tex[tIdx] = s;
-                        tex[tIdx + 1] = t;
-                        tIdx += 2;
+                    } else if (j === stacks - 1) {
+                        el[idx] = stackStart + j;
+                        el[idx + 1] = stackStart + j + 1;
+                        el[idx + 2] = nextStackStart + j;
+                        idx += 3;
+                    } else {
+                        el[idx] = stackStart + j;
+                        el[idx + 1] = stackStart + j + 1;
+                        el[idx + 2] = nextStackStart + j + 1;
+                        el[idx + 3] = nextStackStart + j;
+                        el[idx + 4] = stackStart + j;
+                        el[idx + 5] = nextStackStart + j + 1;
+                        idx += 6;
                     }
                 }
+            }
 
-                // Generate the element list
-                idx = 0;
-                for (let i = 0; i < slices; ++i) {
-                    let stackStart = i * (stacks + 1);
-                    let nextStackStart = (i + 1) * (stacks + 1);
-                    for (let j = 0; j < stacks; ++j) {
-                        if (j === 0) {
-                            el[idx] = stackStart;
-                            el[idx + 1] = stackStart + 1;
-                            el[idx + 2] = nextStackStart + 1;
-                            idx += 3;
-                        } else if (j === stacks - 1) {
-                            el[idx] = stackStart + j;
-                            el[idx + 1] = stackStart + j + 1;
-                            el[idx + 2] = nextStackStart + j;
-                            idx += 3;
-                        } else {
-                            el[idx] = stackStart + j;
-                            el[idx + 1] = stackStart + j + 1;
-                            el[idx + 2] = nextStackStart + j + 1;
-                            el[idx + 3] = nextStackStart + j;
-                            el[idx + 4] = stackStart + j;
-                            el[idx + 5] = nextStackStart + j + 1;
-                            idx += 6;
-                        }
-                    }
-                }
+            this._handle = [];
+            this._vao.bind();
 
-                this._handle = [];
-                this._vao.bind();
+            this.addElementArray(el);
 
-                this.addElementArray(new Uint16Array(el));
+            this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
+            this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+            this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
 
-                this.addBufferArray(0, new Float32Array(verts), 3);
-                this.addBufferArray(1, new Float32Array(norms), 3);
-                this.addBufferArray(2, new Float32Array(tex), 2);
-
-                this._indicesLen = el.length;
-            };
+            this._indicesLen = el.length;
         };
     };
 };

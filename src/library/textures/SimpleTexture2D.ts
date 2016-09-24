@@ -20,150 +20,132 @@
 "use strict";
 
 namespace MB {
-    export namespace textures {
-        export class SimpleTexture2D extends Texture {
-            protected _size: MB.maths.Vect2;
+    export class SimpleTexture2D extends Texture {
+        protected _size: MB.Vect2;
 
-            public getWidth(): number {
-                return this._size.x;
-            }
-            public getHeight(): number {
-                return this._size.y;
-            }
-            protected _offsets_: Array<number>;
-            /**
-             * SimpleTexture2D constructor
-             * @param {MB.maths.Vect2} size: Texture size
-             * @param {TexOptions = {}} options: Texture options
-             * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
-             */
-            constructor(size: MB.maths.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
-                super(MB.ctes.TextureTarget.Texture2D);
+        public getWidth(): number {
+            return this._size.x;
+        }
+        public getHeight(): number {
+            return this._size.y;
+        }
+        protected _offsets_: Array<number>;
+        /**
+         * SimpleTexture2D constructor
+         * @param {MB.Vect2} size: Texture size
+         * @param {TexOptions = {}} options: Texture options
+         * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
+         */
+        constructor(size: MB.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
+            super(MB.ctes.TextureTarget.Texture2D, options);
 
-                this._size = size;
+            this._size = size;
 
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                this._handle_ = gl.createTexture();
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            this._offsets_ = options.offsets;
 
-                // TODO: Support compression
+            // TODO: Support compression
 
-                this._flipY_ = options.flipY === true;
-
-                this._internalformat_ = options.internalFormat || MB.ctes.TextureFormat.RGBA;
-                this._format_ = options.format || gl.RGBA;
-                this._type_ = options.type || gl.UNSIGNED_BYTE;
-                this._level_ = options.level || 0;
-                this._compressed_ = Boolean(options.compressed || false);
-                this._offsets_ = options.offsets;
-
-                this.bind();
-
-                if (this._offsets_ && this._offsets_.length === 2) {
-                    if (this._compressed_) {
-                        gl.compressedTexSubImage2D(
-                            this._target_,
-                            this._level_,
-                            this._offsets_[0],
-                            this._offsets_[1],
-                            this.getWidth(),
-                            this.getHeight(),
-                            this._format_, // Format
-                            null
-                       );
-                    } else {
-                        gl.texSubImage2D(
-                            this._target_,
-                            this._level_,
-                            this._offsets_[0],
-                            this._offsets_[1],
-                            this.getWidth(),
-                            this.getHeight(),
-                            this._format_, // Format
-                            this._type_, // Size of each channel
-                            null
-                       );
-                    }
+            if (this._offsets_ && this._offsets_.length === 2) {
+                if (this._compressed) {
+                    gl.compressedTexSubImage2D(
+                        this._target,
+                        this._level,
+                        this._offsets_[0],
+                        this._offsets_[1],
+                        this.getWidth(),
+                        this.getHeight(),
+                        this._format,
+                        null
+                   );
                 } else {
-                    if (this._compressed_) {
-                        gl.compressedTexImage2D(
-                            this._target_,
-                            this._level_,
-                            this._format_, // Format
-                            this.getWidth(),
-                            this.getHeight(),
-                            0,
-                            null
-                       );
-                    } else {
-                        gl.texImage2D(
-                            this._target_,
-                            this._level_,
-                            this._internalformat_,
-                            this.getWidth(),
-                            this.getHeight(),
-                            0,
-                            this._format_, // Format
-                            this._type_, // Size of each channel
-                            null
-                       );
-                    }
+                    gl.texSubImage2D(
+                        this._target,
+                        this._level,
+                        this._offsets_[0],
+                        this._offsets_[1],
+                        this.getWidth(),
+                        this.getHeight(),
+                        this._format,
+                        this._type,
+                        null
+                   );
                 }
-
-                /*gl.texImage2D(
-                    this._target_,
-                    this._level_, // Level of details
-                    this._internalformat_, // Internal format
-                    this.getWidth(),
-                    this.getHeight(),
-                    0,
-                    this._format_, // Format
-                    this._type_, // Size of each channel
-                    null
-               );*/
-
-                this.minFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-                this.magFilter(options.minFilter || MB.ctes.TextureType.Nearest);
-
-                this.wrap([
-                    options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
-                    options.wrapT || MB.ctes.WrapMode.Clamp2Edge
-                ]);
-
-                if (this._flipY_) {
-                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-                }
-
-                this.unbind();
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
-                if (onSuccess) {
-                    onSuccess();
-                }
-            }
-
-            public setInmutable(size: MB.maths.Vect2 = this._size) {
-                this.bind();
-                const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                gl.texStorage2D(this.target, 1, gl.RGB8, size.x, size.y);
-                this.unbind();
-            }
-
-            public resize(size: MB.maths.Vect2) {
-                if (!size.exactEquals(this._size)) {
-                    const gl: WebGL2RenderingContext = MB.core.Core.getInstance().getGL();
-                    gl.bindTexture(this.target, this._handle_);
-                    gl.texImage2D(
-                        this._target_,
-                        this._level_, // Level of details
-                        this._internalformat_, // Internal format
-                        size.x,
-                        size.y,
+            } else {
+                if (this._compressed) {
+                    gl.compressedTexImage2D(
+                        this._target,
+                        this._level,
+                        this._format,
+                        this.getWidth(),
+                        this.getHeight(),
                         0,
-                        this._format_, // Format
-                        this._type_, // Size of each channel
+                        null
+                   );
+                } else {
+                    gl.texImage2D(
+                        this._target,
+                        this._level,
+                        this._internalformat,
+                        this.getWidth(),
+                        this.getHeight(),
+                        0,
+                        this._format,
+                        this._type,
                         null
                    );
                 }
             }
-        };
+
+            /*gl.texImage2D(
+                this._target_,
+                this._level_,
+                this._internalformat
+                this.getWidth(),
+                this.getHeight(),
+                0,
+                this._format,
+                this._type_,
+                null
+           );*/
+
+            this.wrap([
+                options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
+                options.wrapT || MB.ctes.WrapMode.Clamp2Edge
+            ]);
+
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
+
+            this.unbind();
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+            if (onSuccess) {
+                onSuccess();
+            }
+        }
+
+        public setInmutable(size: MB.Vect2 = this._size) {
+            this.bind();
+            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            gl.texStorage2D(this.target, 1, gl.RGB8, size.x, size.y);
+            this.unbind();
+        }
+
+        public resize(size: MB.Vect2) {
+            if (!size.exactEquals(this._size)) {
+                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                this.bind();
+                gl.texImage2D(
+                    this._target,
+                    this._level,
+                    this._internalformat,
+                    size.x,
+                    size.y,
+                    0,
+                    this._format,
+                    this._type,
+                    null
+               );
+            }
+        }
     };
 };

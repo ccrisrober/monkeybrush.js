@@ -6,9 +6,10 @@ Monkey Brush is a library that adds OOP for WebGL 1/2 using Typescript
 ## init
 ```bash
 npm install && bower install
-npm start # Open server in 3000 port
-npm script build # Compile project
-tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint rules
+gulp build-debug # Compile project
+gulp typedoc # Generate documentation
+gulp tslint # Check tslint style
+gulp typescript # Generate definition file
 ```
 <div style="width: 100%">
     <img src="_images/descarga.png"      width="24.61%" />
@@ -162,6 +163,7 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [x] Shader uniforms and attributes extraction
 - [x] Clean project generator (Simple project gen.) (https://github.com/maldicion069/monkeybrush-generator)
 - [ ] MonkeyBrush-frags (Two triangles rendering!) (https://github.com/maldicion069/monkeybrush-frags)
+- [ ] ESDOC integration
 
 ### Demos
 - [x] Rim Lighting
@@ -182,11 +184,8 @@ tslint lib/**/*.ts --exclude lib/**/*.d.ts > tslintwarnings.txt # Check TSlint r
 - [ ] Create "shadertoy" for desktop
 
 ### Help
-> - tslint src/**/*.ts --exclude src/**/*.d.ts > tslintwarnings.txt
-> - https://www.npmjs.com/package/webpack-glsl-loader
-> - http://www.jbrantly.com/es6-modules-with-typescript-and-webpack/
-
-> - tslint code/mb/library/**/*.ts --exclude code/mb/**/*.d.ts > tslintwarnings.txt
 
 ## Changelog
-- 
+- (09/17/2016) Release first version
+- (09/19/2016) Completed Depth, Color, Stencil, Culling and Blending in GlobalState.
+- (09/20/2016) Added VertexBufferGeometry to models

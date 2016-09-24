@@ -88,3 +88,7 @@ tslintwarnings*
 
 # for VSCode
 .vscode
+
+_unused_.zip
+doc
+docs

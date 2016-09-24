@@ -38,24 +38,24 @@
                 this.mainShader = "prog";
             }
             MyScene.prototype.loadAssets = function () {
-                MB.resources.Loaders.loadImage("../assets/images/pal.png", "1DTex");
+                MB.Loaders.loadImage("../assets/images/pal.png", "1DTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                var myTexture = MB.resources.ResourceMap.retrieveAsset("1DTex");
-                this.tex = new MB.textures.Texture2D(myTexture, {
+                var myTexture = MB.ResourceMap.retrieveAsset("1DTex");
+                this.tex = new MB.Texture2D(myTexture, {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.resources.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.core.Program();
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ProgramCte.shader_type.vertex, MB.ctes.ProgramCte.mode.read_file);
-                    prog.addShader("../shaders/julia.frag", MB.ctes.ProgramCte.shader_type.fragment, MB.ctes.ProgramCte.mode.read_file);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/julia.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["offset", "tex", "iter"]);
@@ -67,14 +67,14 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
-                MB.core.Core.getInstance().clearColorAndDepth();
-                var prog = MB.resources.ProgramManager.get(this.mainShader);
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex.bind(0);
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1i("iter", this.text.iter);
                 prog.sendUniform2f("offset", this.text.offsetX, this.text.offsetY);
-                MB.extras.PostProcess.render();
+                MB.PostProcess.render();
             };
             MyScene.prototype.cameraUpdate = function () {
             };
@@ -84,7 +84,7 @@
                 gui.add(this.text, "offsetY", -10.0, 10.0);
             };
             return MyScene;
-        }(MB.Scene));
+        }(MB.App));
         ;
         window.onload = function () {
             var myScene = new MyScene();
