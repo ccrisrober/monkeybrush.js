@@ -186,6 +186,7 @@
                 "Ripple_effect",
                 "Ripple_effect2",
                 "Cubes",
+                "Cubes_Fog",
                 "Click_Points",
                 "Stencil_Reflection",
                 "Stencil_Shadow_And_Reflection",
@@ -224,13 +225,24 @@
                 "Convolution_Matrix"
             ],
             "PostProcess Effects": [
-                "Cloud_Effect",
-                "Wood_Effect",
                 "Desintegration_Effect",
                 "PaintSpatter_Effect",
                 "NightVision_Effect",
                 "HDR",
                 "Grey_Filter"
+            ],
+            "Procedural": [
+                "Cloud_Effect",
+                "Wood_Effect",
+                "Alien_Procedural",
+                "Heat",
+                "Hatching",
+                "Hatching3D",
+                "Gooch",
+                "Granite",
+                "Stripes",
+                "Turbulence",
+                "Woody"
             ],
             "Lighting": [
                 "Ambient_Light",
@@ -239,6 +251,7 @@
                 "Point_Light",
                 "Spot_Light",
                 "Random_Lights",
+                "Rim_Light",
                 "Cemetery_Scene"
             ],
             "Meshes": [
@@ -339,7 +352,7 @@
             selected = file;
         };
         if (window.location.hash !== "") {
-            load (window.location.hash.substring(1));
+            load(window.location.hash.substring(1));
         }
         </script>
 

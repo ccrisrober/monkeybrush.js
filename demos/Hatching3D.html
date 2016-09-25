@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ambient light</title>
+    <title>Matcap Vertex</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -32,26 +32,41 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
+                this.homePoint = new MB.Vect3(-0.18, 1.60, 25.23);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             }
-            MyScene.prototype.loadAssets = function () {
-            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(15.0);
+                this.cubito = new MB.Mesh("../assets/objects/teddy.json");
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
-                    prog.addShader("../shaders/passLight.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/pointLight.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/stripes.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/hatching3D.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model", "lightPosition", "viewPos"]);
+                    prog.addUniforms(["projection", "view", "model", "viewPos", "tex"]);
                     return prog;
+                });
+                var size = 64;
+                var data = new Uint8Array(Math.pow(size, 3));
+                for (var k = 0; k < size; ++k) {
+                    for (var j = 0; j < size; ++j) {
+                        for (var i = 0; i < size; ++i) {
+                            data[i + j * size + k * size * size] = MB.RandomGenerator.random() * 255;
+                        }
+                    }
+                }
+                this.tex3d = new MB.Texture3D(data, new MB.Vect3(size, size, size), {
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
+                    autoMipMap: true,
+                    internalFormat: MB.ctes.PixelFormat.R8,
+                    format: MB.ctes.PixelFormat.RED,
+                    type: MB.ctes.DataType.UnsignedByte
                 });
                 this.cameraUpdate();
             };
@@ -65,6 +80,8 @@
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
+                this.tex3d.bind(0);
+                prog.sendUniform1i("tex", 0);
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
@@ -72,7 +89,6 @@
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
-                prog.sendUniform3f("lightPosition", 1.2, 1.0, 2.0);
                 this.cubito.render();
             };
             MyScene.prototype.cameraUpdate = function () {
@@ -81,6 +97,7 @@
                 this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
+                console.log(this.camera.GetPos());
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());
                 prog.sendUniformMat4("projection", this.projection);
                 prog.sendUniformMat4("view", this.view);

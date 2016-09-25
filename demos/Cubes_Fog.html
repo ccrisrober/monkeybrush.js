@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ambient light</title>
+    <title>Cubes</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -25,14 +25,18 @@
         };
         var SimpleConfig = function () {
             return {
-                resume: true
+                resume: true,
+                MinDist: 1.0,
+                MaxDist: 75.0,
+                FogType: -1,
+                FogDensity: 0.04
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
+                this.homePoint = new MB.Vect3(0.08, 0.58, 59.79);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
@@ -43,14 +47,15 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(15.0);
+                this.cubito = new MB.Cube(2.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
-                    prog.addShader("../shaders/passLight.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/pointLight.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/simpleDiffuseLinearFog.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model", "lightPosition", "viewPos"]);
+                    prog.addUniforms(["projection", "view", "model", "viewPos", "color", "minMaxDist", "fogType", "fogDensity"]);
+                    prog.sendUniform3f("color", 0.5, 0.8, 0.1);
                     return prog;
                 });
                 this.cameraUpdate();
@@ -65,15 +70,28 @@
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
-                this.model =
-                    this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
-                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                prog.sendUniform3f("lightPosition", 1.2, 1.0, 2.0);
-                this.cubito.render();
+
+                prog.sendUniform2f("minMaxDist", this.text.MinDist, this.text.MaxDist);
+                prog.sendUniform1i("fogType", this.text.FogType);
+                prog.sendUniform1f("fogDensity", this.text.FogDensity);
+
+                var MAX = 15;
+                for (var zz = 0; zz < MAX; ++zz) {
+                    for (var yy = 0; yy < MAX; ++yy) {
+                        for (var xx = 0; xx < MAX; ++xx) {
+                            this.model =
+                                this.identityMatrix.clone()
+                                    .translate(new MB.Vect3(
+                                        -15.0 + xx * 6.0,
+                                        -15.0 + yy * 6.0,
+                                        zz * 6.0))
+                                    .rotate(this.angle + xx * 0.21 + yy * 0.37, MB.Vect3.zAxis);
+                            prog.sendUniformMat4("model", this.model);
+                            prog.sendUniform3f("color", xx/MAX, yy/MAX, zz/MAX);
+                            this.cubito.render();
+                        }
+                    }
+                }
             };
             MyScene.prototype.cameraUpdate = function () {
                 var canvas = MB.Core.getInstance().canvas();
@@ -86,6 +104,10 @@
                 prog.sendUniformMat4("view", this.view);
             };
             MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "MinDist", 1.0, 25.0);
+                gui.add(this.text, "MaxDist", 25.0, 150.0);
+                gui.add(this.text, "FogDensity", 0.001, 0.1);
+                gui.add(this.text, 'FogType', { Normal: -1, Linear: 0, Exp: 1, Exp2: 2 });
             };
             return MyScene;
         }(MB.App));
