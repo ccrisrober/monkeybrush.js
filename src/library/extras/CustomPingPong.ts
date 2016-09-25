@@ -42,19 +42,20 @@ namespace MB {
         /**
          * Swap ping pong inner objects.
          */
-        public swap() {
+        public swap(cb?: Function) {
             this._elems2 = [this._elems1, this._elems1 = this._elems2][0];
+            if (cb) cb();
         };
         /**
          * Returns first object.
-         * @return {T} 
+         * @return {T}
          */
         public first(): T {
             return this._elems1;
         };
         /**
          * Returns last object.
-         * @return {T} 
+         * @return {T}
          */
         public last(): T {
             return this._elems2;

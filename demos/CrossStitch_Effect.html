@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ambient light</title>
+    <title>Night-vision effects</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -25,67 +25,56 @@
         };
         var SimpleConfig = function () {
             return {
-                resume: true
-            };
+                resume: true,
+                stich: 2.0
+            }
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
-                this.camera = new MB.Camera2(this.homePoint);
-                this.angle = 0;
                 this.mainShader = "prog";
-                this.identityMatrix = MB.Mat4.identity.clone();
-                this.model = new MB.Mat4();
             }
             MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadVideo("../assets/video/Possum vs Cat.mp4", "video");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(15.0);
+
+                this.tex = new MBX.VideoTexture(MB.ResourceMap.retrieveAsset("video"));
+
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
-                    prog.addShader("../shaders/passLight.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/pointLight.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/cross_stich.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model", "lightPosition", "viewPos"]);
+                    prog.addUniforms(["tex", "stich", "size"]);
+                    console.log(prog);
                     return prog;
                 });
-                this.cameraUpdate();
             };
+            // TODO: NO FUNCIONA
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function (dt) {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
-                this.model =
-                    this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
-                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                prog.sendUniform3f("lightPosition", 1.2, 1.0, 2.0);
-                this.cubito.render();
+                this.tex.bind(0);
+
+                var canvas = MB.Core.getInstance().canvas();
+
+                prog.sendUniform1i("tex", 0);
+                prog.sendUniform1f("stich", this.text.stich);
+                prog.sendUniform2f("size", canvas.width, canvas.height);
+                MB.PostProcess.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
             };
             MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "stich", 0.1, 10.0);
             };
             return MyScene;
         }(MB.App));

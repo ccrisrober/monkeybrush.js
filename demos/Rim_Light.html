@@ -43,16 +43,19 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(15.0);
+                this.cubito = new MB.Cube(30.0);
+                this.sphere = new MB.Sphere(2.5);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/passLight.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/pointLight.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/pointLightRim.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["projection", "view", "model", "lightPosition", "viewPos"]);
                     return prog;
                 });
+                this.lightRot = 0.0;
+                this.lightPosition = [-15.0, -15.0, -15.0];
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
@@ -60,6 +63,12 @@
                 this.camera.update(this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
+
+                this.lightRot += MB.Timer.deltaTime() * 0.001;
+
+                this.lightPosition[0] += Math.cos(this.lightRot) * 0.6;
+                //this.lightPosition[1] += Math.cos(this.lightRot) * 0.1;
+                //this.lightPosition[2] += Math.sin(this.lightRot) * 0.6;
             };
             MyScene.prototype.draw = function (dt) {
                 MB.Core.getInstance().clearColorAndDepth();
@@ -72,8 +81,14 @@
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
-                prog.sendUniform3f("lightPosition", 1.2, 1.0, 2.0);
+                prog.sendUniform3f("lightPosition", this.lightPosition[0], this.lightPosition[1], this.lightPosition[2]);
                 this.cubito.render();
+
+                this.model =
+                    this.identityMatrix.clone()
+                    .translate(new MB.Vect3(this.lightPosition[0], this.lightPosition[1], this.lightPosition[2]));
+                prog.sendUniformMat4("model", this.model);
+                this.sphere.render();
             };
             MyScene.prototype.cameraUpdate = function () {
                 var canvas = MB.Core.getInstance().canvas();
