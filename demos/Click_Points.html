@@ -36,7 +36,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(15.0);
+                this.cubito = new MB.Cube(this.context, 15.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/clickPoint.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

@@ -45,10 +45,10 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 console.log(MB.ResourceMap);
-                this.plane = new MB.Plane(50.0, 30.0, 200.0, 200.0);
+                this.plane = new MB.Plane(this.context, 50.0, 30.0, 200.0, 200.0);
 
                 let grassImage = MB.ResourceMap.retrieveAsset("heightmap");
-                this.tex2d = new MB.Texture2D(grassImage, {
+                this.tex2d = new MB.Texture2D(this.context, grassImage, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -57,7 +57,7 @@
                 });
 
                 var heightmapImage = MB.ResourceMap.retrieveAsset("earth");
-                this.tex2d2 = new MB.Texture2D(heightmapImage, {
+                this.tex2d2 = new MB.Texture2D(this.context, heightmapImage, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

@@ -41,7 +41,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.plane = new MB.Plane(36.0, 36.0, 36, 36); // TODO: Using even-odd triangulation
+                this.plane = new MB.Plane(this.context, 36.0, 36.0, 36, 36); // TODO: Using even-odd triangulation
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/ripple2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

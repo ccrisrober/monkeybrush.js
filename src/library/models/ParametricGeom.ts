@@ -36,8 +36,9 @@ namespace MB {
          * @param {number} slices Number of slices
          * @param {number} stacks Number of stacks
          */
-        constructor(func: (u: number, v: number) => MB.Vect3, slices: number, stacks: number) {
-            super();
+        // TODO: DOC
+        constructor(context: GLContext, func: (u: number, v: number) => MB.Vect3, slices: number, stacks: number) {
+            super(context);
 
             this._func = func;
             this._slices = slices;

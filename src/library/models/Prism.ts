@@ -34,9 +34,10 @@ namespace MB {
          * @param {boolean = true} createTopBase: Create top base
          * @param {boolean = true} createBottomBase: Create bottom base
          */
-        constructor(radius: number, height: number, sides: number,
+        // TODO: DOC
+        constructor(context: GLContext, radius: number, height: number, sides: number,
             heightSubDiv: number = 1.0, topCap: boolean = true, bottomCap: boolean = true) {
-            super(radius, radius, height, sides, heightSubDiv, topCap, bottomCap);
+            super(context, radius, radius, height, sides, heightSubDiv, topCap, bottomCap);
         };
     };
 };

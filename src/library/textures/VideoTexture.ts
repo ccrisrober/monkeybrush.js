@@ -33,17 +33,17 @@ namespace MBX {
          * @param {number = 15} frameTime [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
          */
-        constructor(video: HTMLVideoElement, loop: boolean = true,
+        // TODO: DOC
+        constructor(context: MB.GLContext, video: HTMLVideoElement, loop: boolean = true,
             frameTime: number = 15, onSuccess: () => void = null) {
-
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-
-            super(MB.ctes.TextureTarget.Texture2D, {
+            super(context, MB.ctes.TextureTarget.Texture2D, {
                 internalFormat: MB.ctes.PixelFormat.RGBA,
                 format: MB.ctes.PixelFormat.RGBA,
-                type: gl.UNSIGNED_BYTE,
+                // TODO: type: gl.UNSIGNED_BYTE,
                 flipY: true
             });
+
+            const gl: WebGL2RenderingContext = this._context.gl;
 
             this._video = video;
             this._video.muted = true;
@@ -73,7 +73,7 @@ namespace MBX {
 
             // Update texture
             this.bind();
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.texImage2D(
                 this._target,
                 this._level,

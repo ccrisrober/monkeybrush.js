@@ -55,8 +55,8 @@ namespace MB {
             0, 0, 1, 1,
             0, 0, 1, 1
         ];
-        constructor(dim: number = 10) {
-            super();
+        constructor(context: GLContext, dim: number = 10) {
+            super(context);
 
             if (dim < 1) {
                 throw new Error("Dim > 1 pls");

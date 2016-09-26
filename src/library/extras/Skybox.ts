@@ -52,12 +52,17 @@ namespace MB {
         get texture(): MB.CubeMapTexture {
             return this._cubeMapTexture;
         };
+
+        protected _context: GLContext;
+
         /**
          * Skybox constructor
          * @param {string} dir Skybox directory (without "/")
          * @param {boolean = true} isWebGL2 [description]
          */
-        constructor(dir: string, isWebGL2: boolean = true) {
+        // TODO: Complete DOC with Context
+        constructor(context: GLContext, dir: string, isWebGL2: boolean = true) {
+            this._context = context;
             let faces: Array<string> = [];
             faces.push(dir + "/right.jpg");
             faces.push(dir + "/left.jpg");
@@ -66,7 +71,7 @@ namespace MB {
             faces.push(dir + "/back.jpg");
             faces.push(dir + "/front.jpg");
 
-            const gl: WebGLRenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGLRenderingContext = this._context.gl;
 
             this._prog = new MB.Program();
 
@@ -220,7 +225,7 @@ namespace MB {
          * @param {Array<string>} faces Array of image routes.
          */
         protected _loadCubemap(faces: Array<string>) {
-            this._cubeMapTexture = new MB.CubeMapTexture();
+            this._cubeMapTexture = new MB.CubeMapTexture(this._context);
             this._cubeMapTexture.bind();
 
             for (let i = 0; i < 6; ++i) {

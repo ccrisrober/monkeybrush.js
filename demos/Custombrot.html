@@ -44,7 +44,7 @@
                 var _this = this;
 
                 var myTexture = MB.ResourceMap.retrieveAsset("1DTex");
-                this.tex = new MB.Texture2D(myTexture, {
+                this.tex = new MB.Texture2D(this.context, myTexture, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

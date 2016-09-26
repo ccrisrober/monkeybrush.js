@@ -36,7 +36,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.triangleModel = new MB.CustomModel({
+                this.triangleModel = new MB.CustomModel(this.context, {
                     indices: [
                         0, 1, 2
                     ],

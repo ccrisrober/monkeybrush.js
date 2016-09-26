@@ -39,8 +39,8 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(15.0);
-                this.tex = new MBX.WebcamTexture();
+                this.cubito = new MB.Cube(this.context, 15.0);
+                this.tex = new MBX.WebcamTexture(this.context);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

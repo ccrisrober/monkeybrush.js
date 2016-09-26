@@ -84,7 +84,7 @@ void main() {
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex2d = new MB.Texture2D(MB.ResourceMap.retrieveAsset("heightmap"), {
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("heightmap"), {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -92,7 +92,7 @@ void main() {
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.cubito = new MB.Plane(13.0, 10.0, 100, 100);
+                this.cubito = new MB.Plane(this.context, 13.0, 10.0, 100, 100);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);

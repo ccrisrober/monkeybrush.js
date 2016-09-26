@@ -36,7 +36,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Mesh("../assets/objects/teddy.json");
+                this.cubito = new MB.Mesh(this.context, "../assets/objects/teddy.json");
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/gooch.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

@@ -40,9 +40,9 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Sphere(17.5, 45, 45);
+                this.cubito = new MB.Sphere(this.context, 17.5, 45, 45);
 
-                this.tex2d = new MB.Texture2D(MB.ResourceMap.retrieveAsset("diffuseMap"), {
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("diffuseMap"), {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -50,7 +50,7 @@
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.tex2d2 = new MB.Texture2D(MB.ResourceMap.retrieveAsset("normalMap"), {
+                this.tex2d2 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("normalMap"), {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

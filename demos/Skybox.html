@@ -35,7 +35,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.skybox = new MB.Skybox("../assets/images/canyon", this._webglVersion === 2);
+                this.skybox = new MB.Skybox(this.context, "../assets/images/canyon", this._webglVersion === 2);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {

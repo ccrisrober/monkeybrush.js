@@ -27,10 +27,11 @@ namespace MB {
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
          */
-        constructor(data: any, options: TexOptions = {}, onSuccess: () => void = null) {
-            super(MB.ctes.TextureTarget.Texture2D, options);
+        // TODO: DOC
+        constructor(context: GLContext, data: any, options: TexOptions = {}, onSuccess: () => void = null) {
+            super(context, MB.ctes.TextureTarget.Texture2D, options);
 
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
 
             this.bind();
 

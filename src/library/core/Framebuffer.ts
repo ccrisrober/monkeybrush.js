@@ -49,7 +49,7 @@ namespace MB {
         protected _valid: boolean = false;
 
         // TODO: Stencil unused
-        constructor(textures: Array<MB.Texture>, size: MB.Vect2, depth: boolean = false,
+        constructor(context: GLContext, textures: Array<MB.Texture>, size: MB.Vect2, depth: boolean = false,
             stencil: boolean = false, options = {}) {
             let numColors = textures.length;
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -88,6 +88,7 @@ namespace MB {
 
             if (depth) {
                 this._renderBuffer = new MB.RenderBufferTexture(
+                    context,
                     size,
                     gl.DEPTH_COMPONENT16,
                     gl.DEPTH_ATTACHMENT

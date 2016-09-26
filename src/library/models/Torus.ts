@@ -36,9 +36,10 @@ namespace MB {
          * @param {number = 4}   sides: Number of sides
          * @param {number = 10}  rings: Number of rings
          */
-        constructor(outerRadius: number = 1.0, innerRadius: number = 0.5,
+        // TODO: DOC
+        constructor(context: GLContext, outerRadius: number = 1.0, innerRadius: number = 0.5,
             sides: number = 4, rings: number = 10) {
-            super();
+            super(context);
 
             this._outerRadius = outerRadius;
             this._innerRadius = innerRadius;

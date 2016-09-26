@@ -33,10 +33,11 @@ namespace MB {
          * @param {number = 0.0} innerRadius: Inner radius of disc
          * @param {number = 0.0} stackInc: Width inc/dec around center.
          */
-        constructor(radius: number, divisions: number, stacks: number = 1.0,
+        // TODO: DOC
+        constructor(context: GLContext, radius: number, divisions: number, stacks: number = 1.0,
             innerRadius: number = 0.0, stackInc: number = 0.0) {
 
-            super();
+            super(context);
 
             if (divisions < 3) {
                 throw Error("divisions must be 3 or greater");

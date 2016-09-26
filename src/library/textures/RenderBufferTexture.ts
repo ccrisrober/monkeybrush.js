@@ -21,10 +21,10 @@
 
 namespace MB {
     export class RenderBufferTexture extends RenderBuffer {
-        constructor(size: MB.Vect2, format: number, attachment: number) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            super(size, format, attachment);
+        constructor(context: GLContext, size: MB.Vect2, format: number, attachment: number) {
+            super(context, size, format, attachment);
 
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
             gl.renderbufferStorage(gl.RENDERBUFFER, this._format, this._size.x, this._size.y);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, this._attachment,
@@ -37,7 +37,7 @@ namespace MB {
          */
         public resize(size: MB.Vect2) {
             if (!size.exactEquals(this._size)) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 this.bind();
                 gl.renderbufferStorage(gl.RENDERBUFFER, this._format, size.x, size.y);
                 this.unbind();

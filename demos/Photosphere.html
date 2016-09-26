@@ -41,7 +41,7 @@
                 var _this = this;
 
                 var myTexture = MB.ResourceMap.retrieveAsset("sphereTex");
-                this.tex = new MB.Texture2D(myTexture, {
+                this.tex = new MB.Texture2D(this.context, myTexture, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
@@ -49,7 +49,7 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                this.esferita = new MB.Sphere(15.0, 20, 20);
+                this.esferita = new MB.Sphere(this.context, 15.0, 20, 20);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/photosphere.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

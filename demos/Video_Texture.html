@@ -39,8 +39,8 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(14.0);
-                this.tex = new MBX.VideoTexture(MB.ResourceMap.retrieveAsset("video"));
+                this.cubito = new MB.Cube(this.context, 14.0);
+                this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"));
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

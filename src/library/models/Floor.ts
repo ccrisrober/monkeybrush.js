@@ -30,8 +30,9 @@ namespace MB {
          * @param {number = 80} dim [description]
          * @param {number = 2}  e   [description]
          */
-        constructor(dim: number = 80, e: number = 2) {
-            super();
+        // TODO: DOC
+        constructor(context: GLContext, dim: number = 80, e: number = 2) {
+            super(context);
             const lines = 2 * dim / e;
             const inc = 2 * dim / lines;
 

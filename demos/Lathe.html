@@ -48,7 +48,7 @@
                         height + i,
                         (i - count) + count / 3.5));
                 }
-                this.latheModel = new MB.Lathe(points, 150);
+                this.latheModel = new MB.Lathe(this.context, points, 150);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     if (_this._webglVersion === 2) {

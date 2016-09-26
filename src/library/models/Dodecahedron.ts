@@ -30,11 +30,12 @@ namespace MB {
          * @param {number} radius: Dodecahedron radius
          * @param {number} subdivisions: Dodecahedron subdivisions from base dodecahedron.
          */
-        constructor(radius: number, subdivisions: number) {
+        // TODO: DOC
+        constructor(context: GLContext, radius: number, subdivisions: number) {
             const t: number = ( 1 + Math.sqrt( 5 ) ) / 2;
             const r: number = 1 / t;
 
-            super([
+            super(context, [
                 // (±1, ±1, ±1)
                 - 1, - 1, - 1,    - 1, - 1,  1,
                 - 1,  1, - 1,    - 1,  1,  1,

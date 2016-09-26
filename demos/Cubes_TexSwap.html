@@ -40,17 +40,17 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(25.0);
+                this.cubito = new MB.Cube(this.context, 25.0);
 
                 this.customPP = new MB.CustomPingPong(
-                    new MB.Texture2D(MB.ResourceMap.retrieveAsset("tex1"), {
+                    new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("tex1"), {
                         flipY: true,
                         minFilter: MB.ctes.TextureFilter.Nearest,
                         magFilter: MB.ctes.TextureFilter.Nearest,
                         wrapS: MB.ctes.TextureFilter.Clamp2Edge,
                         wrapT: MB.ctes.TextureFilter.Clamp2Edge
                     }),
-                    new MB.Texture2D(MB.ResourceMap.retrieveAsset("tex2"), {
+                    new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("tex2"), {
                         flipY: true,
                         minFilter: MB.ctes.TextureFilter.Nearest,
                         magFilter: MB.ctes.TextureFilter.Nearest,

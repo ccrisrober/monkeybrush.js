@@ -29,8 +29,9 @@ namespace MB {
          * Mesh definition
          * @param {string} fileRoute: JSON file route
          */
-        constructor(fileRoute: string) {
-            super();
+        // TODO: DOC
+        constructor(context: GLContext, fileRoute: string) {
+            super(context);
             this.loadJSON(fileRoute);
         }
 

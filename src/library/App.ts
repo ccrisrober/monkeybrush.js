@@ -31,9 +31,13 @@ namespace MB {
         protected _webglVersion: number;
 
         protected text: any;
-
+        protected _context: GLContext;
+        public get context(): GLContext {
+            return this._context;
+        };
         constructor(title: string = null, context: GLContext, text: Object = {}) {
             MB.Log.info("init app");
+            this._context = context;
             MB.Core._context = context;
             MB.Core.getInstance();
 

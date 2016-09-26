@@ -41,16 +41,16 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.skybox = new MB.Skybox("../assets/images/hw_mystic", this._webglVersion === 2);
+                this.skybox = new MB.Skybox(this.context, "../assets/images/hw_mystic", this._webglVersion === 2);
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, myTexture, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-                this.cubito = new MB.Icosahedron(15.0, 1.0);
+                this.cubito = new MB.Icosahedron(this.context, 15.0, 1.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     if (_this._webglVersion === 2) {

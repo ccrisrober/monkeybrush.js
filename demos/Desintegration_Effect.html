@@ -46,14 +46,14 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 var myTexture = MB.ResourceMap.retrieveAsset("noiseTex");
-                this.tex2d = new MB.Texture2D(myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, myTexture, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-                this.cubito = new MB.Torus(15.0, 8.0, 25, 75);
+                this.cubito = new MB.Torus(this.context, 15.0, 8.0, 25, 75);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

@@ -35,10 +35,11 @@ namespace MB {
          * @param {number = 0} phiInit [description]
          * @param {number = 2 * Math.PI} phiRadius [description]
          */
-        constructor(points: ArrayLike<MB.Vect3>, segments: number,
+        // TODO: DOC
+        constructor(context: GLContext, points: ArrayLike<MB.Vect3>, segments: number,
             phiInit: number = 0, phiRadius: number = 2 * Math.PI) {
 
-            super();
+            super(context);
             let vertices = [];
             let normals = [];
             let indices = [];

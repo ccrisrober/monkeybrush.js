@@ -42,9 +42,9 @@ namespace MBX {
     export class Billboard {
         static mesh: MB.CustomModel = null;
         static program: MB.Program = null;
-        static initialize() {
+        static initialize(context: MB.GLContext) {
             if (!Billboard.mesh || !Billboard.program) {
-                Billboard.mesh = new MB.CustomModel({
+                Billboard.mesh = new MB.CustomModel(context, {
                     indices: [0, 1, 2, 2, 3, 0],
                     vertices: [
                         -0.5,  0.5, 0.0,
@@ -108,14 +108,16 @@ namespace MBX {
             }
         }
         static bind() {
+            /*TODO
             if (!Billboard.program) {
                 Billboard.initialize();
             }
-            Billboard.program.use();
+            Billboard.program.use();*/
         }
         static draw(position: Float32Array = new Float32Array([0, 0, 0]),
             opts: BillboardOpts) {
 
+            /*TODO
             let tex = opts.texture;
             let hi = opts.hi || [1, 1];
             let lo = opts.lo || [0, 0];
@@ -141,7 +143,7 @@ namespace MBX {
             Billboard.program.sendUniform1i("tex", 0);
 
 
-            Billboard.mesh.render();
+            Billboard.mesh.render();*/
         }
         static unbind() {
             // TODO: Nothing to do here

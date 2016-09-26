@@ -37,7 +37,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.parametricModel = new MB.ParametricGeom(function (u, v) {
+                this.parametricModel = new MB.ParametricGeom(this.context, function (u, v) {
                     var r = 75;
 
                     var x = Math.tan(u) * r;

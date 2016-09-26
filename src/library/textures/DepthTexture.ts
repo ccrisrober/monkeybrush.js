@@ -28,9 +28,10 @@ namespace MB {
          * DepthTexture constructor
          * @param {() => void = null} onSuccess Optional callback that runs when creating DepthTexture.
          */
-        constructor(onSuccess: () => void = null) {
+        // TODO: DOC
+        constructor(context: GLContext, onSuccess: () => void = null) {
             /*super(MB.ctes.TextureTarget.Texture2D);
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             if (gl instanceof WebGL2RenderingContext) {
                 this._internalformat_ = gl.DEPTH_COMPONENT32F;
             } else {

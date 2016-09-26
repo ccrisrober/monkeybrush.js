@@ -125,8 +125,12 @@ namespace MB {
             }
         };
 
-        constructor(target: ctes.TextureTarget, options: TexOptions) {
+        protected _context: GLContext;
+
+        constructor(context: GLContext, target: ctes.TextureTarget, options: TexOptions) {
             this._target = target;
+
+            this._context = context;
 
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             this._handler = gl.createTexture();

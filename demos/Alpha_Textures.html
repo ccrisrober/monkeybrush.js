@@ -40,7 +40,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Cube(15.0);
+                this.cubito = new MB.Cube(this.context, 15.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/twoAlpha.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
@@ -52,13 +52,13 @@
                 });
 
                 let woodenBox = MB.ResourceMap.retrieveAsset("woodenBox");
-                this.tex = new MB.Texture2D(woodenBox, {
+                this.tex = new MB.Texture2D(this.context, woodenBox, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear
                 });
                 let fragile = MB.ResourceMap.retrieveAsset("fragile");
-                this.tex2 = new MB.Texture2D(fragile, {
+                this.tex2 = new MB.Texture2D(this.context, fragile, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear
