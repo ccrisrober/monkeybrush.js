@@ -40,6 +40,8 @@
       "./src/library/textures/Texture.ts",
       "./src/library/textures/**/*.ts",
 
+      "./src/library/scene/**/*.ts",
+
       "!node_modules/**"
     ],
     "typescript": [
@@ -75,6 +77,8 @@
 
       "./src/library/textures/Texture.ts",
       "./src/library/textures/**/*.ts",
+
+      "./src/library/scene/**/*.ts",
 
       "../../external references/**/*.d.ts"
     ],
