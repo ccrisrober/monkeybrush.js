@@ -70,8 +70,6 @@ namespace MB {
 
             this.textCB(this._gui);
 
-            //this._gui.add(text, "pepe", 1.0, 2.0);
-
             let self = this;
             this._gui.add(text, "resume", true).onChange(function(v) {
                 if (v === true) {

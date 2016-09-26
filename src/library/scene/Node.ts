@@ -1,6 +1,6 @@
 namespace MBS {
     export class Node {
-        public _scene: Scene
+        public _scene: Scene;
         public _parentNode: Node;
         public _children: Array<Node>;
 
@@ -9,14 +9,14 @@ namespace MBS {
                 return;
             }
             if (this._parentNode) {
-                var idx = this._parentNode._children.indexOf(this);
+                let idx = this._parentNode._children.indexOf(this);
                 if (idx !== -1) {
                     this._parentNode._children.splice(idx, 1);
                 }
             }
             this._parentNode = parent;
             if (this._parentNode) {
-                if(!this._parentNode._children) {
+                if (!this._parentNode._children) {
                     this._parentNode._children = new Array<Node>();
                 }
                 this._parentNode._children.push(this);
@@ -45,11 +45,11 @@ namespace MBS {
         }
 
         protected _generateUUID(): string {
-            var d = new Date().getTime();
-            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = (d + Math.random()*16)%16 | 0;
-                d = Math.floor(d/16);
-                return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+            let d = new Date().getTime();
+            let uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+                let r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
             });
             return uuid;
         };

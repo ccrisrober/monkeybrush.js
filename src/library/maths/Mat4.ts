@@ -416,9 +416,9 @@ namespace MB {
             ]);
         };
         static perspective(fovy: number, aspect: number, near: number, far: number): Mat4 {
-            var f = 1.0 / Math.tan(fovy / 2),
+            const f = 1.0 / Math.tan(fovy / 2),
                 nf = 1 / (near - far);
-            var out = new Float32Array(16);
+            let out = new Float32Array(16);
             out[0] = f / aspect;
             out[1] = 0;
             out[2] = 0;

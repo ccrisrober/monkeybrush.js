@@ -1,10 +1,10 @@
 namespace MB {
     export interface ContextParams {
-       alpha?: boolean,
-       antialias?: boolean,
-       depth?: boolean,
-       stencil?: boolean,
-       premultipliedAlpha?: boolean
+       alpha?: boolean;
+       antialias?: boolean;
+       depth?: boolean;
+       stencil?: boolean;
+       premultipliedAlpha?: boolean;
     };
     export abstract class GLContext {
         protected _canvas: HTMLCanvasElement;
@@ -16,8 +16,7 @@ namespace MB {
         constructor(canvas: HTMLCanvasElement) {
             if (!canvas) {
                 Log.info("Not canvas. Create one ...");
-                canvas = <HTMLCanvasElement>document.createElementNS(
-                        "http://www.w3.org/1999/xhtml", "canvas");
+                canvas = <HTMLCanvasElement>document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
                 canvas.width = 800;
                 canvas.height = 800;
                 document.body.appendChild(canvas);

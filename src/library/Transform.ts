@@ -1,21 +1,21 @@
 namespace MBS {
     export class Transform {
-        //protected _rotation: EulerAngle; // = new EulerAngle(0, 0, 0, RotSeq.XYZ);
+        // protected _rotation: EulerAngle; // = new EulerAngle(0, 0, 0, RotSeq.XYZ);
         protected _quat: Float32Array = quat.create();
         protected _position: Float32Array = vec3.create();
         protected _scale: Float32Array = vec3.fromValues(1.0, 1.0, 1.0);
         public setRotationFromAxis(angle: number, axis: Float32Array) {
-
+            // TODO
         };
         public rotateOnAxis(angle: number, axis: Float32Array) {
-            var halfAngle = angle / 2,
-              s = Math.sin( halfAngle );
+            const halfAngle = angle / 2,
+              s = Math.sin(halfAngle);
 
-            var x = axis[0] * s;
-            var y = axis[1] * s;
-            var z = axis[1] * s;
-            var w = Math.cos( halfAngle );
-            var q1 = quat.fromValues(x, y, z, w);
+            const x = axis[0] * s;
+            const y = axis[1] * s;
+            const z = axis[1] * s;
+            const w = Math.cos(halfAngle);
+            const q1 = quat.fromValues(x, y, z, w);
 
             this._quat = quat.mul(this._quat, this._quat, q1);
         };
@@ -29,7 +29,7 @@ namespace MBS {
             this.rotateOnAxis(angle, new Float32Array([0, 0, 1]));
         };
         public translateOnAxis(dist: number, axis: Float32Array) {
-            var v1 = vec3.create();
+            let v1 = vec3.create();
             v1 = vec3.copy(v1, axis);
             vec3.transformQuat(v1, v1, this._quat);
             v1[0] *= dist;
@@ -61,11 +61,11 @@ namespace MBS {
         }
 
         public translate(axis: Float32Array, distance: number, space?) {
-            var displ = vec3.create();
+            let displ = vec3.create();
             displ = vec3.scale(displ, axis, distance);
 
-            if(!space || space == "local") {
-                //var tempV3 = this.
+            if (!space || space === "local") {
+                // let tempV3 = this.
             }
         }
 
