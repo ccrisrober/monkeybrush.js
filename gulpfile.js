@@ -95,7 +95,7 @@ gulp.task("build-debug", function() {
             sortOutput: true,
             target: "ES5",
             experimentalDecorators: true,
-            removeComments: tsResult // TODO: SOURCEMAPS!!
+            removeComments: true // TODO: SOURCEMAPS!!
         }))
         /*.on("error", notify.onError({
             message: "Error: <%= error.message %>",

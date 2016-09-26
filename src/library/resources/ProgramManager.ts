@@ -21,42 +21,42 @@
 
 namespace MB {
     export interface ProgramCallback {
-        (): MB.Program;
+        (): Program;
     };
     export interface ProgramUseCallback {
-        (prog: MB.Program): void;
+        (prog: Program): void;
     };
 
     /**
-     * MB.Program manager class
-     * @class ProgramManaager
+     * Program manager class
+     * @class ProgramManager
      */
     export class ProgramManager {
         /**
-         * MB.Program cache dictionary
+         * Program cache dictionary
          */
         static _progDictionary: { [ key: string ]: MB.Program; } = {};
         /**
          * Return cached program from name
-         * @param  {string} name: MB.Program name
-         * @return {MB.Program}
+         * @param  {string} name: Program name
+         * @return {Program}
          */
-        public static get(name: string): MB.Program {
+        public static get(name: string): Program {
             let prog = this._progDictionary[name];
             if (!prog) {
-                throw new Error(`MB.Program ${name} undefined`);
+                throw new Error(`Program ${name} undefined`);
             }
             return prog;
         }
         /**
          * Execute a callback function using the specified program (name).
-         * @param  {string} name: MB.Program name
+         * @param  {string} name: Program name
          * @param {ProgramUseCallback}: Function to execute
          */
         public static getCB(name: string, cb: ProgramUseCallback) {
             let prog = this.get(name);
             if (!prog) {
-                throw new Error(`MB.Program ${name} undefined`);
+                throw new Error(`Program ${name} undefined`);
             }
             cb(prog);
         }

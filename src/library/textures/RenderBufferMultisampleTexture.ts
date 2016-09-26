@@ -25,28 +25,17 @@ namespace MB {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             super(size, format, attachment);
 
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-            gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, size.x, size.y);
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handle);
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
+            gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, this._size.x, this._size.y);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handler);
             gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-        };
-        public bind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
-        };
-        public unbind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-        }
-        public destroy() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.deleteTexture(this._handle);
         };
         public resize(size: MB.Vect2) {
             if (!size.exactEquals(this._size)) {
                 const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-                gl.bindRenderbuffer(gl.RENDERBUFFER, this._handle);
+                this.bind();
                 gl.renderbufferStorageMultisample(gl.RENDERBUFFER, this._format, size.x, size.y, this._samples);
+                this.unbind();
             }
         }
     };

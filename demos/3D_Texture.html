@@ -23,26 +23,22 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 layer: 32
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "EY", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.mainShader = "prog";
                 this.angle = 0;
-            }
-            MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
             };
-            ;
+            MyScene.prototype.loadAssets = function () {
+            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                var gl = MB.Core.getInstance().getGL();
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
@@ -63,23 +59,20 @@
                     }
                 }
                 this.tex3d = new MB.Texture3D(data, new MB.Vect3(size, size, size), {
-                    minFilter: MB.ctes.TextureType.Linear,
-                    magFilter: MB.ctes.TextureType.Linear,
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
                     autoMipMap: true,
-                    internalFormat: gl.R8,
-                    format: MB.ctes.TextureFormat.RED,
-                    type: gl.UNSIGNED_BYTE
+                    internalFormat: MB.ctes.PixelFormat.R8,
+                    format: MB.ctes.PixelFormat.RED,
+                    type: MB.ctes.DataType.UnsignedByte
                 });
             };
-            ;
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
-                var gl = MB.Core.getInstance().getGL();
                 //this.text.layer = Math.random();
                 this.__resize__();
             };
-            ;
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -88,17 +81,11 @@
                 prog.sendUniform1f("layer", this.text.layer * 1.0);
                 MB.PostProcess.render();
             };
-            ;
-            MyScene.prototype.cameraUpdate = function () {
-            };
-            ;
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "layer", 0, 64);
             };
-            ;
             return MyScene;
-        }(MB.Scene));
-        ;
+        }(MB.App));
         var myScene;
         window.onload = function () {
             myScene = new MyScene();

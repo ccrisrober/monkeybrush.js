@@ -47,36 +47,36 @@ namespace MB {
             // TODO: Support compression
 
             if (this._offsets_ && this._offsets_.length === 2) {
-                if (this._compressed_) {
+                if (this._compressed) {
                     gl.compressedTexSubImage2D(
-                        this._target_,
-                        this._level_,
+                        this._target,
+                        this._level,
                         this._offsets_[0],
                         this._offsets_[1],
                         this.getWidth(),
                         this.getHeight(),
-                        this._format_, // Format
+                        this._format,
                         null
                    );
                 } else {
                     gl.texSubImage2D(
-                        this._target_,
-                        this._level_,
+                        this._target,
+                        this._level,
                         this._offsets_[0],
                         this._offsets_[1],
                         this.getWidth(),
                         this.getHeight(),
-                        this._format_, // Format
-                        this._type_, // Size of each channel
+                        this._format,
+                        this._type,
                         null
                    );
                 }
             } else {
-                if (this._compressed_) {
+                if (this._compressed) {
                     gl.compressedTexImage2D(
-                        this._target_,
-                        this._level_,
-                        this._format_, // Format
+                        this._target,
+                        this._level,
+                        this._format,
                         this.getWidth(),
                         this.getHeight(),
                         0,
@@ -84,14 +84,14 @@ namespace MB {
                    );
                 } else {
                     gl.texImage2D(
-                        this._target_,
-                        this._level_,
-                        this._internalformat_,
+                        this._target,
+                        this._level,
+                        this._internalformat,
                         this.getWidth(),
                         this.getHeight(),
                         0,
-                        this._format_, // Format
-                        this._type_, // Size of each channel
+                        this._format,
+                        this._type,
                         null
                    );
                 }
@@ -99,13 +99,13 @@ namespace MB {
 
             /*gl.texImage2D(
                 this._target_,
-                this._level_, // Level of details
-                this._internalformat_, // Internal format
+                this._level_,
+                this._internalformat
                 this.getWidth(),
                 this.getHeight(),
                 0,
-                this._format_, // Format
-                this._type_, // Size of each channel
+                this._format,
+                this._type_,
                 null
            );*/
 
@@ -114,9 +114,7 @@ namespace MB {
                 options.wrapT || MB.ctes.WrapMode.Clamp2Edge
             ]);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
@@ -135,16 +133,16 @@ namespace MB {
         public resize(size: MB.Vect2) {
             if (!size.exactEquals(this._size)) {
                 const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-                gl.bindTexture(this.target, this._handle_);
+                this.bind();
                 gl.texImage2D(
-                    this._target_,
-                    this._level_, // Level of details
-                    this._internalformat_, // Internal format
+                    this._target,
+                    this._level,
+                    this._internalformat,
                     size.x,
                     size.y,
                     0,
-                    this._format_, // Format
-                    this._type_, // Size of each channel
+                    this._format,
+                    this._type,
                     null
                );
             }

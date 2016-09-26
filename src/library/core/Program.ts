@@ -51,10 +51,21 @@ namespace MB {
             this._shaders = [];
             this._isLinked = false;
         };
-        private _compiledShader: WebGLProgram;
+        /**
+         * Program internal handler.
+         * @type {WebGLProgram}
+         */
+        private _handler: WebGLProgram;
+        /**
+         * Shaders vector.
+         * @type {Array<WebGLShader>}
+         */
         private _shaders: Array<WebGLShader>;
+        /**
+         * Program status.
+         * @type {boolean}
+         */
         private _isLinked: boolean;
-
         /**
          * Vertex shader raw code.
          * @type {string}
@@ -65,10 +76,16 @@ namespace MB {
          * @type {string}
          */
         public _fragmentSource: string;
-
+        /**
+         * Program cacheable uniforms
+         * @type { [key: string]: WebGLUniformLocation; }
+         */
         public uniformLocations: { [key: string]: WebGLUniformLocation; } = {};
+        /**
+         * Program cacheable attributes
+         * @type { [key: string]: number; }
+         */
         public attribLocations: { [key: string]: number; } = {};
-
         /**
          * Caches a list of attributes using varying arguments
          * @param {string[]} ...attrs Attributes names
@@ -84,7 +101,7 @@ namespace MB {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             for (let attr in attrs) {
                 attr = attrs[attr];
-                const attrID = gl.getAttribLocation(this._compiledShader, attr);
+                const attrID = gl.getAttribLocation(this._handler, attr);
                 if (attrID < 0) {
                     console.error(attr + " undefined");
                     continue;
@@ -107,7 +124,7 @@ namespace MB {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             for (let unif in unifs) {
                 unif = unifs[unif];
-                const unifID: WebGLUniformLocation = gl.getUniformLocation(this._compiledShader, unif);
+                const unifID: WebGLUniformLocation = gl.getUniformLocation(this._handler, unif);
                 if (unifID < 0) {
                     console.error(unif + " undefined");
                     continue;
@@ -120,7 +137,7 @@ namespace MB {
          * @return {WebGLProgram} [description]
          */
         public id(): WebGLProgram {
-            return this._compiledShader;
+            return this._handler;
         };
         /**
          * Attach a new shader to this program.
@@ -148,9 +165,9 @@ namespace MB {
         public _compile() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             // Create and compile shader
-            this._compiledShader = gl.createProgram();
+            this._handler = gl.createProgram();
             for (let i = 0; i < this._shaders.length; ++i) {
-                gl.attachShader(this._compiledShader, this._shaders[i]);
+                gl.attachShader(this._handler, this._shaders[i]);
             }
         };
         /**
@@ -159,13 +176,13 @@ namespace MB {
          */
         public _link(): boolean {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.linkProgram(this._compiledShader);
+            gl.linkProgram(this._handler);
 
             // Checkin errors
-            if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
+            if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._compiledShader));
-                console.log({
+                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                MB.Log.debug({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -181,17 +198,17 @@ namespace MB {
         public compile(): boolean {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             // Create and compile shader
-            this._compiledShader = gl.createProgram();
+            this._handler = gl.createProgram();
             for (let i = 0; i < this._shaders.length; ++i) {
-                gl.attachShader(this._compiledShader, this._shaders[i]);
+                gl.attachShader(this._handler, this._shaders[i]);
             }
-            gl.linkProgram(this._compiledShader);
+            gl.linkProgram(this._handler);
 
             // Checkin errors
-            if (!gl.getProgramParameter(this._compiledShader, gl.LINK_STATUS)) {
+            if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._compiledShader));
-                console.log({
+                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                MB.Log.debug({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -212,13 +229,13 @@ namespace MB {
                 request.send();
             } catch (err) {
                 alert("ERROR: " + filePath);
-                console.log("ERROR: " + filePath);
+                MB.Log.error("ERROR: " + filePath);
                 return null;
             }
             let shaderSource: string = request.responseText;
             if (shaderSource === null) {
                 alert("WARNING: " + filePath + " failed");
-                console.log(this._fragmentSource);
+                MB.Log.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -232,7 +249,7 @@ namespace MB {
         private loadAndCompileFromText(shaderSource: string, shaderType: number) {
             if (shaderSource === null) {
                 alert("WARNING: " + shaderSource + " failed");
-                console.log(this._fragmentSource);
+                MB.Log.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -252,12 +269,30 @@ namespace MB {
 
             if (shaderSource === null) {
                 alert("WARNING: " + id + " failed");
-                console.log(this._fragmentSource);
+                MB.Log.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
             return this.compileShader(shaderSource, shaderType);
         };
+
+        // TODO: HARCODED
+        public _cache = {
+            "msg": "// MESSAGE\n"
+        };
+        public _parse(str) {
+            const regex = /#import +<([\w\d.]+)>/g;
+            function replace(match, include) {
+                MB.Log.debug(include);
+                const replace = this._cache[include]; // Acceso al fichero de turno;
+                if (replace === undefined) {
+                    throw new Error("Can not resolve #import <" + include + ">");
+                }
+                return this._parse(replace);
+            }
+            return str.replace(regex, replace.bind(this));
+        }
+
         /**
          * Compile shader from shader source.
          * @param {string} shaderSource Raw shader code.
@@ -266,6 +301,8 @@ namespace MB {
         private compileShader(shaderSource: string, shaderType: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             let compiledShader: WebGLShader;
+
+            shaderSource = this._parse(shaderSource);
 
             if (shaderType === gl.VERTEX_SHADER) {
                 this._vertexSource = shaderSource;
@@ -283,8 +320,8 @@ namespace MB {
             // Check errors
             if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
                 alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                console.log("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                console.log({
+                MB.Log.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
+                MB.Log.debug({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -297,7 +334,7 @@ namespace MB {
          */
         public use() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.useProgram(this._compiledShader);
+            gl.useProgram(this._handler);
         };
         /**
          * Destroy program.
@@ -307,7 +344,7 @@ namespace MB {
             this._shaders.forEach((shader) => {
                 gl.detachShader(this.compileShader, shader);
             });
-            gl.deleteShader(this._compiledShader);
+            gl.deleteShader(this._handler);
         };
         /**
          * Send uniform float value.
@@ -532,6 +569,34 @@ namespace MB {
             return Program.GL_TABLE[type];
         };
         /**
+         * Autocatching all actives uniforms and attributes for program.
+         */
+        public autocatching() {
+            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
+            let unifs: Array<string> = [];
+            for (let i = 0; i < numUniforms; ++i) {
+                const info = gl.getActiveUniform(this._handler, i);
+                if (info.size > 1) {
+                    for (let j = 0; j < info.size; ++j) {
+                        unifs.push(info.name.replace("[0]", `[${j}]`));
+                    }
+                } else {
+                    unifs.push(info.name);
+                }
+            }
+            this.addUniforms(unifs);
+            const numAttributes = gl.getProgramParameter(this._handler, gl.ACTIVE_ATTRIBUTES);
+            let attrs: Array<string> = [];
+            for (let i = 0; i < numAttributes; ++i) {
+                const info = gl.getActiveAttrib(this._handler, i);
+                if (info) {
+                    attrs.push(info.name);
+                }
+            }
+            this.addAttributes(attrs);
+        }
+        /**
          * Return a object that contains active attributes and uniforms in program.
          * @return {ICachedUnifAttr}
          */
@@ -541,12 +606,10 @@ namespace MB {
                 "uniforms": []
             };
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            console.log("UNIFORMS");
-            const numUniforms = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_UNIFORMS);
+            const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
             let result = [];
             for (let i = 0; i < numUniforms; ++i) {
-                const info = gl.getActiveUniform(this._compiledShader, i);
-                console.log(info);
+                const info = gl.getActiveUniform(this._handler, i);
                 const type = Program.getType(gl, info.type);
                 if (info.size > 1) {
                     for (let j = 0; j < info.size; ++j) {
@@ -564,12 +627,10 @@ namespace MB {
                     });
                 }
             }
-            console.log(ret.uniforms);
-            console.log("ATTRIBUTES");
-            const numAttributes = gl.getProgramParameter(this._compiledShader, gl.ACTIVE_ATTRIBUTES);
+            const numAttributes = gl.getProgramParameter(this._handler, gl.ACTIVE_ATTRIBUTES);
             result = [];
             for (let i = 0; i < numAttributes; ++i) {
-                const info = gl.getActiveAttrib(this._compiledShader, i);
+                const info = gl.getActiveAttrib(this._handler, i);
                 if (info) {
                     ret.attributes.push({
                         name: info.name,
@@ -578,7 +639,6 @@ namespace MB {
                     });
                 }
             }
-            console.log(ret.attributes);
             return ret;
         };
         /**
@@ -618,7 +678,7 @@ namespace MB {
                     precision highp float;
                     out vec4 fragColor;
                     void main() {
-                        fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                        fragColor = vec4(1.0);
                     }`, MB.ctes.ShaderType.fragment,
                     MB.ctes.ReadMode.read_text);
             } else {
@@ -626,7 +686,7 @@ namespace MB {
                     `
                     precision highp float;
                     void main() {
-                        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                        gl_FragColor = vec4(1.0);
                     }`, MB.ctes.ShaderType.fragment,
                     MB.ctes.ReadMode.read_text);
             }

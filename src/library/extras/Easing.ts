@@ -19,7 +19,7 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * Easing namespace
      * @namespace Easing

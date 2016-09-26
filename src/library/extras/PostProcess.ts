@@ -57,7 +57,6 @@ namespace MB {
          */
         public static render() {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            // console.log("DRAW QUAD");
             PostProcess._planeVAO.bind();
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             PostProcess._planeVAO.unbind();

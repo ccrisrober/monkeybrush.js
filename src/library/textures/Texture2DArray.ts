@@ -56,22 +56,22 @@ namespace MB {
             // TODO: WRAP
 
             // TODO: Poner mejor
-            gl.texParameteri(this._target_, gl.TEXTURE_BASE_LEVEL, 0);
-            gl.texParameteri(this._target_, gl.TEXTURE_MAX_LEVEL, 0);
+            gl.texParameteri(this._target, gl.TEXTURE_BASE_LEVEL, 0);
+            gl.texParameteri(this._target, gl.TEXTURE_MAX_LEVEL, 0);
 
             this._numTex_ = images.length;
 
             // TODO: Hardcoded
             gl.texImage3D(
-                this.target, this._level_, this._internalformat_,
+                this.target, this._level, this._internalformat,
                 this._size_.x, this._size_.y, this._numTex_, 0,
-                this._format_, this._type_, null
+                this._format, this._type, null
            );
 
             images.forEach((image: any, i: number) => {
                 gl.texSubImage3D(
                     this.target, 0, 0, 0, i, this._size_.x, this._size_.y, 1,
-                        this._format_, this._type_, image);
+                        this._format, this._type, image);
             });
 
             this.wrap([
@@ -80,9 +80,7 @@ namespace MB {
                 options.wrapR || MB.ctes.WrapMode.Clamp2Edge
             ]);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);

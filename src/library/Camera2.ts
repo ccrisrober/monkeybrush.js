@@ -69,18 +69,18 @@ namespace MB {
                 speed = 2.5;
             }
 
-            if (MB.Input.isKeyPressed(MB.ctes.KeyState.Z)) {
-                if (this.fov > 30.0) {
-                    this.fov -= 0.5;
-                    this._updateCamera = true;
-                }
-            }
-            if (MB.Input.isKeyPressed(MB.ctes.KeyState.X)) {
-                if (this.fov < 90.0) {
-                    this.fov += 0.5;
-                    this._updateCamera = true;
-                }
-            }
+            // if (MB.Input.isKeyClicked(MB.ctes.KeyState.Z)) {
+            //     if (this.fov > 30.0 && this.fov < 90.) {
+            //         this.fov -= 0.5;
+            //         this._updateCamera = true;
+            //     }
+            // }
+            // if (MB.Input.isKeyClicked(MB.ctes.KeyState.X)) {
+            //     if (this.fov > 30.0 && this.fov < 90.) {
+            //         this.fov += 0.5;
+            //         this._updateCamera = true;
+            //     }
+            // }
 
             if (MB.Input.isKeyPressed(MB.ctes.KeyState.W)) {
                 this.processKeyboard(4, speed);
@@ -134,7 +134,7 @@ namespace MB {
                 return;
             }
             const velocity = this.movSpeed * this.timeElapsed * speed;
-            // console.log(direction);
+            // MB.Log.debug(direction);
             if (direction === 0) {
                 this.position = MB.Vect3.scaleAndAdd(this.position, this.front, velocity);
             } else if (direction === 1) {
@@ -151,8 +151,8 @@ namespace MB {
         }
 
         public processMouseMovement(xOffset: number, yOffset: number) {
-            xOffset *= this.movSpeed * 2.0 * this.timeElapsed;
-            yOffset *= this.movSpeed * 2.0 * this.timeElapsed;
+            //xOffset *= this.movSpeed * 2.0 * this.timeElapsed;
+            //yOffset *= this.movSpeed * 2.0 * this.timeElapsed;
 
             this.yaw += xOffset;
             this.pitch += yOffset;
@@ -166,26 +166,13 @@ namespace MB {
             this.updateCameraVectors();
         }
 
-        public updateCameraVectors() {
-            const front: MB.Vect3 = new MB.Vect3(
-                Math.cos(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch)),
-                Math.sin(Math["toRadian"](this.pitch)),
-                Math.sin(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch))
-           );
-            this.front = front.normalize();
-
-            // Recalculate right and up vector
-            this.right = MB.Vect3.cross(this.front, this.worldUp).normalize();
-            this.up = MB.Vect3.cross(this.right, this.front).normalize();
-        }
-
         public GetViewMatrix(): MB.Mat4 {
             return MB.Mat4.lookAt(
                 this.position,
                 MB.Vect3.add(
                     this.position,
                     this.front
-               ),
+                ),
                 this.up
            );
         }
@@ -194,12 +181,25 @@ namespace MB {
             const yMax = -yMin;
             const xMin = yMin + (w * 1.0) / (h * 1.0);
             const xMax = yMax + (w * 1.0) / (h * 1.0);
-            return MB.Mat4.orthographic(xMin, xMax, yMin, yMax, 0.0001, 11000.0);
+            return MB.Mat4.orthographic(xMin, xMax, yMin, yMax, 0.1, 1000.0);
         }
         public GetProjectionMatrix(w: number, h: number): MB.Mat4 {
-            return MB.Mat4.perspective(this.fov, (w * 1.0) / (h * 1.0), 0.0001, 1000.0);
+            return MB.Mat4.perspective(this.fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
         }
 
         public fov: number = 45.0;
+
+        public updateCameraVectors() {
+            const front: MB.Vect3 = new MB.Vect3(
+                Math.cos(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch)),
+                Math.sin(Math["toRadian"](this.pitch)),
+                Math.sin(Math["toRadian"](this.yaw)) * Math.cos(Math["toRadian"](this.pitch))
+            );
+            this.front = front.normalize();
+
+            // Recalculate right and up vector
+            this.right = MB.Vect3.cross(this.front, this.worldUp).normalize();
+            this.up = MB.Vect3.cross(this.right, this.front).normalize();
+        }
     };
 };

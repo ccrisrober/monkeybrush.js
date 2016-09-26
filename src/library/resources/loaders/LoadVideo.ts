@@ -52,5 +52,12 @@ namespace MB {
             video.loop = true;
             video.play();*/
         };
+        /**
+         * [unloadVideo description]
+         * @param {string} imageSrc [description]
+         */
+        export function unloadVideo(videoSrc: string) {
+            ResourceMap.unloadAsset(videoSrc);
+        };
     };
 };

@@ -32,8 +32,16 @@ namespace MB {
      * used as the destination for rendering.
      */
     export class Framebuffer {
+        /**
+         * Framebuffer size.
+         * @type {MB.Vect2}
+         */
         protected _size: MB.Vect2;
-        protected _handle: WebGLFramebuffer;
+        /**
+         * Framebuffer internal handler.
+         * @type {WebGLFramebuffer}
+         */
+        protected _handler: WebGLFramebuffer;
         protected _attachments: Array<MB.Texture>;
         public _renderBuffer: MB.RenderBufferTexture;
         public _depth: MB.SimpleTexture2D;
@@ -58,8 +66,8 @@ namespace MB {
             this._attachments = textures;
             this._size = size;
 
-            this._handle = gl.createFramebuffer();
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
+            this._handler = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this._handler);
 
             // Each textures to fbo
             this._attachments.forEach((texture: MB.Texture, i: number) => {
@@ -192,7 +200,7 @@ namespace MB {
          */
         public bind() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this._handle);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this._handler);
         };
         /**
          * Bind (active) all textures asociated to this framebuffer
@@ -237,7 +245,7 @@ namespace MB {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             let oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
-            if (oldBinding === this._handle) {
+            if (oldBinding === this._handler) {
                 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             }
 
@@ -245,7 +253,7 @@ namespace MB {
                 texture.destroy();
             });
 
-            gl.deleteFramebuffer(this._handle);
+            gl.deleteFramebuffer(this._handler);
 
             // Destroy depth/stencil
             if (this._renderBuffer) {

@@ -25,6 +25,13 @@ namespace MB {
      * @class Cone
      */
     export class Cone extends Drawable {
+        protected _bottomRadius: number;
+        protected _topRadius: number;
+        protected _height: number;
+        protected _radialSubDiv: number;
+        protected _heightSubDiv: number;
+        protected _createTopBase: boolean;
+        protected _createBottomBase: boolean;
         /**
          * Cone constructor
          * @param {number} bottomRadius: Cone bottom radius
@@ -47,6 +54,15 @@ namespace MB {
             if (heightSubDiv < 1) {
                 throw Error("heightSubDiv must be 1 or greater");
             }
+            
+            this._bottomRadius = bottomRadius;
+            this._topRadius = topRadius;
+            this._height = height;
+            this._radialSubDiv = radialSubDiv;
+            this. _heightSubDiv = heightSubDiv;
+            this._createTopBase = createTopBase;
+            this._createBottomBase = createBottomBase;
+
 
             const extra = (createTopBase ? 2 : 0) + (createBottomBase ? 2 : 0);
 

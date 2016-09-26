@@ -23,21 +23,14 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
-            return {
-                resume: true
-            };
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "EY", 2);
+                _super.call(this, "App", new MB.GLContextW2());
                 this.drawTick = true;
                 this.mainShader = "prog";
                 this.angle = 0;
-            }
-            MyScene.prototype.loadAssets = function () { };
-            ;
+            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 MB.ProgramManager.addWithFun("prog", function () {
@@ -51,7 +44,6 @@
                     return prog;
                 });
                 var texSize = 1024;
-                var gl = MB.Core.getInstance().getGL();
                 var bb1 = new Uint8Array(texSize * texSize * 3);
                 var checkSize = 5;
                 var n = 0;
@@ -125,31 +117,28 @@
                     bb1, bb2, bb3, bb4
                 ], {
                     autoMipMap: true,
-                    minFilter: gl.LINEAR,
-                    magFilter: gl.LINEAR,
-                    internalFormat: gl.RGB8,
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
+                    internalFormat: MB.ctes.PixelFormat.RGB8,
                     level: 0,
-                    format: gl.RGB,
-                    type: gl.UNSIGNED_BYTE
+                    format: MB.ctes.PixelFormat.RGB,
+                    type: MB.ctes.DataType.UnsignedByte
                 });
             };
-            ;
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
-            ;
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 if (this.drawTick === false) {
                     return;
                 }
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
-                var gl = MB.Core.getInstance().getGL();
                 var viewProj = mat4.create();
                 var proj = mat4.create();
-                var canvas = gl.canvas;
+                var canvas = MB.Core.getInstance().canvas();
                 mat4.perspective(proj, MB.Mathf.degToRad(60.0), canvas.width / canvas.height, 0.01, 100.0);
                 var view = mat4.create();
                 mat4.lookAt(view, new Float32Array([0.0, 1.0, 5.0]), new Float32Array([0.0, 0.0, 0.0]), new Float32Array([0.0, 1.0, 0.0]));
@@ -159,16 +148,12 @@
                 prog.sendUniformMat4("viewProj", viewProj);
                 MB.PostProcess.render();
             };
-            ;
             MyScene.prototype.cameraUpdate = function () {
             };
-            ;
             MyScene.prototype.textCB = function (gui) {
             };
-            ;
             return MyScene;
-        }(MB.Scene));
-        ;
+        }(MB.App));
         var myScene;
         window.onload = function () {
             myScene = new MyScene();

@@ -23,18 +23,12 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
-            return {
-                resume: true/*,
-                twirl: 5.0*/
-            };
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2());
                 this.mainShader = "prog";
-            }
+            };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Kamelot.jpg", "myTex");
             };
@@ -44,8 +38,8 @@
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
                 this.tex2d = new MB.Texture2D(myTexture, {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
@@ -64,7 +58,7 @@
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -73,14 +67,8 @@
 
                 MB.PostProcess.render();
             };
-            MyScene.prototype.cameraUpdate = function () {
-            };
-            MyScene.prototype.textCB = function (gui) {
-                // gui.add(this.text, "twirl", -10, 10);
-            };
             return MyScene;
-        }(MB.Scene));
-        ;
+        }(MB.App));
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

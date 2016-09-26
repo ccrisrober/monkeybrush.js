@@ -23,22 +23,21 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 render: "0"
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.Vect3(-0.18, 1.60, 25.23);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                this.homePoint = new MB.Vect3(-0.18, 2.60, 10.23);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-            }
+            };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Srtm_ramp2.world.21600x10800.jpg", "heightmap");
                 MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "earth");
@@ -51,24 +50,24 @@
                 let grassImage = MB.ResourceMap.retrieveAsset("heightmap");
                 this.tex2d = new MB.Texture2D(grassImage, {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.TextureType.Clamp2Edge,
-                    wrapT: MB.ctes.TextureType.Clamp2Edge
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
                 var heightmapImage = MB.ResourceMap.retrieveAsset("earth");
                 this.tex2d2 = new MB.Texture2D(heightmapImage, {
                     flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.TextureType.Clamp2Edge,
-                    wrapT: MB.ctes.TextureType.Clamp2Edge
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
-                    prog.addShader("../shaders/earth/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/earth/demoShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/earth/earth.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/earth/earth.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["projection", "view", "model", "tex", "tex2"]);
@@ -82,7 +81,7 @@
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -104,7 +103,6 @@
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
                 prog.sendUniform1i("tex", 0);
@@ -128,10 +126,10 @@
                 });
             };
             return MyScene;
-        }(MB.Scene));
-        ;
+        }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

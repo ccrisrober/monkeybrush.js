@@ -5,6 +5,7 @@ out vec4 fragColor;
 in vec2 uv;
 
 uniform float iGlobalTime;
+uniform vec2 iResolution;
 
 #define INFINITY 100000.0
 

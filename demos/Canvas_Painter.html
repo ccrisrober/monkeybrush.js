@@ -18,7 +18,7 @@
     <script type="text/javascript" src="../dist/output.js"></script>
 
     <!--<canvas id="canvas" style="position: fixed; bottom: 0; right: 0;"></canvas>-->
-    <canvas id="canvas" width="550" height="400"></canvas>
+    <canvas id="canvas" width="550" height="400" style="display: none"></canvas>
 
     <script type="text/javascript">
         var canvas, ctx;
@@ -32,42 +32,30 @@
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText(new Date().getTime(), canvas.width / 2, canvas.height / 2);
-        }
-
+        };
         var __extends = (this && this.__extends) || function (d, b) {
             for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
-            return {
-                resume: true
-            };
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
-                this.homePoint = new MB.Vect3(2.66, 3.58, 20.25);
+                _super.call(this, "App", new MB.GLContextW2());
+                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-            }
+            };
             MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex2d = new MB.CanvasTexture(canvas, {
-                    flipY: true,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest,
-                    wrapS: MB.ctes.WrapMode.MirroredRepeat,
-                    wrapT: MB.ctes.WrapMode.MirroredRepeat
-                });
-                this.cubito = new MB.Cube(25.0);
+                this.tex2d = new MBX.CanvasTexture(canvas);
+                this.cubito = new MB.Cube(15.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
                     prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
@@ -87,7 +75,7 @@
                 changeCanvas();
                 this.tex2d.update();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -96,7 +84,7 @@
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        //.rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
@@ -112,10 +100,8 @@
                 prog.sendUniformMat4("projection", this.projection);
                 prog.sendUniformMat4("view", this.view);
             };
-            MyScene.prototype.textCB = function (gui) {
-            };
             return MyScene;
-        }(MB.Scene));
+        }(MB.App));
         ;
         window.onload = function () {
             canvas = document.createElement("canvas");

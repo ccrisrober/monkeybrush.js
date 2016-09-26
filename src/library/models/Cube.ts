@@ -25,12 +25,15 @@ namespace MB {
      * @class Cube
      */
     export class Cube extends Drawable {
+        protected _side: number;
         /**
          * Cube constructor
          * @param {number = 1.0} side: Size length
          */
         constructor(side: number = 1.0) {
             super();
+
+            this._side = side;
             const side2 = side / 2.0;
 
             this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array([

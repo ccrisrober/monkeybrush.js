@@ -19,12 +19,12 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * VideoTexture class
      * @class VideoTexture
      */
-    export class VideoTexture extends Texture {
+    export class VideoTexture extends MB.Texture {
         protected _video: HTMLVideoElement;
         /**
          * [constructor description]
@@ -39,8 +39,8 @@ namespace MB {
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
             super(MB.ctes.TextureTarget.Texture2D, {
-                internalFormat: MB.ctes.TextureFormat.RGBA,
-                format: MB.ctes.TextureFormat.RGBA,
+                internalFormat: MB.ctes.PixelFormat.RGBA,
+                format: MB.ctes.PixelFormat.RGBA,
                 type: gl.UNSIGNED_BYTE,
                 flipY: true
             });
@@ -51,11 +51,9 @@ namespace MB {
 
             this.update();
 
-            // this.wrap([MB.ctes.TextureType.Linear, MB.ctes.TextureType.Clamp2Edge]);
+            // this.wrap([MB.ctes.TextureFilter.Linear, MB.ctes.TextureFilter.Clamp2Edge]);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
@@ -77,11 +75,11 @@ namespace MB {
             this.bind();
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             gl.texImage2D(
-                this._target_,
-                this._level_, // Level of details
-                this._internalformat_, // Internal format
-                this._format_, // Format
-                this._type_, // Size of each channel
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
                 this._video
            );
             gl.generateMipmap(gl.TEXTURE_2D);

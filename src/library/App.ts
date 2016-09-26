@@ -18,56 +18,62 @@
 /// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
+/// <reference path="../typings/dat-gui.d.ts" />
+/// <reference path="../typings/stats.d.ts" />
 /// <reference path="../typings/vanilla-toasts/vanilla-toasts.d.ts" />
 
 namespace MB {
-    export interface IApp {
-        title?: string;
-        webglVersion?: number;
-        loadAssets: () => void;
-        initialize: (app_: App) => void;
-        update: (app_: App, dt: number) => void;
-        draw: (app_: App, dt?: number) => void;
-        cameraUpdate: () => void;
-        textCB: (gui: dat.GUI) => void;
-    }
-
     @Decorators.sealed
-    export class App {
+    export abstract class App {
 
-        protected stats: Stats;
-        protected gui: dat.GUI;
+        protected _stats: Stats;
+        protected _gui: dat.GUI;
+        protected _webglVersion: number;
 
-        protected cameraUpdateCb;
-        constructor(init: IApp, text: any) {
-            if (!init.webglVersion) {
-                init.webglVersion = 2;
-            }
-            this._appFunctions = init;
-            console.log(this._appFunctions);
-            // console.log(MB.Context.webglVersion);
-            MB.Context.webglVersion = init.webglVersion;
-            // console.log(MB.Context.webglVersion);
+        protected text: any;
+
+        constructor(title: string = null, context: GLContext, text: Object = {}) {
+            MB.Log.info("init app");
+            MB.Core._context = context;
             MB.Core.getInstance();
 
-            document.title = init.title || `WebGL${init.webglVersion} app`;
+            this._webglVersion = context.version;
+            this.text = text;
+
+            document.title = title || `WebGL${this._webglVersion} app`;
 
             this.__init__(text);
         };
 
         public webglVersion(): number {
-            return this._appFunctions.webglVersion;
+            return this._webglVersion;
+        }
+        public loadAssets()  {
+            // Empty methods. Override if necessary
+        }
+        public cameraUpdate() {
+            // Empty methods. Override if necessary
+        }
+        public textCB(g: dat.GUI) {
+            // Empty methods. Override if necessary
         }
 
+        abstract initialize();
+        abstract update(dt: number);
+        abstract draw();
+
         private __init__(text) {
-            MB.Core.getInstance().initialize([1.0, 0.0, 1.0, 1.0]);
+            MB.Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
 
-            this.gui = new dat.GUI();
+            this._gui = new dat.GUI();
+            text["resume"] = true;
 
-            this._appFunctions.textCB(this.gui);
+            this.textCB(this._gui);
+
+            //this._gui.add(text, "pepe", 1.0, 2.0);
 
             let self = this;
-            this.gui.add(text, "resume", true).onChange(function(v) {
+            this._gui.add(text, "resume", true).onChange(function(v) {
                 if (v === true) {
                    self.resume();
                 } else {
@@ -75,41 +81,44 @@ namespace MB {
                 }
             });
 
-            this.stats = new Stats();
-            this.stats.setMode(0);
-            this.stats.domElement.style.position = "absolute";
-            this.stats.domElement.style.left = "0";
-            this.stats.domElement.style.top = "0";
-            document.body.appendChild(this.stats.domElement);
+            this._stats = new Stats();
+            this._stats.setMode(0);
+            this._stats.domElement.style.top = "24px";
 
-            this._appFunctions.loadAssets();
+            let statDOM = document.getElementById("stats") || document.body;
+            statDOM.appendChild(this._stats.domElement);
+
+            this.loadAssets();
+        }
+
+        get stats(): Stats {
+            return this._stats;
         }
 
         public start() {
-            let self = this;
+            let self: App = this;
             MB.ResourceMap.setLoadCompleteCallback(function() {
-                console.log("ALL RESOURCES LOADED!!!!");
+                MB.Log.info("ALL RESOURCES LOADED!!!!");
 
-                self._appFunctions.initialize(self);
+                self.initialize();
 
                 // Remove loader css3 window
                 document.getElementById("spinner").remove();
 
-                /*MB.Core.getInstance().canvas().addEventListener("dblclick", function(){
-                    var el: any = MB.Core.getInstance().canvas();
-
-                    if (el.webkitRequestFullScreen) {
-                        el.webkitRequestFullScreen();
-                    }
-                    else {
-                        el.mozRequestFullScreen();
-                    }
-                });*/
+                // MB.Core.getInstance().canvas().addEventListener("dblclick", function(){
+                //     var el: any = MB.Core.getInstance().canvas();
+                //     if (el.webkitRequestFullScreen) {
+                //         el.webkitRequestFullScreen();
+                //     }
+                //     else {
+                //         el.mozRequestFullScreen();
+                //     }
+                // });
 
                 try {
                     (function __render__(dt?: number) {
                         requestAnimationFrame(__render__);
-                        // console.log(dt);
+                        // MB.Log.debug(dt);
                         MB.Input.update();
 
                         self.stats.begin();
@@ -120,8 +129,8 @@ namespace MB {
                         // self.__resize__();
 
                         if (self._resume) {
-                            self._appFunctions.update(self, dt);
-                            self._appFunctions.draw(self, dt);    // Draw user function
+                            self.update(dt);
+                            self.draw();    // Draw user function
                         }
 
                         self.stats.end();
@@ -139,14 +148,13 @@ namespace MB {
         };
 
         public pause() {
-            console.log("PAUSE");
+            MB.Log.debug("PAUSE");
             this._resume = false;
         };
         public resume() {
-            console.log("RESUME");
+            MB.Log.debug("RESUME");
             this._resume = true;
         };
-
         protected _resume: boolean = true;
 
         protected __resize__() {
@@ -170,10 +178,8 @@ namespace MB {
                 // Set the viewport to match
                 MB.GlobalState.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
 
-                this.cameraUpdateCb();
+                this.cameraUpdate();
             }
         }
-
-        protected _appFunctions: IApp;
     };
-}
+};

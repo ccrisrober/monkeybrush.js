@@ -20,58 +20,62 @@
 "use strict";
 
 namespace MB {
+    /**
+     * VertexBuffer class
+     * @class VertexBuffer
+     */
     export class VertexBuffer {
         /**
-         * [_buffer description]
+         * VertexBuffer internal buffer handler.
          * @type {WebGLBuffer}
          */
-        protected _buffer: WebGLBuffer;
+        protected _handler: WebGLBuffer;
         /**
-         * [_type description]
-         * @type {MB.ctes.BufferType}
+         * VertexBuffer internal type
+         * @type {ctes.BufferType}
          */
-        protected _type: MB.ctes.BufferType = MB.ctes.BufferType.Array;
+        protected _type: ctes.BufferType = ctes.BufferType.Array;
         /**
          * Vertex buffer constructor
-         * @param {MB.ctes.BufferType = MB.ctes.BufferType.Array}
+         * @param {ctes.BufferType = ctes.BufferType.Array}
          */
-        constructor(type: MB.ctes.BufferType = MB.ctes.BufferType.Array) {
+        constructor(type: ctes.BufferType = ctes.BufferType.Array) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            this._buffer = gl.createBuffer();
+            this._handler = gl.createBuffer();
             this._type = type;
             this.bind();
         }
         /**
-         * [bind description]
-         * @param {MB.ctes.BufferType} type [description]
+         * Bind vertex buffer.
+         * @param {MB.ctes.BufferType} type 
          */
         public bind(type?: MB.ctes.BufferType) {
             if (type !== undefined) {
                 this._type = type;
             }
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.bindBuffer(this._type, this._buffer);
+            gl.bindBuffer(this._type, this._handler);
         }
         /**
-         * [unbind description]
+         * Unbind vertex buffer.
          */
         public unbind() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.bindBuffer(this._type, null);
         }
         /**
-         * [getBufferType description]
-         * @return {MB.ctes.BufferType} [description]
+         * Returns interla buffer type.
+         * @return {ctes.BufferType}
          */
-        public getBufferType(): MB.ctes.BufferType {
+        public getBufferType(): ctes.BufferType {
             return this._type;
         }
         /**
-         * [getBuffer description]
-         * @return {WebGLBuffer} [description]
+         * Returns internal buffer handler.
+         * @return {WebGLBuffer}
          */
         public getBuffer(): WebGLBuffer {
-            return this._buffer;
+            return this._handler;
         }
         /**
          * [destroy description]
@@ -79,15 +83,15 @@ namespace MB {
         public destroy() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.bindBuffer(this._type, 0);
-            if (!this._buffer) {
-                gl.deleteBuffer(this._buffer);
+            if (!this._handler) {
+                gl.deleteBuffer(this._handler);
             }
-            this._buffer = null;
+            this._handler = null;
         }
         /**
          * [bufferData description]
          * @param {Float32Array | Uint16Array | number}          data  [description]
-         * @param {MB.ctes.UsageType    = MB.ctes.UsageType.StaticDraw} usage [description]
+         * @param {ctes.UsageType =B.ctes.UsageType.StaticDraw} usage [description]
          */
         public bufferData(data: Float32Array | Uint16Array | number,
             usage: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
@@ -137,7 +141,14 @@ namespace MB {
                 offset // Offset from the beginning of a single vertex to this attribute
            );
         };
-
+        /**
+         * [copySub description]
+         * @param {number}     readTarget [description]
+         * @param {number}     writeTarget [description]
+         * @param {number}     readOffset [description]
+         * @param {number}     writeOffset [description]
+         * @param {number}     size [description]
+         */
         public copySub(readTarget: number, writeTarget: number, readOffset: number,
             writeOffset: number, size: number) {
             // TODO: https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/copyBufferSubData
@@ -148,7 +159,7 @@ namespace MB {
 
         public bindBufferBase(target: number, index: number = 0) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.bindBufferBase(target, index, this._buffer);
+            gl.bindBufferBase(target, index, this._handler);
         }
     };
 };

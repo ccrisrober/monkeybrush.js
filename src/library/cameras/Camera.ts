@@ -25,10 +25,30 @@ namespace MB {
      * @class Camera
      */
     abstract class Camera {
+        /**
+         * Camera current position.
+         * @type {MB.Vect3}
+         */
         protected _position: MB.Vect3;
+        /**
+         * Camera view matrix.
+         * @type {MB.Mat4}
+         */
         protected _view: MB.Mat4;
+        /**
+         * Camera projection matrix.
+         * @type {MB.Mat4}
+         */
         protected _projection: MB.Mat4;
+        /**
+         * Camera field of view.
+         * @type {number}
+         */
         protected _fov: number;
+        /**
+         * Camera aspect ratio
+         * @type {number}
+         */
         protected _ar: number;
         protected _near: number;
         protected _far: number;

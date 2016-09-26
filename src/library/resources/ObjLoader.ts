@@ -30,7 +30,7 @@ namespace MB {
             try {
                 req.send(null);
             } catch (e) {
-                console.log(`Error reading file ${filename}`);
+                MB.Log.error(`Error reading file ${filename}`);
             }
             return req.responseText;
         }

@@ -45,8 +45,7 @@ namespace MB {
                     Math.random() * range - range / 2,
                     Math.random() * range - range / 2,
                     Math.random() * range - range / 2
-               );
-                // console.log(particle._value);
+                );
                 this._points.push(particle.x, particle.y, particle.z);
             }
             this._size = 500;

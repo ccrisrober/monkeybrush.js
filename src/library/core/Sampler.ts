@@ -44,14 +44,14 @@ namespace MB {
      */
     // TODO: Added this to textures
     export class Sampler {
-        public _handle: WebGLSampler;
+        public _handler: WebGLSampler;
         constructor() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            this._handle = gl.createSampler();
+            this._handler = gl.createSampler();
         };
         /**
-         * Set a list of texture parameters (filters, wraps, LOD, ...)
-         * @param {SamplerParams} params SamplerParams interface
+         * Set a list of texture parameters (filters, wraps, LOD, ...).
+         * @param {SamplerParams} params SamplerParams interface.
          */
         public setParams(params: SamplerParams) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
@@ -87,55 +87,55 @@ namespace MB {
             }
         };
         /**
-         * Bind (active) sampler
+         * Bind (active) sampler.
          * @param {number} unit Specifying the index of the texture
-         *                       to which to bind the sampler
+         *                       to which to bind the sampler.
          */
         public bind(unit: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.bindSampler(unit, this._handle);
+            gl.bindSampler(unit, this._handler);
         };
         /**
-         * Unbind (disable) sampler
+         * Unbind (disable) sampler.
          * @param {number} unit Specifying the index of the texture
-         *                       to which to unbind the sampler
+         *                       to which to unbind the sampler.
          */
         public unbind(unit: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             gl.bindSampler(unit, null);
         };
         /**
-         * Set a unique texture parameter
-         * @param {MB.ctes.SamplerParameter} name  Parameter name
-         * @param {number} param Parameter value
+         * Set a unique texture parameter.
+         * @param {ctes.SamplerParameter} name  Parameter name.
+         * @param {number} param Parameter value.
          */
-        public parameteri(name: MB.ctes.SamplerParameter, param: number) {
+        public parameteri(name: ctes.SamplerParameter, param: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.samplerParameteri(this._handle, name, param);
+            gl.samplerParameteri(this._handler, name, param);
         };
         /**
-         * Set a unique texture parameter
-         * @param {MB.ctes.SamplerParameter} name  Parameter name
-         * @param {number} param Parameter value
+         * Set a unique texture parameter.
+         * @param {ctes.SamplerParameter} name  Parameter name.
+         * @param {number} param Parameter value.
          */
-        public parameterf(name: MB.ctes.SamplerParameter, param: number) {
+        public parameterf(name: ctes.SamplerParameter, param: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.samplerParameterf(this._handle, name, param);
+            gl.samplerParameterf(this._handler, name, param);
         };
         /**
          * Return parameter for this sampler object.
-         * @param {MB.ctes.SamplerParameter} name  Parameter name
+         * @param {ctes.SamplerParameter} name  Parameter name.
          */
-        public getParameter(name: MB.ctes.SamplerParameter) {
+        public getParameter(name: ctes.SamplerParameter) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            return gl.getSamplerParameter(this._handle, name);
+            return gl.getSamplerParameter(this._handler, name);
         };
         /**
          * Destroy sampler object.
          */
         public destroy() {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            gl.deleteSampler(this._handle);
+            gl.deleteSampler(this._handler);
         };
         /**
          * Return if this sampler is a valid sampler.
@@ -143,7 +143,7 @@ namespace MB {
          */
         public isValid(): boolean {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            return gl.isSampler(this._handle);
+            return gl.isSampler(this._handler);
         };
     };
 };

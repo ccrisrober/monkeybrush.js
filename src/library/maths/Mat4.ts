@@ -416,11 +416,31 @@ namespace MB {
             ]);
         };
         static perspective(fovy: number, aspect: number, near: number, far: number): Mat4 {
-            const
+            var f = 1.0 / Math.tan(fovy / 2),
+                nf = 1 / (near - far);
+            var out = new Float32Array(16);
+            out[0] = f / aspect;
+            out[1] = 0;
+            out[2] = 0;
+            out[3] = 0;
+            out[4] = 0;
+            out[5] = f;
+            out[6] = 0;
+            out[7] = 0;
+            out[8] = 0;
+            out[9] = 0;
+            out[10] = (far + near) * nf;
+            out[11] = -1;
+            out[12] = 0;
+            out[13] = 0;
+            out[14] = (2 * far * near) * nf;
+            out[15] = 0;
+            return new Mat4(out);
+            /*const
                 top = near * Math.tan(fovy * Math.PI / 360.0),
                 right = top * aspect;
 
-            return Mat4.frustum(-right, right, -top, top, near, far);
+            return Mat4.frustum(-right, right, -top, top, near, far);*/
         };
         static orthographic(l: number, r: number, b: number, t: number, n: number, f: number): Mat4 {
             const

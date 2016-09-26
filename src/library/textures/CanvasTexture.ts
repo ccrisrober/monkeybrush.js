@@ -19,14 +19,14 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * CanvasTexture class
      * @class CanvasTexture
      *
-     * This class uses an image of a canvas like texture
+     * This class uses an canvas image like texture
      */
-    export class CanvasTexture extends Texture {
+    export class CanvasTexture extends MB.Texture {
         /**
          * Canvas that contains the image texture
          * @type {HTMLCanvasElement}
@@ -38,21 +38,19 @@ namespace MB {
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
          */
-        constructor(domCanvas: HTMLCanvasElement, options: TexOptions = {}, onSuccess: () => void = null) {
+        constructor(domCanvas: HTMLCanvasElement, options: MB.TexOptions = {}, onSuccess: () => void = null) {
             super(MB.ctes.TextureTarget.Texture2D, options);
 
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
             this._domCanvas = domCanvas;
 
-            this._compressed_ = Boolean(options.compressed || false);
-
             gl.texImage2D(
-                this._target_,
-                this._level_,
-                this._internalformat_,
-                this._format_, // Format
-                this._type_, // Size of each channel
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
                 this._domCanvas
             );
 
@@ -61,9 +59,7 @@ namespace MB {
                 options.wrapT || MB.ctes.WrapMode.Clamp2Edge
             ]);
 
-            if (this._flipY_) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY_ === true ? 1 : 0);
-            }
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
@@ -79,11 +75,11 @@ namespace MB {
             this.bind();
             const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
             gl.texImage2D(
-                this._target_,
-                this._level_,
-                this._internalformat_,
-                this._format_,
-                this._type_,
+                this._target,
+                this._level,
+                this._internalformat,
+                this._format,
+                this._type,
                 this._domCanvas
            );
             this.unbind();

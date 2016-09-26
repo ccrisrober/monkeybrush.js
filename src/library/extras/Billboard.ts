@@ -20,20 +20,26 @@
 "use strict";
 /// <reference path="../../typings/gl-matrix.d.ts" />
 
-namespace MB {
-
-export interface BillboardOpts {
-    texture: MB.Texture2D;
-    hi?: Array<number>;         // Upper tex. coordinate
-    lo?: Array<number>;         // Lower tex. coordinate
-    width?: number;             // Billboard width
-    height?: number;            // Billboard height
-    model?: Float32Array;
-    view?: Float32Array;
-    projection?: Float32Array;
-};
-
-export class Billboard {
+namespace MBX {
+    /**
+     * BillboardOpts interface.
+     * @interface BillboardOpts
+     */
+    export interface BillboardOpts {
+        texture: MB.Texture2D;
+        hi?: Array<number>;         // Upper tex. coordinate
+        lo?: Array<number>;         // Lower tex. coordinate
+        width?: number;             // Billboard width
+        height?: number;            // Billboard height
+        model?: Float32Array;
+        view?: Float32Array;
+        projection?: Float32Array;
+    };
+    /**
+     * Billboard class.
+     * @class Billboard
+     */
+    export class Billboard {
         static mesh: MB.CustomModel = null;
         static program: MB.Program = null;
         static initialize() {

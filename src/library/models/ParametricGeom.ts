@@ -27,6 +27,9 @@ namespace MB {
      * @class ParametricGeom
      */
     export class ParametricGeom extends Drawable {
+        protected _slices: number;
+        protected _stacks: number;
+        protected _func: (u: number, v: number) => MB.Vect3;
         /**
          * ParametricGeom
          * @param {number) => MB.Vect3} func Function generator (u, v) => MB.Vect3
@@ -34,12 +37,18 @@ namespace MB {
          * @param {number} stacks Number of stacks
          */
         constructor(func: (u: number, v: number) => MB.Vect3, slices: number, stacks: number) {
+            super();
+
+            this._func = func;
+            this._slices = slices;
+            this._stacks = stacks;
+
             let vertices = [];
             let normals = [];
             let indices = [];
             let uvs = [];
 
-            super();
+
             let evalVect3;
             let u, v;
 

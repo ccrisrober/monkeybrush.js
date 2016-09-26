@@ -38,25 +38,11 @@ namespace MB {
             return (alias.length < 1) ? src : alias;
         };
         /**
-         * [unloadVideo description]
-         * @param {string} imageSrc [description]
-         */
-        export function unloadVideo(videoSrc: string) {
-            ResourceMap.unloadAsset(videoSrc);
-        };
-        /**
          * [unloadImage description]
          * @param {string} imageSrc [description]
          */
         export function unloadImage(imageSrc: string) {
             ResourceMap.unloadAsset(imageSrc);
-        };
-        /**
-         * [unloadAudio description]
-         * @param {string} clipName [description]
-         */
-        export function unloadAudio(clipName: string) {
-            ResourceMap.unloadAsset(clipName);
         };
         // Code based on http://www.graphics.cornell.edu/~bjw/rgbe/rgbe.c
         function RGBEParser(buffer: ArrayBuffer) {

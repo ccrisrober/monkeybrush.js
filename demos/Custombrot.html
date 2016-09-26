@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mandelbrot</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var Configuration = function () {
+            return {
+                zoom: 3.1,
+                offsetX: 0.1,
+                offsetY: 0.1,
+                iter: 256
+            }
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                this.mainShader = "prog";
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/gradientTexture.jpg", "1DTex");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+
+                var myTexture = MB.ResourceMap.retrieveAsset("1DTex");
+                this.tex = new MB.Texture2D(myTexture, {
+                    flipY: true,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/custombrot.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms([
+                        "ColorOffset", "Zoom", "center", "MaxIterations", "InnerColor", "tex"]);
+                    console.log(prog);
+                    return prog;
+                });
+            };
+            MyScene.prototype.update = function (dt) {
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.tex.bind(0);
+                prog.sendUniform1i("tex", 0);
+                prog.sendUniform1f("MaxIterations", this.text.iter);
+                prog.sendUniform1f("Zoom", this.text.zoom);
+                prog.sendUniform2f("center", this.text.offsetX, this.text.offsetY);
+                MB.PostProcess.render();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "zoom", 0.0, 50.0);
+                gui.add(this.text, "iter", 1, 500).step(0.01);
+                gui.add(this.text, "offsetX", -10.0, 10.0);
+                gui.add(this.text, "offsetY", -10.0, 10.0);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

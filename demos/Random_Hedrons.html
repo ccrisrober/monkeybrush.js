@@ -23,23 +23,16 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
-            return {
-                resume: true
-            };
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2());
                 this.homePoint = new MB.Vect3(3.91, -4.52, 60.35);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-            }
-            MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -74,21 +67,24 @@
                 this.dodecahedron3 = new MB.Dodecahedron(12.5, 3.0);
                 this.dodecahedron4 = new MB.Dodecahedron(12.5, 4.0);
 
+
+                var indices = [ 2, 1, 0, 0, 3, 2, 3, 0, 2, 1, 2, 1, 0, 3, 0, 2, 3, 1, 2, 1, 0 ];
+
                 this.customHedron0 = new MB.Polyhedron(
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-                    [ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 0.0);
+                    indices, 12.5, 0.0);
                 this.customHedron1 = new MB.Polyhedron(
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-                    [ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 1.0);
+                    indices, 12.5, 1.0);
                 this.customHedron2 = new MB.Polyhedron(
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-                    [ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 2.0);
+                    indices, 12.5, 2.0);
                 this.customHedron3 = new MB.Polyhedron(
                     [ 1, 1, -1.23 -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-                    [ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 3.0);
+                    indices, 12.5, 3.0);
                 this.customHedron4 = new MB.Polyhedron(
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
-                    [ 2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1 ], 12.5, 4.0);
+                    indices, 12.5, 4.0);
 
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
@@ -116,7 +112,7 @@
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -143,11 +139,8 @@
                 prog.sendUniformMat4("projection", this.projection);
                 prog.sendUniformMat4("view", this.view);
             };
-            MyScene.prototype.textCB = function (gui) {
-            };
             return MyScene;
-        }(MB.Scene));
-        ;
+        }(MB.App));
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

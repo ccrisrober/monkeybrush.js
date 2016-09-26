@@ -43,11 +43,11 @@ namespace MB {
 
             this._tex1 = this._tex2 =
                 new MB.SimpleTexture2D(size, {
-                    internalFormat: MB.ctes.TextureFormat.RGBA,
-                    format: MB.ctes.TextureFormat.RGBA,
+                    internalFormat: MB.ctes.PixelFormat.RGBA,
+                    format: MB.ctes.PixelFormat.RGBA,
                     type: gl.FLOAT,
-                    minFilter: MB.ctes.TextureType.Nearest,
-                    magFilter: MB.ctes.TextureType.Nearest
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest
                 });
 
             this._fbo = new MB.Framebuffer([this._tex1], size);

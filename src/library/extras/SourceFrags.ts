@@ -31,6 +31,6 @@ namespace MB {
                 return parse(replace);
             }
             return str.replace(regex, replace);
-        }
+        };
     };
 };

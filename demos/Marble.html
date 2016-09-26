@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matcap Vertex</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2());
+                this.homePoint = new MB.Vect3(-0.18, 1.60, 25.23);
+                this.camera = new MB.Camera2(this.homePoint);
+                this.angle = 0;
+                this.mainShader = "prog";
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+                this.cubito = new MB.Mesh("../assets/objects/teddy.json");
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program();
+                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/marble.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["projection", "view", "model", "viewPos"]);
+                    return prog;
+                });
+                this.cameraUpdate();
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+                this.camera.update(this.cameraUpdate.bind(this));
+                this.angle += MB.Timer.deltaTime() * 0.001;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                MB.Core.getInstance().clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.model =
+                    this.identityMatrix.clone()
+                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
+                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
+                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                prog.sendUniformMat4("model", this.model);
+                this.cubito.render();
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                var canvas = MB.Core.getInstance().canvas();
+                this.view = this.camera.GetViewMatrix();
+                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                console.log(this.camera.GetPos());
+                prog.sendUniformVec3("viewPos", this.camera.GetPos());
+                prog.sendUniformMat4("projection", this.projection);
+                prog.sendUniformMat4("view", this.view);
+            };
+            MyScene.prototype.textCB = function (gui) {
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

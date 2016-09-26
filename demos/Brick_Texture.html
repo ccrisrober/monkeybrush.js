@@ -23,9 +23,8 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 brickW: 25,
                 brickH: 15,
                 brickColor: "#ff7800",
@@ -35,10 +34,8 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.mainShader = "prog";
-            }
-            MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -59,7 +56,7 @@
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -69,8 +66,6 @@
                 prog.sendUniform3f("jointColor", this.jointColor.r, this.jointColor.g, this.jointColor.b);
 
                 MB.PostProcess.render();
-            };
-            MyScene.prototype.cameraUpdate = function () {
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "brickW", 10, 50);
@@ -83,8 +78,7 @@
                 }.bind(this));
             };
             return MyScene;
-        }(MB.Scene));
-        ;
+        }(MB.App));
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();
