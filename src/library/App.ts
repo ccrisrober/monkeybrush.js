@@ -63,7 +63,7 @@ namespace MB {
 
         abstract initialize();
         abstract update(dt: number);
-        abstract draw(dt?: number);    // TODO: Remove "dt"
+        abstract draw();
 
         private __init__(text) {
             MB.Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
