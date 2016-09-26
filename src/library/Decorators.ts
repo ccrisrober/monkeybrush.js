@@ -15,13 +15,13 @@ namespace MB {
             // property getter
             let getter = function () {
                 let val = this[newKey];
-                console.log(`Get: ${key} => ${val}`);
+                MB.Log.debug(`Get: ${key} => ${val}`);
                 return val;
             };
 
             // property setter
             let setter = function (newVal: any) {
-                console.log(`Set: ${key} => ${newVal}`);
+                MB.Log.debug(`Set: ${key} => ${newVal}`);
                 this[newKey] = newVal;
             };
 

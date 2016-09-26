@@ -23,18 +23,17 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 amount: 0.5
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.mainShader = "prog";
-            }
+            };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
             };
@@ -64,7 +63,7 @@
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -75,14 +74,11 @@
                 MB.PostProcess.render();
                 this.text.render = false;
             };
-            MyScene.prototype.cameraUpdate = function () {
-            };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "amount", 0.0, 1.0);
             };
             return MyScene;
         }(MB.App));
-        ;
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

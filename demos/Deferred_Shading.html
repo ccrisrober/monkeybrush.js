@@ -23,23 +23,22 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
                 max: 10,
-                resume: true,
                 mode: 0
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.camera = new MB.Camera2(new MB.Vect3(-2.7, -1.4, 11.8));
                 this.angle = 0;
                 this.mainShader = "prepass";
                 this.identityMatrix = MB.Mat4.identity;
                 this.model = new MB.Mat4();
-            }
+            };
             MyScene.prototype.loadAssets = function () {
                 // skybox
                 MB.Loaders.loadImage("../assets/images/skybox2/back.jpg");
@@ -83,7 +82,7 @@
                 this.camera.update(this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 this.deferred.bindForWriting();
                 MB.Core.getInstance().clearColorAndDepth();
@@ -156,7 +155,6 @@
             };
             return MyScene;
         }(MB.App));
-        ;
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

@@ -98,9 +98,6 @@ namespace MB {
                 idx += divisions + 1;
             }
 
-            console.log(stacks * divisions * 3);
-            console.log(verts.length);
-
             this._handle = [];
             this._vao.bind();
 

@@ -17,28 +17,78 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+precision highp float;
+
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 uv;
+
+out vec3 outPosition;
+out vec3 outNormal;
+out vec2 outUV;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+uniform vec3 lightPosition;
+uniform float heightFactor;
+
+uniform sampler2D texH;
+
+void main() {
+    mat3 normalMatrix = mat3(inverse(transpose(model)));
+
+    vec3 pos = position;
+
+    const vec2 size = vec2(0.5,0.0);
+    const ivec3 off = ivec3(-1,0,1);
+    vec4 wave = texture(texH, uv);
+    float s11 = wave.x;
+    float s01 = textureOffset(texH, uv, off.xy).x;
+    float s21 = textureOffset(texH, uv, off.zy).x;
+    float s10 = textureOffset(texH, uv, off.yx).x;
+    float s12 = textureOffset(texH, uv, off.yz).x;
+    vec3 va = normalize(vec3(size.xy,s21-s01));
+    vec3 vb = normalize(vec3(size.yx,s12-s10));
+    vec4 bump = vec4( cross(va,vb), s11 );
+
+    pos.y += heightFactor * bump.w;
+    outNormal = bump.xyz;
+
+
+    vec4 pp = model * vec4(pos, 1.0);
+    pp = view * pp;
+    outPosition = pp.xyz;
+    outUV = uv;
+    outNormal = normalize(normalMatrix * outNormal);
+    gl_Position = projection * pp;
+}
+    </script>
+
     <script type="text/javascript">
         var __extends = (this && this.__extends) || function (d, b) {
             for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true
+                heightFactor: 3.5
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.homePoint = new MB.Vect3(0.08, 5.16, 15.25);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-            }
+            };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/heightmap.jpg", "heightmap");
             };
@@ -53,14 +103,14 @@
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.cubito = new MB.Plane(13.0, 10.0, 100, 100);
+                this.cubito = new MB.Plane(26.0, 20.0, 200, 200);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program();
-                    prog.addShader("../shaders/elevation.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
                     prog.addShader("../shaders/texRender.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model", "tex"]);
+                    prog.addUniforms(["projection", "view", "model", "tex", "heightFactor"]);
                     return prog;
                 });
                 this.cameraUpdate();
@@ -71,7 +121,7 @@
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -81,6 +131,7 @@
                         .translate(new MB.Vect3(0.0, 0.0, 0.0));
                 prog.sendUniformMat4("model", this.model);
                 prog.sendUniform1i("tex", 0);
+                prog.sendUniform1f("heightFactor", this.text.heightFactor);
                 this.cubito.render();
             };
             MyScene.prototype.cameraUpdate = function () {
@@ -94,10 +145,10 @@
                 prog.sendUniformMat4("view", this.view);
             };
             MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "heightFactor", 0.1, 10.0);
             };
             return MyScene;
         }(MB.App));
-        ;
         var myScene;
         window.onload = function () {
             myScene = new MyScene();

@@ -38,7 +38,7 @@ namespace MB {
             let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
 
             if (ext === null) {
-                console.warn(name + " extension not supported.");
+                MB.Log.warn(name + " extension not supported.");
                 return;
             }
             this._extensions[name] = ext;
@@ -46,10 +46,6 @@ namespace MB {
         }
     };
 };
-
-
-// const ext = gl_.getExtension("OES_draw_buffers_indexed");
-// console.log(ext);
 
 /*let arr = [
     "OES_element_index_uint",
@@ -71,8 +67,4 @@ namespace MB {
     "WEBGL_compressed_texture_pvrtc",
     "WEBGL_compressed_texture_etc1"
 ];
-
-arr.forEach((v: string) => {
-    console.log(v);
-    console.log(gl_.getExtension(v));
-});*/
+;*/

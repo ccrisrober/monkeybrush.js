@@ -17,7 +17,6 @@
 
       "./src/library/Camera2.ts",
       "./src/library/Decorators.ts",
-      "./src/library/Scene.ts",
       "./src/library/App.ts",
 
       "./src/library/models/Drawable.ts",
@@ -39,7 +38,6 @@
 
       "./src/library/textures/Texture.ts",
       "./src/library/textures/**/*.ts",
-
 
       "./src/library/scene/**/*.ts",
       "./src/library/Transform.ts",
@@ -57,7 +55,6 @@
 
       "./src/library/Camera2.ts",
       "./src/library/Decorators.ts",
-      "./src/library/Scene.ts",
       "./src/library/App.ts",
 
       "./src/library/models/Drawable.ts",
@@ -79,7 +76,6 @@
 
       "./src/library/textures/Texture.ts",
       "./src/library/textures/**/*.ts",
-
 
       "./src/library/scene/**/*.ts",
       "./src/library/Transform.ts",

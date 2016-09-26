@@ -23,18 +23,17 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
-                twirl: 0.6
+                twirl: 0.47
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.mainShader = "prog";
-            }
+            };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Kamelot.jpg", "myTex");
             };
@@ -56,7 +55,7 @@
                     prog.addShader("../shaders/twirlFilter.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex", "iGlobalTime", "twirl_amount"]);
+                    prog.addUniforms(["tex", "twirl_amount"]);
                     console.log(prog);
                     return prog;
                 });
@@ -64,25 +63,21 @@
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("iGlobalTime", dt);
                 prog.sendUniform1f("twirl_amount", this.text.twirl);
 
                 MB.PostProcess.render();
-            };
-            MyScene.prototype.cameraUpdate = function () {
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "twirl", -10, 10);
             };
             return MyScene;
         }(MB.App));
-        ;
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

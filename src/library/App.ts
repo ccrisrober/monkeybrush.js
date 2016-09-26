@@ -28,22 +28,19 @@ namespace MB {
 
         protected _stats: Stats;
         protected _gui: dat.GUI;
-        protected _webglVersion;
+        protected _webglVersion: number;
 
         protected text: any;
 
-        constructor(text: any, title: string = null, webglVersion: number = 2) {
+        constructor(title: string = null, context: GLContext, text: Object = {}) {
             MB.Log.info("init app");
-            if (!webglVersion) {
-                webglVersion = 2;
-            }
-            MB.Context.webglVersion = webglVersion;
+            MB.Core._context = context;
             MB.Core.getInstance();
 
-            this._webglVersion = webglVersion;
+            this._webglVersion = context.version;
             this.text = text;
 
-            document.title = title || `WebGL${webglVersion} app`;
+            document.title = title || `WebGL${this._webglVersion} app`;
 
             this.__init__(text);
         };
@@ -69,8 +66,11 @@ namespace MB {
             MB.Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
 
             this._gui = new dat.GUI();
+            text["resume"] = true;
 
             this.textCB(this._gui);
+
+            //this._gui.add(text, "pepe", 1.0, 2.0);
 
             let self = this;
             this._gui.add(text, "resume", true).onChange(function(v) {
@@ -84,7 +84,9 @@ namespace MB {
             this._stats = new Stats();
             this._stats.setMode(0);
             this._stats.domElement.style.top = "24px";
-            document.body.appendChild(this._stats.domElement);
+
+            let statDOM = document.getElementById("stats") || document.body;
+            statDOM.appendChild(this._stats.domElement);
 
             this.loadAssets();
         }
@@ -116,7 +118,7 @@ namespace MB {
                 try {
                     (function __render__(dt?: number) {
                         requestAnimationFrame(__render__);
-                        // console.log(dt);
+                        // MB.Log.debug(dt);
                         MB.Input.update();
 
                         self.stats.begin();
@@ -128,7 +130,7 @@ namespace MB {
 
                         if (self._resume) {
                             self.update(dt);
-                            self.draw(dt);    // Draw user function
+                            self.draw();    // Draw user function
                         }
 
                         self.stats.end();
@@ -146,14 +148,13 @@ namespace MB {
         };
 
         public pause() {
-            console.log("PAUSE");
+            MB.Log.debug("PAUSE");
             this._resume = false;
         };
         public resume() {
-            console.log("RESUME");
+            MB.Log.debug("RESUME");
             this._resume = true;
         };
-
         protected _resume: boolean = true;
 
         protected __resize__() {

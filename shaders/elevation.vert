@@ -8,12 +8,12 @@ layout(location = 2) in vec2 uv;
 out vec3 outPosition;
 out vec3 outNormal;
 out vec2 outUV;
-out vec3 lp;
 
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 uniform vec3 lightPosition;
+uniform float heightFactor;
 
 uniform sampler2D texH;
 
@@ -21,8 +21,6 @@ void main() {
     mat3 normalMatrix = mat3(inverse(transpose(model)));
 
     vec3 pos = position;
-
-    float heightFactor = 3.5;
 
     const vec2 size = vec2(0.5,0.0);
     const ivec3 off = ivec3(-1,0,1);
@@ -46,7 +44,4 @@ void main() {
     outUV = uv;
     outNormal = normalize(normalMatrix * outNormal);
     gl_Position = projection * pp;
-
-    gl_PointSize = 5.0;
-    lp = (view * model * vec4(lightPosition, 1.0)).rgb;
 }

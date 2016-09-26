@@ -181,8 +181,8 @@ namespace MB {
             // Checkin errors
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                console.log({
+                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                MB.Log.debug({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -207,8 +207,8 @@ namespace MB {
             // Checkin errors
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                console.log({
+                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                MB.Log.debug({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -229,13 +229,13 @@ namespace MB {
                 request.send();
             } catch (err) {
                 alert("ERROR: " + filePath);
-                console.log("ERROR: " + filePath);
+                MB.Log.error("ERROR: " + filePath);
                 return null;
             }
             let shaderSource: string = request.responseText;
             if (shaderSource === null) {
                 alert("WARNING: " + filePath + " failed");
-                console.log(this._fragmentSource);
+                MB.Log.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -249,7 +249,7 @@ namespace MB {
         private loadAndCompileFromText(shaderSource: string, shaderType: number) {
             if (shaderSource === null) {
                 alert("WARNING: " + shaderSource + " failed");
-                console.log(this._fragmentSource);
+                MB.Log.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -269,7 +269,7 @@ namespace MB {
 
             if (shaderSource === null) {
                 alert("WARNING: " + id + " failed");
-                console.log(this._fragmentSource);
+                MB.Log.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -283,7 +283,7 @@ namespace MB {
         public _parse(str) {
             const regex = /#import +<([\w\d.]+)>/g;
             function replace(match, include) {
-                console.log(include);
+                MB.Log.debug(include);
                 const replace = this._cache[include]; // Acceso al fichero de turno;
                 if (replace === undefined) {
                     throw new Error("Can not resolve #import <" + include + ">");
@@ -301,7 +301,7 @@ namespace MB {
         private compileShader(shaderSource: string, shaderType: number) {
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
             let compiledShader: WebGLShader;
-            
+
             shaderSource = this._parse(shaderSource);
 
             if (shaderType === gl.VERTEX_SHADER) {
@@ -320,8 +320,8 @@ namespace MB {
             // Check errors
             if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
                 alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                console.log("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                console.log({
+                MB.Log.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
+                MB.Log.debug({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -606,12 +606,10 @@ namespace MB {
                 "uniforms": []
             };
             const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-            console.log("UNIFORMS");
             const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
             let result = [];
             for (let i = 0; i < numUniforms; ++i) {
                 const info = gl.getActiveUniform(this._handler, i);
-                console.log(info);
                 const type = Program.getType(gl, info.type);
                 if (info.size > 1) {
                     for (let j = 0; j < info.size; ++j) {
@@ -629,8 +627,6 @@ namespace MB {
                     });
                 }
             }
-            console.log(ret.uniforms);
-            console.log("ATTRIBUTES");
             const numAttributes = gl.getProgramParameter(this._handler, gl.ACTIVE_ATTRIBUTES);
             result = [];
             for (let i = 0; i < numAttributes; ++i) {
@@ -643,7 +639,6 @@ namespace MB {
                     });
                 }
             }
-            console.log(ret.attributes);
             return ret;
         };
         /**

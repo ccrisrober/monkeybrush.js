@@ -33,12 +33,14 @@ namespace MB {
 
         private _gl: WebGL2RenderingContext;
 
+        public static _context: GLContext;
+
         constructor() {
             Log.info("INIT CORE");
             if (Core._instance) {
                 throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
             }
-            this._gl = Context.getContext();
+            this._gl = Core._context.gl;
 
             Core._instance = this;
         }
@@ -67,11 +69,10 @@ namespace MB {
                 ].forEach((ext: string) => {
                     MB.Extensions.get(ext);
                 });
-                console.log("All WebGL1 extensions enabled");
+                MB.Log.info("All WebGL1 extensions enabled");
             }
 
             GlobalState.initializeAll();
-            GlobalState.color.setClearColor(new Color4(0.0, 0.0, 0.0, 1.0));
             this.init();
         }
 

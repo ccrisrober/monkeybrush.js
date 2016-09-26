@@ -23,9 +23,8 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 zoom: 3.1,
                 offsetX: 0.1,
                 offsetY: 0.1,
@@ -35,9 +34,9 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.mainShader = "prog";
-            }
+            };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/gradientTexture.jpg", "1DTex");
             };
@@ -68,7 +67,7 @@
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -79,8 +78,6 @@
                 prog.sendUniform2f("center", this.text.offsetX, this.text.offsetY);
                 MB.PostProcess.render();
             };
-            MyScene.prototype.cameraUpdate = function () {
-            };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "zoom", 0.0, 50.0);
                 gui.add(this.text, "iter", 1, 500).step(0.01);
@@ -89,7 +86,6 @@
             };
             return MyScene;
         }(MB.App));
-        ;
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

@@ -278,7 +278,7 @@ namespace MB {
                 gl.texParameterf(this._target, gl.TEXTURE_MIN_LOD, this._minLOD);
                 gl.texParameterf(this._target, gl.TEXTURE_MAX_LOD, this._maxLOD);
             } else {
-                console.log("TEXTURE LOD isn´t supported");
+                MB.Log.warn("TEXTURE LOD isn´t supported");
             }
         };
         public getWidth(): number { return -1; }
