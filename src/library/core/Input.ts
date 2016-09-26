@@ -22,7 +22,7 @@
 namespace MB {
     /**
     * This class wrap Input
-    * @class core.Input
+    * @class Input
     */
     export class Input {
         constructor() {
@@ -43,7 +43,7 @@ namespace MB {
             }
 
             let self = Input;
-            
+
             // Register handles
             window.addEventListener("keyup", function(ev: KeyboardEvent) {
                 if (ev.keyCode === 40 || ev.keyCode === 38) {
@@ -176,7 +176,7 @@ namespace MB {
         protected static _onMouseMove(ev: MouseEvent): boolean {
             let inside = false;
 
-            const canvas = Core.getInstance().canvas();
+            const canvas = <HTMLCanvasElement>ev.target;
             let bbox = canvas.getBoundingClientRect();
 
             const x = Math.round((ev.clientX - bbox.left) * (canvas.width / bbox.width));

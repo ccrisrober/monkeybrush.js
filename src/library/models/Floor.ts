@@ -73,7 +73,7 @@ namespace MB {
         };
         /*
         public render() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
             gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
             this._vao.unbind();

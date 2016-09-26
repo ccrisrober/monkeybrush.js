@@ -59,7 +59,7 @@ namespace MBX {
                     ]
                 });
 
-                Billboard.program = new MB.Program();
+                Billboard.program = new MB.Program(context);
                 Billboard.program.addShader(`#version 300 es
                 precision highp float;
                 in vec3 position;

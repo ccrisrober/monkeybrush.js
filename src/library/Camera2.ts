@@ -176,14 +176,18 @@ namespace MB {
                 this.up
            );
         }
-        public GetOrthoProjectionMatrix(w: number, h: number): MB.Mat4 {
+        public GetOrthoProjectionMatrix(canvas: HTMLCanvasElement): MB.Mat4 {
             const yMin = -0.0001 * Math.tan(this.fov * Math.PI / 360.0);
             const yMax = -yMin;
+            const w: number = canvas.clientWidth;
+            const h: number = canvas.clientHeight;
             const xMin = yMin + (w * 1.0) / (h * 1.0);
             const xMax = yMax + (w * 1.0) / (h * 1.0);
             return MB.Mat4.orthographic(xMin, xMax, yMin, yMax, 0.1, 1000.0);
         }
-        public GetProjectionMatrix(w: number, h: number): MB.Mat4 {
+        public GetProjectionMatrix(canvas: HTMLCanvasElement): MB.Mat4 {
+            const w: number = canvas.clientWidth;
+            const h: number = canvas.clientHeight;
             return MB.Mat4.perspective(this.fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
         }
 

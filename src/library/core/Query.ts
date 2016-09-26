@@ -30,24 +30,27 @@ namespace MB {
     export class Query {
         /**
          * Query internal handler.
-         * 
+         *
          * @protected
          * @type {WebGLQuery}
          * @memberOf Query
          */
         protected _handler: WebGLQuery;
+        protected _context: GLContext;
         /**
          * Query constructor.
          */
-        constructor() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // TODO: DOC
+        constructor(context: GLContext) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._handler = gl.createQuery();
         };
         /**
          * Delete query object
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.deleteQuery(this._handler);
         };
         /**
@@ -55,7 +58,7 @@ namespace MB {
          * @param {MB.ctes.QueryTarget} target Indicate which kind of query to begin.
          */
         public begin(target: MB.ctes.QueryTarget) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.beginQuery(target, this._handler);
         };
         /**
@@ -63,7 +66,7 @@ namespace MB {
          * @param {MB.ctes.QueryTarget} target Specifying the target of the query.
          */
         public end(target: MB.ctes.QueryTarget) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.endQuery(target);
         };
         public useAnySamples(cb: Function) {
@@ -86,7 +89,7 @@ namespace MB {
          * @return {any}               [description]
          */
         public getParameter(param: MB.ctes.QueryParams): any {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getQueryParameter(this._handler, param);
         };
         /**

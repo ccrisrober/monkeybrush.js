@@ -145,7 +145,7 @@ namespace MB {
          * Clear depth buffer.
          */
         public clearBuffer() {
-            const gl = Core.getInstance().getGL();
+            const gl = this._context.gl;
             gl.clear(gl.DEPTH_BUFFER_BIT);
         };
         public reset() {
@@ -598,12 +598,12 @@ namespace MB {
         };
 
         public clearBuffers() {
-            const gl = Core.getInstance().getGL();
+            const gl = this._context.gl;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         };
 
         public clearAllBuffers() {
-            const gl = Core.getInstance().getGL();
+            const gl = this._context.gl;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BITS);
         };
 

@@ -30,11 +30,12 @@ namespace MB {
          * @param {string} name Extension name
          * @return {any} Extension (null if undefined)
          */
-        public static get(name: string): any {
+        // TODO: DOC
+        public static get(context: GLContext, name: string): any {
             if (name in this._extensions) {
                 return this._extensions[name];
             }
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = context.gl;
             let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
 
             if (ext === null) {

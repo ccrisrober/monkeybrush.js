@@ -34,7 +34,7 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                vec3 pos = vertPosition;\n                pos *= 50.0;\n                gl_Position = viewProj * vec4(pos, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
                     prog.addShader("#version 300 es\n            precision highp float;\n            precision highp sampler2DArray;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler2DArray tex;\n\n            void main() {\n                if (uv.x < 0.5) {\n                    if (uv.y < 0.5) {\n                        fragColor = texture(tex, vec3(uv, 0.0));\n                    } else {\n                        fragColor = texture(tex, vec3(uv, 2.0));\n                    }\n                } else {\n                    if (uv.y > 0.5) {\n                        fragColor = texture(tex, vec3(uv, 1.0));\n                    } else {\n                        fragColor = texture(tex, vec3(uv, 3.0));\n                    }\n                }\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
                     prog._compile();
@@ -124,6 +124,7 @@
                     format: MB.ctes.PixelFormat.RGB,
                     type: MB.ctes.DataType.UnsignedByte
                 });
+                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
@@ -133,12 +134,12 @@
                 if (this.drawTick === false) {
                     return;
                 }
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 var viewProj = mat4.create();
                 var proj = mat4.create();
-                var canvas = MB.Core.getInstance().canvas();
+                var canvas = this.canvas;
                 mat4.perspective(proj, MB.Mathf.degToRad(60.0), canvas.width / canvas.height, 0.01, 100.0);
                 var view = mat4.create();
                 mat4.lookAt(view, new Float32Array([0.0, 1.0, 5.0]), new Float32Array([0.0, 0.0, 0.0]), new Float32Array([0.0, 1.0, 0.0]));
@@ -146,7 +147,7 @@
                 this.tex2.bind(0);
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniformMat4("viewProj", viewProj);
-                MB.PostProcess.render();
+                this.postProcess.render();
             };
             MyScene.prototype.cameraUpdate = function () {
             };

@@ -47,7 +47,7 @@
                     return new MB.Vect3(x, y, z);
                 }, 75, 65);
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     if (_this._webglVersion === 2) {
                         prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                         prog.addShader("../shaders/demoShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
@@ -70,7 +70,7 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.model =
@@ -85,9 +85,8 @@
                 this.parametricModel.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());

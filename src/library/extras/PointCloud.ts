@@ -25,19 +25,21 @@ namespace MB {
      * @class PointCloud
      */
     export class PointCloud {
-        protected _points: Array<number>;
+        /*protected _points: Array<number>;
         protected _size: number;
         protected _vb: MB.VertexBuffer;
-        constructor() {
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
             this._points = [];
             this._size = 0;
-            /*this._vb = this.addBufferArray(0, new Float32Array([
-                  0.0,  0.5, 0.0,
-                 -0.5, -0.5, 0.0,
-                  0.5, -0.5, 0.0,
-                  1.5, -0.0, 0.0,
-            ]), 3);
-            this._size = 4;*/
+            // this._vb = this.addBufferArray(0, new Float32Array([
+            //       0.0,  0.5, 0.0,
+            //      -0.5, -0.5, 0.0,
+            //       0.5, -0.5, 0.0,
+            //       1.5, -0.0, 0.0,
+            // ]), 3);
+            // this._size = 4;
 
             const range = 50;
             for (let i = 0; i < 500; ++i) {
@@ -54,7 +56,7 @@ namespace MB {
             data: Float32Array, numElems: number,
             type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw): MB.VertexBuffer {
 
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let vb: MB.VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.Array);
             vb.bufferData(data, type);
             vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
@@ -69,12 +71,12 @@ namespace MB {
                 this._vb = this.addBufferArray(0, new Float32Array(this._points), 3);
             }
             let buffer = this._vb.getBuffer();
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.enableVertexAttribArray(0);
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
             gl.drawArrays(gl.POINTS, 0, this._size);
             this._vb.unbind();
-        };
+        };*/
     };
 };

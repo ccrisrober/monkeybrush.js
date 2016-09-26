@@ -31,10 +31,11 @@ namespace MB {
          * Return the maximum anisotropy value from current WebGL implementation.
          * @return {number} Maximum anisotropy value.
          */
-        export function getMaxAnisotropy(): number {
+        // TODO: DOC
+        export function getMaxAnisotropy(context: GLContext): number {
             if (!_capabilities["anisotropy"]) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-                const ext = Extensions.get("EXT_texture_filter_anisotropic");
+                const gl: WebGL2RenderingContext = context.gl;
+                const ext = Extensions.get(context, "EXT_texture_filter_anisotropic");
                 _capabilities["anisotropy"] = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT) || 0;
             }
             return _capabilities["anisotropy"];
@@ -43,36 +44,37 @@ namespace MB {
          * Returns the maximum number of textures permitted.
          * @return {number} Maximum textures permitted.
          */
-        export function getMaxTextures(): number {
+        // TODO: DOC
+        export function getMaxTextures(context: GLContext): number {
             if (!_capabilities["maxTextures"]) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = context.gl;
                 _capabilities["maxTextures"] = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
             }
             return _capabilities["maxTextures"];
         };
-        export function getMaxVertexTextures(): number {
+        export function getMaxVertexTextures(context: GLContext): number {
             if (!_capabilities["maxVertexTextures"]) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = context.gl;
                 _capabilities["maxVertexTextures"] = gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
             }
             return _capabilities["maxVertexTextures"];
         };
-        export function getMaxTextureSize(): number {
+        export function getMaxTextureSize(context: GLContext): number {
             if (!_capabilities["maxTextureSize"]) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = context.gl;
                 _capabilities["maxTextureSize"] = gl.getParameter(gl.MAX_TEXTURE_SIZE);
             }
             return _capabilities["maxTextureSize"];
         };
-        export function getMaxCubemapSize(): number {
+        export function getMaxCubemapSize(context: GLContext): number {
             if (!_capabilities["maxCubemapSize"]) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = context.gl;
                 _capabilities["maxCubemapSize"] = gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
             }
             return _capabilities["maxCubemapSize"];
         }
-        export function getMaxPrecision(): string {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+        export function getMaxPrecision(context: GLContext): string {
+            const gl: WebGL2RenderingContext = context.gl;
             if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
                  gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0) {
                 return "highp";
@@ -83,27 +85,27 @@ namespace MB {
             }
             return "lowp";
         };
-        export function getMaxDrawBuffers(): number {
+        export function getMaxDrawBuffers(context: GLContext): number {
             if (!_capabilities["maxDrawBuffers"]) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = context.gl;
                 _capabilities["maxDrawBuffers"] = gl.getParameter(gl.MAX_DRAW_BUFFERS);
             }
             return _capabilities["maxDrawBuffers"];
         };
-        export function getMaxColorAttachments(): number {
+        export function getMaxColorAttachments(context: GLContext): number {
             if (!_capabilities["maxColorAttachments"]) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = context.gl;
                 _capabilities["maxColorAttachments"] = gl.getParameter(gl.MAX_COLOR_ATTACHMENTS);
             }
             return _capabilities["maxColorAttachments"];
         };
         declare var WebGL2RenderingContext: any;
-        export function isTextureFloat(): boolean {
-            const gl = Core.getInstance().getGL();
+        export function isTextureFloat(context: GLContext): boolean {
+            const gl = context.gl;
             if (gl instanceof WebGL2RenderingContext) {
                 return true;
             } else {
-                return !!Extensions.get("OES_texture_float");
+                return !!Extensions.get(context, "OES_texture_float");
             }
         };
         /**

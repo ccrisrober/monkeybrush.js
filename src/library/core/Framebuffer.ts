@@ -48,11 +48,14 @@ namespace MB {
 
         protected _valid: boolean = false;
 
+        protected _context: GLContext;
+
         // TODO: Stencil unused
         constructor(context: GLContext, textures: Array<MB.Texture>, size: MB.Vect2, depth: boolean = false,
             stencil: boolean = false, options = {}) {
+            this._context = context;
             let numColors = textures.length;
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             if (numColors < 0) {
                 throw new Error("must specify >= 0 color attachments");
             } else if (numColors > 1) {
@@ -148,8 +151,9 @@ namespace MB {
         /**
          * Enable default framebuffer
          */
-        public static RestoreDefaultFBO() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // TODO: DOC
+        public static RestoreDefaultFBO(context: GLContext) {
+            const gl: WebGL2RenderingContext = context.gl;
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         };
         /**
@@ -161,7 +165,7 @@ namespace MB {
             if (attach > this._attachments.length) {
                 throw new Error("Attachment undefined");
             }
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             // gl.bindTexture(gl.TEXTURE_2D, texture2);
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
                 gl.TEXTURE_2D, tex.handler, 0);
@@ -171,7 +175,7 @@ namespace MB {
          * @return {boolean} True if correct framebuffer
          */
         public isValid(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             this.bind();
             this._valid = (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE);
             this.unbind();
@@ -182,7 +186,7 @@ namespace MB {
          * @param {number} status
          */
         private checkStatus(status: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             switch (status) {
                 case gl.FRAMEBUFFER_UNSUPPORTED:
                     throw new Error("Framebuffer: Framebuffer unsupported");
@@ -200,14 +204,14 @@ namespace MB {
          * Bind (active) this framebuffer
          */
         public bind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindFramebuffer(gl.FRAMEBUFFER, this._handler);
         };
         /**
          * Bind (active) all textures asociated to this framebuffer
          */
         public onlyBindTextures() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             this._attachments.forEach((tex: MB.Texture, idx: number) => {
                 tex.bind(idx);
@@ -218,7 +222,7 @@ namespace MB {
          * Enable default framebuffer
          */
         public unbind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         };
         /**
@@ -243,7 +247,7 @@ namespace MB {
          * Destroy framebuffer and asociated textures.
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
             if (oldBinding === this._handler) {

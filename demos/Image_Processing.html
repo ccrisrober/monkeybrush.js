@@ -50,7 +50,7 @@
                 });
 
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.addShader("../shaders/imgProcessing.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
@@ -59,19 +59,20 @@
                     console.log(prog);
                     return prog;
                 });
+                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1i("mode", parseInt(this.text.mode + ""));
 
-                MB.PostProcess.render();
+                this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "mode", {

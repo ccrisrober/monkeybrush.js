@@ -39,7 +39,7 @@ namespace MBX {
             super(context, MB.ctes.TextureTarget.Texture2D, {
                 internalFormat: MB.ctes.PixelFormat.RGBA,
                 format: MB.ctes.PixelFormat.RGBA,
-                // TODO: type: gl.UNSIGNED_BYTE,
+                type: MB.ctes.DataType.UnsignedByte,
                 flipY: true
             });
 

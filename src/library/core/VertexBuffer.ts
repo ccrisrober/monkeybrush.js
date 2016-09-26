@@ -30,6 +30,7 @@ namespace MB {
          * @type {WebGLBuffer}
          */
         protected _handler: WebGLBuffer;
+        protected _context: GLContext;
         /**
          * VertexBuffer internal type
          * @type {ctes.BufferType}
@@ -39,28 +40,30 @@ namespace MB {
          * Vertex buffer constructor
          * @param {ctes.BufferType = ctes.BufferType.Array}
          */
-        constructor(type: ctes.BufferType = ctes.BufferType.Array) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // TODO: DOC
+        constructor(context: GLContext, type: ctes.BufferType = ctes.BufferType.Array) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._handler = gl.createBuffer();
             this._type = type;
             this.bind();
         }
         /**
          * Bind vertex buffer.
-         * @param {MB.ctes.BufferType} type 
+         * @param {MB.ctes.BufferType} type
          */
         public bind(type?: MB.ctes.BufferType) {
             if (type !== undefined) {
                 this._type = type;
             }
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBuffer(this._type, this._handler);
         }
         /**
          * Unbind vertex buffer.
          */
         public unbind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBuffer(this._type, null);
         }
         /**
@@ -81,7 +84,7 @@ namespace MB {
          * [destroy description]
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBuffer(this._type, 0);
             if (!this._handler) {
                 gl.deleteBuffer(this._handler);
@@ -97,7 +100,7 @@ namespace MB {
             usage: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
 
             this.bind();
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bufferData(this._type, data, usage);
         };
         /**
@@ -109,7 +112,7 @@ namespace MB {
          */
         public attribDivisor(position: number, length: number, divisor: number, stride: number = 0) {
             this.bind();
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.enableVertexAttribArray(position);
             gl.vertexAttribPointer(position,
                 length,
@@ -130,7 +133,7 @@ namespace MB {
         public vertexAttribPointer(attribLocation: number, numElems: number, type: number,
             normalized: boolean = false, offset: number = 0) {
             this.bind();
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.enableVertexAttribArray(attribLocation);
             gl.vertexAttribPointer(
                 attribLocation, // Attribute location
@@ -152,13 +155,13 @@ namespace MB {
         public copySub(readTarget: number, writeTarget: number, readOffset: number,
             writeOffset: number, size: number) {
             // TODO: https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/copyBufferSubData
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.copyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
         };
 
 
         public bindBufferBase(target: number, index: number = 0) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBufferBase(target, index, this._handler);
         }
     };

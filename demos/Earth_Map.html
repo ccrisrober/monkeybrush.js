@@ -65,7 +65,7 @@
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/earth/earth.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.addShader("../shaders/earth/earth.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
@@ -82,7 +82,7 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
@@ -110,9 +110,8 @@
                 this.plane[mode]();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformMat4("projection", this.projection);

@@ -37,12 +37,11 @@ namespace MBX {
          */
         // TODO: DOC
         constructor(context: MB.GLContext, size: MB.Vect2) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
 
             const configTex: MB.TexOptions = {
                 internalFormat: MB.ctes.PixelFormat.RGB,
                 format: MB.ctes.PixelFormat.RGB,
-                type: gl.FLOAT,
+                type: MB.ctes.DataType.Float,
                 minFilter: MB.ctes.TextureFilter.Nearest,
                 magFilter: MB.ctes.TextureFilter.Nearest
             };

@@ -52,7 +52,7 @@
                     ]
                 });
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
 
                     prog.addShader("../shaders/triangleShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.addShader("../shaders/triangleShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
@@ -71,7 +71,7 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.model =
@@ -86,9 +86,8 @@
                 this.triangleModel.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());

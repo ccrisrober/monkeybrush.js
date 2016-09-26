@@ -36,18 +36,21 @@ namespace MB {
          * @type {WebGLTransformFeedback}
          */
         protected _handler: WebGLTransformFeedback;
+        protected _context: GLContext;
         /**
          * Create and initializes a TransformFeedback object.
          */
-        constructor() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // TODO: DOC
+        constructor(context: GLContext) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._handler = gl.createTransformFeedback();
         };
         /**
          * Delete TransformFeedback object.
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.deleteTransformFeedback(this._handler);
             this._handler = null;
         };
@@ -55,14 +58,14 @@ namespace MB {
          * Bind this TransformFeedback object to current GL state.
          */
         public bind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindTransformFeedback(MB.ctes.TFTarget.TransformFeedback, this._handler);
         };
         /**
          * Unbind this TransformFeedback object to current GL state.
          */
         public unbind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindTransformFeedback(MB.ctes.TFTarget.TransformFeedback, null);
         };
         /**
@@ -70,7 +73,7 @@ namespace MB {
          * @param {MB.ctes.TFPrimitive} mode TransformFeedback mode.
          */
         public begin(mode: MB.ctes.TFPrimitive) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.beginTransformFeedback(mode);
         };
         /**
@@ -95,21 +98,21 @@ namespace MB {
          * Finish TransformFeedback operation.
          */
         public end() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.endTransformFeedback();
         };
         /**
          * Pause TransformFeedback operation.
          */
         public pause() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.pauseTransformFeedback();
         };
         /**
          * Resume TransformFeedback operation.
          */
         public resume() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.resumeTransformFeedback();
         };
         /**
@@ -118,10 +121,11 @@ namespace MB {
          * @param {Array<string>} varyings   [description]
          * @param {ctes.TFMode}        bufferMode [description]
          */
-        public static varyings(program: Program, varyings: Array<string>,
+        // TODO: DOC
+        public static varyings(context: GLContext, program: Program, varyings: Array<string>,
             bufferMode: ctes.TFMode) {
 
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = context.gl;
             gl.transformFeedbackVaryings(program.id(), varyings, bufferMode);
         };
         /**
@@ -132,7 +136,7 @@ namespace MB {
          * @return {VaryingInfo}         [description]
          */
         public getVarying(program: Program, idx: number): VaryingInfo {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let info = gl.getTransformFeedbackVarying(program.id(), idx);
             let info2: VaryingInfo = {
                 name: info.name,
@@ -145,7 +149,7 @@ namespace MB {
          * @return {boolean} [description]
          */
         public isValid(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.isTransformFeedback(this._handler);
         };
         /**
@@ -156,7 +160,7 @@ namespace MB {
         // TODO: Improve in Point_TF demo
         public extractData(numElems: number): Float32Array {
             let arrBuffer = new ArrayBuffer(numElems * Float32Array.BYTES_PER_ELEMENT);
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.getBufferSubData(gl.TRANSFORM_FEEDBACK_BUFFER, 0, arrBuffer);
             return new Float32Array(arrBuffer);
         };

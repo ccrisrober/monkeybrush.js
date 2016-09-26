@@ -31,13 +31,16 @@ namespace MB {
      */
     export class Sync {
         protected _handler: WebGLSync;
+        protected _context: GLContext;
 
         /**
          * Sync constructor.
          * @param {ctes.SyncCondition = ctes.SyncCondition.GPUCommandsComplete} condition Sync condition.
          */
-        constructor(condition: ctes.SyncCondition = ctes.SyncCondition.GPUCommandsComplete) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // TODO: DOC
+        constructor(context: GLContext, condition: ctes.SyncCondition = ctes.SyncCondition.GPUCommandsComplete) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._handler = gl.fenceSync(condition, 0);
         };
         /*
@@ -46,14 +49,14 @@ namespace MB {
          *      for the sync obj to become signaled.
          */
         public clientWait(timeout: number): ctes.SyncWaitResult {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.clientWaitSync(this._handler, 0, timeout);
         };
         /**
          * Destroy sync object.
          */
         public destroy() {
-           const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+           const gl: WebGL2RenderingContext = this._context.gl;
             gl.deleteSync(this._handler);
         };
         /**
@@ -61,7 +64,7 @@ namespace MB {
          * @return {boolean} True if sync object is valid.
          */
         public isValid(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.isSync(this._handler);
         };
         /**
@@ -70,7 +73,7 @@ namespace MB {
          *                  should wait before continuing.
          */
         public wait(timeout: number = -1) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.waitSync(this._handler, 0, timeout);
         };
         /**
@@ -78,7 +81,7 @@ namespace MB {
          * @return {ctes.SyncStatus} Current sync status.
          */
         public status(): ctes.SyncStatus {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.SYNC_STATUS);
         };
         /**
@@ -86,7 +89,7 @@ namespace MB {
          * @return {ctes.SyncStatus} Current sync condition.
          */
         public condition(): ctes.SyncCondition {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.SYNC_CONDITION);
         };
         /**
@@ -94,7 +97,7 @@ namespace MB {
          * @return {ctes.SyncStatus} Current sync type.
          */
         public type(): ctes.SyncType {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.OBJECT_TYPE);
         };
         /**
@@ -102,7 +105,7 @@ namespace MB {
          * @return {boolean}
          */
         public isSignaled(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.SYNC_STATUS) === ctes.SyncStatus.Signaled;
         };
         /**
@@ -110,7 +113,7 @@ namespace MB {
          * @return {ctes.SyncStatus}
          */
         get signaled(): ctes.SyncStatus {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.SYNC_STATUS);
         };
     };

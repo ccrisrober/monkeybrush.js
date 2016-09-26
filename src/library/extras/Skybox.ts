@@ -61,7 +61,7 @@ namespace MB {
          * @param {boolean = true} isWebGL2 [description]
          */
         // TODO: Complete DOC with Context
-        constructor(context: GLContext, dir: string, isWebGL2: boolean = true) {
+        constructor(context: GLContext, dir: string) {
             this._context = context;
             let faces: Array<string> = [];
             faces.push(dir + "/right.jpg");
@@ -73,7 +73,9 @@ namespace MB {
 
             const gl: WebGLRenderingContext = this._context.gl;
 
-            this._prog = new MB.Program();
+            this._prog = new MB.Program(this._context);
+
+            const isWebGL2: boolean = this._context instanceof GLContextW2;
 
             let vs: string;
 
@@ -176,10 +178,10 @@ namespace MB {
                  1.0, -1.0,  1.0
             ]);
 
-            this._VertexArray = new MB.VertexArray();
+            this._VertexArray = new MB.VertexArray(this._context);
             this._VertexArray.bind();
 
-            this._VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.Array);
+            this._VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
             this._VertexBuffer.bind();
             this._VertexBuffer.bufferData(skyboxVertices, MB.ctes.UsageType.StaticDraw);
             this._VertexBuffer.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
@@ -193,11 +195,11 @@ namespace MB {
          * @param {MB.Mat4} projection Projection matrix
          */
         public render(view: Mat4, projection: Mat4) {
-            const gl: WebGLRenderingContext = Core.getInstance().getGL();
+            const gl: WebGLRenderingContext = this._context.gl;
 
-            let currDepthComp = Core.getInstance().state.depth.getCurrentComparisonFunc();
+            let currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
 
-            Core.getInstance().state.depth.setFunc(ctes.ComparisonFunc.LessEqual);
+            this._context.state.depth.setFunc(ctes.ComparisonFunc.LessEqual);
             this._prog.use();
 
             // Remove any translation
@@ -209,10 +211,10 @@ namespace MB {
             this._cubeMapTexture.bind(0);
 
             this._VertexArray.bind();
-            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            gl.drawArrays(MB.ctes.RenderMode.Triangles, 0, 36);
             this._VertexArray.unbind();
 
-            Core.getInstance().state.depth.setFunc(currDepthComp);
+            this._context.state.depth.setFunc(currDepthComp);
         }
        /**
         * Destroy skybox.

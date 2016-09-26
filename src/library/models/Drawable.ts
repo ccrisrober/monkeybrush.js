@@ -42,7 +42,7 @@ namespace MB {
         // TODO: DOC
         constructor(context: GLContext) {
             this._context = context;
-            this._vao = new MB.VertexArray();
+            this._vao = new MB.VertexArray(this._context);
             this._geometry = new MB.VertexBufferGeometry();
         };
 
@@ -68,7 +68,7 @@ namespace MB {
          * @param {MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw} type [description]
          */
         protected addElementArray(data: Uint16Array, type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
-            let vb: MB.VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.ElementArray);
+            let vb: MB.VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.ElementArray);
             vb.bufferData(new Uint16Array(data), type);
             this._handle.push(vb);
             return vb;
@@ -87,7 +87,7 @@ namespace MB {
             type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw): MB.VertexBuffer {
 
             const gl: WebGL2RenderingContext = this._context.gl;
-            let vb: MB.VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.Array);
+            let vb: MB.VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
             vb.bufferData(data, type);
             vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
             this._handle.push(vb);
@@ -134,7 +134,7 @@ namespace MB {
                     numInstances
               );
             } else {
-                const ext = MB.Extensions.get("ANGLE_instanced_arrays");
+                const ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
                     ext.drawElementsInstancedANGLE(
                         gl.TRIANGLES,
@@ -165,7 +165,7 @@ namespace MB {
                     numInstances
               );
             } else {
-                const ext = MB.Extensions.get("ANGLE_instanced_arrays");
+                const ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
                     ext.drawArraysInstancedANGLE(
                         gl.TRIANGLES,

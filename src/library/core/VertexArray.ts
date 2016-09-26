@@ -24,6 +24,7 @@ namespace MB {
     declare var WebGL2RenderingContext: any;
 
     export class VertexArray {
+        protected _context: GLContext;
         /**
          * [_handler description]
          * @type {WebGLVertexArrayObject}
@@ -33,18 +34,16 @@ namespace MB {
          * Vertex array constructor
          * @param {WebGLVertexArrayObject} vao [description]
          */
-        constructor(vao?: WebGLVertexArrayObject) {
-            if (vao !== undefined) {
-                this._handler = vao;
+        // TODO: DOC
+        constructor(context: GLContext) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
+            if (gl instanceof WebGL2RenderingContext) {
+                this._handler = gl.createVertexArray();
             } else {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
-                if (gl instanceof WebGL2RenderingContext) {
-                    this._handler = gl.createVertexArray();
-                } else {
-                    const ext = Extensions.get("OES_vertex_array_object");
-                    if (ext) {
-                        this._handler = ext.createVertexArrayOES();
-                    }
+                const ext = Extensions.get(this._context, "OES_vertex_array_object");
+                if (ext) {
+                    this._handler = ext.createVertexArrayOES();
                 }
             }
             this.bind();
@@ -60,12 +59,12 @@ namespace MB {
          * [bind description]
          */
         public bind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             if (gl instanceof WebGL2RenderingContext) {
                 gl.bindVertexArray(this._handler);
                 return;
             }
-            const ext = Extensions.get("OES_vertex_array_object");
+            const ext = Extensions.get(this._context, "OES_vertex_array_object");
             if (ext) {
                 ext.bindVertexArrayOES(this._handler);
             }
@@ -74,12 +73,12 @@ namespace MB {
          * [unbind description]
          */
         public unbind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             if (gl instanceof WebGL2RenderingContext) {
                 gl.bindVertexArray(null);
                 return;
             }
-            const ext = Extensions.get("OES_vertex_array_object");
+            const ext = Extensions.get(this._context, "OES_vertex_array_object");
             if (ext) {
                 ext.bindVertexArrayOES(null);
             }
@@ -88,13 +87,13 @@ namespace MB {
          * Destroy vertex array
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             this.bind();
             if (gl instanceof WebGL2RenderingContext) {
                 gl.deleteVertexArray(this._handler);
                 return;
             }
-            const ext = Extensions.get("OES_vertex_array_object");
+            const ext = Extensions.get(this._context, "OES_vertex_array_object");
             if (ext) {
                 ext.deleteVertexArrayOES(this._handler);
             }
@@ -103,10 +102,11 @@ namespace MB {
          * Check if current context supports VertexArray
          * @return {boolean} True if current context supports VertexArray
          */
-        public static isSupported(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // TODO: DOC
+        public static isSupported(context: GLContext): boolean {
+            const gl: WebGL2RenderingContext = context.gl;
             return gl instanceof WebGL2RenderingContext ||
-                Extensions.get("OES_vertex_array_object");
+                Extensions.get(context, "OES_vertex_array_object");
         }
     };
 };

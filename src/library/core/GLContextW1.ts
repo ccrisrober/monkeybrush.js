@@ -25,7 +25,7 @@ namespace MB {
                     "OES_fbo_render_mipmap",
                     "ANGLE_instanced_arrays"
                 ].forEach((ext: string) => {
-                    MB.Extensions.get(ext);
+                    MB.Extensions.get(this, ext);
                 });
                 MB.Log.info("All WebGL1 extensions enabled");
             }
