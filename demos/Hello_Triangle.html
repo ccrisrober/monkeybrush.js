@@ -81,7 +81,7 @@
                         .scale(new MB.Vect3(10.0, 10.0, 10.0));
                 prog.sendUniformMat4("model", this.model);
 
-                MB.GlobalState.culling.setStatus(false);
+                MB.Core._state.culling.setStatus(false);
 
                 this.triangleModel.render();
             };

@@ -35,6 +35,7 @@ namespace MB {
         constructor(title: string = null, context: GLContext, text: Object = {}) {
             MB.Log.info("init app");
             MB.Core._context = context;
+            MB.Core._state = new GlobalState(context);
             MB.Core.getInstance();
 
             this._webglVersion = context.version;
@@ -69,8 +70,6 @@ namespace MB {
             text["resume"] = true;
 
             this.textCB(this._gui);
-
-            //this._gui.add(text, "pepe", 1.0, 2.0);
 
             let self = this;
             this._gui.add(text, "resume", true).onChange(function(v) {
@@ -156,7 +155,6 @@ namespace MB {
             this._resume = true;
         };
         protected _resume: boolean = true;
-
         protected __resize__() {
             let canvas: HTMLCanvasElement = MB.Core.getInstance().canvas();
             let realToCSSPixels = window.devicePixelRatio || 1;
@@ -176,7 +174,7 @@ namespace MB {
                 canvas.height = displayHeight;
 
                 // Set the viewport to match
-                MB.GlobalState.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
+                Core._state.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
 
                 this.cameraUpdate();
             }

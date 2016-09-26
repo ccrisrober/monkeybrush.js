@@ -67,7 +67,7 @@
                     fb[j + 2] = z;
                     fb[j + 3] = 1.0;
                 }
-                MB.GlobalState.setLineWidth(20.5);
+                MB.Core._state.setLineWidth(20.5);
                 uniformPerDrawBuffer.update(fb);
             };
             MyScene.prototype.update = function (dt) {

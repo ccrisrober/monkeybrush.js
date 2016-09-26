@@ -52,7 +52,7 @@
                     prog.addUniforms(["projection", "view", "model"]);
                     return prog;
                 });
-                MB.GlobalState.culling.setStatus(false);
+                MB.Core._state.culling.setStatus(false);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {

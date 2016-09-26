@@ -35,6 +35,8 @@ namespace MB {
 
         public static _context: GLContext;
 
+        public static _state: GlobalState;
+
         constructor() {
             Log.info("INIT CORE");
             if (Core._instance) {
@@ -71,13 +73,11 @@ namespace MB {
                 });
                 MB.Log.info("All WebGL1 extensions enabled");
             }
-
-            GlobalState.initializeAll();
             this.init();
         }
 
         public clearColorAndDepth() {
-            GlobalState.clearBuffers();
+            Core._state.clearBuffers();
         }
         public canvas(): HTMLCanvasElement {
             return this._gl.canvas;
@@ -86,11 +86,11 @@ namespace MB {
             Input.initialize();
             MB.PostProcess.initialize();
 
-            GlobalState.depth.setStatus(true);
-            GlobalState.depth.setFunc(ctes.ComparisonFunc.Less);
+            Core._state.depth.setStatus(true);
+            Core._state.depth.setFunc(ctes.ComparisonFunc.Less);
 
-            GlobalState.culling.setStatus(true);
-            GlobalState.blending.setStatus(false);
+            Core._state.culling.setStatus(true);
+            Core._state.blending.setStatus(false);
         }
 
         public static getInstance(): Core {

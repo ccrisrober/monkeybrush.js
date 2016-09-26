@@ -59,8 +59,8 @@
                     prog.addUniforms(["projection", "view", "model", "tex"]);
                     return prog;
                 });
-                MB.GlobalState.culling.setStatus(false);
-                MB.GlobalState.color.setClearColor(new MB.Color4(0.0, 0.2, 1.0, 1.0))
+                MB.Core._state.culling.setStatus(false);
+                MB.Core._state.color.setClearColor(new MB.Color4(0.0, 0.2, 1.0, 1.0))
                 this.tex.bind(0);
                 this.cameraUpdate();
             };

@@ -83,7 +83,7 @@
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
 
-                MB.GlobalState.culling.setStatus(false);
+                MB.Core._state.culling.setStatus(false);
 
                 this.latheModel.render();
             };
