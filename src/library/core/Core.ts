@@ -30,12 +30,9 @@ namespace MB {
     */
     export class Core {
         private static _instance: Core = null;
-
         private _gl: WebGL2RenderingContext;
-
         public static _context: GLContext;
-
-        public static _state: GlobalState;
+        protected static _state: GlobalState;
 
         constructor() {
             Log.info("INIT CORE");
@@ -43,46 +40,11 @@ namespace MB {
                 throw new Error("Error: Instantiation failed: Use Core.getInstance() instead of new.");
             }
             this._gl = Core._context.gl;
+            Core._state = Core._context.state;
 
             Core._instance = this;
-        }
-
-        public initialize(color: Array<number>) {
-            // const gl = this._gl;
-            // gl.getParameter(gl.VERSION)
-            // Load all extensions if WebGLRenderingContext === 1
-            if (!(this._gl instanceof WebGL2RenderingContext)) {
-                [
-                    "OES_element_index_uint",
-                    "EXT_sRGB",
-                    "EXT_blend_minmax",
-                    "EXT_frag_depth",
-                    "WEBGL_depth_texture",
-                    "WEBKIT_WEBGL_depth_texture",
-                    "EXT_shader_texture_lod",
-                    "OES_standard_derivatives",
-                    "OES_texture_float",
-                    "OES_texture_half_float",
-                    "OES_texture_half_float_linear",
-                    "OES_vertex_array_object",
-                    "WEBGL_draw_buffers",
-                    "OES_fbo_render_mipmap",
-                    "ANGLE_instanced_arrays"
-                ].forEach((ext: string) => {
-                    MB.Extensions.get(ext);
-                });
-                MB.Log.info("All WebGL1 extensions enabled");
-            }
-            this.init();
-        }
-
-        public clearColorAndDepth() {
-            Core._state.clearBuffers();
-        }
-        public canvas(): HTMLCanvasElement {
-            return this._gl.canvas;
-        }
-        protected init() {
+        };
+        public initialize(color: Array<number> /* TODO: COLOR UNUSED */) {
             Input.initialize();
             MB.PostProcess.initialize();
 
@@ -91,8 +53,16 @@ namespace MB {
 
             Core._state.culling.setStatus(true);
             Core._state.blending.setStatus(false);
-        }
-
+        };
+        public clearColorAndDepth() {
+            Core._state.clearBuffers();
+        };
+        public canvas(): HTMLCanvasElement {
+            return this._gl.canvas;
+        };
+        public get state(): GlobalState {
+            return Core._state;
+        };
         public static getInstance(): Core {
             if (!Core._instance) {
                 Log.info("Creando core");

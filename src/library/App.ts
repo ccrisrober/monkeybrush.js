@@ -35,7 +35,6 @@ namespace MB {
         constructor(title: string = null, context: GLContext, text: Object = {}) {
             MB.Log.info("init app");
             MB.Core._context = context;
-            MB.Core._state = new GlobalState(context);
             MB.Core.getInstance();
 
             this._webglVersion = context.version;
@@ -45,6 +44,9 @@ namespace MB {
 
             this.__init__(text);
         };
+        public get state(): GlobalState {
+            return MB.Core.getInstance().state;
+        }
 
         public webglVersion(): number {
             return this._webglVersion;
@@ -174,7 +176,7 @@ namespace MB {
                 canvas.height = displayHeight;
 
                 // Set the viewport to match
-                Core._state.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
+                Core.getInstance().state.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
 
                 this.cameraUpdate();
             }

@@ -190,9 +190,9 @@ namespace MB {
         public render(view: Mat4, projection: Mat4) {
             const gl: WebGLRenderingContext = Core.getInstance().getGL();
 
-            let currDepthComp = Core._state.depth.getCurrentComparisonFunc();
+            let currDepthComp = Core.getInstance().state.depth.getCurrentComparisonFunc();
 
-            Core._state.depth.setFunc(ctes.ComparisonFunc.LessEqual);
+            Core.getInstance().state.depth.setFunc(ctes.ComparisonFunc.LessEqual);
             this._prog.use();
 
             // Remove any translation
@@ -207,7 +207,7 @@ namespace MB {
             gl.drawArrays(gl.TRIANGLES, 0, 36);
             this._VertexArray.unbind();
 
-            Core._state.depth.setFunc(currDepthComp);
+            Core.getInstance().state.depth.setFunc(currDepthComp);
         }
        /**
         * Destroy skybox.

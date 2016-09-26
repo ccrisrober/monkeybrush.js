@@ -117,12 +117,12 @@
                 // Top-left
                 prog.sendUniform1b("op", false);
                 vp = this.viewports[3];
-                MB.Core._state.setViewport(vp);
+                this.state.setViewport(vp);
                 MB.PostProcess.render();
                 // Bottom-left
                 prog.sendUniform1b("op", true);
                 vp = this.viewports[0];
-                MB.Core._state.setViewport(vp);
+                this.state.setViewport(vp);
                 MB.PostProcess.render();
                 // Integer textures
                 prog = MB.ProgramManager.get("progI");
@@ -132,12 +132,12 @@
                 // Bottom-right
                 prog.sendUniform1b("op", false);
                 vp = this.viewports[1];
-                MB.Core._state.setViewport(vp);
+                this.state.setViewport(vp);
                 MB.PostProcess.render();
                 // Top-right
                 prog.sendUniform1b("op", true);
                 vp = this.viewports[2];
-                MB.Core._state.setViewport(vp);
+                this.state.setViewport(vp);
                 MB.PostProcess.render();
                 this.text.resume = false;
             };

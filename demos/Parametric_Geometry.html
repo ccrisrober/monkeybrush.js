@@ -80,7 +80,7 @@
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
 
-                MB.Core._state.culling.setStatus(false);
+                this.state.culling.setStatus(false);
 
                 this.parametricModel.render();
             };
