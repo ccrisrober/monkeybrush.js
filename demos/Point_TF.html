@@ -23,9 +23,8 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 render: function () {
                     myScene.drawTick = true;
                 }
@@ -34,12 +33,10 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "Point TF", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.drawTick = true;
                 this.mainShader = "prog";
-            }
-            MyScene.prototype.loadAssets = function () { };
-            ;
+            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 MB.ProgramManager.addWithFun("prog", function () {
@@ -60,12 +57,10 @@
                     return prog;
                 });
             };
-            ;
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
-            ;
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 if (this.drawTick === false) {
                     return;
                 }
@@ -89,17 +84,11 @@
                 this.bA = this.bB;
                 this.bB = t;
             };
-            ;
-            MyScene.prototype.cameraUpdate = function () {
-            };
-            ;
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "render");
             };
-            ;
             return MyScene;
         }(MB.App));
-        ;
         var myScene;
         window.onload = function () {
             myScene = new MyScene();

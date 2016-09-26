@@ -19,8 +19,6 @@ const float GrainThreshold = 0.3;
 
 const float base_freq = 0.5;
 
-
-
 //  Simplex 3D Noise
 //  by Ian McEwan, Ashima Arts
 //

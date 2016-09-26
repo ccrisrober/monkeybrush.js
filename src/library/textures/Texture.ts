@@ -261,7 +261,7 @@ namespace MB {
                 ctes.WrapMode.Clamp2Edge
             ]);*/
         }
-        get target(): number { 
+        get target(): number {
             return this._target;
         };
         get handler(): WebGLTexture {
@@ -278,10 +278,9 @@ namespace MB {
                 gl.texParameterf(this._target, gl.TEXTURE_MIN_LOD, this._minLOD);
                 gl.texParameterf(this._target, gl.TEXTURE_MAX_LOD, this._maxLOD);
             } else {
-                console.log("TEXTURE LOD isn´t supported");
+                MB.Log.warn("TEXTURE LOD isn´t supported");
             }
         };
-        // TODO: Move to abstract methods
         public getWidth(): number { return -1; }
         public getHeight(): number { return -1; }
         public getDepth(): number { return -1; }

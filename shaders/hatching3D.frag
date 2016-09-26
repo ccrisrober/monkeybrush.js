@@ -14,7 +14,7 @@ const float frequency = 0.6;
 uniform sampler3D tex;
 
 void main() {
-    vec3 N=normalize(outNormal);
+    vec3 N = normalize(outNormal);
     vec3 L = normalize(viewPos - outPosition);
     float dif=dot(N,L);
 

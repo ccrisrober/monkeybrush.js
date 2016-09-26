@@ -23,9 +23,8 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 ThresholdX: 0.2,
                 ThresholdY: 0.2,
                 ScaleX: 5.0,
@@ -35,14 +34,14 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.homePoint = new MB.Vect3(-0.18, 1.60, 25.23);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-            }
+            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 this.cubito = new MB.Capsule(15.0);
@@ -64,7 +63,7 @@
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -98,7 +97,6 @@
             };
             return MyScene;
         }(MB.App));
-        ;
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

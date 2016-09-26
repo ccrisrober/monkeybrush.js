@@ -42,7 +42,6 @@ namespace MB {
         private createVAO(model, el: Array<number>) {
             this._handle = [];
             this._vao.bind();
-            // console.log(model.meshes[0]);
 
             if (model.meshes[0].vertices) {
                 let verts = model.meshes[0].vertices;
@@ -73,7 +72,7 @@ namespace MB {
             let self = this;
             request.onload = function () {
                 if (request.status < 200 || request.status > 299) {
-                    console.log(`Error: HTTP Status ${request.status} on resource ${url}`);
+                    MB.Log.error(`Error: HTTP Status ${request.status} on resource ${url}`);
                     return {};
                 } else {
                     let modelObj = JSON.parse(request.responseText);

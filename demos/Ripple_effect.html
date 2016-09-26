@@ -23,24 +23,21 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
                 amplitude: 5,
-                frequency: 0.138,
-                resume: true
+                frequency: 0.138
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.homePoint = new MB.Vect3(-0.18, 1.60, 15.23);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-            }
-            MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -61,8 +58,9 @@
                 this.camera.update(this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
+                this.dt = dt;
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -72,7 +70,7 @@
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
-                prog.sendUniform1f("time", dt);
+                prog.sendUniform1f("time", this.dt);
                 prog.sendUniform1f("amplitude", this.text.amplitude);
                 prog.sendUniform1f("frequency", this.text.frequency);
                 this.plane.render2();
@@ -92,7 +90,6 @@
             };
             return MyScene;
         }(MB.App));
-        ;
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

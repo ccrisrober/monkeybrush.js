@@ -56,16 +56,12 @@ namespace MB {
             }
             if (model.vertices && model.vertices.length && model.vertices.length % 3 === 0) {
                 this.addBufferArray(i++, new Float32Array(model.vertices), 3);
-                console.log("vertices");
-                console.log(model.vertices);
             } else {
                 throw new Error("Vertices undefined");
             }
             if (model.regenerateNormals === false || !model.regenerateNormals) {
                 if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
                     this.addBufferArray(i++, new Float32Array(model.normals), 3);
-                    console.log("normals");
-                    console.log(model.normals);
                 }
             } else if (model.regenerateNormals === true) {
                 this.recalculateNormals(); // TODO

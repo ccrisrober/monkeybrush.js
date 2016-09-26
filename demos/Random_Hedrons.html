@@ -23,23 +23,16 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
-            return {
-                resume: true
-            };
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "App", 2);
+                _super.call(this, "App", new MB.GLContextW2());
                 this.homePoint = new MB.Vect3(3.91, -4.52, 60.35);
                 this.camera = new MB.Camera2(this.homePoint);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-            }
-            MyScene.prototype.loadAssets = function () {
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -119,7 +112,7 @@
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 MB.Core.getInstance().clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
@@ -146,11 +139,8 @@
                 prog.sendUniformMat4("projection", this.projection);
                 prog.sendUniformMat4("view", this.view);
             };
-            MyScene.prototype.textCB = function (gui) {
-            };
             return MyScene;
         }(MB.App));
-        ;
         window.onload = function () {
             var myScene = new MyScene();
             myScene.start();

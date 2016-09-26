@@ -155,7 +155,7 @@ namespace MB {
             if (!(znear === this._znear && zfar === this._zfar)) {
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                 if (znear > zfar || znear < 0.0 || zfar > 1.0) {
-                    console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
+                    MB.Log.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
                     return;
                 }
                 gl.depthRange(znear, zfar);
@@ -183,7 +183,6 @@ namespace MB {
          * @param {number = 1.0} a Alpha channel value
          */
         public setClearColor(bgColor: Color4) {
-            console.log(bgColor);
             if (!this._currentColorClear || this._currentColorClear.isEquals(bgColor) === false) {
                 const gl: WebGL2RenderingContext = Core.getInstance().getGL();
                 gl.clearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);

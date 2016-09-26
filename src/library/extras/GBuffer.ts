@@ -55,7 +55,7 @@ namespace MBX {
                 new MB.SimpleTexture2D(size, configTex)
             ], size, true, true, {});
 
-            console.log("done");
+            MB.Log.debug("GBuffer created");
         };
         /**
          * Bind GBuffer for reading (pospass)

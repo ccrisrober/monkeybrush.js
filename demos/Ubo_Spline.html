@@ -23,9 +23,8 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var SimpleConfig = function () {
+        var Configuration = function () {
             return {
-                resume: true,
                 lod: 1,
                 numPoints: 256
             };
@@ -33,13 +32,11 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, SimpleConfig(), "EY", 2);
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.drawTick = true;
                 this.mainShader = "prog";
                 this.angle = 0;
-            }
-            MyScene.prototype.loadAssets = function () { };
-            ;
+            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 MB.ProgramManager.addWithFun("prog", function () {
@@ -73,13 +70,11 @@
                 MB.GlobalState.setLineWidth(20.5);
                 uniformPerDrawBuffer.update(fb);
             };
-            ;
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
-            ;
-            MyScene.prototype.draw = function (dt) {
+            MyScene.prototype.draw = function () {
                 if (this.drawTick === false) {
                     return;
                 }
@@ -99,18 +94,12 @@
                 prog.sendUniform1i("numPoints", this.text.numPoints);
                 gl.drawArrays(MB.ctes.RenderMode.LineStrip, 0, this.text.lod * (this.text.numPoints + 1) + 1);
             };
-            ;
-            MyScene.prototype.cameraUpdate = function () {
-            };
-            ;
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "lod", 0.0, 25);
                 gui.add(this.text, "numPoints", 1, 256);
             };
-            ;
             return MyScene;
         }(MB.App));
-        ;
         var myScene;
         window.onload = function () {
             myScene = new MyScene();
