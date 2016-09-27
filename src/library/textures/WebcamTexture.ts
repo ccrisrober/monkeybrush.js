@@ -31,9 +31,8 @@ namespace MBX {
          * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
          */
         // TODO: DOC
-        constructor(context: MB.GLContext, size: MB.Vect2 = MB.Vect2.createFromScalar(320), 
-        onSuccess: () => void = null)
-        {
+        constructor(context: MB.GLContext, size: MB.Vect2 = MB.Vect2.createFromScalar(320),
+            onSuccess: () => void = null) {
             super(context, MB.ResourceMap.retrieveAsset("webcam"));
 
             this._video.width = size.x;

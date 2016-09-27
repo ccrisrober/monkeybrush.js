@@ -41,11 +41,10 @@ namespace MB {
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2DArray.
          */
         // TODO: DOC
-        constructor(context: GLContext, size: Vector2<number>, images: Array<any>, 
-        options: TexOptions = {}, onSuccess: () => void = null)
-        {
+        constructor(context: GLContext, size: Vector2<number>, images: Array<any>,
+            options: TexOptions = {}, onSuccess: () => void = null) {
             super(context, ctes.TextureTarget.Texture2DArray, options);
-            
+
             const gl: WebGL2RenderingContext = this._context.gl;
             if (!(gl instanceof WebGL2RenderingContext)) {
                 throw new Error("Must provide a WebGL2 context ...");

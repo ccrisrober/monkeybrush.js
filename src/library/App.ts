@@ -119,7 +119,7 @@ namespace MB {
                 self.initialize();
 
                 // Remove loader css3 window
-                var spinner = document.getElementById("spinner");
+                let spinner = document.getElementById("spinner");
                 if (spinner) spinner.remove();
 
                 // MB.Core.getInstance().canvas().addEventListener("dblclick", function(){
