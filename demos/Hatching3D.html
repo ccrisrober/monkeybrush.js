@@ -36,9 +36,9 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Mesh("../assets/objects/teddy.json");
+                this.cubito = new MB.Mesh(this.context, "../assets/objects/teddy.json");
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/stripes.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.addShader("../shaders/hatching3D.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
@@ -46,6 +46,7 @@
                     prog.addUniforms(["projection", "view", "model", "viewPos", "tex"]);
                     return prog;
                 });
+                MB.RandomGenerator.setSeed(1239);
                 var size = 64;
                 var data = new Uint8Array(Math.pow(size, 3));
                 for (var k = 0; k < size; ++k) {
@@ -55,7 +56,7 @@
                         }
                     }
                 }
-                this.tex3d = new MB.Texture3D(data, new MB.Vect3(size, size, size), {
+                this.tex3d = new MB.Texture3D(this.context, data, new MB.Vect3(size, size, size), {
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
                     autoMipMap: true,
@@ -72,7 +73,7 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex3d.bind(0);
@@ -81,15 +82,14 @@
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
+                        //.rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
                 this.cubito.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 console.log(this.camera.GetPos());

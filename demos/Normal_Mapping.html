@@ -40,9 +40,9 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Sphere(17.5, 45, 45);
+                this.cubito = new MB.Sphere(this.context, 17.5, 45, 45);
 
-                this.tex2d = new MB.Texture2D(MB.ResourceMap.retrieveAsset("diffuseMap"), {
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("diffuseMap"), {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -50,7 +50,7 @@
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.tex2d2 = new MB.Texture2D(MB.ResourceMap.retrieveAsset("normalMap"), {
+                this.tex2d2 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("normalMap"), {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -59,7 +59,7 @@
                 });
 
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/normalMapping.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.addShader("../shaders/normalMapping.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
@@ -76,7 +76,7 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
@@ -93,9 +93,8 @@
                 this.cubito.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());

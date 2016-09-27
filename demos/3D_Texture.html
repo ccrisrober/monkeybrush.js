@@ -35,12 +35,10 @@
                 this.mainShader = "prog";
                 this.angle = 0;
             };
-            MyScene.prototype.loadAssets = function () {
-            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
                     prog.addShader("#version 300 es\n            precision highp float;\n            precision highp sampler3D;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler3D tex;\n            uniform float layer;\n\n            void main() {\n                float r = texture(tex, vec3(uv, layer)).r;\n                fragColor = vec4(vec3(r), 1.0);\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
                     prog._compile();
@@ -58,7 +56,7 @@
                         }
                     }
                 }
-                this.tex3d = new MB.Texture3D(data, new MB.Vect3(size, size, size), {
+                this.tex3d = new MB.Texture3D(this.context, data, new MB.Vect3(size, size, size), {
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
                     autoMipMap: true,
@@ -66,6 +64,8 @@
                     format: MB.ctes.PixelFormat.RED,
                     type: MB.ctes.DataType.UnsignedByte
                 });
+
+                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
@@ -73,13 +73,13 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex3d.bind(0);
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1f("layer", this.text.layer * 1.0);
-                MB.PostProcess.render();
+                this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "layer", 0, 64);

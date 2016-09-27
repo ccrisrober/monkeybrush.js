@@ -34,9 +34,10 @@ namespace MB {
          * @param {number = 1.0} smax: Width texCoord subdivision
          * @param {number = 1.0} tmax  Height texCoord subdivision
          */
-        constructor(xsize: number, zsize: number, xdivs: number, zdivs: number,
+        // TODO: DOC
+        constructor(context: GLContext, xsize: number, zsize: number, xdivs: number, zdivs: number,
             smax: number = 1.0, tmax: number = 1.0) {
-            super();
+            super(context);
 
             let verts = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
             let norms = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));

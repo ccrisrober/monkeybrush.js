@@ -37,17 +37,25 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.parametricModel = new MB.ParametricGeom(function (u, v) {
-                    var r = 75;
+                this.parametricModel = new MB.ParametricGeom(this.context, function (u, v) {
+                    /*var r = 75;
 
                     var x = Math.tan(u) * r;
                     var z = Math.sin(v / 2) * 1.2 * r;
-                    var y = (Math.sin(u * 3 * Math.PI) + Math.cos(v * 3 * Math.PI)) * 2.8;
+                    var y = (Math.sin(u * 3 * Math.PI) + Math.cos(v * 3 * Math.PI)) * 2.8;*/
+                    var a = 5;
+                    var n = 5;
+                    var m = 1;
+                    var u = u * 4 * Math.PI;
+                    var v = v * 2 * Math.PI;
+                    var x = (a + Math.cos(n * u / 2.0) * Math.sin(v) - Math.sin(n * u / 2.0) * Math.sin(2 * v)) * Math.cos(m * u / 2.0);
+                    var y = (a + Math.cos(n * u / 2.0) * Math.sin(v) - Math.sin(n * u / 2.0) * Math.sin(2 * v)) * Math.sin(m * u / 2.0);
+                    var z = Math.sin(n * u / 2.0) * Math.sin(v) + Math.cos(n * u / 2.0) * Math.sin(2 * v);
 
                     return new MB.Vect3(x, y, z);
                 }, 75, 65);
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     if (_this._webglVersion === 2) {
                         prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                         prog.addShader("../shaders/demoShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
@@ -70,7 +78,7 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.model =
@@ -80,14 +88,13 @@
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
 
-                MB.GlobalState.culling.setStatus(false);
+                this.state.culling.setStatus(false);
 
                 this.parametricModel.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());

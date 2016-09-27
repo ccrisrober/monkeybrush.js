@@ -35,7 +35,8 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.skybox = new MB.Skybox("../assets/images/canyon", this._webglVersion === 2);
+                this.skybox = new MB.Skybox(this.context, "../assets/images/canyon");
+                console.log(this.skybox);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
@@ -45,18 +46,18 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 this.skybox.render(this.view, this.projection);
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

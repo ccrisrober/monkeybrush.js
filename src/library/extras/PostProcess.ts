@@ -22,54 +22,55 @@
 namespace MB {
     /**
     * This class wrap PostProcess effects
-    * @class core.PostProcess
+    * @class PostProcess
     */
     export class PostProcess {
+        protected _context: GLContext;
         /**
          * [initialize description]
          */
-        static initialize() {
-            if (!PostProcess._planeVAO) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-                const positions = [
-                    -1.0, -1.0,
-                     1.0, -1.0,
-                    -1.0,  1.0,
-                     1.0,  1.0
-                ];
-                PostProcess._planeVAO = new MB.VertexArray();
-                // Unnecesary gl.bindVertexArray(PostProcess._planeVAO);
-                this._planeVertexVBO = new MB.VertexBuffer(MB.ctes.BufferType.Array);
-                // Unnecesary gl.bindBuffer(gl.ARRAY_BUFFER, this._planeVertexVBO);
-                this._planeVertexVBO.bufferData(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
-                this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
-                PostProcess._planeVAO.unbind();
-            }
+        // TODO: DOC
+        constructor(context: GLContext) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
+            const positions = [
+                -1.0, -1.0,
+                 1.0, -1.0,
+                -1.0,  1.0,
+                 1.0,  1.0
+            ];
+            this._planeVAO = new MB.VertexArray(this._context);
+            // Unnecesary gl.bindVertexArray(PostProcess._planeVAO);
+            this._planeVertexVBO = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
+            // Unnecesary gl.bindBuffer(gl.ARRAY_BUFFER, this._planeVertexVBO);
+            this._planeVertexVBO.bufferData(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
+            this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
+            this._planeVAO.unbind();
         }
         /**
          *
          */
-        public static bind() {
-            PostProcess._planeVAO.bind();
+        public bind() {
+            this._planeVAO.bind();
         }
         /**
          *
          */
-        public static render() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            PostProcess._planeVAO.bind();
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            PostProcess._planeVAO.unbind();
+        public render() {
+            const gl: WebGL2RenderingContext = this._context.gl;
+            this._planeVAO.bind();
+            gl.drawArrays(MB.ctes.RenderMode.TriangleStrip, 0, 4);
+            this._planeVAO.unbind();
         }
         /**
          * [_planeVAO description]
          * @type {VertexArray}
          */
-        protected static _planeVAO: MB.VertexArray = null;
+        protected _planeVAO: MB.VertexArray = null;
         /**
          * [_planeVertexVBO description]
          * @type {VertexBuffer}
          */
-        protected static _planeVertexVBO: MB.VertexBuffer = null;
+        protected _planeVertexVBO: MB.VertexBuffer = null;
     };
 };

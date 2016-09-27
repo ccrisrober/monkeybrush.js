@@ -41,8 +41,9 @@ namespace MB {
          * CustomModel constructor
          * @param {ICustomModel} model: Model data
          */
-        constructor(model: ICustomModel) {
-            super();
+        // TODO: DOC
+        constructor(context: GLContext, model: ICustomModel) {
+            super(context);
 
             this._handle = [];
             this._vao.bind();

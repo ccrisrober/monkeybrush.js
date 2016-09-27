@@ -31,12 +31,14 @@ namespace MB {
          * @param {TexOptions =    {}}        options [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture3D.
          */
-        constructor (data, size: MB.Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+        // TODO: DOC
+        constructor(context: GLContext, data, size: MB.Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
+            super(context, MB.ctes.TextureTarget.Texture3D, options);
+            
+            const gl: WebGL2RenderingContext = this._context.gl;
             if (!(gl instanceof WebGL2RenderingContext)) {
                 throw new Error("Must provide a WebGL2 context ...");
             }
-            super(MB.ctes.TextureTarget.Texture3D, options);
             this.bind();
 
             // TODO: gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);

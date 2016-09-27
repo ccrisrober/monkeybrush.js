@@ -39,8 +39,9 @@ namespace MB {
          * CubeMapTexture constructor
          * @param {TexOptions = {}} options: Texture options
          */
-        constructor(options: TexOptions = {}) {
-            super(MB.ctes.TextureTarget.TextureCubeMap, options);
+        // TODO: DOC
+        constructor(context: GLContext, options: TexOptions = {}) {
+            super(context, MB.ctes.TextureTarget.TextureCubeMap, options);
 
             this._finished = false;
 
@@ -53,15 +54,15 @@ namespace MB {
          * @param {[type]} data Image or buffer data.
          */
         public addImage(i: number, data) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
-                gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, data);
+            const gl: WebGL2RenderingContext = this._context.gl;
+            gl.texImage2D(0x8515 /*TEXTURE_CUBE_MAP_POSITIVE_X*/ + i, 0,
+                MB.ctes.PixelFormat.RGB, MB.ctes.PixelFormat.RGB, MB.ctes.DataType.UnsignedByte, data);
         };
         /**
          * Finalize cubemap texture
          */
         public finishTex() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, MB.ctes.TextureFilter.Linear);
             gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, MB.ctes.TextureFilter.Linear);
             gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, MB.ctes.WrapMode.Clamp2Edge);

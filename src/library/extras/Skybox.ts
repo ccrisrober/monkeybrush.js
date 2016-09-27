@@ -52,12 +52,14 @@ namespace MB {
         get texture(): MB.CubeMapTexture {
             return this._cubeMapTexture;
         };
+        protected _context: GLContext;
         /**
          * Skybox constructor
          * @param {string} dir Skybox directory (without "/")
          * @param {boolean = true} isWebGL2 [description]
          */
-        constructor(dir: string, isWebGL2: boolean = true) {
+        // TODO: DOC
+        constructor(context: GLContext, dir: string) {
             let faces: Array<string> = [];
             faces.push(dir + "/right.jpg");
             faces.push(dir + "/left.jpg");
@@ -66,9 +68,13 @@ namespace MB {
             faces.push(dir + "/back.jpg");
             faces.push(dir + "/front.jpg");
 
-            const gl: WebGLRenderingContext = MB.Core.getInstance().getGL();
+            this._context = context;
 
-            this._prog = new MB.Program();
+            const gl: WebGLRenderingContext = this._context.gl;
+
+            this._prog = new MB.Program(this._context);
+
+            const isWebGL2: boolean = context instanceof GLContextW2;
 
             let vs: string;
 
@@ -96,7 +102,6 @@ namespace MB {
                     TexCoords = position;
                 }`;
             }
-
 
             this._prog.addShader(vs, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
 
@@ -171,10 +176,10 @@ namespace MB {
                  1.0, -1.0,  1.0
             ]);
 
-            this._VertexArray = new MB.VertexArray();
+            this._VertexArray = new MB.VertexArray(this._context);
             this._VertexArray.bind();
 
-            this._VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.Array);
+            this._VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
             this._VertexBuffer.bind();
             this._VertexBuffer.bufferData(skyboxVertices, MB.ctes.UsageType.StaticDraw);
             this._VertexBuffer.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
@@ -188,11 +193,12 @@ namespace MB {
          * @param {MB.Mat4} projection Projection matrix
          */
         public render(view: Mat4, projection: Mat4) {
-            const gl: WebGLRenderingContext = Core.getInstance().getGL();
+            const gl: WebGLRenderingContext = this._context.gl;
 
-            let currDepthComp = GlobalState.depth.getCurrentComparisonFunc();
+            let currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
 
-            GlobalState.depth.setFunc(ctes.ComparisonFunc.LessEqual);
+            this._context.state.depth.setFunc(ctes.ComparisonFunc.LessEqual);
+
             this._prog.use();
 
             // Remove any translation
@@ -207,7 +213,7 @@ namespace MB {
             gl.drawArrays(gl.TRIANGLES, 0, 36);
             this._VertexArray.unbind();
 
-            GlobalState.depth.setFunc(currDepthComp);
+            this._context.state.depth.setFunc(currDepthComp);
         }
        /**
         * Destroy skybox.
@@ -220,7 +226,7 @@ namespace MB {
          * @param {Array<string>} faces Array of image routes.
          */
         protected _loadCubemap(faces: Array<string>) {
-            this._cubeMapTexture = new MB.CubeMapTexture();
+            this._cubeMapTexture = new MB.CubeMapTexture(this._context);
             this._cubeMapTexture.bind();
 
             for (let i = 0; i < 6; ++i) {
@@ -233,3 +239,6 @@ namespace MB {
         }
     };
 };
+
+
+// TODO: Move VAO and VBO to MB.CustomModel

@@ -9,6 +9,7 @@ namespace MB {
     export abstract class GLContext {
         protected _canvas: HTMLCanvasElement;
         protected _gl: WebGL2RenderingContext;
+        protected _state: GlobalState;
         protected _version: number;
         public get version(): number {
             return this._version;
@@ -44,14 +45,19 @@ namespace MB {
             } else {
                 this._version = numVersion;
                 this._getVendors();
+                
+                this._state = new GlobalState(this);
                 Log.info("WebGL2RenderingContext OK :)");
             }
         };
-        get gl() {
+        get gl(): WebGL2RenderingContext {
             return this._gl;
         };
-        get canvas() {
+        get canvas(): HTMLCanvasElement {
             return this._canvas;
+        };
+        get state(): GlobalState {
+            return this._state;
         };
         protected _getVendors() {
             let vendors: string[] = "ms,moz,webkit,o".split(",");

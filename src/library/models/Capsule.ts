@@ -36,10 +36,11 @@ namespace MB {
          * @param {number = 12} subHeight Capsule height subdivision
          * @param {number = 12} numSegm Capsule num segments
          */
-        constructor(radius: number = 0.5, height: number = radius * 2,
+        // TODO: DOC
+        constructor(context: GLContext, radius: number = 0.5, height: number = radius * 2,
             subHeight: number = 12, numSegm: number = 12) {
 
-            super();
+            super(context);
 
             this._radius = radius;
             this._height = height;

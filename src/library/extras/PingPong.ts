@@ -32,17 +32,20 @@ namespace MB {
         protected _flag: boolean;
         protected _tex1: MB.SimpleTexture2D;
         protected _tex2: MB.SimpleTexture2D;
+        protected _context: GLContext;
         /**
          * PingProng constructor
          * @param {MB.Vect2} size Framebuffer/texture size
          */
-        constructor(size: MB.Vect2) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+        // TOOD: DOC
+        constructor(context: GLContext, size: MB.Vect2) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._flag = true;
             this._size = size;
 
             this._tex1 = this._tex2 =
-                new MB.SimpleTexture2D(size, {
+                new MB.SimpleTexture2D(this._context, size, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
                     type: gl.FLOAT,
@@ -50,7 +53,7 @@ namespace MB {
                     magFilter: MB.ctes.TextureFilter.Nearest
                 });
 
-            this._fbo = new MB.Framebuffer([this._tex1], size);
+            this._fbo = new MB.Framebuffer(this._context, [this._tex1], size);
         };
         /**
          * Replace textures.

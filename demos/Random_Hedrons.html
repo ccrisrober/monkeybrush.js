@@ -37,57 +37,57 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.cuboctahedron0 = new MB.Cuboctahedron(12.5, 0.0);
-                this.cuboctahedron1 = new MB.Cuboctahedron(12.5, 1.0);
-                this.cuboctahedron2 = new MB.Cuboctahedron(12.5, 2.0);
-                this.cuboctahedron3 = new MB.Cuboctahedron(12.5, 3.0);
-                this.cuboctahedron4 = new MB.Cuboctahedron(12.5, 4.0);
+                this.cuboctahedron0 = new MB.Cuboctahedron(this.context, 12.5, 0.0);
+                this.cuboctahedron1 = new MB.Cuboctahedron(this.context, 12.5, 1.0);
+                this.cuboctahedron2 = new MB.Cuboctahedron(this.context, 12.5, 2.0);
+                this.cuboctahedron3 = new MB.Cuboctahedron(this.context, 12.5, 3.0);
+                this.cuboctahedron4 = new MB.Cuboctahedron(this.context, 12.5, 4.0);
 
-                this.octahedron0 = new MB.Octahedron(12.5, 0.0);
-                this.octahedron1 = new MB.Octahedron(12.5, 1.0);
-                this.octahedron2 = new MB.Octahedron(12.5, 2.0);
-                this.octahedron3 = new MB.Octahedron(12.5, 3.0);
-                this.octahedron4 = new MB.Octahedron(12.5, 4.0);
+                this.octahedron0 = new MB.Octahedron(this.context, 12.5, 0.0);
+                this.octahedron1 = new MB.Octahedron(this.context, 12.5, 1.0);
+                this.octahedron2 = new MB.Octahedron(this.context, 12.5, 2.0);
+                this.octahedron3 = new MB.Octahedron(this.context, 12.5, 3.0);
+                this.octahedron4 = new MB.Octahedron(this.context, 12.5, 4.0);
 
-                this.icosahedron0 = new MB.Icosahedron(12.5, 0.0);
-                this.icosahedron1 = new MB.Icosahedron(12.5, 1.0);
-                this.icosahedron2 = new MB.Icosahedron(12.5, 2.0);
-                this.icosahedron3 = new MB.Icosahedron(12.5, 3.0);
-                this.icosahedron4 = new MB.Icosahedron(12.5, 4.0);
+                this.icosahedron0 = new MB.Icosahedron(this.context, 12.5, 0.0);
+                this.icosahedron1 = new MB.Icosahedron(this.context, 12.5, 1.0);
+                this.icosahedron2 = new MB.Icosahedron(this.context, 12.5, 2.0);
+                this.icosahedron3 = new MB.Icosahedron(this.context, 12.5, 3.0);
+                this.icosahedron4 = new MB.Icosahedron(this.context, 12.5, 4.0);
 
-                this.tetrahedron0 = new MB.Tetrahedron(12.5, 0.0);
-                this.tetrahedron1 = new MB.Tetrahedron(12.5, 1.0);
-                this.tetrahedron2 = new MB.Tetrahedron(12.5, 2.0);
-                this.tetrahedron3 = new MB.Tetrahedron(12.5, 3.0);
-                this.tetrahedron4 = new MB.Tetrahedron(12.5, 4.0);
+                this.tetrahedron0 = new MB.Tetrahedron(this.context, 12.5, 0.0);
+                this.tetrahedron1 = new MB.Tetrahedron(this.context, 12.5, 1.0);
+                this.tetrahedron2 = new MB.Tetrahedron(this.context, 12.5, 2.0);
+                this.tetrahedron3 = new MB.Tetrahedron(this.context, 12.5, 3.0);
+                this.tetrahedron4 = new MB.Tetrahedron(this.context, 12.5, 4.0);
 
-                this.dodecahedron0 = new MB.Dodecahedron(12.5, 0.0);
-                this.dodecahedron1 = new MB.Dodecahedron(12.5, 1.0);
-                this.dodecahedron2 = new MB.Dodecahedron(12.5, 2.0);
-                this.dodecahedron3 = new MB.Dodecahedron(12.5, 3.0);
-                this.dodecahedron4 = new MB.Dodecahedron(12.5, 4.0);
+                this.dodecahedron0 = new MB.Dodecahedron(this.context, 12.5, 0.0);
+                this.dodecahedron1 = new MB.Dodecahedron(this.context, 12.5, 1.0);
+                this.dodecahedron2 = new MB.Dodecahedron(this.context, 12.5, 2.0);
+                this.dodecahedron3 = new MB.Dodecahedron(this.context, 12.5, 3.0);
+                this.dodecahedron4 = new MB.Dodecahedron(this.context, 12.5, 4.0);
 
 
                 var indices = [ 2, 1, 0, 0, 3, 2, 3, 0, 2, 1, 2, 1, 0, 3, 0, 2, 3, 1, 2, 1, 0 ];
 
-                this.customHedron0 = new MB.Polyhedron(
+                this.customHedron0 = new MB.Polyhedron(this.context,
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
                     indices, 12.5, 0.0);
-                this.customHedron1 = new MB.Polyhedron(
+                this.customHedron1 = new MB.Polyhedron(this.context,
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
                     indices, 12.5, 1.0);
-                this.customHedron2 = new MB.Polyhedron(
+                this.customHedron2 = new MB.Polyhedron(this.context,
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
                     indices, 12.5, 2.0);
-                this.customHedron3 = new MB.Polyhedron(
+                this.customHedron3 = new MB.Polyhedron(this.context,
                     [ 1, 1, -1.23 -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
                     indices, 12.5, 3.0);
-                this.customHedron4 = new MB.Polyhedron(
+                this.customHedron4 = new MB.Polyhedron(this.context,
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
                     indices, 12.5, 4.0);
 
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.setFooFragment();
                     prog.compile();
@@ -113,7 +113,7 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 for (var i = 0; i < 5; ++i) {
@@ -130,9 +130,8 @@
                 }
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());

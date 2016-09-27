@@ -19,52 +19,52 @@
 
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-precision highp float;
+        precision highp float;
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 uv;
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+        layout(location = 2) in vec2 uv;
 
-out vec3 outPosition;
-out vec3 outNormal;
-out vec2 outUV;
+        out vec3 outPosition;
+        out vec3 outNormal;
+        out vec2 outUV;
 
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 model;
-uniform vec3 lightPosition;
-uniform float heightFactor;
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+        uniform vec3 lightPosition;
+        uniform float heightFactor;
 
-uniform sampler2D texH;
+        uniform sampler2D texH;
 
-void main() {
-    mat3 normalMatrix = mat3(inverse(transpose(model)));
+        void main() {
+            mat3 normalMatrix = mat3(inverse(transpose(model)));
 
-    vec3 pos = position;
+            vec3 pos = position;
 
-    const vec2 size = vec2(0.5,0.0);
-    const ivec3 off = ivec3(-1,0,1);
-    vec4 wave = texture(texH, uv);
-    float s11 = wave.x;
-    float s01 = textureOffset(texH, uv, off.xy).x;
-    float s21 = textureOffset(texH, uv, off.zy).x;
-    float s10 = textureOffset(texH, uv, off.yx).x;
-    float s12 = textureOffset(texH, uv, off.yz).x;
-    vec3 va = normalize(vec3(size.xy,s21-s01));
-    vec3 vb = normalize(vec3(size.yx,s12-s10));
-    vec4 bump = vec4( cross(va,vb), s11 );
+            const vec2 size = vec2(0.5,0.0);
+            const ivec3 off = ivec3(-1,0,1);
+            vec4 wave = texture(texH, uv);
+            float s11 = wave.x;
+            float s01 = textureOffset(texH, uv, off.xy).x;
+            float s21 = textureOffset(texH, uv, off.zy).x;
+            float s10 = textureOffset(texH, uv, off.yx).x;
+            float s12 = textureOffset(texH, uv, off.yz).x;
+            vec3 va = normalize(vec3(size.xy,s21-s01));
+            vec3 vb = normalize(vec3(size.yx,s12-s10));
+            vec4 bump = vec4( cross(va,vb), s11 );
 
-    pos.y += heightFactor * bump.w;
-    outNormal = bump.xyz;
+            pos.y += heightFactor * bump.w;
+            outNormal = bump.xyz;
 
 
-    vec4 pp = model * vec4(pos, 1.0);
-    pp = view * pp;
-    outPosition = pp.xyz;
-    outUV = uv;
-    outNormal = normalize(normalMatrix * outNormal);
-    gl_Position = projection * pp;
-}
+            vec4 pp = model * vec4(pos, 1.0);
+            pp = view * pp;
+            outPosition = pp.xyz;
+            outUV = uv;
+            outNormal = normalize(normalMatrix * outNormal);
+            gl_Position = projection * pp;
+        }
     </script>
 
     <script type="text/javascript">
@@ -95,7 +95,7 @@ void main() {
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex2d = new MB.Texture2D(MB.ResourceMap.retrieveAsset("heightmap"), {
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("heightmap"), {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -103,9 +103,9 @@ void main() {
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.cubito = new MB.Plane(26.0, 20.0, 200, 200);
+                this.cubito = new MB.Plane(this.context, 26.0, 20.0, 200, 200);
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
                     prog.addShader("../shaders/texRender.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
@@ -122,7 +122,7 @@ void main() {
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex2d.bind(0);
@@ -135,9 +135,8 @@ void main() {
                 this.cubito.render();
             };
             MyScene.prototype.cameraUpdate = function () {
-                var canvas = MB.Core.getInstance().canvas();
                 this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 prog.sendUniformVec3("viewPos", this.camera.GetPos());

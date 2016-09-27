@@ -44,10 +44,13 @@ namespace MB {
      * @class Program
      */
     export class Program {
+        protected _context: GLContext;
+
         /**
          * Program constructor
          */
-        constructor() {
+        constructor(context: GLContext) {
+            this._context = context;
             this._shaders = [];
             this._isLinked = false;
         };
@@ -98,7 +101,7 @@ namespace MB {
          * @param {Array<string>} attrs Array of string that contains attributes names
          */
         public addAttributes(attrs: Array<string>) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             for (let attr in attrs) {
                 attr = attrs[attr];
                 const attrID = gl.getAttribLocation(this._handler, attr);
@@ -121,7 +124,7 @@ namespace MB {
          * @param {Array<string>} unifs Array of string that contains uniforms names
          */
         public addUniforms(unifs: Array<string>) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             for (let unif in unifs) {
                 unif = unifs[unif];
                 const unifID: WebGLUniformLocation = gl.getUniformLocation(this._handler, unif);
@@ -163,7 +166,7 @@ namespace MB {
          * Create shader program and attach vertex and fragment shader.
          */
         public _compile() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             // Create and compile shader
             this._handler = gl.createProgram();
             for (let i = 0; i < this._shaders.length; ++i) {
@@ -175,7 +178,7 @@ namespace MB {
          * @return {boolean} True if linked correctly. False otherwise.
          */
         public _link(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.linkProgram(this._handler);
 
             // Checkin errors
@@ -196,7 +199,7 @@ namespace MB {
          * @return {boolean}: True if not errors
          */
         public compile(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             // Create and compile shader
             this._handler = gl.createProgram();
             for (let i = 0; i < this._shaders.length; ++i) {
@@ -299,7 +302,7 @@ namespace MB {
          * @param {number} shaderType   Shader type.
          */
         private compileShader(shaderSource: string, shaderType: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let compiledShader: WebGLShader;
 
             shaderSource = this._parse(shaderSource);
@@ -333,14 +336,14 @@ namespace MB {
          * Active program.
          */
         public use() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.useProgram(this._handler);
         };
         /**
          * Destroy program.
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._shaders.forEach((shader) => {
                 gl.detachShader(this.compileShader, shader);
             });
@@ -352,7 +355,7 @@ namespace MB {
          * @param {number} value Float value.
          */
         public sendUniform1f(name: string, value: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.uniform1f(this.uniformLocations[name], value);
         };
         /**
@@ -361,7 +364,7 @@ namespace MB {
          * @param {number} value Integer value.
          */
         public sendUniform1i(name: string, value: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.uniform1i(this.uniformLocations[name], value);
         };
         /**
@@ -370,7 +373,7 @@ namespace MB {
          * @param {boolean} value Boolean value.
          */
         public sendUniform1b(name: string, value: boolean) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.uniform1i(this.uniformLocations[name], value === true ? 1 : 0);
         };
         /**
@@ -379,7 +382,7 @@ namespace MB {
          * @param {number} value Unsigned integer value.
          */
         public sendUniform1u(name: string, value: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.uniform1ui(this.uniformLocations[name], value);
         };
         /**
@@ -389,7 +392,7 @@ namespace MB {
          * @param {number} y    Second float value.
          */
         public sendUniform2f(name: string, x: number, y: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.uniform2f(this.uniformLocations[name], x, y);
         };
         /**
@@ -400,7 +403,7 @@ namespace MB {
          * @param {number} z    Third float value.
          */
         public sendUniform3f(name: string, x: number, y: number, z: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.uniform3f(this.uniformLocations[name], x, y, z);
         };
         /**
@@ -412,7 +415,7 @@ namespace MB {
          * @param {number} w    Fourth float value.
          */
         public sendUniform4f(name: string, x: number, y: number, z: number, w: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.uniform4f(this.uniformLocations[name], x, y, z, w);
         };
         /**
@@ -421,7 +424,7 @@ namespace MB {
          * @param {Float32Array | MB.Vect2} value Vector of floats.
          */
         public sendUniformVec2(name: string, value: Float32Array | MB.Vect2) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let val: Float32Array;
             if (value instanceof MB.Vect2) {
                 val = (<MB.Vect2>value).value;
@@ -436,7 +439,7 @@ namespace MB {
          * @param {Float32Array | MB.Vect3} value Vector of floats.
          */
         public sendUniformVec3(name: string, value: Float32Array | MB.Vect3) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let val: Float32Array;
             if (value instanceof MB.Vect3) {
                 val = (<MB.Vect3>value).value;
@@ -451,7 +454,7 @@ namespace MB {
          * @param {Float32Array | MB.Vect4} value Vector of floats.
          */
         public sendUniformVec4(name: string, value: Float32Array | MB.Vect4) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let val: Float32Array;
             if (value instanceof MB.Vect4) {
                 val = (<MB.Vect4>value).value;
@@ -467,7 +470,7 @@ namespace MB {
          * @param {boolean = false} transpose Transpose mat2.
          */
         public sendUniformMat2(name: string, value: Float32Array | MB.Mat2, transpose: boolean = false) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let val: Float32Array;
             if (value instanceof MB.Mat2) {
                 val = (<MB.Mat2>value)._value;
@@ -483,7 +486,7 @@ namespace MB {
          * @param {boolean = false} transpose Transpose mat3.
          */
         public sendUniformMat3(name: string, value: Float32Array | MB.Mat3, transpose: boolean = false) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let val: Float32Array;
             if (value instanceof MB.Mat3) {
                 val = (<MB.Mat3>value)._value;
@@ -499,7 +502,7 @@ namespace MB {
          * @param {boolean = false} transpose Transpose mat4.
          */
         public sendUniformMat4(name: string, value: Float32Array | MB.Mat4, transpose: boolean = false) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             let val: Float32Array;
             if (value instanceof MB.Mat4) {
                 val = (<MB.Mat4>value)._value;
@@ -572,7 +575,7 @@ namespace MB {
          * Autocatching all actives uniforms and attributes for program.
          */
         public autocatching() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
             let unifs: Array<string> = [];
             for (let i = 0; i < numUniforms; ++i) {
@@ -605,7 +608,7 @@ namespace MB {
                 "attributes": [],
                 "uniforms": []
             };
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
             let result = [];
             for (let i = 0; i < numUniforms; ++i) {
@@ -654,24 +657,25 @@ namespace MB {
          * @param {Array<string>} varyings Array of string that contains varying attributes.
          * @param {MB.ctes.TFMode}        mode     Transform Feedback mode (record mode).
          */
-        public feedbackVarying(varyings: Array<string>, mode: MB.ctes.TFMode) {
+        // TODO: DOC
+        public feedbackVarying(context: GLContext, varyings: Array<string>, mode: MB.ctes.TFMode) {
             if (this._isLinked === true) {
                 alert("ONLY EXEC THIS BEFORE LINK");
                 return;
             }
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             if (!(gl instanceof WebGL2RenderingContext)) {
                 alert("NEED WEBGL2 CONTEXT");
                 return;
             }
-            TransformFeedback.varyings(this, varyings, mode);
+            TransformFeedback.varyings(context, this, varyings, mode);
         };
         /**
          * Add a foo fragment shader.
          * Useful for transform feedback or shadow techniques.
          */
         public setFooFragment() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             if (gl instanceof WebGL2RenderingContext) {
                 this.addShader(
                     `#version 300 es

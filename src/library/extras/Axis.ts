@@ -19,7 +19,7 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     // TODO!!!
 
 
@@ -55,8 +55,8 @@ namespace MB {
             0, 0, 1, 1,
             0, 0, 1, 1
         ];
-        constructor(dim: number = 10) {
-            super();
+        constructor(context: MB.GLContext, dim: number = 10) {
+            super(context);
 
             if (dim < 1) {
                 throw new Error("Dim > 1 pls");
@@ -73,7 +73,7 @@ namespace MB {
             this._indicesLen = this.indices.length;
 
             MB.ProgramManager.addWithFun("axisShader", () : MB.Program => {
-                let prog: MB.Program = new MB.Program();
+                let prog: MB.Program = new MB.Program(this._context);
 
                 prog.addShader(`#version 300 es
                     precision highp float;
@@ -123,7 +123,7 @@ namespace MB {
             /* tslint:enable */
         };
         public render() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
             gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
             this._vao.unbind();

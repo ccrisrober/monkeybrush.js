@@ -30,8 +30,9 @@ namespace MB {
          * @param {number} radius: Tetrahedron radius
          * @param {number} subdivisions: Tetrahedron subdivisions from base tetrahedron.
          */
-        constructor(radius: number, subdivisions: number) {
-            super([
+        // TODO: DOC
+        constructor(context: GLContext, radius: number, subdivisions: number) {
+            super(context, [
                  1,  1,  1,
                 -1, -1,  1,
                 -1,  1, -1,

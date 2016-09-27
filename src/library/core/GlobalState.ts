@@ -21,6 +21,10 @@
 
 namespace MB {
     export class CullingState {
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
+        };
         protected _currentFrontFace: ctes.FaceDir = null;
         protected _cullingEnabled: boolean = false;
         protected _cullingFaceMode: ctes.FaceSide = MB.ctes.FaceSide.FrontAndBack;
@@ -30,7 +34,7 @@ namespace MB {
          */
         public setStatus(enabled: boolean) {
             if (this._cullingEnabled !== enabled) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 if (enabled === true) {
                     gl.enable(gl.CULL_FACE);
                 } else {
@@ -41,7 +45,7 @@ namespace MB {
         };
         public setFlipSided(flipSided: ctes.FaceDir) {
             if (this._currentFrontFace !== flipSided) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.frontFace(flipSided);
                 this._currentFrontFace = flipSided;
             }
@@ -59,7 +63,7 @@ namespace MB {
          */
         public setMode(mode: MB.ctes.FaceSide) {
             if (this._cullingFaceMode !== mode) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.cullFace(mode);
                 this._cullingFaceMode = mode;
             }
@@ -77,9 +81,13 @@ namespace MB {
         };
     };
     export class DepthState {
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
+        };
         protected _depthEnabled: boolean = false;
         protected _currentDepthMask: boolean = false;
-        protected _currentDepthFunc: ctes.ComparisonFunc = ctes.ComparisonFunc.LessEqual;
+        protected _currentDepthFunc: ctes.ComparisonFunc = null;
         protected _currentDepthClear = null;
         protected _znear: number = 0.0;
         protected _zfar: number = 1.0;
@@ -103,14 +111,14 @@ namespace MB {
          */
         public setFunc(depthFunc: ctes.ComparisonFunc) {
             if (this._currentDepthFunc !== depthFunc) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.depthFunc(depthFunc);
                 this._currentDepthFunc = depthFunc;
             }
         };
         public setStatus(enabled: boolean) {
             if (this._depthEnabled !== enabled) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 if (enabled === true) {
                     gl.enable(gl.DEPTH_TEST);
                 } else {
@@ -121,14 +129,14 @@ namespace MB {
         };
         public setMask(mask: boolean) {
             if (this._currentDepthMask !== mask) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.depthMask(mask);
                 this._currentDepthMask = mask;
             }
         };
         public setClear(depth: number) {
             if (this._currentDepthClear !== depth) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.clearDepth(depth);
                 this._currentDepthClear = depth;
             }
@@ -137,13 +145,13 @@ namespace MB {
          * Clear depth buffer.
          */
         public clearBuffer() {
-            const gl = Core.getInstance().getGL();
+            const gl = this._context.gl;
             gl.clear(gl.DEPTH_BUFFER_BIT);
         };
         public reset() {
             this._depthEnabled = true;
             this._currentDepthMask = true;
-            this._currentDepthFunc = ctes.ComparisonFunc.LessEqual;
+            this.setFunc(ctes.ComparisonFunc.Less);
             this._currentDepthClear = null;
         };
         /**
@@ -153,7 +161,7 @@ namespace MB {
          */
         public depthRange(znear: number = 0.0, zfar: number = 1.0) {
             if (!(znear === this._znear && zfar === this._zfar)) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 if (znear > zfar || znear < 0.0 || zfar > 1.0) {
                     MB.Log.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
                     return;
@@ -165,12 +173,16 @@ namespace MB {
         };
     };
     export class ColorState {
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
+        };
         protected _currentColorMask: Vector4<boolean>;
         protected _currentColorClear: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);
 
         public setMask(colorMask: MB.Vector4<boolean>) {
             if (!this._currentColorMask || this._currentColorMask.isEqual(colorMask) === false) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.colorMask(colorMask.x, colorMask.y, colorMask.z, colorMask.w);
                 this._currentColorMask = colorMask.clone();
             }
@@ -184,7 +196,7 @@ namespace MB {
          */
         public setClearColor(bgColor: Color4) {
             if (!this._currentColorClear || this._currentColorClear.isEquals(bgColor) === false) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.clearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
                 this._currentColorClear = bgColor.clone();
             }
@@ -199,17 +211,21 @@ namespace MB {
          * Clear color values
          */
         public clearBuffer() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.clear(gl.COLOR_BUFFER_BIT);
         }
     };
     export class ScissorsState {
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
+        };
         protected _scissorsEnabled: boolean = false;
         protected _scissorsBox: MB.Box2D = new MB.Box2D();
 
         set status(enabled: boolean) {
             if (this._scissorsEnabled !== enabled) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 if (enabled === true) {
                     gl.enable(gl.SCISSOR_TEST);
                 } else {
@@ -228,7 +244,7 @@ namespace MB {
         public setRectangle(x: number, y: number, width: number, height: number) {
             let b: MB.Box2D = new MB.Box2D(new MB.Vect2(x, y), new MB.Vect2(width, height));
             if (!this._scissorsBox.isEqual(b)) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
                 this._scissorsBox = b;
             }
@@ -242,7 +258,7 @@ namespace MB {
          */
         public setRectangleBox2D(b: MB.Box2D) {
             if (!this._scissorsBox.isEqual(b)) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.scissor(b.min.x, b.min.y, b.max.x, b.max.y);
                 this._scissorsBox = b;
             }
@@ -263,6 +279,10 @@ namespace MB {
         }
     };
     export class StencilState {
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
+        };
         protected _stencilEnabled: boolean = false;
         protected _currentStencilMask: number = 0;
         protected _currentStencilFunc: MB.ctes.ComparisonFunc = null;
@@ -275,7 +295,7 @@ namespace MB {
 
         public setTest(enabled: boolean) {
             if (this._stencilEnabled !== enabled) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 if (enabled === true) {
                     gl.enable(gl.STENCIL_TEST);
                 } else {
@@ -291,7 +311,7 @@ namespace MB {
          */
         public setMaskValue(mask: number) {
             if (this._currentStencilMask !== mask) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.stencilMask(mask);
                 this._currentStencilMask = mask;
             }
@@ -307,7 +327,7 @@ namespace MB {
             if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
                 && this._currentStencilFuncMask !== mask) {
 
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.stencilFunc(compFun, ref, mask);
 
                 this._currentStencilFunc = compFun;
@@ -327,7 +347,7 @@ namespace MB {
             if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
                 && this._currentStencilZPass !== zpass) {
 
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.stencilOp(fail, zfail, zpass);
 
                 this._currentStencilFail = fail;
@@ -340,7 +360,7 @@ namespace MB {
         }
         public setClearValue(s: number) {
             if (this._currentStencilClear !== s) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.clearStencil(s);
                 this._currentStencilClear = s;
             }
@@ -352,7 +372,7 @@ namespace MB {
          *    bits in the stencil planes.
          */
         public setMaskFace(face: MB.ctes.FaceSide, mask: number) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.stencilMaskSeparate(face, mask);
         }
         /**
@@ -360,7 +380,7 @@ namespace MB {
          * @return {number}
          */
         public getFrontWriteMask(): number {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.STENCIL_WRITEMASK);
         }
         /**
@@ -368,7 +388,7 @@ namespace MB {
          * @return {number}
          */
         public getBackWriteMask(): number {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.STENCIL_BACK_WRITEMASK);
         }
         /**
@@ -376,14 +396,14 @@ namespace MB {
          * @return {number}
          */
         public getBits(): number {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.STENCIL_BITS);
         }
         /**
          * Clear stencil values
          */
         public clearBuffer() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.clear(gl.STENCIL_BUFFER_BIT);
         }
         /**
@@ -391,7 +411,7 @@ namespace MB {
          * @return {boolean} True if activated
          */
         public isEnabled(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.isEnabled(gl.STENCIL_TEST);
         }
         public reset() {
@@ -399,6 +419,10 @@ namespace MB {
         };
     };
     export class BlendingState {
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
+        };
         protected _blendingEnabled: boolean = false;
         protected _blendingMode: MB.ctes.BlendingEq; // TODO
         /**
@@ -407,7 +431,7 @@ namespace MB {
          */
         public setStatus(enabled: boolean) {
             if (this._blendingEnabled !== enabled) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 if (enabled === true) {
                     gl.enable(gl.BLEND);
                 } else {
@@ -424,7 +448,7 @@ namespace MB {
          */
         public setEquation(mode: MB.ctes.BlendingEq) {
             if (mode !== this._blendingMode) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.blendEquation(mode);
                 this._blendingMode = mode;
             }
@@ -439,15 +463,15 @@ namespace MB {
          *      are combined.
          */
         public equationSeparate(modeRGB: MB.ctes.BlendingEq, modeAlpha: MB.ctes.BlendingEq) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.blendEquationSeparate(modeRGB, modeAlpha); // TODO: Cache
         };
         public getquationRGB(): MB.ctes.BlendingEq {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.BLEND_EQUATION_RGB); // TODO: Cache
         };
         public getEquationAlpha(): MB.ctes.BlendingEq {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             return gl.getParameter(gl.BLEND_EQUATION_ALPHA); // TODO: Cache
         };
         /**
@@ -461,7 +485,7 @@ namespace MB {
             green: number = 0.0,
             blue: number = 0.0,
             alpha: number = 0.0) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.blendColor(red, green, blue, alpha); // TODO: Cache
         };
         /**
@@ -473,7 +497,7 @@ namespace MB {
          */
         public setFunc(sfactor: MB.ctes.BlendingMode = MB.ctes.BlendingMode.One,
             dfactor: MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.blendFunc(sfactor, dfactor); // TODO: Cache
         };
         /**
@@ -491,7 +515,7 @@ namespace MB {
             dstRGB: MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero,
             srcAlpha: MB.ctes.BlendingMode = MB.ctes.BlendingMode.One,
             dstAlpha: MB.ctes.BlendingMode = MB.ctes.BlendingMode.Zero) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha); // TODO: Cache
         };
         /**
@@ -510,42 +534,44 @@ namespace MB {
      *     machine through a common API.
      */
     export class GlobalState {
-        public static initializeAll() {
-            this.depth = new DepthState();
-            this.culling = new CullingState();
-            this.color = new ColorState();
+        protected _context: GLContext;
+        constructor(context: GLContext) {
+            this._context = context;
+            this.depth = new DepthState(context);
+            this.culling = new CullingState(context);
+            this.color = new ColorState(context);
             this.color.reset();
-            this.stencil = new StencilState();
-            this.blending = new BlendingState();
+            this.stencil = new StencilState(context);
+            this.blending = new BlendingState(context);
         };
-        public static depth: DepthState;
-        public static culling: CullingState;
-        public static color: ColorState;
-        public static stencil: StencilState;
-        public static blending: BlendingState;
+        public depth: DepthState;
+        public culling: CullingState;
+        public color: ColorState;
+        public stencil: StencilState;
+        public blending: BlendingState;
 
-        static _currentLineWidth: number = 1.0;
-        public static setLineWidth(width: number) {
+        _currentLineWidth: number = 1.0;
+        public setLineWidth(width: number) {
             if (width !== this._currentLineWidth) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.lineWidth(width);
                 this._currentLineWidth = width;
             }
         };
 
-        static _viewport: Vector4<number> = new Vector4<number>(0.0, 0.0, 0.0, 0.0);
+        _viewport: Vector4<number> = new Vector4<number>(0.0, 0.0, 0.0, 0.0);
 
-        public static setViewport(viewport: Vector4<number>) {
+        public setViewport(viewport: Vector4<number>) {
             if (this._viewport.isEqual(viewport) === false) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.viewport(viewport.x, viewport.y, viewport.z, viewport.w);
                 this._viewport = viewport.clone();
             }
         };
 
-        static _poligonOffsetEnable: boolean;
-        static _currentPolygonOffsetFactor: number;
-        static _currentPolygonOffsetUnits: number;
+        _poligonOffsetEnable: boolean;
+        _currentPolygonOffsetFactor: number;
+        _currentPolygonOffsetUnits: number;
 
         /**
          * Specifies the scale factors and units to calculate depth values.
@@ -555,9 +581,9 @@ namespace MB {
          * @param {number}  factor [description]
          * @param {number}  units  [description]
          */
-        public static setPolygonOffset(enable: boolean, factor: number, units: number) {
+        public setPolygonOffset(enable: boolean, factor: number, units: number) {
             if (enable) {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.enable(gl.POLYGON_OFFSET_FILL);
                 if (this._currentPolygonOffsetFactor !== factor
                     || this._currentPolygonOffsetUnits !== units ) {
@@ -566,18 +592,18 @@ namespace MB {
                     this._currentPolygonOffsetUnits = units;
                 }
             } else {
-                const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.disable(gl.POLYGON_OFFSET_FILL);
             }
         };
 
-        public static clearBuffers() {
-            const gl = Core.getInstance().getGL();
+        public clearBuffers() {
+            const gl = this._context.gl;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         };
 
-        public static clearAllBuffers() {
-            const gl = Core.getInstance().getGL();
+        public clearAllBuffers() {
+            const gl = this._context.gl;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BITS);
         };
 

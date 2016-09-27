@@ -34,10 +34,11 @@ namespace MB {
          * @param {number} radius Polyhedron radius
          * @param {number} subdivisions Polyhedron subdivisions
          */
-        constructor(verts: Array<number>, el: Array<number>,
+        // TODO: DOC
+        constructor(context: GLContext, verts: Array<number>, el: Array<number>,
             radius: number, subdivisions: number) {
 
-            super();
+            super(context);
 
             this._radius = radius;
             this._subdivisions = subdivisions;

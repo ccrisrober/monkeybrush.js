@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Hello World</title>
-   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+    <!--<link rel="stylesheet" type="text/css" href="./libs/style.css" />-->
 </head>
 <body>
     <div class="spinner" id="spinner">
@@ -15,7 +15,8 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <canvas id="canvas" width="800" height="500"></canvas>
+    <canvas id="canvas" width="250" height="250"></canvas>
+    <canvas id="canvas2" width="250" height="250"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
         precision highp float;
@@ -74,63 +75,55 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")));
-                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
-                this.camera = new MB.Camera2(this.homePoint);
-                this.angle = 0;
-                this.mainShader = "prog";
-                this.identityMatrix = MB.Mat4.identity.clone();
-                this.model = new MB.Mat4();
+                this.color = [0.0, 0.0, 0.0];
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                this.cubito = new MB.Cube(this.context, 15.0);
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "viewPos", "color"]);
-
-                    prog.sendUniform3f("color", 1.0, 0.0, 1.0);
-                    return prog;
-                });
-                this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
-                this.angle += MB.Timer.deltaTime() * 0.001;
-                this.__resize__();
+                this.color[0] = Math.abs(Math.sin(dt));
+                this.color[1] = Math.abs(Math.cos(dt));
+                this.color[2] = Math.abs(Math.sin(dt));
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.model =
-                    this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
-                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                this.cubito.render();
+                this.state.color.setClearColor(MB.Color4.fromColor3(new MB.Color3(
+                    this.color[0], this.color[1], this.color[2]
+                )));
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
             };
             return MyScene;
         }(MB.App));
+        var MyScene2 = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas2")));
+                this.color = [0.0, 0.0, 0.0];
+            };
+            MyScene.prototype.initialize = function () {
+            };
+            MyScene.prototype.update = function (dt) {
+                this.color[0] = Math.abs(Math.cos(dt));
+                this.color[1] = Math.abs(Math.sin(dt));
+                this.color[2] = Math.abs(Math.cos(dt));
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.state.color.setClearColor(MB.Color4.fromColor3(new MB.Color3(
+                    this.color[0], this.color[1], this.color[2]
+                )));
+            };
+            MyScene.prototype.cameraUpdate = function () {
+            };
+            return MyScene;
+        }(MB.App));
+        var myScene;
+        var myScene2;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
+            myScene2 = new MyScene2();
+            myScene2.start();
         };
     </script>
 </body>

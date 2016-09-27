@@ -36,12 +36,13 @@ namespace MB {
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
          */
-        constructor(size: MB.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
-            super(MB.ctes.TextureTarget.Texture2D, options);
+        // TODO: DOC
+        constructor(context: GLContext, size: MB.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
+            super(context, MB.ctes.TextureTarget.Texture2D, options);
 
             this._size = size;
 
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._offsets_ = options.offsets;
 
             // TODO: Support compression
@@ -125,14 +126,14 @@ namespace MB {
 
         public setInmutable(size: MB.Vect2 = this._size) {
             this.bind();
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.texStorage2D(this.target, 1, gl.RGB8, size.x, size.y);
             this.unbind();
         }
 
         public resize(size: MB.Vect2) {
             if (!size.exactEquals(this._size)) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 this.bind();
                 gl.texImage2D(
                     this._target,

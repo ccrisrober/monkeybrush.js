@@ -34,8 +34,9 @@ namespace MB {
          * @param {number} slices: Number of steps around sphere.
          * @param {number} stacks: Number of vertically on the sphere.
          */
-        constructor(radius: number, slices: number = 64, stacks: number = 64) {
-            super();
+        // TODO: DOC
+        constructor(context: GLContext, radius: number, slices: number = 64, stacks: number = 64) {
+            super(context);
 
             this._radius = radius;
             this._slices = slices;

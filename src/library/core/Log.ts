@@ -23,7 +23,7 @@
 namespace MB {
     /**
     * This class wraps a logger
-    * @class core.Logger
+    * @class Logger
     */
     export var Log = function _log(logName: string): log4javascript.Logger {
         let Log: log4javascript.Logger = log4javascript.getLogger(logName);

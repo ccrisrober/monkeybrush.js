@@ -40,10 +40,10 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex = new MBX.VideoTexture(MB.ResourceMap.retrieveAsset("video"));
+                this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"));
 
                 MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
                     prog.addShader("../shaders/cross_stich.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
@@ -52,23 +52,24 @@
                     console.log(prog);
                     return prog;
                 });
+                this.postProcess = new MB.PostProcess(this.context);
             };
             // TODO: NO FUNCIONA
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
                 this.tex.bind(0);
 
-                var canvas = MB.Core.getInstance().canvas();
+                var canvas = this.canvas;
 
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1f("stich", this.text.stich);
                 prog.sendUniform2f("size", canvas.width, canvas.height);
-                MB.PostProcess.render();
+                this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "stich", 0.1, 10.0);

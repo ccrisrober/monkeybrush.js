@@ -36,14 +36,17 @@ namespace MB {
          * @type {WebGLBuffer}
          */
         protected _handle: WebGLBuffer;
+        protected _context: GLContext;
         protected _index: number;
         // TODO: A futuro usar el Program y no
         //         WebGLProgram (cachear ubo también en Program ...)
-        constructor(prog: WebGLProgram, name: string, blockBindIdx: number) {
-            if (!VertexUBO.isSupported()) {
+        // TODO: DOC
+        constructor(context: GLContext, prog: WebGLProgram, name: string, blockBindIdx: number) {
+            if (!VertexUBO.isSupported(context)) {
                 throw new Error("VertexUBO undefined with current context");
             }
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._handle = gl.createBuffer();
             const index = gl.getUniformBlockIndex(prog, name);
             if (index === 4294967295) {
@@ -56,7 +59,7 @@ namespace MB {
          * Bind Uniform Buffer Object.
          */
         public bind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBuffer(gl.UNIFORM_BUFFER, this._handle);
         };
         /**
@@ -64,7 +67,7 @@ namespace MB {
          * @param {Float32Array} data [description]
          */
         public update(data: Float32Array) {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBuffer(gl.UNIFORM_BUFFER, this._handle);
             gl.bufferData(gl.UNIFORM_BUFFER, data, gl.STATIC_DRAW);
             gl.bindBuffer(gl.UNIFORM_BUFFER, null);
@@ -74,7 +77,7 @@ namespace MB {
          * Unbind Uniform Buffer Object.
          */
         public unbind() {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBuffer(gl.UNIFORM_BUFFER, null);
         };
         /**
@@ -82,15 +85,16 @@ namespace MB {
          */
         public destroy() {
             this.bind();
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.deleteBuffer(this._handle);
         };
         /**
          * Returns if the current context allows use UBO.
          * @return {boolean} True if allows use UBO.
          */
-        public static isSupported(): boolean {
-            const gl: WebGL2RenderingContext = Core.getInstance().getGL();
+        // TODO: DOC
+        public static isSupported(context: GLContext): boolean {
+            const gl: WebGL2RenderingContext = context.gl;
             return gl instanceof WebGL2RenderingContext;
         };
     };

@@ -46,8 +46,11 @@ namespace MB {
          * @type {number}
          */
         protected _attachment: number;
-        constructor(size: MB.Vect2, format: number, attachment: number, samples: number = 4) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+
+        protected _context: GLContext;
+        constructor(context: GLContext, size: MB.Vect2, format: number, attachment: number, samples: number = 4) {
+            this._context = context;
+            const gl: WebGL2RenderingContext = this._context.gl;
             this._handler = gl.createRenderbuffer();
             this._size = size;
             this._format = format;
@@ -58,21 +61,21 @@ namespace MB {
          * Bind renderbuffer.
          */
         public bind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
         };
         /**
          * Unbind render buffer.
          */
         public unbind() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindRenderbuffer(gl.RENDERBUFFER, null);
         };
         /**
          * Destroy renderbuffer texture.
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.deleteRenderbuffer(this._handler);
         };
         public abstract resize(size: MB.Vect2);

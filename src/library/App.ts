@@ -29,13 +29,17 @@ namespace MB {
         protected _stats: Stats;
         protected _gui: dat.GUI;
         protected _webglVersion: number;
+        protected _state: GlobalState;
 
         protected text: any;
-
+        protected _context: GLContext;
+        public get context(): GLContext {
+            return this._context;
+        };
         constructor(title: string = null, context: GLContext, text: Object = {}) {
             MB.Log.info("init app");
-            MB.Core._context = context;
-            MB.Core.getInstance();
+            this._context = context;
+            this._state = new GlobalState(context);
 
             this._webglVersion = context.version;
             this.text = text;
@@ -44,6 +48,9 @@ namespace MB {
 
             this.__init__(text);
         };
+        public get state(): GlobalState {
+            return this._state;
+        }
 
         public webglVersion(): number {
             return this._webglVersion;
@@ -62,8 +69,19 @@ namespace MB {
         abstract update(dt: number);
         abstract draw();
 
+        public clearColorAndDepth() {
+            this._state.clearBuffers();
+        };
         private __init__(text) {
-            MB.Core.getInstance().initialize([1.0, 1.0, 1.0, 1.0]);
+            let bgColor = Color4.fromColor3(Color3.Black);
+            Input.initialize();
+
+            this._state.depth.setStatus(true);
+            this._state.depth.setFunc(ctes.ComparisonFunc.Less);
+
+            this._state.culling.setStatus(true);
+            this._state.blending.setStatus(false);
+            this._state.color.setClearColor(bgColor);
 
             this._gui = new dat.GUI();
             text["resume"] = true;
@@ -101,7 +119,8 @@ namespace MB {
                 self.initialize();
 
                 // Remove loader css3 window
-                document.getElementById("spinner").remove();
+                var spinner = document.getElementById("spinner");
+                if (spinner) spinner.remove();
 
                 // MB.Core.getInstance().canvas().addEventListener("dblclick", function(){
                 //     var el: any = MB.Core.getInstance().canvas();
@@ -153,10 +172,12 @@ namespace MB {
             MB.Log.debug("RESUME");
             this._resume = true;
         };
+        get canvas(): HTMLCanvasElement {
+            return this.context.canvas;
+        };
         protected _resume: boolean = true;
-
         protected __resize__() {
-            let canvas: HTMLCanvasElement = MB.Core.getInstance().canvas();
+            let canvas: HTMLCanvasElement = this.canvas;
             let realToCSSPixels = window.devicePixelRatio || 1;
 
             // Lookup the size the browser is displaying the canvas in CSS pixels
@@ -174,7 +195,7 @@ namespace MB {
                 canvas.height = displayHeight;
 
                 // Set the viewport to match
-                MB.GlobalState.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
+                this.state.setViewport(new Vector4<number>(0, 0, canvas.width, canvas.height));
 
                 this.cameraUpdate();
             }

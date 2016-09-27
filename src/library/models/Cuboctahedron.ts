@@ -30,7 +30,8 @@ namespace MB {
          * @param {number} radius: Cuboctahedron radius
          * @param {number} subdivisions: Cuboctahedron subdivisions from base icosphere
          */
-        constructor(radius: number = 1.0, subdivisions: number = 1) {
+        // TODO: DOC
+        constructor(context: GLContext, radius: number = 1.0, subdivisions: number = 1) {
             subdivisions = Math.floor(subdivisions);
 
             if (subdivisions > 10) {
@@ -38,7 +39,7 @@ namespace MB {
                 return;
             }
 
-            super([
+            super(context, [
                  // Front
                -radius, -radius, radius,
                 radius, -radius, radius,

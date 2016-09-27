@@ -30,8 +30,9 @@ namespace MB {
          * Cube constructor
          * @param {number = 1.0} side: Size length
          */
-        constructor(side: number = 1.0) {
-            super();
+        // TODO: DOC
+        constructor(context: GLContext, side: number = 1.0) {
+            super(context);
 
             this._side = side;
             const side2 = side / 2.0;

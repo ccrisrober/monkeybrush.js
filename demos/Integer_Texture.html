@@ -56,7 +56,7 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 MB.ProgramManager.addWithFun("progF", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
                     prog.addShader("#version 300 es\n            precision highp float;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler2D tex;\n            uniform bool op;\n\n            void main() {\n                vec4 floatColor = texture(tex, uv);\n                if (op) {\n                    floatColor = floatColor / 64.0 * 64.0;\n                }\n                fragColor = vec4(floatColor);\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
                     prog._compile();
@@ -66,7 +66,7 @@
                     return prog;
                 });
                 MB.ProgramManager.addWithFun("progI", function () {
-                    var prog = new MB.Program();
+                    var prog = new MB.Program(_this.context);
                     prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
                     prog.addShader("#version 300 es\n            precision highp float;\n            precision highp usampler2D;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform usampler2D tex;\n            uniform bool op;\n\n            void main() {\n                vec2 uvv = vec2(1.0 - uv.x, uv.y);\n                uvec4 intColor = texture(tex, uvv);\n                if (!op) {\n                    intColor = intColor / 64u * 64u;\n                }\n                fragColor = vec4(intColor) / 255.0;\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
                     prog._compile();
@@ -76,7 +76,7 @@
                     return prog;
                 });
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, myTexture, {
                     flipY: true,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -84,7 +84,7 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge,
                     autoMipMap: true
                 });
-                this.tex2d2 = new MB.Texture2D(myTexture, {
+                this.tex2d2 = new MB.Texture2D(this.context, myTexture, {
                     flipY: false,
                     internalFormat: MB.ctes.PixelFormat.RGBA8UI,
                     format: MB.ctes.PixelFormat.RGBA_INTEGER,
@@ -93,10 +93,11 @@
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
+                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
-                var canvas = MB.Core.getInstance().canvas();
+                var canvas = this.canvas;
                 this.viewports[0] = new MB.Vector4(0, 0, canvas.width / 2, canvas.height / 2);
                 this.viewports[1] = new MB.Vector4(canvas.width / 2, 0, canvas.width / 2, canvas.height / 2);
                 this.viewports[2] = new MB.Vector4(canvas.width / 2, canvas.height / 2, canvas.width / 2, canvas.height / 2);
@@ -107,7 +108,7 @@
                 if (this.drawTick === false) {
                     return;
                 }
-                MB.Core.getInstance().clearColorAndDepth();
+                this.clearColorAndDepth();
                 var prog, vp;
                 // Floating textures
                 prog = MB.ProgramManager.get("progF");
@@ -117,13 +118,13 @@
                 // Top-left
                 prog.sendUniform1b("op", false);
                 vp = this.viewports[3];
-                MB.GlobalState.setViewport(vp);
-                MB.PostProcess.render();
+                this.state.setViewport(vp);
+                this.postProcess.render();
                 // Bottom-left
                 prog.sendUniform1b("op", true);
                 vp = this.viewports[0];
-                MB.GlobalState.setViewport(vp);
-                MB.PostProcess.render();
+                this.state.setViewport(vp);
+                this.postProcess.render();
                 // Integer textures
                 prog = MB.ProgramManager.get("progI");
                 prog.use();
@@ -132,13 +133,13 @@
                 // Bottom-right
                 prog.sendUniform1b("op", false);
                 vp = this.viewports[1];
-                MB.GlobalState.setViewport(vp);
-                MB.PostProcess.render();
+                this.state.setViewport(vp);
+                this.postProcess.render();
                 // Top-right
                 prog.sendUniform1b("op", true);
                 vp = this.viewports[2];
-                MB.GlobalState.setViewport(vp);
-                MB.PostProcess.render();
+                this.state.setViewport(vp);
+                this.postProcess.render();
                 this.text.resume = false;
             };
             MyScene.prototype.cameraUpdate = function () {

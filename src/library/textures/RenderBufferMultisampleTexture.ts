@@ -21,10 +21,10 @@
 
 namespace MB {
     export class RenderBufferMultisampleTexture extends RenderBuffer {
-        constructor(size: MB.Vect2, format: number, attachment: number, samples: number = 4) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
-            super(size, format, attachment);
+        constructor(context: GLContext, size: MB.Vect2, format: number, attachment: number, samples: number = 4) {
+            super(context, size, format, attachment);
 
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
             gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, this._format, this._size.x, this._size.y);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, this._handler);
@@ -32,7 +32,7 @@ namespace MB {
         };
         public resize(size: MB.Vect2) {
             if (!size.exactEquals(this._size)) {
-                const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+                const gl: WebGL2RenderingContext = this._context.gl;
                 this.bind();
                 gl.renderbufferStorageMultisample(gl.RENDERBUFFER, this._format, size.x, size.y, this._samples);
                 this.unbind();

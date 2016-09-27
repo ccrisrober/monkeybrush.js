@@ -38,10 +38,13 @@ namespace MBX {
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
          */
-        constructor(domCanvas: HTMLCanvasElement, options: MB.TexOptions = {}, onSuccess: () => void = null) {
-            super(MB.ctes.TextureTarget.Texture2D, options);
+        // TODO: DOC
+        constructor(context: MB.GLContext, domCanvas: HTMLCanvasElement, 
+            options: MB.TexOptions = {}, onSuccess: () => void = null)
+        {
+            super(context, MB.ctes.TextureTarget.Texture2D, options);
 
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
 
             this._domCanvas = domCanvas;
 
@@ -73,7 +76,7 @@ namespace MBX {
          */
         public update() {
             this.bind();
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+            const gl: WebGL2RenderingContext = this._context.gl;
             gl.texImage2D(
                 this._target,
                 this._level,

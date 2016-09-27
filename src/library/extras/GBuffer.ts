@@ -35,24 +35,24 @@ namespace MBX {
          * GBuffer constructor
          * @param {MB.Vect2} size GBuffer size
          */
-        constructor(size: MB.Vect2) {
-            const gl: WebGL2RenderingContext = MB.Core.getInstance().getGL();
+        // TODO: DOC
+        constructor(context: MB.GLContext, size: MB.Vect2) {
 
             const configTex: MB.TexOptions = {
                 internalFormat: MB.ctes.PixelFormat.RGB,
                 format: MB.ctes.PixelFormat.RGB,
-                type: gl.FLOAT,
+                type: MB.ctes.DataType.Float,
                 minFilter: MB.ctes.TextureFilter.Nearest,
                 magFilter: MB.ctes.TextureFilter.Nearest
             };
 
-            this.Framebuffer = new MB.Framebuffer([
+            this.Framebuffer = new MB.Framebuffer(context, [
                 // Position color buffer
-                new MB.SimpleTexture2D(size, configTex),
+                new MB.SimpleTexture2D(context, size, configTex),
                 // Normal color buffer
-                new MB.SimpleTexture2D(size, configTex),
+                new MB.SimpleTexture2D(context, size, configTex),
                 // Color + Specular color buffer
-                new MB.SimpleTexture2D(size, configTex)
+                new MB.SimpleTexture2D(context, size, configTex)
             ], size, true, true, {});
 
             MB.Log.debug("GBuffer created");
