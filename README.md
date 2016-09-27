@@ -35,24 +35,6 @@ gulp typescript # Generate definition file
 ## TODO
 
 ### Models
-- [x] Add quad/plane model
-- [x] Add cube model
-- [x] Add sphere model
-- [x] Add torus model
-- [x] Add cone model
-- [x] Add prism model
-- [x] Add cylinder model
-- [x] Add disc model
-- [x] Add polyhedron abstract model
-- [x] Add octahedron model
-- [x] Add icosphere model
-- [x] Add tetrahedron model
-- [x] Add dodecahedron model
-- [x] Add parametric geometry model
-- [x] Add lathe model
-- [x] Add capsule model
-- [x] Add object parser (faces: x1/y1/z1 x2/y2/z2 x3/y3/z3)
-- [x] Add custom model (indices, vertices, normals and texcoords list)
 - [ ] Add glTF (https://github.com/KhronosGroup/glTF)
 
 ### Cameras
@@ -63,76 +45,20 @@ gulp typescript # Generate definition file
 - [ ] Cube Camera
 
 ### Shading lighting
-- [x] Phong shading
-- [x] Blinn-Phong shading
-- [x] Gaussian shading
-- [x] Oren-Nayar shading
-- [x] Benckmann shading
 - [ ] Ward shading
 - [ ] Cook-Torrance shading
 
-### Textures
-- [x] Add texture 2D
-- [x] Add texture 2D array
-- [x] Add texture 3D
-- [x] Add framebuffer
-- [x] Inmutable textures
-- [x] Video texture
-- [x] Webcam texture
-- [x] Compressed texture
-- [x] Canvas texture
-
-### WebGL2
-- [x] Transform feedback
-- [x] Occlusion Query
-- [x] Query object
-- [x] Sampler object
-- [x] Sync object
-- [x] UBO (projection, view example)
-
 ### Maths
-- [x] Vect2
-- [x] Vect3
-- [x] Vect3
-- [x] Quaternion
-- [x] Mat2
-- [x] Mat3
-- [x] Mat4
-- [x] Box2D
-- [x] Box3D
-- [x] DoubleLinkedList (List)
-- [x] Transpose matrix GLSL (WebGL1)
-- [x] Inverse matrix GLSL (WebGL1)
-- [x] Spline2D
-- [x] Spline3D
 - [ ] SIMD instructions
 
 ### Resources
 - [x] Audio supporting (Background)
 - [x] Audio supporting (SimpleAudio)
 - [x] HDR images supporting
-- [x] Image upload
-- [x] Skybox supporting
-- [x] Video loader
-- [x] Webcam loader
 - [ ] Fonts
 - [ ] Generate video capture
 
-### Lights
-- [x] Directional Light
-- [x] Point Light
-- [x] Spot Light
-- [x] Ambient Light
-- [x] Hemispheric Light
-
 ### Core
-- [x] App class
-- [x] Key input
-- [x] Mouse input
-- [x] Easing functions
-- [x] VertexArray class
-- [x] Instancing
-- [ ] GlobalState
 - [ ] Sprites (HUD)
 - [ ] Picking
 - [ ] Multi context
@@ -146,14 +72,7 @@ gulp typescript # Generate definition file
 - [ ] Array remove by index
 
 ### Others
-- [x] Skybox
-- [x] Easing functions
-- [x] Noise generator
-- [x] Clock
-- [x] Billboard
 - [x] WebVR supporting
-- [x] Enconding
-
 
 ### Development
 - [x] Grunt integration (deprecated)
@@ -165,22 +84,7 @@ gulp typescript # Generate definition file
 - [ ] MonkeyBrush-frags (Two triangles rendering!) (https://github.com/maldicion069/monkeybrush-frags)
 - [ ] ESDOC integration
 
-### Demos
-- [x] Rim Lighting
-- [x] Deferred Shading
-- [x] Tone mapping
-- [x] Skybox reflection and refraction
-- [x] Spherical Harmonics
-- [x] Heightmap
-- [ ] Texture LOD DEMO
-- [ ] Normal Mapping
-- [ ] Bump Mapping
-- [ ] Tiled Deferred Shading
-- [ ] SSAO
-- [ ] HDR
-- [ ] Basic Transparency
-- [ ] Woit Transparency
-- [ ] Simple Shadow
+### Others
 - [ ] Create "shadertoy" for desktop
 
 ### Help
@@ -189,3 +93,4 @@ gulp typescript # Generate definition file
 - (09/17/2016) Release first version
 - (09/19/2016) Completed Depth, Color, Stencil, Culling and Blending in GlobalState.
 - (09/20/2016) Added VertexBufferGeometry to models
+- (09/26/2016) Removed Core. GLContext time.
