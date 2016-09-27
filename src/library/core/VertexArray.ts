@@ -31,10 +31,10 @@ namespace MB {
          */
         protected _handler: WebGLVertexArrayObject;
         /**
-         * Vertex array constructor
+         * Vertex array constructor.
+         * @param {GLContext} context [description]
          * @param {WebGLVertexArrayObject} vao [description]
          */
-        // TODO: DOC
         constructor(context: GLContext) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;
@@ -84,7 +84,7 @@ namespace MB {
             }
         }
         /**
-         * Destroy vertex array
+         * Destroy vertex array.
          */
         public destroy() {
             const gl: WebGL2RenderingContext = this._context.gl;
@@ -99,10 +99,10 @@ namespace MB {
             }
         }
         /**
-         * Check if current context supports VertexArray
+         * Check if current context supports VertexArray.
+         * @param {GLContext} context [description]
          * @return {boolean} True if current context supports VertexArray
          */
-        // TODO: DOC
         public static isSupported(context: GLContext): boolean {
             const gl: WebGL2RenderingContext = context.gl;
             return gl instanceof WebGL2RenderingContext ||

@@ -1695,7 +1695,8 @@ declare namespace MB {
         protected _geometry: MB.VertexBufferGeometry;
         protected _context: GLContext;
         /**
-         * Drawable constructor
+         * Drawable constructor.
+         * @param {GLContext} context [description]
          */
         constructor(context: GLContext);
         createWireframe(): void;
@@ -1742,7 +1743,8 @@ declare namespace MB {
         protected _radius: number;
         protected _subdivisions: number;
         /**
-         * Polyhedron abstract constructor
+         * Polyhedron abstract constructor.
+         * @param {GLContext} context [description]
          * @param {Array<number>} verts List of vertices
          * @param {Array<number>} el List of indices
          * @param {number} radius Polyhedron radius
@@ -1766,7 +1768,8 @@ declare namespace MB {
         protected _createTopBase: boolean;
         protected _createBottomBase: boolean;
         /**
-         * Cone constructor
+         * Cone constructor.
+         * @param {GLContext} context [description]
          * @param {number} bottomRadius: Cone bottom radius
          * @param {number} topRadius: Cone top radius
          * @param {number} height: Cone height
@@ -2410,11 +2413,477 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    /**
+     * BufferAttribute class
+     * @class BufferAttribute
+     */
+    class BufferAttribute {
+        protected _arr: ArrayLike<number>;
+        protected _size: number;
+        /**
+         * BufferAttribute constructor
+         * @param {ArrayLike<number>} arr  [description]
+         * @param {number}            size [description]
+         */
+        constructor(arr: ArrayLike<number>, size: number);
+        /**
+         * Return buffer attribute inner array
+         * @return {ArrayLike<number>} [description]
+         */
+        array: ArrayLike<number>;
+        /**
+         * Return how many items of the inner array are
+         *     associated with a particular vect[size].
+         * @return {number} [description]
+         */
+        size: number;
+        /**
+         * Return total buffer number of elements in the inner array.
+         * @return {number} [description]
+         */
+        count: number;
+        /**
+         * Return x value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getX(index: number): number;
+        /**
+         * Return y value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getY(index: number): number;
+        /**
+         * Return z value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getZ(index: number): number;
+        /**
+         * Return w value from specifies vect[size] index
+         * @param  {number} index [description]
+         * @return {number}       [description]
+         */
+        getW(index: number): number;
+        /**
+         * Return [x, y] values from specifies vect[size] index
+         * @param  {number}        index [description]
+         * @return {ArrayLike<number>}       [description]
+         */
+        getXY(index: number): ArrayLike<number>;
+        /**
+         * Return [x, y, z] values from specifies vect[size] index
+         * @param  {number}        index [description]
+         * @return {ArrayLike<number>}       [description]
+         */
+        getXYZ(index: number): ArrayLike<number>;
+        /**
+         * Return [x, y, z, w] values from specifies vect[size] index
+         * @param  {number}        index [description]
+         * @return {ArrayLike<number>}       [description]
+         */
+        getXYZW(index: number): ArrayLike<number>;
+        /**
+         * Sets the x value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setX(index: number, value: number): void;
+        /**
+         * Sets the y value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setY(index: number, value: number): void;
+        /**
+         * Sets the z value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setZ(index: number, value: number): void;
+        /**
+         * Sets the w value from specifies vect[size] index
+         * @param {number} index [description]
+         * @param {number} value [description]
+         */
+        setW(index: number, value: number): void;
+        /**
+         * Sets the x and y values from specifies vect[size] index
+         * @param {number} index  [description]
+         * @param {number} xValue [description]
+         * @param {number} yValue [description]
+         */
+        setXY(index: number, xValue: number, yValue: number): void;
+        /**
+         * Sets the x, y and z values from specifies vect[size] index
+         * @param {number} index  [description]
+         * @param {number} xValue [description]
+         * @param {number} yValue [description]
+         * @param {number} zValue [description]
+         */
+        setXYZ(index: number, xValue: number, yValue: number, zValue: number): void;
+        /**
+         * Sets the x, y, z and w values from specifies vect[size] index
+         * @param {number} index  [description]
+         * @param {number} xValue [description]
+         * @param {number} yValue [description]
+         * @param {number} zValue [description]
+         * @param {number} wValue [description]
+         */
+        setXYZW(index: number, xValue: number, yValue: number, zValue: number, wValue: number): void;
+    }
+}
+
+declare namespace MB {
+    /**
+     * Capabilities namespace
+     * @namespace Capabilities
+     */
+    namespace Capabilities {
+        /**
+         * Return the maximum anisotropy value from current WebGL implementation.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum anisotropy value.
+         */
+        function getMaxAnisotropy(context: GLContext): number;
+        /**
+         * Returns the maximum number of textures permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum textures permitted.
+         */
+        function getMaxTextures(context: GLContext): number;
+        function getMaxVertexTextures(context: GLContext): number;
+        function getMaxTextureSize(context: GLContext): number;
+        function getMaxCubemapSize(context: GLContext): number;
+        function getMaxPrecision(context: GLContext): string;
+        function getMaxDrawBuffers(context: GLContext): number;
+        function getMaxColorAttachments(context: GLContext): number;
+        function isTextureFloat(context: GLContext): boolean;
+    }
+}
+
+declare namespace MB {
+    /**
+     * Color3 class
+     * @class Color3
+     */
+    class Color3 {
+        /**
+         * Internal array that identifies the color values
+         */
+        protected _color: MB.Vect3;
+        /**
+         * Color3 constructor
+         * @param {number} r Red channel
+         * @param {number} g Green channel
+         * @param {number} b Blue channel
+         */
+        constructor(r: number, g: number, b: number);
+        /**
+         * Check if another color is equals than current color.
+         * @param  {Color3}  c Another color
+         * @return {boolean}
+         */
+        isEquals(c: Color3): boolean;
+        /**
+         * [clone description]
+         * @return {Color3} [description]
+         */
+        clone(): Color3;
+        /**
+         * [copy description]
+         * @param  {Color3} c [description]
+         * @return {Color3}   [description]
+         */
+        copy(c: Color3): Color3;
+        /**
+         * Return red channel
+         * @return {number}
+         */
+        /**
+         * Set red channel
+         * @param {number} r New red channel value.
+         */
+        r: number;
+        /**
+         * Return green channel
+         * @return {number}
+         */
+        /**
+         * Set green channel
+         * @param {number} g New green channel value.
+         */
+        g: number;
+        /**
+         * Return blue channel
+         * @return {number}
+         */
+        /**
+         * Set blue channel
+         * @param {number} b New blue channel value.
+         */
+        b: number;
+        /**
+         * Create color for RGB value.
+         * @param  {number} r Red channel value.
+         * @param  {number} g Green channel value.
+         * @param  {number} b Blue channel value.
+         * @return {Color3}    New color
+         */
+        setRGB(r: number, g: number, b: number): Color3;
+        /**
+         * Lerp color between two colors using alpha value.
+         * The parameter alpha is clamped to the range [0, 1].
+         * @param  {Color3} minColor Minimum color.
+         * @param  {Color3} maxColor Maximum color.
+         * @param  {number} alpha    Alpha. Clamped to the range [0, 1].
+         * @return {Color3}          New color generated.
+         */
+        static lerp(minColor: Color3, maxColor: Color3, alpha: number): Color3;
+        /**
+         * Create new color using hexadecimal value.
+         * @param  {number} hex Hexadecimal value.
+         * @return {Color3}          New color generated.
+         */
+        static createFromHex(hex: number): Color3;
+        /**
+         * Create random color
+         * @return {Color3} New color generated.
+         */
+        static getRandomColor(): Color3;
+        /**
+         * Convert current color from gamma to linear range.
+         * @param  {number = 2.2} gammaFactor Gamma factor value
+         * @return {Color3}          New color generated.
+         */
+        gammaToLinear(gammaFactor?: number): Color3;
+        /**
+         * Convert current color from linear to gamma range.
+         * @param  {number = 2.2}         gammaFactor Gamma factor value
+         * @return {Color3}          New color generated.
+         */
+        linearToGamma(gammaFactor?: number): Color3;
+        /**
+         * Return hexadecimal value from current color.
+         * @return {number} Hexadecimal representation of current color.
+         */
+        getHexadecimal(): number;
+        /**
+         * Convert current color to HSL representation.
+         * @return {Color3} New color using HSL representation.
+         */
+        toHSL(): Color3;
+        static fromColor4(color: Color4): Color3;
+        /**
+         * Aqua color
+         * @param {Color3} 0x00FFFF
+         */
+        static Aqua: Color3;
+        /**
+         * Beige color
+         * @param {Color3} 0xF5F5DC
+         */
+        static Beige: Color3;
+        /**
+         * Black color
+         * @param {Color3} 0x000000
+         */
+        static Black: Color3;
+        /**
+         * Blue color
+         * @param {Color3} 0x0000FF
+         */
+        static Blue: Color3;
+        /**
+         * Brown color
+         * @param {Color3} 0xA52A2A
+         */
+        static Brown: Color3;
+        /**
+         * Cyan color
+         * @param {Color3} 0x00FFFF
+         */
+        static Cyan: Color3;
+        /**
+         * Gold color
+         * @param {Color3} 0xFFD700
+         */
+        static Gold: Color3;
+        /**
+         * Indigo color
+         * @param {Color3} 0x4B0082
+         */
+        static Indigo: Color3;
+        /**
+         * Lavender color
+         * @param {Color3} 0xE6E6FA
+         */
+        static Lavender: Color3;
+        /**
+         * Orange color
+         * @param {Color3} 0xFFA500
+         */
+        static Orange: Color3;
+        /**
+         * Pink color
+         * @param {Color3} 0xFFC0CB
+         */
+        static Pink: Color3;
+        /**
+         * Purple color
+         * @param {Color3} 0x800080
+         */
+        static Purple: Color3;
+        /**
+         * Red color
+         * @param {Color3} 0xFF0000
+         */
+        static Red: Color3;
+        /**
+         * Yellow color
+         * @param {Color3} 0xFFFF00
+         */
+        static Yellow: Color3;
+        /**
+         * White color
+         * @param {Color3} 0xFFFFFF
+         */
+        static White: Color3;
+    }
+}
+
+declare namespace MB {
+    /**
+     * Color4 class
+     * @class Color4
+     */
+    class Color4 {
+        /**
+         * Internal array that identifies the color values
+         */
+        protected _color: Vect4;
+        /**
+         * Color4 constructor
+         * @param {number} r Red channel
+         * @param {number} g Green channel
+         * @param {number} b Blue channel
+         * @param {number} a Alpha channel
+         */
+        constructor(r: number, g: number, b: number, a: number);
+        /**
+         * Check if another color is equals than current color.
+         * @param  {Color4}  c Another color
+         * @return {boolean}
+         */
+        isEquals(c: Color4): boolean;
+        /**
+         * [clone description]
+         * @return {Color4} [description]
+         */
+        clone(): Color4;
+        /**
+         * [copy description]
+         * @param  {Color4} c [description]
+         * @return {Color4}   [description]
+         */
+        copy(c: Color4): Color4;
+        /**
+         * Return red channel
+         * @return {number}
+         */
+        /**
+         * Set blue channel
+         * @param {number} r New red channel value.
+         */
+        r: number;
+        /**
+         * Return green channel
+         * @return {number}
+         */
+        /**
+         * Set blue channel
+         * @param {number} g New green channel value.
+         */
+        g: number;
+        /**
+         * Return blue channel
+         * @return {number}
+         */
+        /**
+         * Set blue channel
+         * @param {number} b New blue channel value.
+         */
+        b: number;
+        /**
+         * Return alpha channel
+         * @return {number}
+         */
+        /**
+         * Set alpha channel
+         * @param {number} a New alpha channel value.
+         */
+        a: number;
+        /**
+         * Lerp color between two colors using alpha value.
+         * The parameter alpha is clamped to the range [0, 1].
+         * @param  {Color4} minColor Minimum color.
+         * @param  {Color4} maxColor Maximum color.
+         * @param  {number} alpha    Alpha. Clamped to the range [0, 1].
+         * @return {Color4}          New color.
+         */
+        static lerp(minColor: Color4, maxColor: Color4, alpha: number): Color4;
+        /**
+         * Create color for RGBA value
+         * @param  {number} r Red channel value
+         * @param  {number} g Green channel value
+         * @param  {number} b Blue channel value
+         * @param  {number} a Alpha channel value
+         * @return {Color4}    New color
+         */
+        setRGBA(r: number, g: number, b: number, a: number): Color4;
+        /**
+         * Convert current color to HSL representation.
+         * @return {Color4} New color using HSL representation.
+         */
+        toHSL(): Color4;
+        static fromColor3(color: Color3): Color4;
+    }
+}
+
+declare namespace MB {
     class DOMElement {
         protected _domElem: HTMLElement;
         protected _matrix: Float32Array;
         constructor(domElem?: HTMLElement);
         render(camera: Camera2): void;
+    }
+}
+
+declare namespace MB {
+    /**
+     * Encodings namespace
+     * @namespace Encodings
+     */
+    namespace Encodings {
+        function RGBByte2Float(srcArr: any, srcOff: any, dstArr: any, dstOff: any): void;
+        function RGBByte2Half(srcArr: any, srcOff: any, dstArr: any, dstOff: any): void;
+    }
+}
+
+declare namespace MB {
+    class Extensions {
+        /**
+         * Cache extensions
+         */
+        protected static _extensions: {};
+        /**
+         * Return a specific extension.
+         * @param {GLContext} context [description]
+         * @param {string} name Extension name
+         * @return {any} Extension (null if undefined)
+         */
+        static get(context: GLContext, name: string): any;
     }
 }
 
@@ -2445,6 +2914,7 @@ declare namespace MB {
         constructor(context: GLContext, textures: Array<MB.Texture>, size: MB.Vect2, depth?: boolean, stencil?: boolean, options?: {});
         /**
          * Enable default framebuffer
+         * @param {GLContext} context [description]
          */
         static RestoreDefaultFBO(context: GLContext): void;
         /**
@@ -2485,6 +2955,54 @@ declare namespace MB {
          * Destroy framebuffer and asociated textures.
          */
         destroy(): void;
+    }
+}
+
+declare namespace MB {
+    /**
+     * GeometryFunctions namespace
+     * @namespace GeometryFunctions
+     */
+    namespace GeometryFunctions {
+        /**
+         * Return triangle centroid (geometry center).
+         * @param  {Float32Array} v1 First triangle vertex.
+         * @param  {Float32Array} v2 Second triangle vertex.
+         * @param  {Float32Array} v3 Third triangle vertex.
+         * @return {Float32Array}    Centroid position of given triangle
+         */
+        function triangleCentroid(v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array;
+        /**
+         * Return triangle incenter.
+         * @param  {Float32Array} v1 First triangle vertex.
+         * @param  {Float32Array} v2 Second triangle vertex.
+         * @param  {Float32Array} v3 Third triangle vertex.
+         * @return {Float32Array}    Incenter position of given triangle
+         */
+        function triangleIncenter(v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array;
+        function getConvexHull(points: number[][]): Array<any>;
+        /**
+         * Return a convex hull from 1D points list
+         * @param  {ArrayLike<number>} points Point list
+         * @return {Array<number>}            [description]
+         */
+        function convexHull1D(points: ArrayLike<number>): Array<number>;
+        /**
+         * Return a new vertices and indices list removed orphan vertices
+         * @param  {Array<Array<number>>} positions Positions list
+         * @param  {Array<Array<number>>} indices   Indices list
+         * @return {Object}                         New indices (indices)
+         *                                              and positions (positions)
+         */
+        function removeOrphanVertices(positions: Array<Array<number>>, indices: Array<Array<number>>): Object;
+        /**
+         * Export quad faces to triangle faces
+         * @param  {Array<Array<number>>} faces [description]
+         * @return {Array}                      [description]
+         */
+        function triangulateQuadFace(faces: Array<Array<number>>): Array<Array<number>>;
+        function removeDegerateIndices(indices: number[][]): number[][];
+        function removeDegerateIndicesWithVertices(indices: number[][], vertices: number[][]): number[][];
     }
 }
 
@@ -2901,10 +3419,76 @@ declare namespace MB {
 
 declare namespace MB {
     /**
+     * InstancedInterleavedBuffer class
+     * @class InstancedInterleavedBuffer
+     */
+    class InstancedInterleavedBuffer extends BufferAttribute {
+        protected _meshPerAttr: number;
+        constructor(arr: ArrayLike<number>, stride: number, meshPerAttr?: number);
+        meshPerAttr: number;
+    }
+}
+
+declare namespace MB {
+    /**
     * This class wraps a logger
     * @class Logger
     */
     var Log: log4javascript.Logger;
+}
+
+declare namespace MB {
+    /**
+     * Noise namespace
+     * @namespace Noise
+     */
+    namespace Noise {
+        namespace fractal {
+            function noise(x: number, y: number, z: number, octaves: number, noiseCallback: (x: number, y: number, z: number) => number): number;
+        }
+        namespace worley {
+            function setSeed(seed: number): void;
+            function Euclidean(x: any, y: any, z: any): number[];
+            function Manhattan(x: any, y: any, z: any): number[];
+        }
+        namespace perlin {
+            function setSeed(seed: number): void;
+            function noise(x: number, y: number, z: number): number;
+        }
+        namespace simplex {
+            function setSeed(seed: any): void;
+            function noise(x: any, y: any, z: any): number;
+        }
+    }
+}
+
+declare namespace MB {
+    /**
+    * This class wrap PostProcess effects
+    * @class PostProcess
+    */
+    class PostProcess {
+        protected _context: GLContext;
+        constructor(context: GLContext);
+        /**
+         *
+         */
+        bind(): void;
+        /**
+         *
+         */
+        render(): void;
+        /**
+         * [_planeVAO description]
+         * @type {VertexArray}
+         */
+        protected _planeVAO: MB.VertexArray;
+        /**
+         * [_planeVertexVBO description]
+         * @type {VertexBuffer}
+         */
+        protected _planeVertexVBO: MB.VertexBuffer;
+    }
 }
 
 declare namespace MB {
@@ -3202,6 +3786,7 @@ declare namespace MB {
         /**
          * Attach transform feedback varying to this program.
          * Only call this before linking program.
+         * @param {GLContext} context [description]
          * @param {Array<string>} varyings Array of string that contains varying attributes.
          * @param {MB.ctes.TFMode}        mode     Transform Feedback mode (record mode).
          */
@@ -3234,6 +3819,7 @@ declare namespace MB {
         protected _context: GLContext;
         /**
          * Query constructor.
+         * @param {GLContext} context [description]
          */
         constructor(context: GLContext);
         /**
@@ -3275,6 +3861,61 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    /**
+     * RandomGenerator namespace
+     * @namespace RandomGenerator
+     *
+     * Examples:
+     *
+     *     // Real random [0, 1) (Same interval as Math.random)
+     *     - RandomGenerator.random();
+     *     // [0, 4294967295]
+     *     - RandomGenerator.randomInt();
+     *     // [0,1]
+     *     - RandomGenerator.randomIncl();
+     *     // (0,1)
+     *     - RandomGenerator.randomExcl();
+     *     // [0,1) with 53-bit resolution
+     *     - RandomGenerator.randomLong();
+     *     // [0, 2147483647]
+     *     - RandomGenerator.randomInt31();
+     */
+    namespace RandomGenerator {
+        /**
+         * Init RandomGenerator with custom seed
+         * @param {number} seed New seed number generator
+         */
+        function setSeed(seed: number): void;
+        /**
+         * Generates a random number on [0, 0xffffffff]-interval
+         * @return {number}
+         */
+        function randomInt(): number;
+        /**
+         * Generates a random number on [0, 0x7fffffff]-interval
+         * @return {number}
+         */
+        function randomInt31(): number;
+        /**
+         * Generates a random number on [0, 1]-real-interval
+         * @return {number}
+         */
+        function randomIncl(): number;
+        function random(): number;
+        /**
+         * Generates a random number on (0,1)-real-interval
+         * @return {number}
+         */
+        function randomExcl(): number;
+        /**
+         * Generates a random number on [0,1) with 53-bit resolution
+         * @return {number}
+         */
+        function randomLong(): number;
+    }
+}
+
+declare namespace MB {
     interface SamplerParams {
         minFilter?: number;
         magFilter?: number;
@@ -3299,6 +3940,10 @@ declare namespace MB {
     class Sampler {
         _handler: WebGLSampler;
         protected _context: GLContext;
+        /**
+         * [constructor description]
+         * @param {GLContext} context [description]
+         */
         constructor(context: GLContext);
         /**
          * Set a list of texture parameters (filters, wraps, LOD, ...).
@@ -3361,6 +4006,7 @@ declare namespace MB {
         protected _context: GLContext;
         /**
          * Sync constructor.
+         * @param {GLContext} context [description]
          * @param {ctes.SyncCondition = ctes.SyncCondition.GPUCommandsComplete} condition Sync condition.
          */
         constructor(context: GLContext, condition?: ctes.SyncCondition);
@@ -3410,6 +4056,24 @@ declare namespace MB {
 
 declare namespace MB {
     /**
+     * Timer namespace
+     * @namespace Timer
+     */
+    namespace Timer {
+        /**
+         * Update timer
+         */
+        function update(): void;
+        /**
+         * Return the seconds passed since the last update
+         * @return {number} Delta time
+         */
+        function deltaTime(): number;
+    }
+}
+
+declare namespace MB {
+    /**
      * TransformFeedback class
      * @class TransformFeedback
      *
@@ -3428,6 +4092,7 @@ declare namespace MB {
         protected _context: GLContext;
         /**
          * Create and initializes a TransformFeedback object.
+         * @param {GLContext} context [description]
          */
         constructor(context: GLContext);
         /**
@@ -3473,6 +4138,7 @@ declare namespace MB {
         resume(): void;
         /**
          * Specifies values to record in TransformFeedback buffers.
+         * @param {GLContext} context [description]
          * @param {Program}       program    Program targe object.
          * @param {Array<string>} varyings   [description]
          * @param {ctes.TFMode}        bufferMode [description]
@@ -3592,7 +4258,8 @@ declare namespace MB {
          */
         protected _handler: WebGLVertexArrayObject;
         /**
-         * Vertex array constructor
+         * Vertex array constructor.
+         * @param {GLContext} context [description]
          * @param {WebGLVertexArrayObject} vao [description]
          */
         constructor(context: GLContext);
@@ -3610,11 +4277,12 @@ declare namespace MB {
          */
         unbind(): void;
         /**
-         * Destroy vertex array
+         * Destroy vertex array.
          */
         destroy(): void;
         /**
-         * Check if current context supports VertexArray
+         * Check if current context supports VertexArray.
+         * @param {GLContext} context [description]
          * @return {boolean} True if current context supports VertexArray
          */
         static isSupported(context: GLContext): boolean;
@@ -3634,12 +4302,13 @@ declare namespace MB {
         protected _handler: WebGLBuffer;
         protected _context: GLContext;
         /**
-         * VertexBuffer internal type
+         * VertexBuffer internal type.
          * @type {ctes.BufferType}
          */
         protected _type: ctes.BufferType;
         /**
-         * Vertex buffer constructor
+         * Vertex buffer constructor.
+         * @param {GLContext} context [description]
          * @param {ctes.BufferType = ctes.BufferType.Array}
          */
         constructor(context: GLContext, type?: ctes.BufferType);
@@ -3703,6 +4372,54 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    namespace VBType {
+        const VBVertices: string;
+        const VBNormals: string;
+        const VBTexCoord: string;
+    }
+    /**
+     * VertexBufferGeometry class
+     * @class VertexBufferGeometry
+     */
+    class VertexBufferGeometry {
+        protected _indices: Uint16Array;
+        /**
+         * Hashmap with key as attribute ID and value a BufferGeometry instance
+         * @type {string[BufferAttribute]}
+         */
+        protected _attrs: {
+            [key: string]: BufferAttribute;
+        };
+        /**
+         * Add an attribute to this VertexBufferGeometry.
+         * @param {string}          type      [description]
+         * @param {BufferAttribute} attribute [description]
+         */
+        addAttr(type: string, attribute: BufferAttribute): void;
+        /**
+         * Return attribute with given specified name
+         * @param {string} name Attribute name
+         */
+        getAttr(name: string): BufferAttribute;
+        /**
+         * Remove attribute with given specified name
+         * @param {string} type [description]
+         */
+        removeAttr(type: string): void;
+        setIndex(indices: Uint16Array): void;
+        indices: Uint16Array;
+        normalizeNormals(): void;
+        toNotIndexed(): VertexBufferGeometry;
+        merge(geom2: VertexBufferGeometry, offset?: number): VertexBufferGeometry;
+        /**
+         * Compute the bounding box of the geometry
+         * @return {MB.Box3D} BoundingBox
+         */
+        computingBoundingBox(): MB.Box3D;
+    }
+}
+
+declare namespace MB {
     /**
      * VertexUBO class
      * @class VertexUBO
@@ -3738,6 +4455,7 @@ declare namespace MB {
         destroy(): void;
         /**
          * Returns if the current context allows use UBO.
+         * @param {GLContext} context [description]
          * @return {boolean} True if allows use UBO.
          */
         static isSupported(context: GLContext): boolean;
@@ -3780,155 +4498,6 @@ declare namespace MBX {
         static bind(): void;
         static draw(position: Float32Array, opts: BillboardOpts): void;
         static unbind(): void;
-    }
-}
-
-declare namespace MB {
-    /**
-     * BufferAttribute class
-     * @class BufferAttribute
-     */
-    class BufferAttribute {
-        protected _arr: ArrayLike<number>;
-        protected _size: number;
-        /**
-         * BufferAttribute constructor
-         * @param {ArrayLike<number>} arr  [description]
-         * @param {number}            size [description]
-         */
-        constructor(arr: ArrayLike<number>, size: number);
-        /**
-         * Return buffer attribute inner array
-         * @return {ArrayLike<number>} [description]
-         */
-        array: ArrayLike<number>;
-        /**
-         * Return how many items of the inner array are
-         *     associated with a particular vect[size].
-         * @return {number} [description]
-         */
-        size: number;
-        /**
-         * Return total buffer number of elements in the inner array.
-         * @return {number} [description]
-         */
-        count: number;
-        /**
-         * Return x value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getX(index: number): number;
-        /**
-         * Return y value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getY(index: number): number;
-        /**
-         * Return z value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getZ(index: number): number;
-        /**
-         * Return w value from specifies vect[size] index
-         * @param  {number} index [description]
-         * @return {number}       [description]
-         */
-        getW(index: number): number;
-        /**
-         * Return [x, y] values from specifies vect[size] index
-         * @param  {number}        index [description]
-         * @return {ArrayLike<number>}       [description]
-         */
-        getXY(index: number): ArrayLike<number>;
-        /**
-         * Return [x, y, z] values from specifies vect[size] index
-         * @param  {number}        index [description]
-         * @return {ArrayLike<number>}       [description]
-         */
-        getXYZ(index: number): ArrayLike<number>;
-        /**
-         * Return [x, y, z, w] values from specifies vect[size] index
-         * @param  {number}        index [description]
-         * @return {ArrayLike<number>}       [description]
-         */
-        getXYZW(index: number): ArrayLike<number>;
-        /**
-         * Sets the x value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setX(index: number, value: number): void;
-        /**
-         * Sets the y value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setY(index: number, value: number): void;
-        /**
-         * Sets the z value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setZ(index: number, value: number): void;
-        /**
-         * Sets the w value from specifies vect[size] index
-         * @param {number} index [description]
-         * @param {number} value [description]
-         */
-        setW(index: number, value: number): void;
-        /**
-         * Sets the x and y values from specifies vect[size] index
-         * @param {number} index  [description]
-         * @param {number} xValue [description]
-         * @param {number} yValue [description]
-         */
-        setXY(index: number, xValue: number, yValue: number): void;
-        /**
-         * Sets the x, y and z values from specifies vect[size] index
-         * @param {number} index  [description]
-         * @param {number} xValue [description]
-         * @param {number} yValue [description]
-         * @param {number} zValue [description]
-         */
-        setXYZ(index: number, xValue: number, yValue: number, zValue: number): void;
-        /**
-         * Sets the x, y, z and w values from specifies vect[size] index
-         * @param {number} index  [description]
-         * @param {number} xValue [description]
-         * @param {number} yValue [description]
-         * @param {number} zValue [description]
-         * @param {number} wValue [description]
-         */
-        setXYZW(index: number, xValue: number, yValue: number, zValue: number, wValue: number): void;
-    }
-}
-
-declare namespace MB {
-    /**
-     * Capabilities namespace
-     * @namespace Capabilities
-     */
-    namespace Capabilities {
-        /**
-         * Return the maximum anisotropy value from current WebGL implementation.
-         * @return {number} Maximum anisotropy value.
-         */
-        function getMaxAnisotropy(context: GLContext): number;
-        /**
-         * Returns the maximum number of textures permitted.
-         * @return {number} Maximum textures permitted.
-         */
-        function getMaxTextures(context: GLContext): number;
-        function getMaxVertexTextures(context: GLContext): number;
-        function getMaxTextureSize(context: GLContext): number;
-        function getMaxCubemapSize(context: GLContext): number;
-        function getMaxPrecision(context: GLContext): string;
-        function getMaxDrawBuffers(context: GLContext): number;
-        function getMaxColorAttachments(context: GLContext): number;
-        function isTextureFloat(context: GLContext): boolean;
     }
 }
 
@@ -3984,294 +4553,6 @@ declare namespace MB {
          * @return {number} Delta time.
          */
         delta(): number;
-    }
-}
-
-declare namespace MB {
-    /**
-     * Color3 class
-     * @class Color3
-     */
-    class Color3 {
-        /**
-         * Internal array that identifies the color values
-         */
-        protected _color: MB.Vect3;
-        /**
-         * Color3 constructor
-         * @param {number} r Red channel
-         * @param {number} g Green channel
-         * @param {number} b Blue channel
-         */
-        constructor(r: number, g: number, b: number);
-        /**
-         * Check if another color is equals than current color.
-         * @param  {Color3}  c Another color
-         * @return {boolean}
-         */
-        isEquals(c: Color3): boolean;
-        /**
-         * [clone description]
-         * @return {Color3} [description]
-         */
-        clone(): Color3;
-        /**
-         * [copy description]
-         * @param  {Color3} c [description]
-         * @return {Color3}   [description]
-         */
-        copy(c: Color3): Color3;
-        /**
-         * Return red channel
-         * @return {number}
-         */
-        /**
-         * Set red channel
-         * @param {number} r New red channel value.
-         */
-        r: number;
-        /**
-         * Return green channel
-         * @return {number}
-         */
-        /**
-         * Set green channel
-         * @param {number} g New green channel value.
-         */
-        g: number;
-        /**
-         * Return blue channel
-         * @return {number}
-         */
-        /**
-         * Set blue channel
-         * @param {number} b New blue channel value.
-         */
-        b: number;
-        /**
-         * Create color for RGB value.
-         * @param  {number} r Red channel value.
-         * @param  {number} g Green channel value.
-         * @param  {number} b Blue channel value.
-         * @return {Color3}    New color
-         */
-        setRGB(r: number, g: number, b: number): Color3;
-        /**
-         * Lerp color between two colors using alpha value.
-         * The parameter alpha is clamped to the range [0, 1].
-         * @param  {Color3} minColor Minimum color.
-         * @param  {Color3} maxColor Maximum color.
-         * @param  {number} alpha    Alpha. Clamped to the range [0, 1].
-         * @return {Color3}          New color generated.
-         */
-        static lerp(minColor: Color3, maxColor: Color3, alpha: number): Color3;
-        /**
-         * Create new color using hexadecimal value.
-         * @param  {number} hex Hexadecimal value.
-         * @return {Color3}          New color generated.
-         */
-        static createFromHex(hex: number): Color3;
-        /**
-         * Create random color
-         * @return {Color3} New color generated.
-         */
-        static getRandomColor(): Color3;
-        /**
-         * Convert current color from gamma to linear range.
-         * @param  {number = 2.2} gammaFactor Gamma factor value
-         * @return {Color3}          New color generated.
-         */
-        gammaToLinear(gammaFactor?: number): Color3;
-        /**
-         * Convert current color from linear to gamma range.
-         * @param  {number = 2.2}         gammaFactor Gamma factor value
-         * @return {Color3}          New color generated.
-         */
-        linearToGamma(gammaFactor?: number): Color3;
-        /**
-         * Return hexadecimal value from current color.
-         * @return {number} Hexadecimal representation of current color.
-         */
-        getHexadecimal(): number;
-        /**
-         * Convert current color to HSL representation.
-         * @return {Color3} New color using HSL representation.
-         */
-        toHSL(): Color3;
-        static fromColor4(color: Color4): Color3;
-        /**
-         * Aqua color
-         * @param {Color3} 0x00FFFF
-         */
-        static Aqua: Color3;
-        /**
-         * Beige color
-         * @param {Color3} 0xF5F5DC
-         */
-        static Beige: Color3;
-        /**
-         * Black color
-         * @param {Color3} 0x000000
-         */
-        static Black: Color3;
-        /**
-         * Blue color
-         * @param {Color3} 0x0000FF
-         */
-        static Blue: Color3;
-        /**
-         * Brown color
-         * @param {Color3} 0xA52A2A
-         */
-        static Brown: Color3;
-        /**
-         * Cyan color
-         * @param {Color3} 0x00FFFF
-         */
-        static Cyan: Color3;
-        /**
-         * Gold color
-         * @param {Color3} 0xFFD700
-         */
-        static Gold: Color3;
-        /**
-         * Indigo color
-         * @param {Color3} 0x4B0082
-         */
-        static Indigo: Color3;
-        /**
-         * Lavender color
-         * @param {Color3} 0xE6E6FA
-         */
-        static Lavender: Color3;
-        /**
-         * Orange color
-         * @param {Color3} 0xFFA500
-         */
-        static Orange: Color3;
-        /**
-         * Pink color
-         * @param {Color3} 0xFFC0CB
-         */
-        static Pink: Color3;
-        /**
-         * Purple color
-         * @param {Color3} 0x800080
-         */
-        static Purple: Color3;
-        /**
-         * Red color
-         * @param {Color3} 0xFF0000
-         */
-        static Red: Color3;
-        /**
-         * Yellow color
-         * @param {Color3} 0xFFFF00
-         */
-        static Yellow: Color3;
-        /**
-         * White color
-         * @param {Color3} 0xFFFFFF
-         */
-        static White: Color3;
-    }
-}
-
-declare namespace MB {
-    /**
-     * Color4 class
-     * @class Color4
-     */
-    class Color4 {
-        /**
-         * Internal array that identifies the color values
-         */
-        protected _color: Vect4;
-        /**
-         * Color4 constructor
-         * @param {number} r Red channel
-         * @param {number} g Green channel
-         * @param {number} b Blue channel
-         * @param {number} a Alpha channel
-         */
-        constructor(r: number, g: number, b: number, a: number);
-        /**
-         * Check if another color is equals than current color.
-         * @param  {Color4}  c Another color
-         * @return {boolean}
-         */
-        isEquals(c: Color4): boolean;
-        /**
-         * [clone description]
-         * @return {Color4} [description]
-         */
-        clone(): Color4;
-        /**
-         * [copy description]
-         * @param  {Color4} c [description]
-         * @return {Color4}   [description]
-         */
-        copy(c: Color4): Color4;
-        /**
-         * Return red channel
-         * @return {number}
-         */
-        /**
-         * Set blue channel
-         * @param {number} r New red channel value.
-         */
-        r: number;
-        /**
-         * Return green channel
-         * @return {number}
-         */
-        /**
-         * Set blue channel
-         * @param {number} g New green channel value.
-         */
-        g: number;
-        /**
-         * Return blue channel
-         * @return {number}
-         */
-        /**
-         * Set blue channel
-         * @param {number} b New blue channel value.
-         */
-        b: number;
-        /**
-         * Return alpha channel
-         * @return {number}
-         */
-        /**
-         * Set alpha channel
-         * @param {number} a New alpha channel value.
-         */
-        a: number;
-        /**
-         * Lerp color between two colors using alpha value.
-         * The parameter alpha is clamped to the range [0, 1].
-         * @param  {Color4} minColor Minimum color.
-         * @param  {Color4} maxColor Maximum color.
-         * @param  {number} alpha    Alpha. Clamped to the range [0, 1].
-         * @return {Color4}          New color.
-         */
-        static lerp(minColor: Color4, maxColor: Color4, alpha: number): Color4;
-        /**
-         * Create color for RGBA value
-         * @param  {number} r Red channel value
-         * @param  {number} g Green channel value
-         * @param  {number} b Blue channel value
-         * @param  {number} a Alpha channel value
-         * @return {Color4}    New color
-         */
-        setRGBA(r: number, g: number, b: number, a: number): Color4;
-        /**
-         * Convert current color to HSL representation.
-         * @return {Color4} New color using HSL representation.
-         */
-        toHSL(): Color4;
-        static fromColor3(color: Color3): Color4;
     }
 }
 
@@ -4550,32 +4831,6 @@ declare namespace MBX {
     }
 }
 
-declare namespace MB {
-    /**
-     * Encodings namespace
-     * @namespace Encodings
-     */
-    namespace Encodings {
-        function RGBByte2Float(srcArr: any, srcOff: any, dstArr: any, dstOff: any): void;
-        function RGBByte2Half(srcArr: any, srcOff: any, dstArr: any, dstOff: any): void;
-    }
-}
-
-declare namespace MB {
-    class Extensions {
-        /**
-         * Cache extensions
-         */
-        protected static _extensions: {};
-        /**
-         * Return a specific extension.
-         * @param {string} name Extension name
-         * @return {any} Extension (null if undefined)
-         */
-        static get(context: GLContext, name: string): any;
-    }
-}
-
 declare namespace MBX {
     /**
      * GBuffer class
@@ -4589,7 +4844,8 @@ declare namespace MBX {
          */
         protected Framebuffer: MB.Framebuffer;
         /**
-         * GBuffer constructor
+         * GBuffer constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2} size GBuffer size
          */
         constructor(context: MB.GLContext, size: MB.Vect2);
@@ -4610,91 +4866,6 @@ declare namespace MBX {
          * @param {Vect2} size New GBuffer size
          */
         rebuild(size: MB.Vect2): void;
-    }
-}
-
-declare namespace MB {
-    /**
-     * Geometry namespace
-     * @namespace Geometry
-     */
-    namespace Geometry {
-        /**
-         * Return triangle centroid (geometry center).
-         * @param  {Float32Array} v1 First triangle vertex.
-         * @param  {Float32Array} v2 Second triangle vertex.
-         * @param  {Float32Array} v3 Third triangle vertex.
-         * @return {Float32Array}    Centroid position of given triangle
-         */
-        function triangleCentroid(v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array;
-        /**
-         * Return triangle incenter.
-         * @param  {Float32Array} v1 First triangle vertex.
-         * @param  {Float32Array} v2 Second triangle vertex.
-         * @param  {Float32Array} v3 Third triangle vertex.
-         * @return {Float32Array}    Incenter position of given triangle
-         */
-        function triangleIncenter(v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array;
-        function getConvexHull(points: number[][]): Array<any>;
-        /**
-         * Return a convex hull from 1D points list
-         * @param  {ArrayLike<number>} points Point list
-         * @return {Array<number>}            [description]
-         */
-        function convexHull1D(points: ArrayLike<number>): Array<number>;
-        /**
-         * Return a new vertices and indices list removed orphan vertices
-         * @param  {Array<Array<number>>} positions Positions list
-         * @param  {Array<Array<number>>} indices   Indices list
-         * @return {Object}                         New indices (indices)
-         *                                              and positions (positions)
-         */
-        function removeOrphanVertices(positions: Array<Array<number>>, indices: Array<Array<number>>): Object;
-        /**
-         * Export quad faces to triangle faces
-         * @param  {Array<Array<number>>} faces [description]
-         * @return {Array}                      [description]
-         */
-        function triangulateQuadFace(faces: Array<Array<number>>): Array<Array<number>>;
-        function removeDegerateIndices(indices: number[][]): number[][];
-        function removeDegerateIndicesWithVertices(indices: number[][], vertices: number[][]): number[][];
-    }
-}
-
-declare namespace MB {
-    /**
-     * InstancedInterleavedBuffer class
-     * @class InstancedInterleavedBuffer
-     */
-    class InstancedInterleavedBuffer extends BufferAttribute {
-        protected _meshPerAttr: number;
-        constructor(arr: ArrayLike<number>, stride: number, meshPerAttr?: number);
-        meshPerAttr: number;
-    }
-}
-
-declare namespace MB {
-    /**
-     * Noise namespace
-     * @namespace Noise
-     */
-    namespace Noise {
-        namespace fractal {
-            function noise(x: number, y: number, z: number, octaves: number, noiseCallback: (x: number, y: number, z: number) => number): number;
-        }
-        namespace worley {
-            function setSeed(seed: number): void;
-            function Euclidean(x: any, y: any, z: any): number[];
-            function Manhattan(x: any, y: any, z: any): number[];
-        }
-        namespace perlin {
-            function setSeed(seed: number): void;
-            function noise(x: number, y: number, z: number): number;
-        }
-        namespace simplex {
-            function setSeed(seed: any): void;
-            function noise(x: any, y: any, z: any): number;
-        }
     }
 }
 
@@ -4729,99 +4900,12 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * PointCloud class
      * @class PointCloud
      */
     class PointCloud {
-    }
-}
-
-declare namespace MB {
-    /**
-    * This class wrap PostProcess effects
-    * @class PostProcess
-    */
-    class PostProcess {
-        protected _context: GLContext;
-        /**
-         * [initialize description]
-         */
-        constructor(context: GLContext);
-        /**
-         *
-         */
-        bind(): void;
-        /**
-         *
-         */
-        render(): void;
-        /**
-         * [_planeVAO description]
-         * @type {VertexArray}
-         */
-        protected _planeVAO: MB.VertexArray;
-        /**
-         * [_planeVertexVBO description]
-         * @type {VertexBuffer}
-         */
-        protected _planeVertexVBO: MB.VertexBuffer;
-    }
-}
-
-declare namespace MB {
-    /**
-     * RandomGenerator namespace
-     * @namespace RandomGenerator
-     *
-     * Examples:
-     *
-     *     // Real random [0, 1) (Same interval as Math.random)
-     *     - RandomGenerator.random();
-     *     // [0, 4294967295]
-     *     - RandomGenerator.randomInt();
-     *     // [0,1]
-     *     - RandomGenerator.randomIncl();
-     *     // (0,1)
-     *     - RandomGenerator.randomExcl();
-     *     // [0,1) with 53-bit resolution
-     *     - RandomGenerator.randomLong();
-     *     // [0, 2147483647]
-     *     - RandomGenerator.randomInt31();
-     */
-    namespace RandomGenerator {
-        /**
-         * Init RandomGenerator with custom seed
-         * @param {number} seed New seed number generator
-         */
-        function setSeed(seed: number): void;
-        /**
-         * Generates a random number on [0, 0xffffffff]-interval
-         * @return {number}
-         */
-        function randomInt(): number;
-        /**
-         * Generates a random number on [0, 0x7fffffff]-interval
-         * @return {number}
-         */
-        function randomInt31(): number;
-        /**
-         * Generates a random number on [0, 1]-real-interval
-         * @return {number}
-         */
-        function randomIncl(): number;
-        function random(): number;
-        /**
-         * Generates a random number on (0,1)-real-interval
-         * @return {number}
-         */
-        function randomExcl(): number;
-        /**
-         * Generates a random number on [0,1) with 53-bit resolution
-         * @return {number}
-         */
-        function randomLong(): number;
     }
 }
 
@@ -4871,7 +4955,7 @@ declare namespace MBX {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * Skybox class
      * @class Skybox
@@ -4902,19 +4986,20 @@ declare namespace MB {
          * @return {MB.CubeMapTexture}
          */
         texture: MB.CubeMapTexture;
-        protected _context: GLContext;
+        protected _context: MB.GLContext;
         /**
          * Skybox constructor
+         * @param {MB.GLContext} context [description]
          * @param {string} dir Skybox directory (without "/")
          * @param {boolean = true} isWebGL2 [description]
          */
-        constructor(context: GLContext, dir: string);
+        constructor(context: MB.GLContext, dir: string);
         /**
          * Render skybox using given view and projetion mat4
          * @param {MB.Mat4} view       View matrix
          * @param {MB.Mat4} projection Projection matrix
          */
-        render(view: Mat4, projection: Mat4): void;
+        render(view: MB.Mat4, projection: MB.Mat4): void;
         /**
          * Destroy skybox.
          */
@@ -4933,81 +5018,15 @@ declare namespace MB {
     }
 }
 
-declare namespace MB {
+declare namespace MBX {
     /**
      * Sprite class
      * @class Sprite
      */
     class Sprite {
-        protected _geometry: VertexBufferGeometry;
+        protected _geometry: MB.VertexBufferGeometry;
         constructor();
         setPosition(pos: MB.Vect3): void;
-    }
-}
-
-declare namespace MB {
-    /**
-     * Timer namespace
-     * @namespace Timer
-     */
-    namespace Timer {
-        /**
-         * Update timer
-         */
-        function update(): void;
-        /**
-         * Return the seconds passed since the last update
-         * @return {number} Delta time
-         */
-        function deltaTime(): number;
-    }
-}
-
-declare namespace MB {
-    namespace VBType {
-        const VBVertices: string;
-        const VBNormals: string;
-        const VBTexCoord: string;
-    }
-    /**
-     * VertexBufferGeometry class
-     * @class VertexBufferGeometry
-     */
-    class VertexBufferGeometry {
-        protected _indices: Uint16Array;
-        /**
-         * Hashmap with key as attribute ID and value a BufferGeometry instance
-         * @type {string[BufferAttribute]}
-         */
-        protected _attrs: {
-            [key: string]: BufferAttribute;
-        };
-        /**
-         * Add an attribute to this VertexBufferGeometry.
-         * @param {string}          type      [description]
-         * @param {BufferAttribute} attribute [description]
-         */
-        addAttr(type: string, attribute: BufferAttribute): void;
-        /**
-         * Return attribute with given specified name
-         * @param {string} name Attribute name
-         */
-        getAttr(name: string): BufferAttribute;
-        /**
-         * Remove attribute with given specified name
-         * @param {string} type [description]
-         */
-        removeAttr(type: string): void;
-        setIndex(indices: Uint16Array): void;
-        indices: Uint16Array;
-        normalizeNormals(): void;
-        toNotIndexed(): VertexBufferGeometry;
-        merge(geom2: VertexBufferGeometry, offset?: number): VertexBufferGeometry;
-        /**
-         * Compute the bounding box of the geometry
-         * @return {MB.Box3D} BoundingBox
-         */
-        computingBoundingBox(): MB.Box3D;
     }
 }
 
@@ -5300,6 +5319,27 @@ declare namespace MB {
 
 declare namespace MB {
     /**
+     * Box class
+     * @class Box
+     */
+    class Box extends Drawable {
+        protected _side: number;
+        /**
+         * Box constructor.
+         * @param {GLContext} context [description]
+         * @param {number =       1.0}         width     [description]
+         * @param {number =       1.0}         height    [description]
+         * @param {number =       1.0}         depth     [description]
+         * @param {number =       1.0}         widthSub  [description]
+         * @param {number =       1.0}         heightSub [description]
+         * @param {number =       1.0}         depthSub  [description]
+         */
+        constructor(context: GLContext, width?: number, height?: number, depth?: number, widthSub?: number, heightSub?: number, depthSub?: number);
+    }
+}
+
+declare namespace MB {
+    /**
      * Capsule class
      * @class Capsule
      */
@@ -5310,6 +5350,7 @@ declare namespace MB {
         protected _numSegm: number;
         /**
          * Capsule constructor
+         * @param {GLContext} context [description]
          * @param {number = 0.5} radius Capsule radius
          * @param {number = radius * 2} height Capsule height
          * @param {number = 12} subHeight Capsule height subdivision
@@ -5327,7 +5368,8 @@ declare namespace MB {
     class Cube extends Drawable {
         protected _side: number;
         /**
-         * Cube constructor
+         * Cube constructor.
+         * @param {GLContext} context [description]
          * @param {number = 1.0} side: Size length
          */
         constructor(context: GLContext, side?: number);
@@ -5341,7 +5383,8 @@ declare namespace MB {
      */
     class Cuboctahedron extends Polyhedron {
         /**
-         * Cuboctahedron constructor
+         * Cuboctahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Cuboctahedron radius
          * @param {number} subdivisions: Cuboctahedron subdivisions from base icosphere
          */
@@ -5368,7 +5411,8 @@ declare namespace MB {
      */
     class CustomModel extends Drawable {
         /**
-         * CustomModel constructor
+         * CustomModel constructor.
+         * @param {GLContext} context [description]
          * @param {ICustomModel} model: Model data
          */
         constructor(context: GLContext, model: ICustomModel);
@@ -5385,7 +5429,8 @@ declare namespace MB {
      */
     class Cylinder extends Cone {
         /**
-         * Cylinder constructor
+         * Cylinder constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Cylinder radius
          * @param {number} height: Cylinder height
          * @param {number = 15.0} radialSubDiv: Radial subdivisions around Cylinder
@@ -5404,7 +5449,8 @@ declare namespace MB {
      */
     class Disc extends Drawable {
         /**
-         * Disc constructor
+         * Disc constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Disc radius
          * @param {number} divisions: Disc base subdivison (num. of triangles)
          * @param {number = 1.0} stacks: Radial subdivisions around disc.
@@ -5422,7 +5468,8 @@ declare namespace MB {
      */
     class Dodecahedron extends Polyhedron {
         /**
-         * Dodecahedron constructor
+         * Dodecahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Dodecahedron radius
          * @param {number} subdivisions: Dodecahedron subdivisions from base dodecahedron.
          */
@@ -5437,7 +5484,8 @@ declare namespace MB {
      */
     class Floor extends Drawable {
         /**
-         * Floor constructor
+         * Floor constructor.
+         * @param {GLContext} context [description]
          * @param {number = 80} dim [description]
          * @param {number = 2}  e   [description]
          */
@@ -5452,7 +5500,8 @@ declare namespace MB {
      */
     class Icosahedron extends Polyhedron {
         /**
-         * Icosahedron constructor
+         * Icosahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Icosahedron radius
          * @param {number} subdivisions: Icosahedron subdivisions from base icosphere
          */
@@ -5470,7 +5519,8 @@ declare namespace MB {
      */
     class Lathe extends Drawable {
         /**
-         * Lathe constructor
+         * Lathe constructor.
+         * @param {GLContext} context [description]
          * @param {ArrayLike<MB.Vect3>} points List of points that define the lathe model.
          * @param {number} segments [description] Num. of segments.
          * @param {number = 0} phiInit [description]
@@ -5487,7 +5537,8 @@ declare namespace MB {
      */
     class Mesh extends Drawable {
         /**
-         * Mesh definition
+         * Mesh definition.
+         * @param {GLContext} context [description]
          * @param {string} fileRoute: JSON file route
          */
         constructor(context: GLContext, fileRoute: string);
@@ -5512,8 +5563,9 @@ declare namespace MB {
      */
     class Octahedron extends Polyhedron {
         /**
-         * Octahedron constructor
-         * @param {number} radius: Octahedron radius
+         * Octahedron constructor.
+         * @param {GLContext} context [description]
+         * @param {number} radius: Octahedron radius.
          * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
          */
         constructor(context: GLContext, radius: number, subdivisions: number);
@@ -5530,7 +5582,8 @@ declare namespace MB {
         protected _stacks: number;
         protected _func: (u: number, v: number) => MB.Vect3;
         /**
-         * ParametricGeom
+         * ParametricGeom constructor
+         * @param {GLContext} context [description]
          * @param {number) => MB.Vect3} func Function generator (u, v) => MB.Vect3
          * @param {number} slices Number of slices
          * @param {number} stacks Number of stacks
@@ -5546,7 +5599,8 @@ declare namespace MB {
      */
     class Plane extends Drawable {
         /**
-         * Plane constructor
+         * Plane constructor.
+         * @param {GLContext} context [description]
          * @param {number} xsize: Width plane size
          * @param {number} zsize: Height plane size
          * @param {number} xdivs: Width plane subdivisions
@@ -5565,7 +5619,8 @@ declare namespace MB {
      */
     class Prism extends Cone {
         /**
-         * Prism constructor
+         * Prism constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Prism radius
          * @param {number} height: Prism height
          * @param {number = 1.0} sides: Number of sides of the prism
@@ -5587,7 +5642,8 @@ declare namespace MB {
         protected _slices: number;
         protected _stacks: number;
         /**
-         * Sphere constructor
+         * Sphere constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius [description]
          * @param {number} slices: Number of steps around sphere.
          * @param {number} stacks: Number of vertically on the sphere.
@@ -5603,7 +5659,8 @@ declare namespace MB {
      */
     class Tetrahedron extends Polyhedron {
         /**
-         * Tetrahedron constructor
+         * Tetrahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Tetrahedron radius
          * @param {number} subdivisions: Tetrahedron subdivisions from base tetrahedron.
          */
@@ -5622,7 +5679,8 @@ declare namespace MB {
         protected _sides: number;
         protected _rings: number;
         /**
-         * Torus constructor
+         * Torus constructor.
+         * @param {GLContext} context [description]
          * @param {number = 1.0} outerRadius: Outer ring radius
          * @param {number = 0.5} innerRadius: Inner ring radius
          * @param {number = 4}   sides: Number of sides
@@ -5948,6 +6006,7 @@ declare namespace MB {
         /**
          * Returns false if gl.LINEAR is not supported as a texture
          *     filter mode for textures of type gl.FLOAT.
+         * @param {GLContext} context [description]
          * @return {boolean} [description]
          */
         static canUseFloatingPointTextures(context: GLContext): boolean;
@@ -5956,14 +6015,18 @@ declare namespace MB {
          * Returns false if gl.HALF_FLOAT_OES is not supported as a
          *     texture type.
          * WebGL2 supports this without extension.
+         * @param {GLContext} context [description]
          * @return {boolean} [description]
-         */ static canUseHalfFloatingPointTextures(context: GLContext): boolean;
+         */
+        static canUseHalfFloatingPointTextures(context: GLContext): boolean;
         /**
          * Returns false if gl.LINEAR is not supported as a texture
          *     filter mode for textures of type gl.HALF_FLOAT_OES.
          * WebGL2 supports this without extension.
+         * @param {GLContext} context [description]
          * @return {boolean} [description]
-         */ static canUseHalfFloatingPointLinearFiltering(context: GLContext): boolean;
+         */
+        static canUseHalfFloatingPointLinearFiltering(context: GLContext): boolean;
         protected _context: GLContext;
         constructor(context: GLContext, target: ctes.TextureTarget, options: TexOptions);
         /**
@@ -6017,7 +6080,8 @@ declare namespace MBX {
          */
         protected _domCanvas: HTMLCanvasElement;
         /**
-         * CanvasTexture constructor
+         * CanvasTexture constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2} size: Texture size
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
@@ -6044,7 +6108,8 @@ declare namespace MB {
          */
         isFinished(): boolean;
         /**
-         * CubeMapTexture constructor
+         * CubeMapTexture constructor.
+         * @param {GLContext} context [description]
          * @param {TexOptions = {}} options: Texture options
          */
         constructor(context: GLContext, options?: TexOptions);
@@ -6064,7 +6129,8 @@ declare namespace MB {
 declare namespace MB {
     class DepthTexture {
         /**
-         * DepthTexture constructor
+         * DepthTexture constructor.
+         * @param {GLContext} context [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating DepthTexture.
          */
         constructor(context: GLContext, onSuccess?: () => void);
@@ -6141,7 +6207,8 @@ declare namespace MB {
         getHeight(): number;
         protected _offsets_: Array<number>;
         /**
-         * SimpleTexture2D constructor
+         * SimpleTexture2D constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2} size: Texture size
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
@@ -6157,6 +6224,7 @@ declare namespace MB {
         protected _offsets_: Array<number>;
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {[type]}        data [description]
          * @param {MB.Vect3}         size [description]
          * @param {TexOptions =    {}}        options [description]
@@ -6169,7 +6237,8 @@ declare namespace MB {
 declare namespace MB {
     class Texture2D extends Texture {
         /**
-         * Texture2D constructor
+         * Texture2D constructor.
+         * @param {GLContext} context [description]
          * @param {HTMLImageElement} data: Image data
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
@@ -6185,6 +6254,7 @@ declare namespace MB {
         protected _size_: Vector2<number>;
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {Vector2<number>} size   [description]
          * @param {Array<any>}    images [description]
          * @param {TexOptions =      {}}        options [description]
@@ -6200,6 +6270,7 @@ declare namespace MB {
     class Texture3D extends Texture {
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {[type]}        data [description]
          * @param {MB.Vect3}         size [description]
          * @param {TexOptions =    {}}        options [description]
@@ -6218,6 +6289,7 @@ declare namespace MBX {
         protected _video: HTMLVideoElement;
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {HTMLVideoElement} video [description]
          * @param {boolean = true} loop [description]
          * @param {number = 15} frameTime [description]
@@ -6237,6 +6309,7 @@ declare namespace MBX {
     class WebcamTexture extends VideoTexture {
         /**
          * WebcamTexture constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2 = [320, 320]} size Webcam viewport size.
          * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
          */

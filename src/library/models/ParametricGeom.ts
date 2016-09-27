@@ -31,12 +31,12 @@ namespace MB {
         protected _stacks: number;
         protected _func: (u: number, v: number) => MB.Vect3;
         /**
-         * ParametricGeom
+         * ParametricGeom constructor
+         * @param {GLContext} context [description]
          * @param {number) => MB.Vect3} func Function generator (u, v) => MB.Vect3
          * @param {number} slices Number of slices
          * @param {number} stacks Number of stacks
          */
-        // TODO: DOC
         constructor(context: GLContext, func: (u: number, v: number) => MB.Vect3, slices: number, stacks: number) {
             super(context);
 

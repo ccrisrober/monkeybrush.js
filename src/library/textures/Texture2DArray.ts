@@ -35,12 +35,12 @@ namespace MB {
         protected _size_: Vector2<number>;
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {Vector2<number>} size   [description]
          * @param {Array<any>}    images [description]
          * @param {TexOptions =      {}}        options [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2DArray.
          */
-        // TODO: DOC
         constructor(context: GLContext, size: Vector2<number>, images: Array<any>,
             options: TexOptions = {}, onSuccess: () => void = null) {
             super(context, ctes.TextureTarget.Texture2DArray, options);

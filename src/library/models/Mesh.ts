@@ -26,10 +26,10 @@ namespace MB {
      */
     export class Mesh extends Drawable {
         /**
-         * Mesh definition
+         * Mesh definition.
+         * @param {GLContext} context [description]
          * @param {string} fileRoute: JSON file route
          */
-        // TODO: DOC
         constructor(context: GLContext, fileRoute: string) {
             super(context);
             this.loadJSON(fileRoute);

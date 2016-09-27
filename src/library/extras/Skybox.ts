@@ -19,7 +19,7 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * Skybox class
      * @class Skybox
@@ -52,14 +52,14 @@ namespace MB {
         get texture(): MB.CubeMapTexture {
             return this._cubeMapTexture;
         };
-        protected _context: GLContext;
+        protected _context: MB.GLContext;
         /**
          * Skybox constructor
+         * @param {MB.GLContext} context [description]
          * @param {string} dir Skybox directory (without "/")
          * @param {boolean = true} isWebGL2 [description]
          */
-        // TODO: DOC
-        constructor(context: GLContext, dir: string) {
+        constructor(context: MB.GLContext, dir: string) {
             let faces: Array<string> = [];
             faces.push(dir + "/right.jpg");
             faces.push(dir + "/left.jpg");
@@ -74,7 +74,7 @@ namespace MB {
 
             this._prog = new MB.Program(this._context);
 
-            const isWebGL2: boolean = context instanceof GLContextW2;
+            const isWebGL2: boolean = context instanceof MB.GLContextW2;
 
             let vs: string;
 
@@ -192,12 +192,12 @@ namespace MB {
          * @param {MB.Mat4} view       View matrix
          * @param {MB.Mat4} projection Projection matrix
          */
-        public render(view: Mat4, projection: Mat4) {
+        public render(view: MB.Mat4, projection: MB.Mat4) {
             const gl: WebGLRenderingContext = this._context.gl;
 
             let currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
 
-            this._context.state.depth.setFunc(ctes.ComparisonFunc.LessEqual);
+            this._context.state.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
 
             this._prog.use();
 

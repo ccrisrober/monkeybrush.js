@@ -27,10 +27,10 @@ namespace MBX {
     export class WebcamTexture extends VideoTexture {
         /**
          * WebcamTexture constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2 = [320, 320]} size Webcam viewport size.
          * @param {() => void = null} onSuccess Optional callback that runs when creating WebcamTexture.
          */
-        // TODO: DOC
         constructor(context: MB.GLContext, size: MB.Vect2 = MB.Vect2.createFromScalar(320),
             onSuccess: () => void = null) {
             super(context, MB.ResourceMap.retrieveAsset("webcam"));

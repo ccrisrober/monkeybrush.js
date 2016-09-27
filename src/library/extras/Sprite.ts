@@ -19,25 +19,25 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * Sprite class
      * @class Sprite
      */
     export class Sprite {
-        protected _geometry: VertexBufferGeometry;
+        protected _geometry: MB.VertexBufferGeometry;
 
         constructor() {
-            this._geometry = new VertexBufferGeometry();
+            this._geometry = new MB.VertexBufferGeometry();
             this._geometry.addAttr("position",
-                new BufferAttribute(new Float32Array([
+                new MB.BufferAttribute(new Float32Array([
                     -0.5, -0.5, 0.0,
                      0.5, -0.5, 0.0,
                      0.5,  0.5, 0.0,
                     -0.5,  0.5, 0.0
                 ]), 3));
             this._geometry.addAttr("uv",
-                new BufferAttribute(new Float32Array([
+                new MB.BufferAttribute(new Float32Array([
                     0, 0,
                     1, 0,
                     1, 1,

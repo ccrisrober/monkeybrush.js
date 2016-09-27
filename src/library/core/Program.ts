@@ -654,10 +654,10 @@ namespace MB {
         /**
          * Attach transform feedback varying to this program.
          * Only call this before linking program.
+         * @param {GLContext} context [description]
          * @param {Array<string>} varyings Array of string that contains varying attributes.
          * @param {MB.ctes.TFMode}        mode     Transform Feedback mode (record mode).
          */
-        // TODO: DOC
         public feedbackVarying(context: GLContext, varyings: Array<string>, mode: MB.ctes.TFMode) {
             if (this._isLinked === true) {
                 alert("ONLY EXEC THIS BEFORE LINK");

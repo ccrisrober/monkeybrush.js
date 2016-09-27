@@ -22,12 +22,12 @@
 namespace MB {
     export class Texture2D extends Texture {
         /**
-         * Texture2D constructor
+         * Texture2D constructor.
+         * @param {GLContext} context [description]
          * @param {HTMLImageElement} data: Image data
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
          */
-        // TODO: DOC
         constructor(context: GLContext, data: any, options: TexOptions = {}, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture2D, options);
 
@@ -48,7 +48,7 @@ namespace MB {
                 options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
                 options.wrapT || MB.ctes.WrapMode.Clamp2Edge
             ]);
-            
+
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();

@@ -40,7 +40,6 @@ namespace MB {
         protected _index: number;
         // TODO: A futuro usar el Program y no
         //         WebGLProgram (cachear ubo también en Program ...)
-        // TODO: DOC
         constructor(context: GLContext, prog: WebGLProgram, name: string, blockBindIdx: number) {
             if (!VertexUBO.isSupported(context)) {
                 throw new Error("VertexUBO undefined with current context");
@@ -90,9 +89,9 @@ namespace MB {
         };
         /**
          * Returns if the current context allows use UBO.
+         * @param {GLContext} context [description]
          * @return {boolean} True if allows use UBO.
          */
-        // TODO: DOC
         public static isSupported(context: GLContext): boolean {
             const gl: WebGL2RenderingContext = context.gl;
             return gl instanceof WebGL2RenderingContext;

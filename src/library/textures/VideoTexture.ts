@@ -28,12 +28,12 @@ namespace MBX {
         protected _video: HTMLVideoElement;
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {HTMLVideoElement} video [description]
          * @param {boolean = true} loop [description]
          * @param {number = 15} frameTime [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
          */
-        // TODO: DOC
         constructor(context: MB.GLContext, video: HTMLVideoElement, loop: boolean = true,
             frameTime: number = 15, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture2D, {

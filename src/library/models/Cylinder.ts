@@ -26,7 +26,8 @@ namespace MB {
      */
     export class Cylinder extends Cone {
         /**
-         * Cylinder constructor
+         * Cylinder constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Cylinder radius
          * @param {number} height: Cylinder height
          * @param {number = 15.0} radialSubDiv: Radial subdivisions around Cylinder
@@ -34,7 +35,6 @@ namespace MB {
          * @param {boolean = true} createTopBase: Create top base
          * @param {boolean = true} createBottomBase: Create bottom base
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number, height: number, radialSubDiv: number = 15.0,
             heightSubDiv: number = 1.0, createTopBase: boolean = true, createBottomBase: boolean = true) {
             if (radialSubDiv < 15) {

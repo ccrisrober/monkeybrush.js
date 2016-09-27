@@ -26,7 +26,8 @@ namespace MB {
      */
     export class Plane extends Drawable {
         /**
-         * Plane constructor
+         * Plane constructor.
+         * @param {GLContext} context [description]
          * @param {number} xsize: Width plane size
          * @param {number} zsize: Height plane size
          * @param {number} xdivs: Width plane subdivisions
@@ -34,7 +35,6 @@ namespace MB {
          * @param {number = 1.0} smax: Width texCoord subdivision
          * @param {number = 1.0} tmax  Height texCoord subdivision
          */
-        // TODO: DOC
         constructor(context: GLContext, xsize: number, zsize: number, xdivs: number, zdivs: number,
             smax: number = 1.0, tmax: number = 1.0) {
             super(context);

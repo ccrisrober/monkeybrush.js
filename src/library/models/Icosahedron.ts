@@ -27,11 +27,11 @@ namespace MB {
      */
     export class Icosahedron extends Polyhedron {
         /**
-         * Icosahedron constructor
+         * Icosahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Icosahedron radius
          * @param {number} subdivisions: Icosahedron subdivisions from base icosphere
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number = 1.0, subdivisions: number = 1) {
             subdivisions = Math.floor(subdivisions);
             if (subdivisions > 10) {

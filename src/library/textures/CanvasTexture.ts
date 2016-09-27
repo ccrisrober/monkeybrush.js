@@ -33,12 +33,12 @@ namespace MBX {
          */
         protected _domCanvas: HTMLCanvasElement;
         /**
-         * CanvasTexture constructor
+         * CanvasTexture constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2} size: Texture size
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating CanvasTexture.
          */
-        // TODO: DOC
         constructor(context: MB.GLContext, domCanvas: HTMLCanvasElement,
             options: MB.TexOptions = {}, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture2D, options);

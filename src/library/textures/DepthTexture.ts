@@ -25,10 +25,10 @@ namespace MB {
 
     export class DepthTexture /* extends Texture*/ {
         /**
-         * DepthTexture constructor
+         * DepthTexture constructor.
+         * @param {GLContext} context [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating DepthTexture.
          */
-        // TODO: DOC
         constructor(context: GLContext, onSuccess: () => void = null) {
             /*super(MB.ctes.TextureTarget.Texture2D);
             const gl: WebGL2RenderingContext = this._context.gl;

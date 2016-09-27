@@ -37,9 +37,9 @@ namespace MB {
         protected _context: GLContext;
 
         /**
-         * Drawable constructor
+         * Drawable constructor.
+         * @param {GLContext} context [description]
          */
-        // TODO: DOC
         constructor(context: GLContext) {
             this._context = context;
             this._vao = new MB.VertexArray(this._context);

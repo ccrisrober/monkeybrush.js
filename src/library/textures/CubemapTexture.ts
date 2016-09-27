@@ -36,10 +36,10 @@ namespace MB {
         };
 
         /**
-         * CubeMapTexture constructor
+         * CubeMapTexture constructor.
+         * @param {GLContext} context [description]
          * @param {TexOptions = {}} options: Texture options
          */
-        // TODO: DOC
         constructor(context: GLContext, options: TexOptions = {}) {
             super(context, MB.ctes.TextureTarget.TextureCubeMap, options);
 

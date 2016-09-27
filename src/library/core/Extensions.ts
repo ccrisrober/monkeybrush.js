@@ -27,10 +27,10 @@ namespace MB {
         protected static _extensions = {};
         /**
          * Return a specific extension.
+         * @param {GLContext} context [description]
          * @param {string} name Extension name
          * @return {any} Extension (null if undefined)
          */
-        // TODO: DOC
         public static get(context: GLContext, name: string): any {
             if (name in this._extensions) {
                 return this._extensions[name];

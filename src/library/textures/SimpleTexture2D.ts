@@ -31,12 +31,12 @@ namespace MB {
         }
         protected _offsets_: Array<number>;
         /**
-         * SimpleTexture2D constructor
+         * SimpleTexture2D constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2} size: Texture size
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
          */
-        // TODO: DOC
         constructor(context: GLContext, size: MB.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture2D, options);
 

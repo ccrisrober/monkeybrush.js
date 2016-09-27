@@ -32,15 +32,15 @@ namespace MB {
         protected _handler: WebGLBuffer;
         protected _context: GLContext;
         /**
-         * VertexBuffer internal type
+         * VertexBuffer internal type.
          * @type {ctes.BufferType}
          */
         protected _type: ctes.BufferType = ctes.BufferType.Array;
         /**
-         * Vertex buffer constructor
+         * Vertex buffer constructor.
+         * @param {GLContext} context [description]
          * @param {ctes.BufferType = ctes.BufferType.Array}
          */
-        // TODO: DOC
         constructor(context: GLContext, type: ctes.BufferType = ctes.BufferType.Array) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;

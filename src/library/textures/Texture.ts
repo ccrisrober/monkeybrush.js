@@ -80,9 +80,9 @@ namespace MB {
         /**
          * Returns false if gl.LINEAR is not supported as a texture
          *     filter mode for textures of type gl.FLOAT.
+         * @param {GLContext} context [description]
          * @return {boolean} [description]
          */
-        // TODO: DOC
         public static canUseFloatingPointTextures(context: GLContext): boolean {
             const gl = context.gl;
             if (gl instanceof WebGL2RenderingContext) {
@@ -100,8 +100,9 @@ namespace MB {
          * Returns false if gl.HALF_FLOAT_OES is not supported as a
          *     texture type.
          * WebGL2 supports this without extension.
+         * @param {GLContext} context [description]
          * @return {boolean} [description]
-         */// TODO: DOC
+         */
         public static canUseHalfFloatingPointTextures(context: GLContext): boolean {
             const gl = context.gl;
             if (gl instanceof WebGL2RenderingContext) {
@@ -115,8 +116,9 @@ namespace MB {
          * Returns false if gl.LINEAR is not supported as a texture
          *     filter mode for textures of type gl.HALF_FLOAT_OES.
          * WebGL2 supports this without extension.
+         * @param {GLContext} context [description]
          * @return {boolean} [description]
-         */// TODO: DOC
+         */
         public static canUseHalfFloatingPointLinearFiltering(context: GLContext): boolean {
             const gl = context.gl;
             if (gl instanceof WebGL2RenderingContext) {

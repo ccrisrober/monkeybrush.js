@@ -32,10 +32,10 @@ namespace MBX {
          */
         protected Framebuffer: MB.Framebuffer;
         /**
-         * GBuffer constructor
+         * GBuffer constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2} size GBuffer size
          */
-        // TODO: DOC
         constructor(context: MB.GLContext, size: MB.Vect2) {
 
             const configTex: MB.TexOptions = {

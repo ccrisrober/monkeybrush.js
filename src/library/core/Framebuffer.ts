@@ -150,8 +150,8 @@ namespace MB {
         };
         /**
          * Enable default framebuffer
+         * @param {GLContext} context [description]
          */
-        // TODO: DOC
         public static RestoreDefaultFBO(context: GLContext) {
             const gl: WebGL2RenderingContext = context.gl;
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);

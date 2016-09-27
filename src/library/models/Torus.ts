@@ -30,13 +30,13 @@ namespace MB {
         protected _sides: number;
         protected _rings: number;
         /**
-         * Torus constructor
+         * Torus constructor.
+         * @param {GLContext} context [description]
          * @param {number = 1.0} outerRadius: Outer ring radius
          * @param {number = 0.5} innerRadius: Inner ring radius
          * @param {number = 4}   sides: Number of sides
          * @param {number = 10}  rings: Number of rings
          */
-        // TODO: DOC
         constructor(context: GLContext, outerRadius: number = 1.0, innerRadius: number = 0.5,
             sides: number = 4, rings: number = 10) {
             super(context);

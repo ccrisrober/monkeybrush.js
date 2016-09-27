@@ -29,12 +29,12 @@ namespace MB {
         protected _slices: number;
         protected _stacks: number;
         /**
-         * Sphere constructor
+         * Sphere constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius [description]
          * @param {number} slices: Number of steps around sphere.
          * @param {number} stacks: Number of vertically on the sphere.
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number, slices: number = 64, stacks: number = 64) {
             super(context);
 

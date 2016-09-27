@@ -47,7 +47,10 @@ namespace MB {
         public _handler: WebGLSampler;
 
         protected _context: GLContext;
-        // TODO: DOC
+        /**
+         * [constructor description]
+         * @param {GLContext} context [description]
+         */
         constructor(context: GLContext) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;

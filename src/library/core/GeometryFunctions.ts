@@ -21,10 +21,10 @@
 
 namespace MB {
     /**
-     * Geometry namespace
-     * @namespace Geometry
+     * GeometryFunctions namespace
+     * @namespace GeometryFunctions
      */
-    export namespace Geometry {
+    export namespace GeometryFunctions {
         /**
          * Return triangle centroid (geometry center).
          * @param  {Float32Array} v1 First triangle vertex.

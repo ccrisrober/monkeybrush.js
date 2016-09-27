@@ -27,12 +27,12 @@ namespace MB {
         protected _offsets_: Array<number>;
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {[type]}        data [description]
          * @param {MB.Vect3}         size [description]
          * @param {TexOptions =    {}}        options [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture3D.
          */
-        // TODO: DOC
         constructor(context: GLContext, data, size: MB.Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture3D, options);
 
@@ -143,7 +143,7 @@ namespace MB {
             ]);
 
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
-            
+
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
             if (onSuccess) {

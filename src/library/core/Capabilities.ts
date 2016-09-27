@@ -29,9 +29,9 @@ namespace MB {
 
         /**
          * Return the maximum anisotropy value from current WebGL implementation.
+         * @param {GLContext} context [description]
          * @return {number} Maximum anisotropy value.
          */
-        // TODO: DOC
         export function getMaxAnisotropy(context: GLContext): number {
             if (!_capabilities["anisotropy"]) {
                 const gl: WebGL2RenderingContext = context.gl;
@@ -42,9 +42,9 @@ namespace MB {
         };
         /**
          * Returns the maximum number of textures permitted.
+         * @param {GLContext} context [description]
          * @return {number} Maximum textures permitted.
          */
-        // TODO: DOC
         export function getMaxTextures(context: GLContext): number {
             if (!_capabilities["maxTextures"]) {
                 const gl: WebGL2RenderingContext = context.gl;

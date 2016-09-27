@@ -38,10 +38,10 @@ namespace MB {
      */
     export class CustomModel extends Drawable {
         /**
-         * CustomModel constructor
+         * CustomModel constructor.
+         * @param {GLContext} context [description]
          * @param {ICustomModel} model: Model data
          */
-        // TODO: DOC
         constructor(context: GLContext, model: ICustomModel) {
             super(context);
 

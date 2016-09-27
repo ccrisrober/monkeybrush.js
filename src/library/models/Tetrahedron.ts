@@ -26,11 +26,11 @@ namespace MB {
      */
     export class Tetrahedron extends Polyhedron {
         /**
-         * Tetrahedron constructor
+         * Tetrahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Tetrahedron radius
          * @param {number} subdivisions: Tetrahedron subdivisions from base tetrahedron.
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number, subdivisions: number) {
             super(context, [
                  1,  1,  1,
