@@ -10,7 +10,7 @@ out vec4 fragColor;
 
 uniform vec3 viewPos;
 
-const float frequency = 0.6;
+const float frequency = 1.9;
 uniform sampler3D tex;
 
 void main() {

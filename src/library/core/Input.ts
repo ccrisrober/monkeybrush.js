@@ -27,7 +27,8 @@ namespace MB {
     export class Input {
         constructor() {
             if (Input._instance) {
-                throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
+                return;
+                //throw new Error("Error: Instantiation failed: Use Input.getInstance() instead of new.");
             }
 
             for (let i = 0; i < MB.ctes.KeyState.LastKeyCode; ++i) {

@@ -87,7 +87,7 @@ namespace MB {
         };
         protected _depthEnabled: boolean = false;
         protected _currentDepthMask: boolean = false;
-        protected _currentDepthFunc: ctes.ComparisonFunc = ctes.ComparisonFunc.LessEqual;
+        protected _currentDepthFunc: ctes.ComparisonFunc = null;
         protected _currentDepthClear = null;
         protected _znear: number = 0.0;
         protected _zfar: number = 1.0;
@@ -151,7 +151,7 @@ namespace MB {
         public reset() {
             this._depthEnabled = true;
             this._currentDepthMask = true;
-            this._currentDepthFunc = ctes.ComparisonFunc.LessEqual;
+            this.setFunc(ctes.ComparisonFunc.Less);
             this._currentDepthClear = null;
         };
         /**

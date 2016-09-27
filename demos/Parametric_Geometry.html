@@ -38,11 +38,19 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 this.parametricModel = new MB.ParametricGeom(this.context, function (u, v) {
-                    var r = 75;
+                    /*var r = 75;
 
                     var x = Math.tan(u) * r;
                     var z = Math.sin(v / 2) * 1.2 * r;
-                    var y = (Math.sin(u * 3 * Math.PI) + Math.cos(v * 3 * Math.PI)) * 2.8;
+                    var y = (Math.sin(u * 3 * Math.PI) + Math.cos(v * 3 * Math.PI)) * 2.8;*/
+                    var a = 5;
+                    var n = 5;
+                    var m = 1;
+                    var u = u * 4 * Math.PI;
+                    var v = v * 2 * Math.PI;
+                    var x = (a + Math.cos(n * u / 2.0) * Math.sin(v) - Math.sin(n * u / 2.0) * Math.sin(2 * v)) * Math.cos(m * u / 2.0);
+                    var y = (a + Math.cos(n * u / 2.0) * Math.sin(v) - Math.sin(n * u / 2.0) * Math.sin(2 * v)) * Math.sin(m * u / 2.0);
+                    var z = Math.sin(n * u / 2.0) * Math.sin(v) + Math.cos(n * u / 2.0) * Math.sin(2 * v);
 
                     return new MB.Vect3(x, y, z);
                 }, 75, 65);

@@ -46,6 +46,7 @@
                     prog.addUniforms(["projection", "view", "model", "viewPos", "tex"]);
                     return prog;
                 });
+                MB.RandomGenerator.setSeed(1239);
                 var size = 64;
                 var data = new Uint8Array(Math.pow(size, 3));
                 for (var k = 0; k < size; ++k) {
@@ -81,7 +82,7 @@
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
+                        //.rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
                 this.cubito.render();

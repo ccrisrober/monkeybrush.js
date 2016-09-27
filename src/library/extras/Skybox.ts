@@ -52,17 +52,14 @@ namespace MB {
         get texture(): MB.CubeMapTexture {
             return this._cubeMapTexture;
         };
-
         protected _context: GLContext;
-
         /**
          * Skybox constructor
          * @param {string} dir Skybox directory (without "/")
          * @param {boolean = true} isWebGL2 [description]
          */
-        // TODO: Complete DOC with Context
+        // TODO: DOC
         constructor(context: GLContext, dir: string) {
-            this._context = context;
             let faces: Array<string> = [];
             faces.push(dir + "/right.jpg");
             faces.push(dir + "/left.jpg");
@@ -71,11 +68,13 @@ namespace MB {
             faces.push(dir + "/back.jpg");
             faces.push(dir + "/front.jpg");
 
+            this._context = context;
+
             const gl: WebGLRenderingContext = this._context.gl;
 
             this._prog = new MB.Program(this._context);
 
-            const isWebGL2: boolean = this._context instanceof GLContextW2;
+            const isWebGL2: boolean = context instanceof GLContextW2;
 
             let vs: string;
 
@@ -103,7 +102,6 @@ namespace MB {
                     TexCoords = position;
                 }`;
             }
-
 
             this._prog.addShader(vs, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
 
@@ -200,6 +198,7 @@ namespace MB {
             let currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
 
             this._context.state.depth.setFunc(ctes.ComparisonFunc.LessEqual);
+
             this._prog.use();
 
             // Remove any translation
@@ -211,7 +210,7 @@ namespace MB {
             this._cubeMapTexture.bind(0);
 
             this._VertexArray.bind();
-            gl.drawArrays(MB.ctes.RenderMode.Triangles, 0, 36);
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
             this._VertexArray.unbind();
 
             this._context.state.depth.setFunc(currDepthComp);
@@ -240,3 +239,6 @@ namespace MB {
         }
     };
 };
+
+
+// TODO: Move VAO and VBO to MB.CustomModel
