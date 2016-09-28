@@ -38,13 +38,12 @@ namespace MB {
         protected _handle: WebGLBuffer;
         protected _context: GLContext;
         protected _index: number;
-        // TODO: A futuro usar el Program y no
-        //         WebGLProgram (cachear ubo también en Program ...)
-        constructor(context: GLContext, prog: WebGLProgram, name: string, blockBindIdx: number) {
+        constructor(context: GLContext, program: Program, name: string, blockBindIdx: number) {
             if (!VertexUBO.isSupported(context)) {
                 throw new Error("VertexUBO undefined with current context");
             }
             this._context = context;
+            const prog: WebGLProgram = program.id();
             const gl: WebGL2RenderingContext = this._context.gl;
             this._handle = gl.createBuffer();
             const index = gl.getUniformBlockIndex(prog, name);

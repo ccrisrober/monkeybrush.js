@@ -22,19 +22,19 @@
 namespace MB {
     export namespace Loaders {
         /**
-         * [loadAudio description]
-         * @param {string}    clipName [description]
-         * @param {string =        ""}          alias [description]
+         * Loads an audio file from route.
+         * @param {string}    clipRoute Audio route
+         * @param {string =v""}          alias Auxiliar alias.
          */
-        export function loadAudio(clipName: string, alias: string = "") {
-            alias = _getAlias(clipName, alias);
+        export function loadAudio(clipRoute: string, alias: string = "") {
+            alias = _getAlias(clipRoute, alias);
             if (!(ResourceMap.isAssetLoaded(alias))) {
                 // Update resources in load counter
                 ResourceMap.asyncLoadRequested(alias);
 
                 // Async request the data from server
                 let request = new XMLHttpRequest();
-                request.open("GET", clipName, true);
+                request.open("GET", clipRoute, true);
 
                 // Specify that the request retrieves binary data.
                 request.responseType = "arraybuffer";
@@ -51,7 +51,7 @@ namespace MB {
             }
         };
         /**
-         * [unloadAudio description]
+         * Unloads an audio.
          * @param {string} clipName [description]
          */
         export function unloadAudio(clipName: string) {

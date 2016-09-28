@@ -414,9 +414,6 @@ namespace MB {
             const gl: WebGL2RenderingContext = this._context.gl;
             return gl.isEnabled(gl.STENCIL_TEST);
         }
-        public reset() {
-            // TODO
-        };
     };
     export class BlendingState {
         protected _context: GLContext;
@@ -424,7 +421,7 @@ namespace MB {
             this._context = context;
         };
         protected _blendingEnabled: boolean = false;
-        protected _blendingMode: MB.ctes.BlendingEq; // TODO
+        protected _blendingMode: ctes.BlendingEq;
         /**
          * Change blending status (eables or disabled)
          * @param {boolean} enabled Enable/disable blending

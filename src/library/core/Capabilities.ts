@@ -28,7 +28,7 @@ namespace MB {
         let _capabilities = {};
 
         /**
-         * Return the maximum anisotropy value from current WebGL implementation.
+         * Returns the maximum anisotropy value from current WebGL implementation.
          * @param {GLContext} context [description]
          * @return {number} Maximum anisotropy value.
          */
@@ -52,6 +52,11 @@ namespace MB {
             }
             return _capabilities["maxTextures"];
         };
+        /**
+         * Returns the maximum vertex textures permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum vertex textures permitted.
+         */
         export function getMaxVertexTextures(context: GLContext): number {
             if (!_capabilities["maxVertexTextures"]) {
                 const gl: WebGL2RenderingContext = context.gl;
@@ -59,6 +64,11 @@ namespace MB {
             }
             return _capabilities["maxVertexTextures"];
         };
+        /**
+         * Returns the maximum texture size permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum textures permitted.
+         */
         export function getMaxTextureSize(context: GLContext): number {
             if (!_capabilities["maxTextureSize"]) {
                 const gl: WebGL2RenderingContext = context.gl;
@@ -66,13 +76,23 @@ namespace MB {
             }
             return _capabilities["maxTextureSize"];
         };
+        /**
+         * Returns the maximum cubemap texture size permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum cubemap texture size permitted.
+         */
         export function getMaxCubemapSize(context: GLContext): number {
             if (!_capabilities["maxCubemapSize"]) {
                 const gl: WebGL2RenderingContext = context.gl;
                 _capabilities["maxCubemapSize"] = gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
             }
             return _capabilities["maxCubemapSize"];
-        }
+        };
+        /**
+         * Returns WebGL shading precision.
+         * @param {GLContext} context [description]
+         * @return {string}
+         */
         export function getMaxPrecision(context: GLContext): string {
             const gl: WebGL2RenderingContext = context.gl;
             if (gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT).precision > 0 &&
@@ -85,6 +105,11 @@ namespace MB {
             }
             return "lowp";
         };
+        /**
+         * Returns the maximum draw buffers permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum draw buffers permitted.
+         */
         export function getMaxDrawBuffers(context: GLContext): number {
             if (!_capabilities["maxDrawBuffers"]) {
                 const gl: WebGL2RenderingContext = context.gl;
@@ -92,6 +117,11 @@ namespace MB {
             }
             return _capabilities["maxDrawBuffers"];
         };
+        /**
+         * Returns the maximum color attachment permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum color attachment permitted.
+         */
         export function getMaxColorAttachments(context: GLContext): number {
             if (!_capabilities["maxColorAttachments"]) {
                 const gl: WebGL2RenderingContext = context.gl;
@@ -100,6 +130,11 @@ namespace MB {
             return _capabilities["maxColorAttachments"];
         };
         declare var WebGL2RenderingContext: any;
+        /**
+         * Returns if current context supports FLOAT textures.
+         * @param {GLContext} context [description]
+         * @return {boolean}
+         */
         export function isTextureFloat(context: GLContext): boolean {
             const gl = context.gl;
             if (gl instanceof WebGL2RenderingContext) {

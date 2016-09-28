@@ -20,9 +20,14 @@
 "use strict";
 
 namespace MB {
+    /**
+     * This namespace includes various mathematical methods.
+     * It is based on the functionality found in the Unity Editor Mathf class.
+     * @namespace Mathf
+     */
     export namespace Mathf {
         /**
-         * [lerp description]
+         * Linear interpolation.
          * @param  {number} x   [description]
          * @param  {number} x1  [description]
          * @param  {number} x2  [description]
@@ -36,7 +41,7 @@ namespace MB {
             return ((x2 - x) / (x2 - x1)) * q00 + ((x - x1) / (x2 - x1)) * q01;
         };
         /**
-         * [biLerp description]
+         * Bilinear interpolation
          * @param  {number} x   [description]
          * @param  {number} y   [description]
          * @param  {number} q11 [description]
@@ -59,7 +64,7 @@ namespace MB {
             return lerp(y, y1, y2, r1, r2);
         };
         /**
-         * [triLerp description]
+         * Trilinear interpolation.
          * @param  {number} x    [description]
          * @param  {number} y    [description]
          * @param  {number} z    [description]
@@ -227,7 +232,7 @@ namespace MB {
             return Math.atan2(delta.z, delta.x);
         };
         /**
-         * Evaluate CatmullRom spline in 2D.
+         * Evaluates CatmullRom spline in 2D.
          * @param  {Vect3}  p0 [description]
          * @param  {Vect3}  p1 [description]
          * @param  {Vect3}  p2 [description]
@@ -250,7 +255,7 @@ namespace MB {
             return new Vect2(x, y);
         };
         /**
-         * Evaluate Hermite spline in 2D.
+         * Evaluates Hermite spline in 2D.
          * @param  {Vect2}  p0 [description]
          * @param  {Vect2}  t0 [description]
          * @param  {Vect2}  p1 [description]
@@ -273,7 +278,7 @@ namespace MB {
             return new Vect2(x, y);
         };
         /**
-         * Evaluate CatmullRom spline in 3D.
+         * Evaluates CatmullRom spline in 3D.
          * @param  {Vect3}  p0 [description]
          * @param  {Vect3}  p1 [description]
          * @param  {Vect3}  p2 [description]
@@ -300,7 +305,7 @@ namespace MB {
             return new Vect3(x, y, z);
         };
         /**
-         * Evaluate Hermite spline in 3D.
+         * Evaluates Hermite spline in 3D.
          * @param  {Vect3}  p0 [description]
          * @param  {Vect3}  t0 [description]
          * @param  {Vect3}  p1 [description]

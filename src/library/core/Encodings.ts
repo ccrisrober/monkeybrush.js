@@ -25,6 +25,13 @@ namespace MB {
      * @namespace Encodings
      */
     export namespace Encodings {
+        /**
+         * Converts RGB bytes to float.
+         * @param {[type]} srcArr [description]
+         * @param {[type]} srcOff [description]
+         * @param {[type]} dstArr [description]
+         * @param {[type]} dstOff [description]
+         */
         export function RGBByte2Float(srcArr, srcOff, dstArr, dstOff) {
             const e = srcArr[srcOff + 3];
             const scale = Math.pow(2.0, e - 128.0) / 255.0;
@@ -33,6 +40,13 @@ namespace MB {
             dstArr[dstOff + 1] = srcArr[srcOff + 1] * scale;
             dstArr[dstOff + 2] = srcArr[srcOff + 2] * scale;
         };
+        /**
+         * Converts RGB bytes to half float.
+         * @param {[type]} srcArr [description]
+         * @param {[type]} srcOff [description]
+         * @param {[type]} dstArr [description]
+         * @param {[type]} dstOff [description]
+         */
         export function RGBByte2Half(srcArr, srcOff, dstArr, dstOff) {
             const e = srcArr[srcOff + 3];
             const scale = Math.pow(2.0, e - 128.0) / 255.0;

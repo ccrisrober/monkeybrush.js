@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Brick texture</title>
+    <title>Kuwahara Filter</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -18,6 +18,7 @@
     <script type="text/javascript" src="../dist/output.js"></script>
 
     <script type="text/javascript">
+        alert("TODO: SHADER SIN COMPLETAR");
         var __extends = (this && this.__extends) || function (d, b) {
             for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
             function __() { this.constructor = d; }
@@ -25,11 +26,8 @@
         };
         var Configuration = function () {
             return {
-                brickW: 25,
-                brickH: 15,
-                brickColor: "#ff7800",
-                jointColor: "#ffffff"
-            }
+                amount: 0.5
+            };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
@@ -37,22 +35,32 @@
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.mainShader = "prog";
             };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
+            };
             MyScene.prototype.initialize = function () {
                 var _this = this;
+
+                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
+                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                    flipY: true,
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
 
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/procedurals/brick.glsl", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/kuwaharaFilter.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["brickSize", "brickColor", "jointColor"]);
+                    prog.addUniforms(["tex", "amount"]);
                     console.log(prog);
                     return prog;
                 });
                 this.postProcess = new MB.PostProcess(this.context);
-                this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
-                this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
@@ -61,22 +69,15 @@
                 this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
-
-                prog.sendUniform2f("brickSize", this.text.brickW, this.text.brickH);
-                prog.sendUniform3f("brickColor", this.brickColor.r, this.brickColor.g, this.brickColor.b);
-                prog.sendUniform3f("jointColor", this.jointColor.r, this.jointColor.g, this.jointColor.b);
+                this.tex2d.bind(0);
+                prog.sendUniform1i("tex", 0);
+                prog.sendUniform1f("amount", this.text.amount);
 
                 this.postProcess.render();
+                this.text.render = false;
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "brickW", 10, 50);
-                gui.add(this.text, "brickH", 10, 50);
-                gui.addColor(this.text, "brickColor").onChange(function() {
-                    this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
-                }.bind(this));
-                gui.addColor(this.text, "jointColor").onChange(function() {
-                    this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
-                }.bind(this));
+                gui.add(this.text, "amount", 0.0, 1.0);
             };
             return MyScene;
         }(MB.App));

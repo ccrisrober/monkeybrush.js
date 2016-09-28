@@ -5,6 +5,9 @@ declare namespace MB {
 
 declare namespace MB {
     namespace exceptions {
+        class MBException extends Error {
+            constructor(message: string);
+        }
     }
 }
 
@@ -162,6 +165,10 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    /**
+     * This namespace includes different types of curves are available in standard 2D Canvas api.
+     * @namespace curves
+     */
     namespace curves {
         abstract class Curve2D {
             abstract evaluate(t: number): Vect2;
@@ -319,6 +326,39 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    namespace Interpolation {
+        /**
+         * Linear interpolation.
+         * @param  {number} p0 [description]
+         * @param  {number} p1 [description]
+         * @param  {number} t  [description]
+         * @return {number}    [description]
+         */
+        function linear(p0: number, p1: number, t: number): number;
+        /**
+         * Bezier interpolation.
+         * @param  {number} x1 [description]
+         * @param  {number} y1 [description]
+         * @param  {number} x2 [description]
+         * @param  {number} y2 [description]
+         * @param  {number} t  [description]
+         * @return {number}    [description]
+         */
+        function bezier(x1: number, y1: number, x2: number, y2: number, t: number): number;
+        /**
+         * Catmull rom interpolation.
+         * @param  {number} p0 [description]
+         * @param  {number} p1 [description]
+         * @param  {number} p2 [description]
+         * @param  {number} p3 [description]
+         * @param  {number} t  [description]
+         * @return {number}    [description]
+         */
+        function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number;
+    }
+}
+
+declare namespace MB {
     /**
      * Mat2 class
      * @class Mat2
@@ -424,9 +464,14 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    /**
+     * This namespace includes various mathematical methods.
+     * It is based on the functionality found in the Unity Editor Mathf class.
+     * @namespace Mathf
+     */
     namespace Mathf {
         /**
-         * [lerp description]
+         * Linear interpolation.
          * @param  {number} x   [description]
          * @param  {number} x1  [description]
          * @param  {number} x2  [description]
@@ -436,7 +481,7 @@ declare namespace MB {
          */
         function lerp(x: number, x1: number, x2: number, q00: number, q01: number): number;
         /**
-         * [biLerp description]
+         * Bilinear interpolation
          * @param  {number} x   [description]
          * @param  {number} y   [description]
          * @param  {number} q11 [description]
@@ -451,7 +496,7 @@ declare namespace MB {
          */
         function biLerp(x: number, y: number, q11: number, q12: number, q21: number, q22: number, x1: number, x2: number, y1: number, y2: number): number;
         /**
-         * [triLerp description]
+         * Trilinear interpolation.
          * @param  {number} x    [description]
          * @param  {number} y    [description]
          * @param  {number} z    [description]
@@ -561,7 +606,7 @@ declare namespace MB {
          */
         function angleBetween3DPoints(p0: Vect3, p1: Vect3): number;
         /**
-         * Evaluate CatmullRom spline in 2D.
+         * Evaluates CatmullRom spline in 2D.
          * @param  {Vect3}  p0 [description]
          * @param  {Vect3}  p1 [description]
          * @param  {Vect3}  p2 [description]
@@ -571,7 +616,7 @@ declare namespace MB {
          */
         function CatmullRom2D(p0: Vect2, p1: Vect2, p2: Vect2, p3: Vect2, t: number): Vect2;
         /**
-         * Evaluate Hermite spline in 2D.
+         * Evaluates Hermite spline in 2D.
          * @param  {Vect2}  p0 [description]
          * @param  {Vect2}  t0 [description]
          * @param  {Vect2}  p1 [description]
@@ -581,7 +626,7 @@ declare namespace MB {
          */
         function Hermite2D(p0: Vect2, t0: Vect2, p1: Vect2, t1: Vect2, t: number): Vect2;
         /**
-         * Evaluate CatmullRom spline in 3D.
+         * Evaluates CatmullRom spline in 3D.
          * @param  {Vect3}  p0 [description]
          * @param  {Vect3}  p1 [description]
          * @param  {Vect3}  p2 [description]
@@ -591,7 +636,7 @@ declare namespace MB {
          */
         function CatmullRom3D(p0: Vect3, p1: Vect3, p2: Vect3, p3: Vect3, t: number): Vect3;
         /**
-         * Evaluate Hermite spline in 3D.
+         * Evaluates Hermite spline in 3D.
          * @param  {Vect3}  p0 [description]
          * @param  {Vect3}  t0 [description]
          * @param  {Vect3}  p1 [description]
@@ -731,11 +776,6 @@ declare namespace MB {
 }
 
 declare namespace MB {
-    namespace Interpolation {
-        function linear(p0: number, p1: number, t: number): number;
-        function bezier(x1: number, y1: number, x2: number, y2: number, t: number): number;
-        function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number;
-    }
     /**
      * Spline2D class
      * Create a smooth 2D spline curve from a points list.
@@ -1648,8 +1688,13 @@ declare namespace MB {
 
 declare namespace MB {
     namespace Decorators {
+        /**
+         * Seals an object, preventing new properties from being added to it and
+         *     marking all existing properties as non-configurable.
+         * Values of present properties can still be changed as long as they are writable.
+         * @param {Function} constructor
+         */
         function sealed(constructor: Function): void;
-        function logProperty(target: any, key: string): void;
     }
 }
 
@@ -1699,7 +1744,6 @@ declare namespace MB {
          * @param {GLContext} context [description]
          */
         constructor(context: GLContext);
-        createWireframe(): void;
         /**
          * Add Element buffer object.
          * @param {Uint16Array} data [description]
@@ -1907,17 +1951,6 @@ declare namespace MB {
              * @type {number}
              */
             Max = 32776,
-        }
-        /**
-         * WebGL constants to specify what information to return.
-         * Example: gl.getParameter(ctes.GLParameters.BlendEq)
-         */
-        enum GLParameters {
-            /**
-             * Get the current RGB blend function.
-             * @type {number}
-             */
-            BlendEq = 32777,
         }
         /**
          * WebGL constants used with buffer management.
@@ -2542,7 +2575,7 @@ declare namespace MB {
      */
     namespace Capabilities {
         /**
-         * Return the maximum anisotropy value from current WebGL implementation.
+         * Returns the maximum anisotropy value from current WebGL implementation.
          * @param {GLContext} context [description]
          * @return {number} Maximum anisotropy value.
          */
@@ -2553,12 +2586,47 @@ declare namespace MB {
          * @return {number} Maximum textures permitted.
          */
         function getMaxTextures(context: GLContext): number;
+        /**
+         * Returns the maximum vertex textures permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum vertex textures permitted.
+         */
         function getMaxVertexTextures(context: GLContext): number;
+        /**
+         * Returns the maximum texture size permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum textures permitted.
+         */
         function getMaxTextureSize(context: GLContext): number;
+        /**
+         * Returns the maximum cubemap texture size permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum cubemap texture size permitted.
+         */
         function getMaxCubemapSize(context: GLContext): number;
+        /**
+         * Returns WebGL shading precision.
+         * @param {GLContext} context [description]
+         * @return {string}
+         */
         function getMaxPrecision(context: GLContext): string;
+        /**
+         * Returns the maximum draw buffers permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum draw buffers permitted.
+         */
         function getMaxDrawBuffers(context: GLContext): number;
+        /**
+         * Returns the maximum color attachment permitted.
+         * @param {GLContext} context [description]
+         * @return {number} Maximum color attachment permitted.
+         */
         function getMaxColorAttachments(context: GLContext): number;
+        /**
+         * Returns if current context supports FLOAT textures.
+         * @param {GLContext} context [description]
+         * @return {boolean}
+         */
         function isTextureFloat(context: GLContext): boolean;
     }
 }
@@ -2569,6 +2637,7 @@ declare namespace MB {
      * @class Color3
      */
     class Color3 {
+        toVec3(): MB.Vect3;
         /**
          * Internal array that identifies the color values
          */
@@ -2866,7 +2935,21 @@ declare namespace MB {
      * @namespace Encodings
      */
     namespace Encodings {
+        /**
+         * Converts RGB bytes to float.
+         * @param {[type]} srcArr [description]
+         * @param {[type]} srcOff [description]
+         * @param {[type]} dstArr [description]
+         * @param {[type]} dstOff [description]
+         */
         function RGBByte2Float(srcArr: any, srcOff: any, dstArr: any, dstOff: any): void;
+        /**
+         * Converts RGB bytes to half float.
+         * @param {[type]} srcArr [description]
+         * @param {[type]} srcOff [description]
+         * @param {[type]} dstArr [description]
+         * @param {[type]} dstOff [description]
+         */
         function RGBByte2Half(srcArr: any, srcOff: any, dstArr: any, dstOff: any): void;
     }
 }
@@ -2965,7 +3048,7 @@ declare namespace MB {
      */
     namespace GeometryFunctions {
         /**
-         * Return triangle centroid (geometry center).
+         * Returns triangle centroid (geometry center).
          * @param  {Float32Array} v1 First triangle vertex.
          * @param  {Float32Array} v2 Second triangle vertex.
          * @param  {Float32Array} v3 Third triangle vertex.
@@ -2973,7 +3056,7 @@ declare namespace MB {
          */
         function triangleCentroid(v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array;
         /**
-         * Return triangle incenter.
+         * Returns triangle incenter.
          * @param  {Float32Array} v1 First triangle vertex.
          * @param  {Float32Array} v2 Second triangle vertex.
          * @param  {Float32Array} v3 Third triangle vertex.
@@ -2982,13 +3065,13 @@ declare namespace MB {
         function triangleIncenter(v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array;
         function getConvexHull(points: number[][]): Array<any>;
         /**
-         * Return a convex hull from 1D points list
+         * Returns a convex hull from 1D points list
          * @param  {ArrayLike<number>} points Point list
          * @return {Array<number>}            [description]
          */
         function convexHull1D(points: ArrayLike<number>): Array<number>;
         /**
-         * Return a new vertices and indices list removed orphan vertices
+         * Returns a new vertices and indices list removed orphan vertices
          * @param  {Array<Array<number>>} positions Positions list
          * @param  {Array<Array<number>>} indices   Indices list
          * @return {Object}                         New indices (indices)
@@ -3229,13 +3312,12 @@ declare namespace MB {
          * @return {boolean} True if activated
          */
         isEnabled(): boolean;
-        reset(): void;
     }
     class BlendingState {
         protected _context: GLContext;
         constructor(context: GLContext);
         protected _blendingEnabled: boolean;
-        protected _blendingMode: MB.ctes.BlendingEq;
+        protected _blendingMode: ctes.BlendingEq;
         /**
          * Change blending status (eables or disabled)
          * @param {boolean} enabled Enable/disable blending
@@ -4435,7 +4517,7 @@ declare namespace MB {
         protected _handle: WebGLBuffer;
         protected _context: GLContext;
         protected _index: number;
-        constructor(context: GLContext, prog: WebGLProgram, name: string, blockBindIdx: number);
+        constructor(context: GLContext, program: Program, name: string, blockBindIdx: number);
         /**
          * Bind Uniform Buffer Object.
          */
@@ -4592,7 +4674,7 @@ declare namespace MB {
 
 declare namespace MBX {
     /**
-     * Easing namespace
+     * This namespace includes various methods of easing values.
      * @namespace Easing
      */
     namespace Easing {
@@ -4850,7 +4932,7 @@ declare namespace MBX {
          */
         constructor(context: MB.GLContext, size: MB.Vect2);
         /**
-         * Bind GBuffer for reading (pospass)
+         * Bind GBuffer for reading (postpass)
          */
         bindForReading(): void;
         /**
@@ -5323,16 +5405,15 @@ declare namespace MB {
      * @class Box
      */
     class Box extends Drawable {
-        protected _side: number;
         /**
          * Box constructor.
          * @param {GLContext} context [description]
          * @param {number =       1.0}         width     [description]
          * @param {number =       1.0}         height    [description]
          * @param {number =       1.0}         depth     [description]
-         * @param {number =       1.0}         widthSub  [description]
-         * @param {number =       1.0}         heightSub [description]
-         * @param {number =       1.0}         depthSub  [description]
+         * @param {number =       1}           widthSub  [description]
+         * @param {number =       1}           heightSub [description]
+         * @param {number =       1}           depthSub  [description]
          */
         constructor(context: GLContext, width?: number, height?: number, depth?: number, widthSub?: number, heightSub?: number, depthSub?: number);
     }
@@ -5401,8 +5482,6 @@ declare namespace MB {
         indices: Array<number>;
         vertices: Array<number>;
         normals?: Array<number>;
-        regenerateNormals?: boolean;
-        generateTangents?: boolean;
         texCoords?: Array<number>;
     }
     /**
@@ -5869,13 +5948,13 @@ declare namespace MB {
 declare namespace MB {
     namespace Loaders {
         /**
-         * [loadAudio description]
-         * @param {string}    clipName [description]
-         * @param {string =        ""}          alias [description]
+         * Loads an audio file from route.
+         * @param {string}    clipRoute Audio route
+         * @param {string =v""}          alias Auxiliar alias.
          */
-        function loadAudio(clipName: string, alias?: string): void;
+        function loadAudio(clipRoute: string, alias?: string): void;
         /**
-         * [unloadAudio description]
+         * Unloads an audio.
          * @param {string} clipName [description]
          */
         function unloadAudio(clipName: string): void;
@@ -5885,8 +5964,15 @@ declare namespace MB {
 declare namespace MB {
     namespace Loaders {
         /**
-         * [loadCubeMap description]
-         * @param {string} directorySrc [description]
+         * Loads cubemap images from a directory.
+         *     The required files are:
+         *         -back.jpg
+         *         -bottom.jpg
+         *         -front.jpg
+         *         -left.jpg
+         *         -right.jpg
+         *         -top.jpg
+         * @param {string} directorySrc Cubemap images directory.
          */
         function loadCubeMap(directorySrc: string): void;
     }
@@ -6206,14 +6292,16 @@ declare namespace MB {
         getWidth(): number;
         getHeight(): number;
         protected _offsets_: Array<number>;
+        update(data: any): void;
         /**
          * SimpleTexture2D constructor.
          * @param {GLContext} context [description]
+         * @param {any} data [description]
          * @param {MB.Vect2} size: Texture size
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
          */
-        constructor(context: GLContext, size: MB.Vect2, options?: TexOptions, onSuccess?: () => void);
+        constructor(context: GLContext, data: any, size: MB.Vect2, options?: TexOptions, onSuccess?: () => void);
         setInmutable(size?: MB.Vect2): void;
         resize(size: MB.Vect2): void;
     }

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scenegraph</title>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
+    <script type="text/javascript">
+        var scene, camera, renderer, cube;
+
+        var WIDTH  = window.innerWidth;
+        var HEIGHT = window.innerHeight;
+
+        var SPEED = 0.01;
+
+        function init() {
+            scene = new THREE.Scene();
+
+            initCube();
+            initCamera();
+            initRenderer();
+
+            document.body.appendChild(renderer.domElement);
+        }
+
+        function initCamera() {
+            camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT, 1, 10);
+            camera.position.set(0, 3.5, 5);
+            camera.lookAt(scene.position);
+        }
+
+        function initRenderer() {
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(WIDTH, HEIGHT);
+        }
+
+        function initCube() {
+            cube = new THREE.Mesh(new THREE.CubeGeometry(2, 2, 2), new THREE.MeshNormalMaterial());
+            scene.add(cube);
+        }
+
+        function rotateCube() {
+            cube.rotation.x -= SPEED * 2;
+            cube.rotation.y -= SPEED;
+            cube.rotation.z -= SPEED * 3;
+        }
+
+        function render() {
+            requestAnimationFrame(render);
+            //rotateCube();
+            cube.scale.y = Math.abs(Math.cos(Date.now() / 1000.0));
+            renderer.render(scene, camera);
+        }
+
+        init();
+        render();
+    </script>
+</body>
+</html>

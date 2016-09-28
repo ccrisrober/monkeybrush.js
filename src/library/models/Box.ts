@@ -25,31 +25,36 @@ namespace MB {
      * @class Box
      */
     export class Box extends Drawable {
-        protected _side: number;
         /**
          * Box constructor.
          * @param {GLContext} context [description]
          * @param {number =       1.0}         width     [description]
          * @param {number =       1.0}         height    [description]
          * @param {number =       1.0}         depth     [description]
-         * @param {number =       1.0}         widthSub  [description]
-         * @param {number =       1.0}         heightSub [description]
-         * @param {number =       1.0}         depthSub  [description]
+         * @param {number =       1}           widthSub  [description]
+         * @param {number =       1}           heightSub [description]
+         * @param {number =       1}           depthSub  [description]
          */
         constructor(context: GLContext, width: number = 1.0, height: number = 1.0, depth: number = 1.0,
-            widthSub: number = 1.0, heightSub: number = 1.0, depthSub: number = 1.0) {
+            widthSub: number = 1, heightSub: number = 1, depthSub: number = 1) {
             super(context);
 
+            widthSub = Math.floor(widthSub);
+            heightSub = Math.floor(heightSub);
+            depthSub = Math.floor(depthSub);
 
-            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array([
 
-            ]), 3));
-            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array([
+            const nv: number = (width + 1) * (height + 1) * 2
+                             + (width + 1) * (depth + 1) * 2
+                             + (depth + 1) * (height + 1) * 2;
+            const nidx: number =  (width * height * 2)
+                                + (width * depth * 2)
+                                + (depth * height * 2) * 6;
 
-            ]), 3));
-            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array([
 
-            ]), 2));
+            this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(nv * 3), 3));
+            this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array(nv * 3), 3));
+            this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array(nv * 2), 2));
 
             this._geometry.setIndex(new Uint16Array([
 

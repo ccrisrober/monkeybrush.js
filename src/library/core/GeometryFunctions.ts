@@ -26,7 +26,7 @@ namespace MB {
      */
     export namespace GeometryFunctions {
         /**
-         * Return triangle centroid (geometry center).
+         * Returns triangle centroid (geometry center).
          * @param  {Float32Array} v1 First triangle vertex.
          * @param  {Float32Array} v2 Second triangle vertex.
          * @param  {Float32Array} v3 Third triangle vertex.
@@ -47,7 +47,7 @@ namespace MB {
             return res;
         };
         /**
-         * Return triangle incenter.
+         * Returns triangle incenter.
          * @param  {Float32Array} v1 First triangle vertex.
          * @param  {Float32Array} v2 Second triangle vertex.
          * @param  {Float32Array} v3 Third triangle vertex.
@@ -121,7 +121,7 @@ namespace MB {
             return lower.concat(upper);
         };
         /**
-         * Return a convex hull from 1D points list
+         * Returns a convex hull from 1D points list
          * @param  {ArrayLike<number>} points Point list
          * @return {Array<number>}            [description]
          */
@@ -145,7 +145,7 @@ namespace MB {
             }
         };
         /**
-         * Return a new vertices and indices list removed orphan vertices
+         * Returns a new vertices and indices list removed orphan vertices
          * @param  {Array<Array<number>>} positions Positions list
          * @param  {Array<Array<number>>} indices   Indices list
          * @return {Object}                         New indices (indices)

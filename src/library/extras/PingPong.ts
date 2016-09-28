@@ -45,7 +45,7 @@ namespace MB {
             this._size = size;
 
             this._tex1 = this._tex2 =
-                new MB.SimpleTexture2D(this._context, size, {
+                new MB.SimpleTexture2D(this._context, null, size, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
                     type: gl.FLOAT,
