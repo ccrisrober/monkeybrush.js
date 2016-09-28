@@ -154,7 +154,7 @@ namespace MB {
          */
         public copySub(readTarget: number, writeTarget: number, readOffset: number,
             writeOffset: number, size: number) {
-            // TODO: https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/copyBufferSubData
+            // https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/copyBufferSubData
             const gl: WebGL2RenderingContext = this._context.gl;
             gl.copyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
         };

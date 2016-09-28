@@ -1,11 +1,10 @@
-# MonkeyBrush
-Monkey Brush is a library that adds OOP for WebGL 1/2 using Typescript.
+/// <reference path="./src/typings/dat-gui.d.ts" />
+/// <reference path="./src/typings/gl-matrix.d.ts" />
+/// <reference path="./src/typings/log4javascript.d.ts" />
+/// <reference path="./src/typings/stats.d.ts" />
+/// <reference path="./src/typings/webgl2.d.ts" />
+/// <reference path="./dist/monkeybrush.d.ts" />
 
-## Doc
-<a href="./tutorials.md">Doc</a>
-
-## Example
-```typescript
 let MyConfig = function() {
     return {
         variable: true
@@ -33,10 +32,8 @@ class MyScene extends MB.App {
         let that = this;
         MB.ProgramManager.addWithFun("prog", (): MB.Program => {
             let prog: MB.Program = new MB.Program(that._context);
-            prog.addShader("shaders/demoShader.vert",
-                MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-            prog.addShader("shaders/demoShader.frag",
-                MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+            prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+            prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
             prog.compile();
             prog.use();
             prog.addUniforms(["projection", "view", "model", "viewPos"]);
@@ -79,4 +76,3 @@ class MyScene extends MB.App {
 window.onload = () => {
     new MyScene().start();
 };
-```

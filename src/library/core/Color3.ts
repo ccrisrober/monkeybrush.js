@@ -25,6 +25,9 @@ namespace MB {
      * @class Color3
      */
     export class Color3 {
+        public toVec3(): MB.Vect3 {
+            return this._color;
+        }
         /**
          * Internal array that identifies the color values
          */
@@ -122,7 +125,7 @@ namespace MB {
             this.b = Mathf.clamp01(b);
 
             return this;
-        };
+        }
         /**
          * Lerp color between two colors using alpha value.
          * The parameter alpha is clamped to the range [0, 1].
@@ -135,6 +138,7 @@ namespace MB {
             const r = minColor.r + (maxColor.r - minColor.r) * alpha;
             const g = minColor.g + (maxColor.g - minColor.g) * alpha;
             const b = minColor.b + (maxColor.b - minColor.b) * alpha;
+
             return new Color3(r, g, b);
         };
         /**
@@ -159,9 +163,6 @@ namespace MB {
             const b: number = RandomGenerator.random();
             return new Color3(r, g, b);
         };
-        // TODO: https://github.com/bgrins/TinyColor/blob/master/tinycolor.js
-        // TODO: https://github.com/davidmerfield/randomColor
-
         /**
          * Convert current color from gamma to linear range.
          * @param  {number = 2.2} gammaFactor Gamma factor value

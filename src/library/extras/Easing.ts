@@ -21,7 +21,7 @@
 
 namespace MBX {
     /**
-     * Easing namespace
+     * This namespace includes various methods of easing values.
      * @namespace Easing
      */
     export namespace Easing {

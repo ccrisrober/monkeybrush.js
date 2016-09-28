@@ -74,10 +74,12 @@
                 this.ttf.beginPoints();
                 gl.drawArrays(gl.POINTS, 0, 1);
                 this.ttf.end();
-                var feedback2 = new ArrayBuffer(3 * Float32Array.BYTES_PER_ELEMENT);
-                gl.getBufferSubData(gl.TRANSFORM_FEEDBACK_BUFFER, 0, feedback2);
-                console.log(new Float32Array(feedback2));
+
+                console.log(this.ttf.extractData(3));
+
                 gl.bindBufferBase(MB.ctes.BufferType.TransformFeedback, 0, null);
+
+
                 this.drawTick = false;
                 var t = this.bA;
                 this.bA = this.bB;

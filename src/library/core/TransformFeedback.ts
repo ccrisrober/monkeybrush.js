@@ -157,7 +157,6 @@ namespace MB {
          * @param  {number}         numElems [description]
          * @return {Float32Array}         [description]
          */
-        // TODO: Improve in Point_TF demo
         public extractData(numElems: number): Float32Array {
             let arrBuffer = new ArrayBuffer(numElems * Float32Array.BYTES_PER_ELEMENT);
             const gl: WebGL2RenderingContext = this._context.gl;

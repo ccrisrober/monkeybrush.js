@@ -22,10 +22,10 @@
 
 namespace MB {
     export namespace exceptions {
-        /*export class MBException extends Error {
+        export class MBException extends Error {
             constructor(message: string) {
                 super(message);
             };
-        }*/
+        }
     }
 }

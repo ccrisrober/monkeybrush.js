@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scenegraph</title>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec3 aVertexPosition;
+
+        uniform mat4 uMVMatrix;
+        uniform mat4 uPMatrix;
+
+        void main(void) {
+            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        }
+    </script>
+    <script id="shader-fs" type="x-shader/x-fragment">
+        void main(void) {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    </script>
+    <canvas id="myCanvas"></canvas>
+    <script type="text/javascript" src="./demos/libs/libraries.js"></script>
+    <script type="text/javascript" src="./demito.js"></script>
+    <script type="text/javascript">
+        var createScene = function() {
+            var scene = new MBS.Scene(context);
+
+            var cube = new MBS.Cube(scene, 0.2);
+            return scene;
+        };
+        var canvas = document.getElementById("myCanvas");
+        var context = new MBS.Context(canvas);
+        var scene = createScene();
+        var camera = new MBS.Camera(scene, new Float32Array([0, 0, 0]));
+        //context.run(function(dt) {
+        //    // console.log(dt);
+        //    scene.render(dt);
+        //});
+        var gl = context.gl();
+
+        function initShader() {
+            function getShader(gl, id) {
+                var shaderScript = document.getElementById(id);
+
+                // Didn't find an element with the specified ID; abort.
+
+                if (!shaderScript) {
+                    return null;
+                }
+
+                // Walk through the source element's children, building the
+                // shader source string.
+
+                var theSource = "";
+                var currentChild = shaderScript.firstChild;
+
+                while(currentChild) {
+                    if (currentChild.nodeType == 3) {
+                        theSource += currentChild.textContent;
+                    }
+
+                    currentChild = currentChild.nextSibling;
+                }
+
+                // Now figure out what type of shader script we have,
+                // based on its MIME type.
+
+                var shader;
+
+                if (shaderScript.type == "x-shader/x-fragment") {
+                    shader = gl.createShader(gl.FRAGMENT_SHADER);
+                } else if (shaderScript.type == "x-shader/x-vertex") {
+                    shader = gl.createShader(gl.VERTEX_SHADER);
+                } else {
+                    return null;  // Unknown shader type
+                }
+
+                // Send the source to the shader object
+
+                gl.shaderSource(shader, theSource);
+
+                // Compile the shader program
+
+                gl.compileShader(shader);
+
+                // See if it compiled successfully
+
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));
+                    return null;
+                }
+
+                return shader;
+            }
+
+            var fragmentShader = getShader(gl, "shader-fs");
+            var vertexShader = getShader(gl, "shader-vs");
+
+            // Create the shader program
+
+            var shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            // If creating the shader program failed, alert
+
+            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                alert("Unable to initialize the shader program: " + gl.getProgramInfoLog(shader));
+            }
+            return shaderProgram;
+        }
+
+        var prog = initShader();
+        var projection = camera.GetProjectionMatrix(context.canvas().width, context.canvas().height);
+        var view = camera.GetViewMatrix();
+        var projUnif = gl.getUniformLocation(prog, "uPMatrix");
+        var viewUnif = gl.getUniformLocation(prog, "uMVMatrix");
+        var model = mat4.create();
+        model = mat4.scale(model, model, vec3.fromValues(1.5, 0.7, 1.0));
+        model = mat4.multiply(model, view, model);
+
+        setInterval(function() {
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.useProgram(prog);
+            gl.uniformMatrix4fv(projUnif, false, projection);
+            gl.uniformMatrix4fv(viewUnif, false, model);
+            //cube.render();
+            //console.log("PINTAR");
+            scene.render();
+        }, 15);
+        //window.addEventListener("resize", function(ev) {
+        //    context.resize(ev);
+        //});
+
+    </script>
+</body>
+</html>

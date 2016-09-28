@@ -20,6 +20,10 @@
 "use strict";
 
 namespace MB {
+    /**
+     * This namespace includes different types of curves are available in standard 2D Canvas api.
+     * @namespace curves
+     */
     export namespace curves {
         export abstract class Curve2D {
             public abstract evaluate(t: number): Vect2;

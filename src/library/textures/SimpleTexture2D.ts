@@ -33,11 +33,12 @@ namespace MB {
         /**
          * SimpleTexture2D constructor.
          * @param {GLContext} context [description]
+         * @param {any} data [description]
          * @param {MB.Vect2} size: Texture size
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating SimpleTexture2D.
          */
-        constructor(context: GLContext, size: MB.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
+        constructor(context: GLContext, data: any, size: MB.Vect2, options: TexOptions = {}, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture2D, options);
 
             this._size = size;
@@ -57,8 +58,8 @@ namespace MB {
                         this.getWidth(),
                         this.getHeight(),
                         this._format,
-                        null
-                   );
+                        data
+                    );
                 } else {
                     gl.texSubImage2D(
                         this._target,
@@ -69,8 +70,8 @@ namespace MB {
                         this.getHeight(),
                         this._format,
                         this._type,
-                        null
-                   );
+                        data
+                    );
                 }
             } else {
                 if (this._compressed) {
@@ -81,8 +82,8 @@ namespace MB {
                         this.getWidth(),
                         this.getHeight(),
                         0,
-                        null
-                   );
+                        data
+                    );
                 } else {
                     gl.texImage2D(
                         this._target,
@@ -93,8 +94,8 @@ namespace MB {
                         0,
                         this._format,
                         this._type,
-                        null
-                   );
+                        data
+                    );
                 }
             }
 

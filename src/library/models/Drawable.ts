@@ -46,22 +46,6 @@ namespace MB {
             this._geometry = new MB.VertexBufferGeometry();
         };
 
-        createWireframe() {
-            // TODO: FAIL!!
-            let newcells = [];
-            let el0 = this._geometry.indices;
-            for (let i = 0; i < el0.length; i += 3) {
-                const a = el0[i + 0];
-                const b = el0[i + 1];
-                const c = el0[i + 2];
-                if (a !== null && b !== null) newcells.push(a, b);
-                if (b !== null && c !== null) newcells.push(b, c);
-                if (a !== null && c !== null) newcells.push(c, a);
-            }
-
-            this._geometry.setIndex(new Uint16Array(newcells));
-        }
-
         /**
          * Add Element buffer object.
          * @param {Uint16Array} data [description]

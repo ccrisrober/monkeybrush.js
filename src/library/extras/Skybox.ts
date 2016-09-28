@@ -239,6 +239,3 @@ namespace MBX {
         }
     };
 };
-
-
-// TODO: Move VAO and VBO to MB.CustomModel

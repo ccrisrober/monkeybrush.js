@@ -48,17 +48,23 @@ namespace MBX {
 
             this.Framebuffer = new MB.Framebuffer(context, [
                 // Position color buffer
-                new MB.SimpleTexture2D(context, size, configTex),
+                new MB.SimpleTexture2D(context, null, size, {
+                    internalFormat: MB.ctes.PixelFormat.RGBA,
+                    format: MB.ctes.PixelFormat.RGBA,
+                    type: MB.ctes.DataType.Float,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest
+                }),
                 // Normal color buffer
-                new MB.SimpleTexture2D(context, size, configTex),
+                new MB.SimpleTexture2D(context, null, size, configTex),
                 // Color + Specular color buffer
-                new MB.SimpleTexture2D(context, size, configTex)
+                new MB.SimpleTexture2D(context, null, size, configTex)
             ], size, true, true, {});
 
             MB.Log.debug("GBuffer created");
         };
         /**
-         * Bind GBuffer for reading (pospass)
+         * Bind GBuffer for reading (postpass)
          */
         public bindForReading() {
             this.Framebuffer.onlyBindTextures();
