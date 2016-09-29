@@ -118,13 +118,21 @@
                         pixels.push(exp * y, -exp * x, 3 * Math.exp(-30 * ((x - Ro) * (x - Ro) + y * y)), 1.0);
                     }
                 }
-                var size = new MB.Vect2(ww, hh);
-                this.tex = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+                // TODO: USE PINGPONG!
+                this.tex = new MB.Texture2D(this.context, {
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     type: this.context.gl.FLOAT // TODO
                 });
-                this.tex2 = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+                this.tex2 = new MB.Texture2D(this.context, {
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     type: this.context.gl.FLOAT // TODO

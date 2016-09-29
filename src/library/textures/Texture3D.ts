@@ -20,9 +20,10 @@
 "use strict";
 
 namespace MB {
-
     declare var WebGL2RenderingContext: any;
-
+    export interface ITexture3D extends ITexture2D {
+        depth: number;
+    };
     export class Texture3D extends Texture {
         /**
          * [constructor description]
@@ -32,57 +33,35 @@ namespace MB {
          * @param {TexOptions =    {}}        options [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture3D.
          */
-        constructor(context: GLContext, data, size: MB.Vect3, options: TexOptions = {}, onSuccess: () => void = null) {
-            super(context, MB.ctes.TextureTarget.Texture3D, options);
-
-            const gl: WebGL2RenderingContext = this._context.gl;
+        constructor(context: GLContext, data: ITexture3D, options: TexOptions = {}, onSuccess: () => void = null) {
+            const gl = context.gl;
             if (!(gl instanceof WebGL2RenderingContext)) {
                 throw new Error("Must provide a WebGL2 context ...");
             }
+            super(context, ctes.TextureTarget.Texture3D, options);
             this.bind();
-
-            // TODO: gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-
-            if (this._compressed) {
-                gl.compressedTexImage3D(
-                    this._target,
-                    this._level,
-                    this._format,
-                    size.x,
-                    size.y,
-                    size.z,
-                    0,
-                    data
-               );
-            } else {
-                gl.texImage3D(
-                    this._target,
-                    this._level,
-                    this._internalformat,
-                    size.x,
-                    size.y,
-                    size.z,
-                    0,
-                    this._format,
-                    this._type,
-                    data
-                );
-            }
-
-            // TODO: FAILED TEX IF USED!! this.wrap([
-            // TODO: FAILED TEX IF USED!!     options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
-            // TODO: FAILED TEX IF USED!!     options.wrapT || MB.ctes.WrapMode.Clamp2Edge,
-            // TODO: FAILED TEX IF USED!!     options.wrapR || MB.ctes.WrapMode.Clamp2Edge
-            // TODO: FAILED TEX IF USED!! ]);
-            gl.generateMipmap(gl.TEXTURE_3D);
-
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
+            gl.texImage3D(
+                this._target,
+                this._level,
+                this._internalFormat,
+                data.width,
+                data.height,
+                data.depth,
+                0,
+                this._format,
+                this._type,
+                data.pixels || null
+            );
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_MIN_FILTER,
+                options.minFilter || MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_MAG_FILTER,
+                options.magFilter || MB.ctes.TextureFilter.Linear);
 
             this.unbind();
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
-            if (onSuccess) {
-                onSuccess();
-            }
-        };
+        }
     };
 };

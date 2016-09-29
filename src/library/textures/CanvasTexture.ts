@@ -46,22 +46,34 @@ namespace MBX {
             const gl: WebGL2RenderingContext = this._context.gl;
 
             this._domCanvas = domCanvas;
+            this.bind();
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
             gl.texImage2D(
                 this._target,
                 this._level,
-                this._internalformat,
+                this._internalFormat,
                 this._format,
                 this._type,
                 this._domCanvas
             );
 
-            this.wrap([
-                options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
-                options.wrapT || MB.ctes.WrapMode.Clamp2Edge
-            ]);
-
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_MIN_FILTER,
+                options.minFilter || MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_MAG_FILTER,
+                options.magFilter || MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_WRAP_S,
+                options.wrapS || MB.ctes.WrapMode.Clamp2Edge);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_WRAP_T,
+                options.wrapT || MB.ctes.WrapMode.Clamp2Edge);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
@@ -71,20 +83,22 @@ namespace MBX {
         };
         /**
          * Updates the texture based on the current image of the canvas
-         * that was referenced in the class constructor
+         *     that was referenced in the class constructor.
          */
         public update() {
             this.bind();
             const gl: WebGL2RenderingContext = this._context.gl;
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
             gl.texImage2D(
                 this._target,
                 this._level,
-                this._internalformat,
+                this._internalFormat,
                 this._format,
                 this._type,
                 this._domCanvas
-           );
+            );
             this.unbind();
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
         };
     };
 };

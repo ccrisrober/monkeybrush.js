@@ -113,9 +113,11 @@
                         }
                     }
                 }
-                this.tex2 = new MB.Texture2DArray(this.context, new MB.Vector2(texSize, texSize), [
-                    bb1, bb2, bb3, bb4
-                ], {
+                this.tex2 = new MB.Texture2DArray(this.context, {
+                    width: texSize,
+                    height: texSize,
+                    pixels: [ bb1, bb2, bb3, bb4 ],
+                }, {
                     autoMipMap: true,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,

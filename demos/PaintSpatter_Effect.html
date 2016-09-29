@@ -46,7 +46,7 @@
                 var _this = this;
                 var myTexture = MB.ResourceMap.retrieveAsset("noiseTex");
                 this.tex2d = new MB.Texture2D(this.context, myTexture, {
-                    flipY: true,
+                    flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,

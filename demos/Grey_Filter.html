@@ -42,7 +42,7 @@
 
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
                 this.tex2d = new MB.Texture2D(this.context, myTexture, {
-                    flipY: true,
+                    flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,

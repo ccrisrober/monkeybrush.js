@@ -113,7 +113,9 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex2d = new MBX.CanvasTexture(this.context, canvas);
+                this.tex2d = new MBX.CanvasTexture(this.context, canvas, {
+                    flipY: 1
+                });
                 this.cubito = new MB.Cube(this.context, 30.0);
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);

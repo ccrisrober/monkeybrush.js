@@ -51,9 +51,9 @@ namespace MB {
         /**
          * Add new image to cubemap
          * @param {number} i    Index
-         * @param {[type]} data Image or buffer data.
+         * @param {any} data Image or buffer data.
          */
-        public addImage(i: number, data) {
+        public addImage(i: number, data: any) {
             const gl: WebGL2RenderingContext = this._context.gl;
             gl.texImage2D(0x8515 /*TEXTURE_CUBE_MAP_POSITIVE_X*/ + i, 0,
                 MB.ctes.PixelFormat.RGB, MB.ctes.PixelFormat.RGB, MB.ctes.DataType.UnsignedByte, data);

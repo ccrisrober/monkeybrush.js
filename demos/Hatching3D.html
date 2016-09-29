@@ -56,14 +56,20 @@
                         }
                     }
                 }
-                this.tex3d = new MB.Texture3D(this.context, data, new MB.Vect3(size, size, size), {
-                    minFilter: MB.ctes.TextureFilter.Linear,
+                this.tex3d = new MB.Texture3D(this.context, {
+                    pixels: data,
+                    width: size,
+                    height: size,
+                    depth: size
+                }, {
+                    minFilter: MB.ctes.TextureFilter.LinearMMNearest,
                     magFilter: MB.ctes.TextureFilter.Linear,
                     autoMipMap: true,
                     internalFormat: MB.ctes.PixelFormat.R8,
                     format: MB.ctes.PixelFormat.RED,
                     type: MB.ctes.DataType.UnsignedByte
                 });
+
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
@@ -82,7 +88,7 @@
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        //.rotate(this.angle * 0.5, MB.Vect3.yAxis)
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 prog.sendUniformMat4("model", this.model);
                 this.cubito.render();

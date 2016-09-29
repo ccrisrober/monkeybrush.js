@@ -59,9 +59,9 @@ namespace MB {
                 throw new Error("Vertices undefined");
             }
             // if (model.regenerateNormals === false || !model.regenerateNormals) {
-            //     if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
-            //         this.addBufferArray(i++, new Float32Array(model.normals), 3);
-            //     }
+                if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
+                    this.addBufferArray(i++, new Float32Array(model.normals), 3);
+                }
             // } else if (model.regenerateNormals === true) {
             //     this.recalculateNormals(); // TODO
             // }

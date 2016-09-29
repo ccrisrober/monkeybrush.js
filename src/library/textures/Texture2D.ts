@@ -20,42 +20,105 @@
 "use strict";
 
 namespace MB {
+    export interface ITexture2D {
+        pixels?: any;
+        width: number;
+        height: number;
+    };
+    // TODO: Support update setSubImage
     export class Texture2D extends Texture {
+        constructor(context: GLContext, data: HTMLImageElement, options: TexOptions, onSuccess?: () => void);
+        constructor(context: GLContext, data: ITexture2D, options: TexOptions, onSuccess?: () => void);
         /**
          * Texture2D constructor.
-         * @param {GLContext} context [description]
-         * @param {HTMLImageElement} data: Image data
+         * @param {GLContext}           context [description]
+         * @param {HTMLImageElement |       ITexture2D}  data      [description]
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
          */
-        constructor(context: GLContext, data: any, options: TexOptions = {}, onSuccess: () => void = null) {
-            super(context, MB.ctes.TextureTarget.Texture2D, options);
-
-            const gl: WebGL2RenderingContext = this._context.gl;
-
+        constructor(context: GLContext, data: HTMLImageElement | ITexture2D, options: TexOptions = {},
+            onSuccess: () => void) {
+            super(context, ctes.TextureTarget.Texture2D, options);
+            const gl = context.gl;
             this.bind();
-
-            gl.texImage2D(
+            if (data instanceof HTMLImageElement) {
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY? options.flipY : 0);
+                gl.texImage2D(
+                    this._target,
+                    this._level,
+                    this._internalFormat,
+                    this._format,
+                    this._type,
+                    data
+                );
+            } else {
+                gl.texImage2D(
+                    this._target,
+                    this._level,
+                    this._internalFormat,
+                    data.width,
+                    data.height,
+                    this._border,
+                    this._format,
+                    this._type,
+                    data.pixels || null
+                );
+            };
+            gl.texParameteri(
                 this._target,
-                this._level,
-                this._internalformat,
-                this._format,
-                this._type,
-                data
-            );
-
-            this.wrap([
-                options.wrapS || MB.ctes.WrapMode.Clamp2Edge,
-                options.wrapT || MB.ctes.WrapMode.Clamp2Edge
-            ]);
-
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
-
+                gl.TEXTURE_MIN_FILTER,
+                options.minFilter || MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_MAG_FILTER,
+                options.magFilter || MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_WRAP_S,
+                options.wrapS || MB.ctes.WrapMode.Clamp2Edge);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_WRAP_T,
+                options.wrapT || MB.ctes.WrapMode.Clamp2Edge);
+            if (options.autoMipMap === true) {
+                gl.generateMipmap(this._target);
+            }
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
-            if (onSuccess) {
-                onSuccess();
-            }
+        };
+        public update(data: HTMLImageElement);
+        public update(data: ITexture2D);
+        public update(data: HTMLImageElement | ITexture2D) {
+            // Update texture
+            this.bind();
+            const gl: WebGL2RenderingContext = this._context.gl;
+            this.bind();
+            if (data instanceof HTMLImageElement) {
+                // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+                gl.texImage2D(
+                    this._target,
+                    this._level,
+                    this._internalFormat,
+                    this._format,
+                    this._type,
+                    data
+                );
+            } else {
+                gl.texImage2D(
+                    this._target,
+                    this._level,
+                    this._internalFormat,
+                    data.width,
+                    data.height,
+                    this._border,
+                    this._format,
+                    this._type,
+                    data.pixels || null
+                );
+            };
+            // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+            // gl.generateMipmap(gl.TEXTURE_2D);
+            this.unbind();
         }
-    };
+    }
 };

@@ -119,18 +119,26 @@
                             pixels.push(255.0, 0.0, 0.0, 0.0);
                     }
                 }
-                var size = new MB.Vect2(ww, hh);
-                this.tex = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+                // TODO: PING PONG
+                this.tex = new MB.Texture2D(this.context, {
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     type: this.context.gl.FLOAT // TODO
                 });
-                this.tex2 = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+                this.tex2 = new MB.Texture2D(this.context, {
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     type: this.context.gl.FLOAT // TODO
                 });
-                this.fbo = new MB.Framebuffer(this.context, [this.tex], size);
+                this.fbo = new MB.Framebuffer(this.context, [this.tex], new MB.Vect2(ww, hh));
                 console.log(this.fbo.isValid());
                 this.pp = new MB.PostProcess(this.context);
                 this.textures = [this.tex, this.tex2];
@@ -177,7 +185,7 @@
                 }
                 var size = new MB.Vect2(ww, hh);
                 // TODO: DEBERIA CREAR UN UPDATE
-                this.tex.destroy();
+                /*this.tex.destroy();
                 this.tex = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -188,7 +196,18 @@
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     type: this.context.gl.FLOAT // TODO
-                });
+                });*/
+
+                this.tex.update({
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                })
+                this.tex2.update({
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                })
                 this.textures = [this.tex, this.tex2];
                 this.text.resume = true;
             };

@@ -77,7 +77,7 @@
                 });
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
                 this.tex2d = new MB.Texture2D(this.context, myTexture, {
-                    flipY: true,
+                    flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
@@ -85,7 +85,7 @@
                     autoMipMap: true
                 });
                 this.tex2d2 = new MB.Texture2D(this.context, myTexture, {
-                    flipY: false,
+                    flipY: 1,
                     internalFormat: MB.ctes.PixelFormat.RGBA8UI,
                     format: MB.ctes.PixelFormat.RGBA_INTEGER,
                     minFilter: MB.ctes.TextureFilter.Nearest,

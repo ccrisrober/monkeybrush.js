@@ -20,276 +20,94 @@
 "use strict";
 
 namespace MB {
-    // TODO: hacer unbind al crear textura!!
-
+    declare var WebGL2RenderingContext: any;
     export interface TexOptions {
         internalFormat?: ctes.PixelFormat;
-        type?: ctes.DataType;
-        level?: number;
+        format?: ctes.PixelFormat;
         minFilter?: ctes.TextureFilter;
         magFilter?: ctes.TextureFilter;
-        flipY?: boolean;
-        wrap?: ctes.WrapMode;
+        type?: ctes.DataType;
+        level?: number;
+        flipY?: number;
         wrapS?: ctes.WrapMode;
         wrapT?: ctes.WrapMode;
         wrapR?: ctes.WrapMode;
         minLOD?: number;
         maxLOD?: number;
         autoMipMap?: boolean;
-        format?: ctes.PixelFormat;
         border?: number;
         compressed?: boolean;
         anisotropic?: number;
 
         offsets?: Array<number>;
     };
-
-    declare var WebGL2RenderingContext: any;
-
     export abstract class Texture {
-
-        protected _anisotropy: number = 1;
-        protected _internalformat: ctes.PixelFormat = ctes.PixelFormat.RGBA;
-        protected _format: ctes.PixelFormat = ctes.PixelFormat.RGBA;
-
-        protected _wrapS: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
-        protected _wrapT: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
-        protected _wrapR: ctes.WrapMode = ctes.WrapMode.Clamp2Edge;
-
-        protected _minFilter: ctes.TextureFilter = ctes.TextureFilter.Linear;
-        protected _magFilter: ctes.TextureFilter = ctes.TextureFilter.Linear;
-
-        protected _type: ctes.DataType = ctes.DataType.UnsignedByte;
-        protected _flipY: boolean = true;
-        protected _generateMipMaps: boolean = false;
-        protected _premultiplyAlpha: boolean = false;
-
-        protected _unpackAlignment_: number = 4;
-        protected _target: ctes.TextureTarget;
-        protected _minLOD: number;
-        protected _maxLOD: number;
-
-        protected _level: number = 0;
-        protected _compressed: boolean = false;
-        /**
-         * Internal WebGLTexture handler.
-         * @type {WebGLTexture}
-         */
         protected _handler: WebGLTexture;
-
-        /**
-         * Returns false if gl.LINEAR is not supported as a texture
-         *     filter mode for textures of type gl.FLOAT.
-         * @param {GLContext} context [description]
-         * @return {boolean} [description]
-         */
-        public static canUseFloatingPointTextures(context: GLContext): boolean {
-            const gl = context.gl;
-            if (gl instanceof WebGL2RenderingContext) {
-                return true;
-            } else {
-                return !!Extensions.get(context, "OES_texture_float");
-            }
-        };
-
-        public static canUseFloatingPointLinearFiltering(context: GLContext): boolean {
-            return !!Extensions.get(context, "ES_texture_float_linear");
-        };
-
-        /**
-         * Returns false if gl.HALF_FLOAT_OES is not supported as a
-         *     texture type.
-         * WebGL2 supports this without extension.
-         * @param {GLContext} context [description]
-         * @return {boolean} [description]
-         */
-        public static canUseHalfFloatingPointTextures(context: GLContext): boolean {
-            const gl = context.gl;
-            if (gl instanceof WebGL2RenderingContext) {
-                return true;
-            } else {
-                return !!Extensions.get(context, "OES_texture_half_float");
-            }
-        };
-
-        /**
-         * Returns false if gl.LINEAR is not supported as a texture
-         *     filter mode for textures of type gl.HALF_FLOAT_OES.
-         * WebGL2 supports this without extension.
-         * @param {GLContext} context [description]
-         * @return {boolean} [description]
-         */
-        public static canUseHalfFloatingPointLinearFiltering(context: GLContext): boolean {
-            const gl = context.gl;
-            if (gl instanceof WebGL2RenderingContext) {
-                return true;
-            } else {
-                return !!Extensions.get(context, "OES_texture_half_float_linear");
-            }
-        };
-
+        protected _target: ctes.TextureTarget;
         protected _context: GLContext;
 
-        constructor(context: GLContext, target: ctes.TextureTarget, options: TexOptions) {
-            this._target = target;
+        protected _level: number;
+        protected _border: number;
+        protected _internalFormat: MB.ctes.PixelFormat;
+        protected _format: MB.ctes.PixelFormat;
+        protected _type: MB.ctes.DataType;
 
+        protected _wrapS: MB.ctes.WrapMode;
+        protected _wrapT: MB.ctes.WrapMode;
+        protected _wrapR: MB.ctes.WrapMode;
+
+        protected _minFilter: MB.ctes.TextureFilter;
+        protected _magFilter: MB.ctes.TextureFilter;
+
+        protected _flipY: number = 0;
+
+        constructor(context: GLContext, target: ctes.TextureTarget, options: TexOptions = {}) {
             this._context = context;
-
-            const gl: WebGL2RenderingContext = this._context.gl;
+            this._target = target;
+            const gl = this._context.gl;
             this._handler = gl.createTexture();
 
-            this._flipY = Boolean(options.flipY || false);
-            this._internalformat = options.internalFormat || ctes.PixelFormat.RGBA;
-            this._format = options.format || ctes.PixelFormat.RGBA;
-            this._type = options.type || ctes.DataType.UnsignedByte;
             this._level = options.level || 0;
+            this._border = options.border || 0;
+            this._internalFormat = options.internalFormat || MB.ctes.PixelFormat.RGBA;
+            this._format = options.format || MB.ctes.PixelFormat.RGBA;
+            this._type = options.type || MB.ctes.DataType.UnsignedByte;
 
-            this._compressed = Boolean(options.compressed || false);
+            this._wrapS = options.wrapS || MB.ctes.WrapMode.Clamp2Edge;
+            this._wrapT = options.wrapT || MB.ctes.WrapMode.Clamp2Edge;
+            this._wrapR = options.wrapR || MB.ctes.WrapMode.Clamp2Edge;
 
-            this.bind();
+            this._minFilter = options.minFilter || MB.ctes.TextureFilter.Linear;
+            this._magFilter = options.magFilter || MB.ctes.TextureFilter.Linear;
 
-            this.minFilter(options.minFilter || ctes.TextureFilter.Nearest);
-            this.magFilter(options.minFilter || ctes.TextureFilter.Nearest);
+            this._flipY = options.flipY || 0;
 
-            this._minLOD = options.minLOD || -1000;
-            this._maxLOD = options.maxLOD || 1000;
-            this._anisotropy = options.anisotropic || 1;
-
-            /*
-            TEXTURE_MAX_LEVEL 1000
-            */
-
-            if (this._type === gl.FLOAT) {
-                if (!Texture.canUseFloatingPointTextures(this._context)) {
-                    throw new Error("OES_texture_float is required but not supported.");
-                }
-                if ((this._minFilter !== ctes.TextureFilter.Nearest
-                    || this._magFilter !== ctes.TextureFilter.Nearest) &&
-                    !Texture.canUseFloatingPointLinearFiltering(this._context)) {
-                    throw new Error("OES_texture_float_linear is required but not supported.");
-                }
-            } else if (this._type === gl.HALF_FLOAT) {
-                if (!Texture.canUseHalfFloatingPointTextures(this._context)) {
-                    throw new Error("OES_texture_half_float is required but not supported.");
-                }
-                if ((this._minFilter !== ctes.TextureFilter.Nearest
-                    || this._magFilter !== ctes.TextureFilter.Nearest) &&
-                    !Texture.canUseHalfFloatingPointLinearFiltering(this._context)) {
-                    throw new Error("OES_texture_half_float_linear is required but not supported.");
-                }
-            }
-        };
-
-        /**
-         * Change texture minification filter
-         * @param {ctes.TextureFilter} filter: Minification filter type
-         */
-        public minFilter(filter: ctes.TextureFilter) {
-            this.bind();
-            const gl: WebGL2RenderingContext = this._context.gl;
-            gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, filter);
-            this._minFilter = filter;
-        };
-        /**
-         * Change texture magnification filter
-         * @param {ctes.TextureFilter} filter: Magnification filter type
-         */
-        public magFilter(filter: ctes.TextureFilter) {
-            this.bind();
-            const gl: WebGL2RenderingContext = this._context.gl;
-            gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, filter);
-            this._magFilter = filter;
-        };
-        public wrap(modes: Array<number>) {
-            if (modes.length < 2) {
-                throw new Error("Must specify wrapS, wrapT modes");
-            }
-            const gl: WebGL2RenderingContext = this._context.gl;
-            this.bind();
-            gl.texParameteri(this._target, gl.TEXTURE_WRAP_S, modes[0]);
-            gl.texParameteri(this._target, gl.TEXTURE_WRAP_T, modes[1]);
-            if (modes.length > 2) {
-                gl.texParameteri(this._target, gl.TEXTURE_WRAP_R, modes[2]);
-                this._wrapR = modes[2];
-            }
-            this._wrapS = modes[0];
-            this._wrapT = modes[1];
-        }
-        /**
-         * Generate mipmap to this texture.
-         */
-        public generateMipMap() {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            this.bind();
-            this._generateMipMaps = true;
-            // TODO: Check NPOT??
-            gl.generateMipmap(this._target);
-        }
-        /**
-         * Set texture anisotropic level
-         * @param {number = 0} level: Anisotropic level
-         */
-        public setAnisotropic(level: number = 0) {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            level = Math.floor(level);
-            // const ext = Extensions.get("EXT_texture_filter_anisotropic");
-            const max_anisotropy = Capabilities.getMaxAnisotropy(this._context);
-            if (max_anisotropy < level && this._anisotropy !== level) {
-                this._anisotropy = level;
-                gl.texParameterf(this._target, 0x84FE/*ext.TEXTURE_MAX_ANISOTROPY_EXT*/, level);
-            }
         };
         public bind(slot?: number) {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            if (typeof slot === "number") {
+            const gl = this._context.gl;
+            if (typeof slot === "number" && slot >= 0) {
                 gl.activeTexture(gl.TEXTURE0 + slot);
             }
             gl.bindTexture(this._target, this._handler);
-        }
+        };
         public unbind() {
-            const gl: WebGL2RenderingContext = this._context.gl;
+            const gl = this._context.gl;
             gl.bindTexture(this._target, null);
-        }
-        /**
-         * Destroy texture
-         */
+        };
         public destroy() {
-            const gl: WebGL2RenderingContext = this._context.gl;
+            const gl = this._context.gl;
             gl.deleteTexture(this._handler);
             this._handler = null;
-        }
-        public preventNPOT() {
-            /*this.wrap([
-                // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-                ctes.TextureFilter.Linear,
-                // Prevents s-coordinate wrapping (repeating).
-                ctes.WrapMode.Clamp2Edge,
-                // Prevents t-coordinate wrapping (repeating).
-                ctes.WrapMode.Clamp2Edge
-            ]);*/
-        }
-        get target(): number {
+        };
+        get target(): ctes.TextureTarget {
             return this._target;
         };
         get handler(): WebGLTexture {
             return this._handler;
         };
-        public resize(size: Vect2) {
-            // Nothing to do here
-        };
-        public setLOD(minLOD: number, maxLOD: number) {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            if (gl instanceof WebGL2RenderingContext) {
-                this._minLOD = minLOD;
-                this._maxLOD = maxLOD;
-                gl.texParameterf(this._target, gl.TEXTURE_MIN_LOD, this._minLOD);
-                gl.texParameterf(this._target, gl.TEXTURE_MAX_LOD, this._maxLOD);
-            } else {
-                MB.Log.warn("TEXTURE LOD isn´t supported");
-            }
-        };
-        public getWidth(): number { return -1; }
-        public getHeight(): number { return -1; }
-        public getDepth(): number { return -1; }
+
+        public resize(size: MB.Vect2) {
+            // TODO
+        }
     };
 };

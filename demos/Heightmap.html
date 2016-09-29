@@ -42,14 +42,16 @@
 
             vec3 pos = position;
 
+            outUV = uv;
+
             const vec2 size = vec2(0.5,0.0);
             const ivec3 off = ivec3(-1,0,1);
-            vec4 wave = texture(texH, uv);
+            vec4 wave = texture(texH, outUV);
             float s11 = wave.x;
-            float s01 = textureOffset(texH, uv, off.xy).x;
-            float s21 = textureOffset(texH, uv, off.zy).x;
-            float s10 = textureOffset(texH, uv, off.yx).x;
-            float s12 = textureOffset(texH, uv, off.yz).x;
+            float s01 = textureOffset(texH, outUV, off.xy).x;
+            float s21 = textureOffset(texH, outUV, off.zy).x;
+            float s10 = textureOffset(texH, outUV, off.yx).x;
+            float s12 = textureOffset(texH, outUV, off.yz).x;
             vec3 va = normalize(vec3(size.xy,s21-s01));
             vec3 vb = normalize(vec3(size.yx,s12-s10));
             vec4 bump = vec4( cross(va,vb), s11 );
@@ -61,7 +63,6 @@
             vec4 pp = model * vec4(pos, 1.0);
             pp = view * pp;
             outPosition = pp.xyz;
-            outUV = uv;
             outNormal = normalize(normalMatrix * outNormal);
             gl_Position = projection * pp;
         }
@@ -96,7 +97,7 @@
                 var _this = this;
 
                 this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("heightmap"), {
-                    flipY: true,
+                    flipY: 0,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.TextureFilter.Clamp2Edge,
