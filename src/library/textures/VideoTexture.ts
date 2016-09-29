@@ -40,7 +40,7 @@ namespace MBX {
                 internalFormat: MB.ctes.PixelFormat.RGBA,
                 format: MB.ctes.PixelFormat.RGBA,
                 type: MB.ctes.DataType.UnsignedByte,
-                flipY: true
+                flipY: 1
             });
 
             const gl: WebGL2RenderingContext = this._context.gl;

@@ -24,19 +24,18 @@ namespace MB {
 
     export interface TexOptions {
         internalFormat?: ctes.PixelFormat;
-        type?: ctes.DataType;
-        level?: number;
+        format?: ctes.PixelFormat;
         minFilter?: ctes.TextureFilter;
         magFilter?: ctes.TextureFilter;
-        flipY?: boolean;
-        wrap?: ctes.WrapMode;
+        type?: ctes.DataType;
+        level?: number;
+        flipY?: number;
         wrapS?: ctes.WrapMode;
         wrapT?: ctes.WrapMode;
         wrapR?: ctes.WrapMode;
         minLOD?: number;
         maxLOD?: number;
         autoMipMap?: boolean;
-        format?: ctes.PixelFormat;
         border?: number;
         compressed?: boolean;
         anisotropic?: number;
