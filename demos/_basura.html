@@ -25,10 +25,36 @@
 
         uniform sampler2D tex;
         uniform sampler2D tex2;
+        uniform sampler2D tex3;
+        uniform sampler2D tex4;
+        uniform sampler2D tex5;
 
-        void main() {
-            if (uv.x < 0.45) fragColor = texture(tex, uv);
-            if (uv.x > 0.55) fragColor = texture(tex2, uv);
+        void main(void) {
+            if (uv.x <= 0.45) {
+                if (uv.y <= 0.45) {
+                    fragColor = vec4(texture(tex, uv).xyz, 1.0);
+                }
+                else if (uv.y >= 0.55) {
+                    fragColor = vec4(texture(tex2, uv).xyz, 1.0);
+                }
+                else {
+                    fragColor = vec4(texture(tex5, uv).xyz, 1.0);
+                }
+            }
+            else if (uv.x >= 0.55) {
+                if (uv.y <= 0.45) {
+                    fragColor = vec4(texture(tex3, uv).xyz, 1.0);
+                }
+                else if (uv.y >= 0.55) {
+                    fragColor = vec4(texture(tex4, uv).xyz, 1.0);
+                }
+                else {
+                    fragColor = vec4(texture(tex5, uv).xyz, 1.0);
+                }
+            }
+            else {
+                fragColor = vec4(texture(tex5, uv).xyz, 1.0);
+            }
         }
     </script>
 
@@ -46,23 +72,47 @@
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Kamelot.jpg", "myTex");
+                MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex4");
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex3");
+                MB.Loaders.loadImage("../assets/images/UV_Grid_Sm.jpg", "myTex2");
+                MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "myTex5");
+                console.log("LOL");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                /*this.tex2d = new MB.Texture2D(this.context, myTexture, {
-                    flipY: true,
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
-                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
-                    wrapT: MB.ctes.WrapMode.Clamp2Edge
-                });*/
-                this.tex2d = new MB.MyTexture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
                     flipY: 1
                 });
-                this.tex2d2 = new MB.MyTexture2D(this.context, myTexture, {
+                this.tex2d2 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex2"), {
+                    flipY: 1
+                });
+                this.tex2d3 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex3"), {
+                    flipY: 1
+                });
+                this.tex2d4 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex4"), {
                     flipY: 0
+                });
+                this.tex2d.update(MB.ResourceMap.retrieveAsset("myTex5"));
+
+                var ww = 256;
+                var hh = 256;
+                var pixels = [];
+                for (var i = 0; i < ww; ++i) {
+                    for (var j = 0; j < hh; ++j) {
+                        if (i > j)
+                            pixels.push(0, 0.0, 0.0, 0.0);
+                        else
+                            pixels.push(255.0, 0.0, 0.0, 0.0);
+                    }
+                }
+                this.tex2d32 = new MB.Texture2D(this.context, {
+                    pixels: new Uint8Array(pixels),
+                    width: ww,
+                    height: hh
+                }, {
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest
                 });
 
                 MB.ProgramManager.addWithFun("prog", function () {
@@ -71,7 +121,7 @@
                     prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex", "tex2"]);
+                    prog.addUniforms(["tex", "tex2", "tex3", "tex4", "tex5"]);
                     console.log(prog);
                     return prog;
                 });
@@ -87,7 +137,13 @@
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
                 this.tex2d2.bind(1);
-                prog.sendUniform1i("tex1", 1);
+                prog.sendUniform1i("tex2", 1);
+                this.tex2d3.bind(2);
+                prog.sendUniform1i("tex3", 2);
+                this.tex2d4.bind(3);
+                prog.sendUniform1i("tex4", 3);
+                this.tex2d32.bind(4);
+                prog.sendUniform1i("tex5", 4);
 
                 this.postProcess.render();
             };

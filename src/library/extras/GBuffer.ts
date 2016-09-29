@@ -46,9 +46,14 @@ namespace MBX {
                 magFilter: MB.ctes.TextureFilter.Nearest
             };
 
+            const dataTex: MB.ITexture2D = {
+                width: size.x,
+                height: size.x,
+            };
+
             this.Framebuffer = new MB.Framebuffer(context, [
                 // Position color buffer
-                new MB.SimpleTexture2D(context, null, size, {
+                new MB.Texture2D(context, dataTex, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
                     type: MB.ctes.DataType.Float,
@@ -56,9 +61,9 @@ namespace MBX {
                     magFilter: MB.ctes.TextureFilter.Nearest
                 }),
                 // Normal color buffer
-                new MB.SimpleTexture2D(context, null, size, configTex),
+                new MB.Texture2D(context, dataTex, configTex),
                 // Color + Specular color buffer
-                new MB.SimpleTexture2D(context, null, size, configTex)
+                new MB.Texture2D(context, dataTex, configTex)
             ], size, true, true, {});
 
             MB.Log.debug("GBuffer created");

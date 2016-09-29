@@ -30,8 +30,8 @@ namespace MB {
         protected _size: MB.Vect2;
         protected _fbo: MB.Framebuffer;
         protected _flag: boolean;
-        protected _tex1: MB.SimpleTexture2D;
-        protected _tex2: MB.SimpleTexture2D;
+        protected _tex1: MB.Texture2D;
+        protected _tex2: MB.Texture2D;
         protected _context: GLContext;
         /**
          * PingProng constructor
@@ -44,8 +44,23 @@ namespace MB {
             this._flag = true;
             this._size = size;
 
-            this._tex1 = this._tex2 =
-                new MB.SimpleTexture2D(this._context, null, size, {
+            this._tex1 =
+                new MB.Texture2D(this._context, {
+                    width: size.x,
+                    height: size.y
+                }, {
+                    internalFormat: MB.ctes.PixelFormat.RGBA,
+                    format: MB.ctes.PixelFormat.RGBA,
+                    type: gl.FLOAT,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest
+                });
+
+            this._tex2 =
+                new MB.Texture2D(this._context, {
+                    width: size.x,
+                    height: size.y
+                }, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
                     type: gl.FLOAT,

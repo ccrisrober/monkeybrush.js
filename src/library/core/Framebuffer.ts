@@ -44,7 +44,7 @@ namespace MB {
         protected _handler: WebGLFramebuffer;
         protected _attachments: Array<MB.Texture>;
         public _renderBuffer: MB.RenderBufferTexture;
-        public _depth: MB.SimpleTexture2D;
+        public _depth: MB.Texture2D;
 
         protected _valid: boolean = false;
 

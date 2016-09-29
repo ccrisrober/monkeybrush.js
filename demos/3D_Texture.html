@@ -56,7 +56,12 @@
                         }
                     }
                 }
-                this.tex3d = new MB.Texture3D(this.context, data, new MB.Vect3(size, size, size), {
+                this.tex3d = new MB.Texture3D(this.context, {
+                    pixels: data,
+                    width: size,
+                    height: size,
+                    depth: size
+                }, {
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
                     autoMipMap: true,
