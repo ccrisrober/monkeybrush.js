@@ -49,7 +49,7 @@
 
                 let grassImage = MB.ResourceMap.retrieveAsset("heightmap");
                 this.tex2d = new MB.Texture2D(this.context, grassImage, {
-                    flipY: 1,
+                    flipY: 0,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
@@ -58,7 +58,7 @@
 
                 var heightmapImage = MB.ResourceMap.retrieveAsset("earth");
                 this.tex2d2 = new MB.Texture2D(this.context, heightmapImage, {
-                    flipY: 1,
+                    flipY: 0,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,

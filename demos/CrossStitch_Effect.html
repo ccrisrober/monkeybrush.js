@@ -66,11 +66,9 @@
                 prog.use();
                 this.tex.bind(0);
 
-                var canvas = this.canvas;
-
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1f("stich", this.text.stich);
-                prog.sendUniform2f("size", canvas.width, canvas.height);
+                prog.sendUniform2f("size", this.canvas.width, this.canvas.height);
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
