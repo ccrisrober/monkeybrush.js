@@ -9,81 +9,129 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var SimpleConfig = function () {
+var MyConfig = function () {
     return {
-        resume: true,
-        layer: 32
+        Ro: 0.1,
+        reset: function () {
+            myScene.reset(this.Ro);
+        }
     };
 };
 var MyScene = (function (_super) {
     __extends(MyScene, _super);
     function MyScene() {
-        _super.call(this, SimpleConfig(), "EY", 2);
-        this.mainShader = "prog";
-        this.angle = 0;
+        _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")), MyConfig());
+        this._it = 1;
+        this._resetTime = false;
     }
-    MyScene.prototype.loadAssets = function () {
-        MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
-    };
-    ;
     MyScene.prototype.initialize = function () {
-        var _this = this;
-        var gl = MB.Core.getInstance().getGL();
+        var that = this;
         MB.ProgramManager.addWithFun("prog", function () {
-            var prog = new MB.Program();
-            prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-            prog.addShader("#version 300 es\n            precision highp float;\n            precision highp sampler3D;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler3D tex;\n            uniform float layer;\n\n            void main() {\n                float r = texture(tex, vec3(uv, layer)).r;\n                fragColor = vec4(vec3(r), 1.0);\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-            prog._compile();
-            prog._link();
+            var prog = new MB.Program(that._context);
+            prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+            prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+            prog.compile();
             prog.use();
-            prog.addUniforms(["tex", "layer"]);
+            prog.addUniforms(["tex"]);
             return prog;
         });
-        var size = 64;
-        var data = new Uint8Array(Math.pow(size, 3));
-        for (var k = 0; k < size; ++k) {
-            for (var j = 0; j < size; ++j) {
-                for (var i = 0; i < size; ++i) {
-                    data[i + j * size + k * size * size] = MB.RandomGenerator.random() * 255; //Math.floor(MB.Noise.worley.Euclidean(i, j, k)[0] * 255);
-                }
+        MB.ProgramManager.addWithFun("prog_show", function () {
+            var prog = new MB.Program(that._context);
+            prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+            prog.addShader("show-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+            prog.compile();
+            prog.use();
+            prog.addUniforms(["tex"]);
+            return prog;
+        });
+        var ww = 256; // this.context.canvas.width;
+        var hh = 256; // this.context.canvas.height;
+        var Ro = this.text.Ro;
+        var pixels = [];
+        for (var i = 0; i < ww; ++i) {
+            for (var j = 0; j < hh; ++j) {
+                if (Math.random() > Ro)
+                    pixels.push(0, 0.0, 0.0, 0.0);
+                else
+                    pixels.push(255.0, 0.0, 0.0, 0.0);
             }
         }
-        this.tex3d = new MB.Texture3D(data, new MB.Vect3(size, size, size), {
-            minFilter: MB.ctes.TextureType.Linear,
-            magFilter: MB.ctes.TextureType.Linear,
-            autoMipMap: true,
-            internalFormat: gl.R8,
-            format: MB.ctes.TextureFormat.RED,
-            type: gl.UNSIGNED_BYTE
+        var size = new MB.Vect2(ww, hh);
+        this.tex = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+            minFilter: MB.ctes.TextureFilter.Nearest,
+            magFilter: MB.ctes.TextureFilter.Nearest,
+            type: this.context.gl.FLOAT // TODO
         });
+        this.tex2 = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+            minFilter: MB.ctes.TextureFilter.Nearest,
+            magFilter: MB.ctes.TextureFilter.Nearest,
+            type: this.context.gl.FLOAT // TODO
+        });
+        this.fbo = new MB.Framebuffer(this.context, [this.tex], size);
+        console.log(this.fbo.isValid());
+        this.pp = new MB.PostProcess(this.context);
+        this.textures = [this.tex, this.tex2];
+        this.cameraUpdate();
     };
-    ;
     MyScene.prototype.update = function (dt) {
-        this.angle += MB.Timer.deltaTime() * 0.001;
-        var gl = MB.Core.getInstance().getGL();
-        //this.text.layer = Math.random();
-        this.__resize__();
     };
-    ;
-    MyScene.prototype.draw = function (dt) {
-        MB.Core.getInstance().clearColorAndDepth();
-        var prog = MB.ProgramManager.get(this.mainShader);
+    MyScene.prototype.draw = function () {
+        this.clearColorAndDepth();
+        var prog;
+        this.state.setViewport(new MB.Vector4(0.0, 0.0, 256.0, 256.0));
+        prog = MB.ProgramManager.get("prog");
         prog.use();
-        this.tex3d.bind(0);
         prog.sendUniform1i("tex", 0);
-        prog.sendUniform1f("layer", this.text.layer * 1.0);
-        MB.PostProcess.render();
+        this.textures[1].bind(0);
+        this.fbo.bind();
+        this.fbo.replaceTexture(this.textures[0], 0);
+        this.textures.reverse();
+        this.pp.render();
+        this.fbo.unbind();
+        this.state.setViewport(new MB.Vector4(0.0, 0.0, 512.0, 512.0));
+        prog = MB.ProgramManager.get("prog_show");
+        prog.use();
+        this.tex.bind(0);
+        prog.sendUniform1i("tex", 0);
+        this.pp.render();
+        this._it - this._it;
     };
-    ;
-    MyScene.prototype.cameraUpdate = function () {
-    };
-    ;
     MyScene.prototype.textCB = function (gui) {
-        gui.add(this.text, "layer", 0, 64);
+        gui.add(this.text, "Ro", 0.01, 1.0);
+        gui.add(this.text, "reset");
     };
-    ;
+    MyScene.prototype.reset = function (Ro) {
+        this.text.resume = false;
+        var ww = 256; // this.context.canvas.width;
+        var hh = 256; // this.context.canvas.height;
+        var pixels = [];
+        for (var i = 0; i < ww; ++i) {
+            for (var j = 0; j < hh; ++j) {
+                if (Math.random() > Ro)
+                    pixels.push(0, 0.0, 0.0, 0.0);
+                else
+                    pixels.push(255.0, 0.0, 0.0, 0.0);
+            }
+        }
+        var size = new MB.Vect2(ww, hh);
+        // TODO: DEBERIA CREAR UN UPDATE
+        this.tex.destroy();
+        this.tex = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+            minFilter: MB.ctes.TextureFilter.Nearest,
+            magFilter: MB.ctes.TextureFilter.Nearest,
+            type: this.context.gl.FLOAT // TODO
+        });
+        this.tex2.destroy();
+        this.tex2 = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
+            minFilter: MB.ctes.TextureFilter.Nearest,
+            magFilter: MB.ctes.TextureFilter.Nearest,
+            type: this.context.gl.FLOAT // TODO
+        });
+        this.textures = [this.tex, this.tex2];
+        this.text.resume = true;
+    };
     return MyScene;
-}(MB.Scene));
+}(MB.App));
 ;
 var myScene;
 window.onload = function () {

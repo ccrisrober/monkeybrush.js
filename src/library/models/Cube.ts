@@ -27,10 +27,10 @@ namespace MB {
     export class Cube extends Drawable {
         protected _side: number;
         /**
-         * Cube constructor
+         * Cube constructor.
+         * @param {GLContext} context [description]
          * @param {number = 1.0} side: Size length
          */
-        // TODO: DOC
         constructor(context: GLContext, side: number = 1.0) {
             super(context);
 

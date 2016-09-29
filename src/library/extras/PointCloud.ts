@@ -19,7 +19,7 @@
 
 "use strict";
 
-namespace MB {
+namespace MBX {
     /**
      * PointCloud class
      * @class PointCloud

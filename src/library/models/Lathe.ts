@@ -29,13 +29,13 @@ namespace MB {
      */
     export class Lathe extends Drawable {
         /**
-         * Lathe constructor
+         * Lathe constructor.
+         * @param {GLContext} context [description]
          * @param {ArrayLike<MB.Vect3>} points List of points that define the lathe model.
          * @param {number} segments [description] Num. of segments.
          * @param {number = 0} phiInit [description]
          * @param {number = 2 * Math.PI} phiRadius [description]
          */
-        // TODO: DOC
         constructor(context: GLContext, points: ArrayLike<MB.Vect3>, segments: number,
             phiInit: number = 0, phiRadius: number = 2 * Math.PI) {
 

@@ -32,10 +32,10 @@ namespace MBX {
          */
         protected Framebuffer: MB.Framebuffer;
         /**
-         * GBuffer constructor
+         * GBuffer constructor.
+         * @param {GLContext} context [description]
          * @param {MB.Vect2} size GBuffer size
          */
-        // TODO: DOC
         constructor(context: MB.GLContext, size: MB.Vect2) {
 
             const configTex: MB.TexOptions = {
@@ -46,19 +46,30 @@ namespace MBX {
                 magFilter: MB.ctes.TextureFilter.Nearest
             };
 
+            const dataTex: MB.ITexture2D = {
+                width: size.x,
+                height: size.x,
+            };
+
             this.Framebuffer = new MB.Framebuffer(context, [
                 // Position color buffer
-                new MB.SimpleTexture2D(context, size, configTex),
+                new MB.Texture2D(context, dataTex, {
+                    internalFormat: MB.ctes.PixelFormat.RGBA,
+                    format: MB.ctes.PixelFormat.RGBA,
+                    type: MB.ctes.DataType.Float,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest
+                }),
                 // Normal color buffer
-                new MB.SimpleTexture2D(context, size, configTex),
+                new MB.Texture2D(context, dataTex, configTex),
                 // Color + Specular color buffer
-                new MB.SimpleTexture2D(context, size, configTex)
+                new MB.Texture2D(context, dataTex, configTex)
             ], size, true, true, {});
 
             MB.Log.debug("GBuffer created");
         };
         /**
-         * Bind GBuffer for reading (pospass)
+         * Bind GBuffer for reading (postpass)
          */
         public bindForReading() {
             this.Framebuffer.onlyBindTextures();

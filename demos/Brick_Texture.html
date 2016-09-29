@@ -50,6 +50,7 @@
                     console.log(prog);
                     return prog;
                 });
+                this.postProcess = new MB.PostProcess(this.context);
                 this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
                 this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
             };

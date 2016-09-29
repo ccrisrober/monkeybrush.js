@@ -26,10 +26,7 @@ namespace MB {
     */
     export class PostProcess {
         protected _context: GLContext;
-        /**
-         * [initialize description]
-         */
-        // TODO: DOC
+
         constructor(context: GLContext) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;

@@ -26,11 +26,11 @@ namespace MB {
      */
     export class Cuboctahedron extends Polyhedron {
         /**
-         * Cuboctahedron constructor
+         * Cuboctahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Cuboctahedron radius
          * @param {number} subdivisions: Cuboctahedron subdivisions from base icosphere
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number = 1.0, subdivisions: number = 1) {
             subdivisions = Math.floor(subdivisions);
 

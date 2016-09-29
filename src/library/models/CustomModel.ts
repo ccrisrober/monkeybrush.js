@@ -28,8 +28,6 @@ namespace MB {
         indices: Array<number>;
         vertices: Array<number>;
         normals?: Array<number>;
-        regenerateNormals?: boolean;    // TODO: Unused
-        generateTangents?: boolean;    // TODO: Unused
         texCoords?: Array<number>;
     };
     /**
@@ -38,10 +36,10 @@ namespace MB {
      */
     export class CustomModel extends Drawable {
         /**
-         * CustomModel constructor
+         * CustomModel constructor.
+         * @param {GLContext} context [description]
          * @param {ICustomModel} model: Model data
          */
-        // TODO: DOC
         constructor(context: GLContext, model: ICustomModel) {
             super(context);
 
@@ -60,21 +58,21 @@ namespace MB {
             } else {
                 throw new Error("Vertices undefined");
             }
-            if (model.regenerateNormals === false || !model.regenerateNormals) {
+            // if (model.regenerateNormals === false || !model.regenerateNormals) {
                 if (model.normals && model.normals.length && model.normals.length % 3 === 0) {
                     this.addBufferArray(i++, new Float32Array(model.normals), 3);
                 }
-            } else if (model.regenerateNormals === true) {
-                this.recalculateNormals(); // TODO
-            }
+            // } else if (model.regenerateNormals === true) {
+            //     this.recalculateNormals(); // TODO
+            // }
             if (model.texCoords && model.texCoords.length && model.texCoords.length % 2 === 0) {
                 this.addBufferArray(i++, new Float32Array(model.texCoords), 2);
             }
 
-            if (model.generateTangents === true) {
-                this.addBufferArray(i++, new Float32Array([]), 3);
-                // TODO: generateTangents
-            }
+            //  if (model.generateTangents === true) {
+            //      this.addBufferArray(i++, new Float32Array([]), 3);
+            //      // TODO: generateTangents
+            //  }
 
             this._indicesLen = model.indices.length;
 

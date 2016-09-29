@@ -119,12 +119,6 @@ namespace MB {
                     timeout: 2500
                 });
             }
-            VanillaToasts.create({
-                title: `${resName} completed`,
-                text: "",
-                type: "success",
-                timeout: 1500
-            });
             _ResourceMap[resName].setAsset(loadedAsset);
             --_numOutstandingLoads;
             _checkForAllLoadCompleted();

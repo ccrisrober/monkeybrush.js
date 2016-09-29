@@ -39,8 +39,8 @@ namespace MB {
         protected _context: GLContext;
         /**
          * Create and initializes a TransformFeedback object.
+         * @param {GLContext} context [description]
          */
-        // TODO: DOC
         constructor(context: GLContext) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;
@@ -117,11 +117,11 @@ namespace MB {
         };
         /**
          * Specifies values to record in TransformFeedback buffers.
+         * @param {GLContext} context [description]
          * @param {Program}       program    Program targe object.
          * @param {Array<string>} varyings   [description]
          * @param {ctes.TFMode}        bufferMode [description]
          */
-        // TODO: DOC
         public static varyings(context: GLContext, program: Program, varyings: Array<string>,
             bufferMode: ctes.TFMode) {
 
@@ -157,7 +157,6 @@ namespace MB {
          * @param  {number}         numElems [description]
          * @return {Float32Array}         [description]
          */
-        // TODO: Improve in Point_TF demo
         public extractData(numElems: number): Float32Array {
             let arrBuffer = new ArrayBuffer(numElems * Float32Array.BYTES_PER_ELEMENT);
             const gl: WebGL2RenderingContext = this._context.gl;

@@ -40,7 +40,11 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 this.cubito = new MB.Cube(this.context, 14.0);
-                this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"));
+
+                this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"), {
+                    flipY: 1
+                });
+
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

@@ -49,7 +49,7 @@
                 MB.Loaders.loadImage("../assets/images/skybox2/top.jpg");
             };
             MyScene.prototype.initialize = function () {
-                this.skybox = new MB.Skybox(this.context, "../assets/images/skybox2");
+                this.skybox = new MBX.Skybox(this.context, "../assets/images/skybox2");
                 this.cubito = new MB.Cube(this.context, 15.0);
                 var canvas = this.canvas;
                 this.deferred = new MBX.GBuffer(this.context, new MB.Vect2(canvas.width, canvas.height));

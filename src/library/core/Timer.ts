@@ -20,7 +20,6 @@
 "use strict";
 
 namespace MB {
-    // TODO: Reorganize using Clock!
     /**
      * Timer namespace
      * @namespace Timer

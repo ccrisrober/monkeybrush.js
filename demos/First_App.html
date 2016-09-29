@@ -41,10 +41,10 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.skybox = new MB.Skybox(this.context, "../assets/images/hw_mystic");
+                this.skybox = new MBX.Skybox(this.context, "../assets/images/hw_mystic");
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
                 this.tex2d = new MB.Texture2D(this.context, myTexture, {
-                    flipY: true,
+                    flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,

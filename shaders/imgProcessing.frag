@@ -10,7 +10,6 @@ uniform int mode;
 void main() {
 	//determine the inverse of texture size
 	vec2 t = vec2(textureSize(tex, 0));
-    vec2 uvv = vec2(uv.x, 1.0 - uv.y);
 
     float tx = 1.0/t.x;
     float ty = 1.0/t.y;
@@ -85,16 +84,16 @@ void main() {
 
     vec3 frag = vec3(0.0);
     // for(int i=0; i<9; i++)
-    //   frag += texture(tex, uvv + tc[i]).rgb * coeff[i];
-    frag += texture(tex, uvv + tc[0]).rgb * coeff[0];
-    frag += texture(tex, uvv + tc[1]).rgb * coeff[1];
-    frag += texture(tex, uvv + tc[2]).rgb * coeff[2];
-    frag += texture(tex, uvv + tc[3]).rgb * coeff[3];
-    frag += texture(tex, uvv + tc[4]).rgb * coeff[4];
-    frag += texture(tex, uvv + tc[5]).rgb * coeff[5];
-    frag += texture(tex, uvv + tc[6]).rgb * coeff[6];
-    frag += texture(tex, uvv + tc[7]).rgb * coeff[7];
-    frag += texture(tex, uvv + tc[8]).rgb * coeff[8];
+    //   frag += texture(tex, uv + tc[i]).rgb * coeff[i];
+    frag += texture(tex, uv + tc[0]).rgb * coeff[0];
+    frag += texture(tex, uv + tc[1]).rgb * coeff[1];
+    frag += texture(tex, uv + tc[2]).rgb * coeff[2];
+    frag += texture(tex, uv + tc[3]).rgb * coeff[3];
+    frag += texture(tex, uv + tc[4]).rgb * coeff[4];
+    frag += texture(tex, uv + tc[5]).rgb * coeff[5];
+    frag += texture(tex, uv + tc[6]).rgb * coeff[6];
+    frag += texture(tex, uv + tc[7]).rgb * coeff[7];
+    frag += texture(tex, uv + tc[8]).rgb * coeff[8];
 
     if (mode == 5) {
         // grayscale

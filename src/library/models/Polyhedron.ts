@@ -28,13 +28,13 @@ namespace MB {
         protected _radius: number;
         protected _subdivisions: number;
         /**
-         * Polyhedron abstract constructor
+         * Polyhedron abstract constructor.
+         * @param {GLContext} context [description]
          * @param {Array<number>} verts List of vertices
          * @param {Array<number>} el List of indices
          * @param {number} radius Polyhedron radius
          * @param {number} subdivisions Polyhedron subdivisions
          */
-        // TODO: DOC
         constructor(context: GLContext, verts: Array<number>, el: Array<number>,
             radius: number, subdivisions: number) {
 

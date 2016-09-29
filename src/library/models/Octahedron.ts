@@ -26,15 +26,15 @@ namespace MB {
      */
     export class Octahedron extends Polyhedron {
         /**
-         * Octahedron constructor
-         * @param {number} radius: Octahedron radius
+         * Octahedron constructor.
+         * @param {GLContext} context [description]
+         * @param {number} radius: Octahedron radius.
          * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number, subdivisions: number) {
             const a: number = 1 / (2 * Math.sqrt(2));
             const b: number = 1 / 2;
-            
+
             super(context, [
                  a,  0,  0,
                 -a,  0,  0,

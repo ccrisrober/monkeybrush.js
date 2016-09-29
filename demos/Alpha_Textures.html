@@ -53,13 +53,13 @@
 
                 let woodenBox = MB.ResourceMap.retrieveAsset("woodenBox");
                 this.tex = new MB.Texture2D(this.context, woodenBox, {
-                    flipY: true,
+                    flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear
                 });
                 let fragile = MB.ResourceMap.retrieveAsset("fragile");
                 this.tex2 = new MB.Texture2D(this.context, fragile, {
-                    flipY: true,
+                    flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear
                 });

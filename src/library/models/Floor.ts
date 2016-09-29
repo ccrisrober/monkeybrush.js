@@ -26,11 +26,11 @@ namespace MB {
      */
     export class Floor extends Drawable {
         /**
-         * Floor constructor
+         * Floor constructor.
+         * @param {GLContext} context [description]
          * @param {number = 80} dim [description]
          * @param {number = 2}  e   [description]
          */
-        // TODO: DOC
         constructor(context: GLContext, dim: number = 80, e: number = 2) {
             super(context);
             const lines = 2 * dim / e;

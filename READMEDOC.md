@@ -6,17 +6,16 @@ Monkey Brush is a library that adds OOP for WebGL 1/2 using Typescript.
 
 ## Example
 ```typescript
-let SimpleConfig = function() {
+let MyConfig = function() {
     return {
-        resume: true
+        variable: true
     };
 };
-
-class MyScene extends MB.Scene {
+class MyScene extends MB.App {
     protected homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
     protected camera = new MB.Camera2(this.homePoint);
 
-    protected cubito: MB.models.Drawable;
+    protected cube: MB.Drawable;
     protected view: MB.Mat4;
     protected projection: MB.Mat4;
 
@@ -25,56 +24,56 @@ class MyScene extends MB.Scene {
     protected angle = 0;
 
     constructor() {
-        super(SimpleConfig(), "App", 2);
+        super("App", new MB.GLContextW2(<HTMLCanvasElement>document.getElementById("canvas")), MyConfig());
     }
     protected mainShader: string = "prog";
     loadAssets() { }
     initialize() {
-        this.cubito = new MB.models.Cube(15.0);
-        MB.resources.ProgramManager.addWithFun("prog", (): MB.core.Program => {
-            let prog: MB.core.Program = new MB.core.Program();
+        this.cube = new MB.Cube(this._context, 15.0);
+        let that = this;
+        MB.ProgramManager.addWithFun("prog", (): MB.Program => {
+            let prog: MB.Program = new MB.Program(that._context);
             prog.addShader("shaders/demoShader.vert",
-                MB.constants.ProgramCte.shader_type.vertex, MB.constants.ProgramCte.mode.read_file);
+                MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
             prog.addShader("shaders/demoShader.frag",
-                MB.constants.ProgramCte.shader_type.fragment, MB.constants.ProgramCte.mode.read_file);
+                MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
             prog.compile();
             prog.use();
-            prog.addUniforms(["projection", "view", "model"]);
+            prog.addUniforms(["projection", "view", "model", "viewPos"]);
             return prog;
         });
         this.cameraUpdate();
     }
     update(dt: number) {
-        this.camera.timeElapsed = MB.extras.Timer.deltaTime() / 10.0;
+        this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
         this.camera.update(this.cameraUpdate.bind(this));
-        this.angle += MB.extras.Timer.deltaTime() * 0.001;
+        this.angle += MB.Timer.deltaTime() * 0.001;
     }
-    draw(dt?: number) {
-        MB.core.Core.getInstance().clearColorAndDepth();
-        let prog = MB.resources.ProgramManager.get(this.mainShader);
+    draw() {
+        this.clearColorAndDepth();
+        let prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
         this.model =
             this.identityMatrix.clone()
-                .translate(new MB.Vect3(i * 1.0, j * 1.0, k * 1.0))
+                .translate(MB.Vect3.createFromScalar(0.0))
                 .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                .rotate(this.angle * 0.5 * dd, MB.Vect3.yAxis)
+                .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                 .scale(new MB.Vect3(0.25, 0.25, 0.25));
         prog.sendUniformMat4("model", this.model);
-        this.cubito.render();
-        this.skybox.render(this.view, this.projection);
+        this.cube.render();
     }
-    public pos = 0;
     cameraUpdate() {
-        let canvas = MB.core.Core.getInstance().canvas();
         this.view = this.camera.GetViewMatrix();
-        this.projection = this.camera.GetProjectionMatrix(canvas.width, canvas.height);
-        let prog = MB.resources.ProgramManager.get(this.mainShader);
+        this.projection = this.camera.GetProjectionMatrix(this.context.canvas);
+        let prog = MB.ProgramManager.get(this.mainShader);
         prog.use();
         prog.sendUniformVec3("viewPos", this.camera.GetPos());
         prog.sendUniformMat4("projection", this.projection);
         prog.sendUniformMat4("view", this.view);
     }
-    textCB(gui: dat.GUI) { }
+    textCB(gui: dat.GUI) {
+        gui.add(this.text, "variable", true);
+    }
 };
 
 window.onload = () => {

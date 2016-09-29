@@ -33,7 +33,8 @@ namespace MB {
         protected _createTopBase: boolean;
         protected _createBottomBase: boolean;
         /**
-         * Cone constructor
+         * Cone constructor.
+         * @param {GLContext} context [description]
          * @param {number} bottomRadius: Cone bottom radius
          * @param {number} topRadius: Cone top radius
          * @param {number} height: Cone height
@@ -42,7 +43,6 @@ namespace MB {
          * @param {boolean = true} createTopBase: Create top base
          * @param {boolean = true} createBottomBase: Create bottom base
          */
-        // TODO: DOC
         constructor(context: GLContext, bottomRadius: number, topRadius: number,
             height: number, radialSubDiv: number = 3.0, heightSubDiv: number = 1.0,
             createTopBase: boolean = true, createBottomBase: boolean = true) {
@@ -56,7 +56,7 @@ namespace MB {
             if (heightSubDiv < 1) {
                 throw Error("heightSubDiv must be 1 or greater");
             }
-            
+
             this._bottomRadius = bottomRadius;
             this._topRadius = topRadius;
             this._height = height;

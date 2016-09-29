@@ -146,18 +146,6 @@ namespace MB {
              */
             Max = 0x8008
         };
-        // TODO: Complete!
-        /**
-         * WebGL constants to specify what information to return.
-         * Example: gl.getParameter(ctes.GLParameters.BlendEq)
-         */
-        export enum GLParameters {
-            /**
-             * Get the current RGB blend function.
-             * @type {number}
-             */
-            BlendEq = 0x8009
-        };
         /**
          * WebGL constants used with buffer management.
          */

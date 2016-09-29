@@ -9,11 +9,11 @@ in vec3  ViewVec;
 
 out vec4 fragColor;
 
-const vec3 SurfaceColor = vec3(0.75, 0.75, 0.75);
-const vec3 WarmColor = vec3(0.6, 0.6, 0.0);
-const vec3 CoolColor = vec3(0.0, 0.0, 0.6);
-const float DiffuseWarm = 0.45;
-const float DiffuseCool = 0.45;
+const vec3 SurfaceColor = vec3(1.0, 1.0, 1.0);
+const vec3 CoolColor = vec3(159.0/255., 148.0/255., 1.);
+const vec3 WarmColor = vec3(1.0, 75.0/255., 75./255.);
+const float DiffuseWarm = 0.5;
+const float DiffuseCool = 0.25;
 
 void main() {
     vec3 kcool    = min(CoolColor + DiffuseCool * SurfaceColor, 1.0);

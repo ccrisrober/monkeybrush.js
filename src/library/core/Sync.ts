@@ -35,9 +35,9 @@ namespace MB {
 
         /**
          * Sync constructor.
+         * @param {GLContext} context [description]
          * @param {ctes.SyncCondition = ctes.SyncCondition.GPUCommandsComplete} condition Sync condition.
          */
-        // TODO: DOC
         constructor(context: GLContext, condition: ctes.SyncCondition = ctes.SyncCondition.GPUCommandsComplete) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;

@@ -44,7 +44,7 @@ namespace MB {
         protected _handler: WebGLFramebuffer;
         protected _attachments: Array<MB.Texture>;
         public _renderBuffer: MB.RenderBufferTexture;
-        public _depth: MB.SimpleTexture2D;
+        public _depth: MB.Texture2D;
 
         protected _valid: boolean = false;
 
@@ -150,8 +150,8 @@ namespace MB {
         };
         /**
          * Enable default framebuffer
+         * @param {GLContext} context [description]
          */
-        // TODO: DOC
         public static RestoreDefaultFBO(context: GLContext) {
             const gl: WebGL2RenderingContext = context.gl;
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);

@@ -26,7 +26,8 @@ namespace MB {
      */
     export class Prism extends Cone {
         /**
-         * Prism constructor
+         * Prism constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Prism radius
          * @param {number} height: Prism height
          * @param {number = 1.0} sides: Number of sides of the prism
@@ -34,7 +35,6 @@ namespace MB {
          * @param {boolean = true} createTopBase: Create top base
          * @param {boolean = true} createBottomBase: Create bottom base
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number, height: number, sides: number,
             heightSubDiv: number = 1.0, topCap: boolean = true, bottomCap: boolean = true) {
             super(context, radius, radius, height, sides, heightSubDiv, topCap, bottomCap);

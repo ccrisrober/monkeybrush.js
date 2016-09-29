@@ -39,8 +39,8 @@ namespace MB {
         protected _context: GLContext;
         /**
          * Query constructor.
+         * @param {GLContext} context [description]
          */
-        // TODO: DOC
         constructor(context: GLContext) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;

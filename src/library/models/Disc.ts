@@ -26,14 +26,14 @@ namespace MB {
      */
     export class Disc extends Drawable {
         /**
-         * Disc constructor
+         * Disc constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Disc radius
          * @param {number} divisions: Disc base subdivison (num. of triangles)
          * @param {number = 1.0} stacks: Radial subdivisions around disc.
          * @param {number = 0.0} innerRadius: Inner radius of disc
          * @param {number = 0.0} stackInc: Width inc/dec around center.
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number, divisions: number, stacks: number = 1.0,
             innerRadius: number = 0.0, stackInc: number = 0.0) {
 

@@ -149,10 +149,10 @@ namespace MB {
             gl.clear(gl.DEPTH_BUFFER_BIT);
         };
         public reset() {
-            this._depthEnabled = true;
-            this._currentDepthMask = true;
+            // this._depthEnabled = true;
+            // this._currentDepthMask = true;
             this.setFunc(ctes.ComparisonFunc.Less);
-            this._currentDepthClear = null;
+            // this._currentDepthClear = null;
         };
         /**
          * Specify mapping of depth values from normalized device coordinates to window coordinates.
@@ -414,9 +414,6 @@ namespace MB {
             const gl: WebGL2RenderingContext = this._context.gl;
             return gl.isEnabled(gl.STENCIL_TEST);
         }
-        public reset() {
-            // TODO
-        };
     };
     export class BlendingState {
         protected _context: GLContext;
@@ -424,7 +421,7 @@ namespace MB {
             this._context = context;
         };
         protected _blendingEnabled: boolean = false;
-        protected _blendingMode: MB.ctes.BlendingEq; // TODO
+        protected _blendingMode: ctes.BlendingEq;
         /**
          * Change blending status (eables or disabled)
          * @param {boolean} enabled Enable/disable blending
@@ -538,6 +535,7 @@ namespace MB {
         constructor(context: GLContext) {
             this._context = context;
             this.depth = new DepthState(context);
+            this.depth.reset();
             this.culling = new CullingState(context);
             this.color = new ColorState(context);
             this.color.reset();

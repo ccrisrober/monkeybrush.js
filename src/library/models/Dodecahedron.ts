@@ -26,11 +26,11 @@ namespace MB {
      */
     export class Dodecahedron extends Polyhedron {
         /**
-         * Dodecahedron constructor
+         * Dodecahedron constructor.
+         * @param {GLContext} context [description]
          * @param {number} radius: Dodecahedron radius
          * @param {number} subdivisions: Dodecahedron subdivisions from base dodecahedron.
          */
-        // TODO: DOC
         constructor(context: GLContext, radius: number, subdivisions: number) {
             const t: number = ( 1 + Math.sqrt( 5 ) ) / 2;
             const r: number = 1 / t;

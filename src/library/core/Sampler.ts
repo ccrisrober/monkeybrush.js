@@ -30,10 +30,9 @@ namespace MB {
         maxLOD?: number;
         compareFunc?: number;
         compareMode?: number;
-        anisotropic?: number;     // TODO ext.TEXTURE_MAX_ANISOTROPY_EXT
-                                  //     (EXT_texture_filter_anisotropic)
-        maxLevel?: number;        // TODO gl.TEXTURE_MAX_LEVEL
-        baseLevel?: number;       // TODO gl.TEXTURE_BASE_LEVEL
+        anisotropic?: number;
+        maxLevel?: number;
+        baseLevel?: number;
     };
     /**
      * Sampler class.
@@ -42,12 +41,14 @@ namespace MB {
      * Sampler Object are objects that stores the sampling
      *     parameters for a Texture access inside of a shader.
      */
-    // TODO: Added this to textures
     export class Sampler {
         public _handler: WebGLSampler;
 
         protected _context: GLContext;
-        // TODO: DOC
+        /**
+         * [constructor description]
+         * @param {GLContext} context [description]
+         */
         constructor(context: GLContext) {
             this._context = context;
             const gl: WebGL2RenderingContext = this._context.gl;

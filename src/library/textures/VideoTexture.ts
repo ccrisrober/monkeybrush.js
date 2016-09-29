@@ -28,32 +28,37 @@ namespace MBX {
         protected _video: HTMLVideoElement;
         /**
          * [constructor description]
+         * @param {GLContext} context [description]
          * @param {HTMLVideoElement} video [description]
          * @param {boolean = true} loop [description]
          * @param {number = 15} frameTime [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
          */
-        // TODO: DOC
         constructor(context: MB.GLContext, video: HTMLVideoElement, loop: boolean = true,
             frameTime: number = 15, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture2D, {
                 internalFormat: MB.ctes.PixelFormat.RGBA,
                 format: MB.ctes.PixelFormat.RGBA,
                 type: MB.ctes.DataType.UnsignedByte,
-                flipY: true
+                flipY: 1
             });
 
+            this.bind();
             const gl: WebGL2RenderingContext = this._context.gl;
+
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_MIN_FILTER, MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(
+                this._target,
+                gl.TEXTURE_MAG_FILTER, MB.ctes.TextureFilter.Linear);
 
             this._video = video;
             this._video.muted = true;
             this._video.loop = loop;
 
             this.update();
-
-            // this.wrap([MB.ctes.TextureFilter.Linear, MB.ctes.TextureFilter.Clamp2Edge]);
-
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, this._flipY === true ? 1 : 0);
 
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
@@ -74,15 +79,17 @@ namespace MBX {
             // Update texture
             this.bind();
             const gl: WebGL2RenderingContext = this._context.gl;
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
             gl.texImage2D(
                 this._target,
                 this._level,
-                this._internalformat,
+                this._internalFormat,
                 this._format,
                 this._type,
                 this._video
-           );
-            gl.generateMipmap(gl.TEXTURE_2D);
+            );
+            //gl.generateMipmap(gl.TEXTURE_2D);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
             this.unbind();
         };
         public destroy() {

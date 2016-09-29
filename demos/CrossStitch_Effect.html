@@ -40,7 +40,9 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"));
+                this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"), {
+                    flipY: 1
+                });
 
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);
@@ -64,11 +66,9 @@
                 prog.use();
                 this.tex.bind(0);
 
-                var canvas = this.canvas;
-
                 prog.sendUniform1i("tex", 0);
                 prog.sendUniform1f("stich", this.text.stich);
-                prog.sendUniform2f("size", canvas.width, canvas.height);
+                prog.sendUniform2f("size", this.canvas.width, this.canvas.height);
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {

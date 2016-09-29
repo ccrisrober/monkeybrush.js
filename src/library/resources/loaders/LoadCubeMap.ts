@@ -22,8 +22,15 @@
 namespace MB {
     export namespace Loaders {
         /**
-         * [loadCubeMap description]
-         * @param {string} directorySrc [description]
+         * Loads cubemap images from a directory.
+         *     The required files are:
+         *         -back.jpg
+         *         -bottom.jpg
+         *         -front.jpg
+         *         -left.jpg
+         *         -right.jpg
+         *         -top.jpg
+         * @param {string} directorySrc Cubemap images directory.
          */
         export function loadCubeMap(directorySrc: string) {
             [
