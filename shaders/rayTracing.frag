@@ -48,28 +48,28 @@ float intersect(in vec3 ro, in vec3 rd, out float hit) {
         id = 2.0; // intersected with plane
         hit = tpla;
     }
-    
+
     return id;
 }
 
 void main() {
     vec3 light = normalize(vec3(0.57703));
-    
+
     // Move sphere
     sphere1.xyz += vec3(
     	0.5 * cos(iGlobalTime),
     	0.33 * cos(iGlobalTime),
     	0.5 * sin(iGlobalTime)
 	);
-    
+
     // Generate a ray with origin ro and direction rd
     vec3 ro = vec3(0.0, 1.0, 2.5);
    	// I believe it is world space transforms
     vec3 rd = normalize(vec3((-1.0 + 2.0 * uv) * vec2(1.78,1.0), -1.0));
-    
+
     float hit;
     float id = intersect(ro, rd, hit);
-    
+
     // Lighting Calculations need normals
     vec3 col = vec3(0.0, 0.0, 0.0);
 	// Sphere hit
@@ -79,9 +79,9 @@ void main() {
         float diff = clamp(dot(nor, light), 0.0, 1.0);
         float ao = 0.5 + 0.5 * nor.y; // ambient oclusion trick
         col = vec3(1.0, 0.0, 1.0) * diff * ao + vec3(0.1, 0.2, 0.4) * ao;
-    } 
+    }
     // Plane hit
-    else if(id > 1.5) { 
+    else if(id > 1.5) {
         vec3 pos = ro + hit * rd;
         vec3 nor = nPlane(pos);
         float diff = clamp(dot(nor,light), 0.0, 1.0);
