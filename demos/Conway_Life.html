@@ -142,7 +142,20 @@
                 console.log(this.fbo.isValid());
                 this.pp = new MB.PostProcess(this.context);
                 this.textures = [this.tex, this.tex2];
+
+
+                this.customPP = new MB.CustomPingPong(
+                    this.tex, this.tex2
+                );
+
                 this.cameraUpdate();
+
+                this.customPP.setCB(function() {
+                    this.customPP.first().bind(0);
+                    this.fbo.bind();
+                    this.fbo.replaceTexture(this.customPP.last(), 0);
+                    this.pp.render();
+                }.bind(this));
             };
             MyScene.prototype.update = function (dt) {
             };
@@ -153,12 +166,10 @@
                 prog = MB.ProgramManager.get("prog");
                 prog.use();
                 prog.sendUniform1i("tex", 0);
-                this.textures[1].bind(0);
-                this.fbo.bind();
-                this.fbo.replaceTexture(this.textures[0], 0);
-                this.textures.reverse();
-                this.pp.render();
+
+                this.customPP.swap();
                 this.fbo.unbind();
+
                 this.state.setViewport(new MB.Vector4(0.0, 0.0, 512.0, 512.0));
                 prog = MB.ProgramManager.get("prog_show");
                 prog.use();

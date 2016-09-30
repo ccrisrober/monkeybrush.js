@@ -30,6 +30,7 @@ namespace MB {
     export class CustomPingPong<T> {
         protected _elems1: T;
         protected _elems2: T;
+        protected _callback: Function;
         /**
          * CustomPingPong<T> constructor.
          * @param {T} elem1 First element.
@@ -39,12 +40,16 @@ namespace MB {
             this._elems1 = elem1;
             this._elems2 = elem2;
         };
+        public setCB(cb: Function) {
+            this._callback = cb;
+        };
         /**
          * Swap ping pong inner objects.
          */
         public swap(cb?: Function) {
             this._elems2 = [this._elems1, this._elems1 = this._elems2][0];
             if (cb) cb();
+            else if (this._callback) this._callback();
         };
         /**
          * Returns first object.

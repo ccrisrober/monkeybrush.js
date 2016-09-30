@@ -97,6 +97,7 @@
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["tex"]);
+                    prog.sendUniform1i("tex", 0);
                     return prog;
                 });
                 MB.ProgramManager.addWithFun("prog_show", function () {
@@ -106,6 +107,7 @@
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["tex"]);
+                    prog.sendUniform1i("tex", 0);
                     return prog;
                 });
                 var ww = this.context.canvas.width;
@@ -118,7 +120,7 @@
                         pixels.push(exp * y, -exp * x, 3 * Math.exp(-30 * ((x - Ro) * (x - Ro) + y * y)), 1.0);
                     }
                 }
-                // TODO: USE PINGPONG!
+
                 this.tex = new MB.Texture2D(this.context, {
                     pixels: new Float32Array(pixels),
                     width: ww,
@@ -137,34 +139,39 @@
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     type: this.context.gl.FLOAT // TODO
                 });
-                this.fbo = new MB.Framebuffer(this.context, [this.tex], size);
+
+                this.customPP = new MB.CustomPingPong(
+                    this.tex, this.tex2
+                );
+
+                this.fbo = new MB.Framebuffer(this.context, [this.tex], new MB.Vect2(ww, hh));
                 console.log(this.fbo.isValid());
                 this.pp = new MB.PostProcess(this.context);
                 this.textures = [this.tex, this.tex2];
                 this.cameraUpdate();
+
+                this.customPP.setCB(function() {
+                    this.customPP.first().bind(0);
+                    this.fbo.bind();
+                    this.fbo.replaceTexture(this.customPP.last(), 0);
+                    this.pp.render();
+                }.bind(this));
             };
             MyScene.prototype.update = function (dt) {
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                this.textures.reverse();
+
                 var prog;
                 prog = MB.ProgramManager.get("prog");
                 prog.use();
-                this.textures[1].bind(0);
-                this.fbo.bind();
-                prog.sendUniform1i("tex", 0);
-                this.fbo.replaceTexture(this.textures[0], 0);
-                this.pp.render();
-                this.textures.reverse();
-                this.textures[1].bind(0);
-                this.fbo.replaceTexture(this.textures[0], 0);
-                this.pp.render();
+
+                this.customPP.swap();
                 this.fbo.unbind();
+
                 prog = MB.ProgramManager.get("prog_show");
                 prog.use();
                 this.tex.bind(0);
-                prog.sendUniform1i("tex", 0);
                 this.pp.render();
             };
             MyScene.prototype.textCB = function (gui) {
@@ -183,19 +190,17 @@
                     }
                 }
                 var size = new MB.Vect2(ww, hh);
-                // TODO: DEBERIA CREAR UN UPDATE
-                this.tex.destroy();
-                this.tex = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
-                    type: this.context.gl.FLOAT // TODO
-                });
-                this.tex2.destroy();
-                this.tex2 = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
-                    type: this.context.gl.FLOAT // TODO
-                });
+
+                this.tex.update({
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                })
+                this.tex2.update({
+                    pixels: new Float32Array(pixels),
+                    width: ww,
+                    height: hh
+                })
                 this.textures = [this.tex, this.tex2];
                 this.text.resume = true;
             };
