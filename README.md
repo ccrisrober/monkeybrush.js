@@ -59,9 +59,9 @@ gulp typescript # Generate definition file
 - [ ] Generate video capture
 
 ### Core
+- [x] Multi context
 - [ ] Sprites (HUD)
 - [ ] Picking
-- [ ] Multi context
 - [ ] PBO (http://www.songho.ca/opengl/gl_pbo.html#create)
 
 ### Polyfills
@@ -82,7 +82,6 @@ gulp typescript # Generate definition file
 - [x] Shader uniforms and attributes extraction
 - [x] Clean project generator (Simple project gen.) (https://github.com/maldicion069/monkeybrush-generator)
 - [ ] MonkeyBrush-frags (Two triangles rendering!) (https://github.com/maldicion069/monkeybrush-frags)
-- [ ] ESDOC integration
 
 ### Others
 - [ ] Create "shadertoy" for desktop
@@ -94,3 +93,4 @@ gulp typescript # Generate definition file
 - (09/19/2016) Completed Depth, Color, Stencil, Culling and Blending in GlobalState.
 - (09/20/2016) Added VertexBufferGeometry to models
 - (09/26/2016) Removed Core. GLContext time.
+- (09/29/2016) Refactorized all textures classes.

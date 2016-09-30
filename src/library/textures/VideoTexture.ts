@@ -88,7 +88,7 @@ namespace MBX {
                 this._type,
                 this._video
             );
-            //gl.generateMipmap(gl.TEXTURE_2D);
+            // gl.generateMipmap(gl.TEXTURE_2D);
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
             this.unbind();
         };

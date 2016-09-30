@@ -47,9 +47,9 @@ namespace MB {
             const nv: number = (width + 1) * (height + 1) * 2
                              + (width + 1) * (depth + 1) * 2
                              + (depth + 1) * (height + 1) * 2;
-            const nidx: number =  (width * height * 2)
+            /*const nidx: number =  (width * height * 2)
                                 + (width * depth * 2)
-                                + (depth * height * 2) * 6;
+                                + (depth * height * 2) * 6;*/
 
 
             this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(nv * 3), 3));

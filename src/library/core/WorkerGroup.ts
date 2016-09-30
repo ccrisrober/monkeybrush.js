@@ -24,7 +24,7 @@ namespace MB {
     export interface WorkerReduceOptions {
         reduceFunc: Function;
         initialValue?: any;
-        onComplete: Function
+        onComplete: Function;
     }
     export class WorkerGroup {
         protected _workers: Array<Worker>;
@@ -52,11 +52,11 @@ namespace MB {
                 } else {
                     acum = fn(acum, e.data);
                 }
-                if (l == 0) {
+                if (l === 0) {
                     opt.onComplete(acum);
                 }
             };
-            for (var i = 0, size = l; i < size; ++i) {
+            for (let i = 0, size = l; i < size; ++i) {
                 let w = this._workers[i];
                 w.onmessage = message;
                 w.postMessage(this._configs[i]);

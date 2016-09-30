@@ -42,7 +42,7 @@ namespace MB {
             const gl = context.gl;
             this.bind();
             if (data instanceof HTMLImageElement) {
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY? options.flipY : 0);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY ? options.flipY : 0);
                 gl.texImage2D(
                     this._target,
                     this._level,
