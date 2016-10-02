@@ -29,6 +29,7 @@ namespace MB {
         type?: ctes.DataType;
         level?: number;
         flipY?: number;
+        unpackAlignment?: number;
         wrapS?: ctes.WrapMode;
         wrapT?: ctes.WrapMode;
         wrapR?: ctes.WrapMode;
@@ -60,6 +61,7 @@ namespace MB {
         protected _magFilter: MB.ctes.TextureFilter;
 
         protected _flipY: number = 0;
+        protected _unpackAlignment: number = 4;
 
         constructor(context: GLContext, target: ctes.TextureTarget, options: TexOptions = {}) {
             this._context = context;
@@ -79,6 +81,8 @@ namespace MB {
 
             this._minFilter = options.minFilter || MB.ctes.TextureFilter.Linear;
             this._magFilter = options.magFilter || MB.ctes.TextureFilter.Linear;
+
+            this._unpackAlignment = options.unpackAlignment || 4;
 
             this._flipY = options.flipY || 0;
 

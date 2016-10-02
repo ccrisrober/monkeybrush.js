@@ -15,8 +15,7 @@ float sRGB_gamma_correct(float c) {
 }
 
 void main() {
-    vec2 uvv = vec2(uv.x, 1.0 - uv.y);
-    fragColor = texture(tex, uvv);
+    fragColor = texture(tex, uv);
     if (mode == 1) {
         fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction
     } else if (mode == 2) {

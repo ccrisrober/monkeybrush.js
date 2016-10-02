@@ -87,6 +87,12 @@ namespace MB {
             gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
             this._vao.unbind();
         };
+        public renderFan() {
+            const gl: WebGL2RenderingContext = this._context.gl;
+            this._vao.bind();
+            gl.drawElements(MB.ctes.RenderMode.TriangleFan, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            this._vao.unbind();
+        };
 
         public render2() {
             const gl: WebGL2RenderingContext = this._context.gl;

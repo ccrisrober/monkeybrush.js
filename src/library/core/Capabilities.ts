@@ -131,16 +131,53 @@ namespace MB {
         };
         declare var WebGL2RenderingContext: any;
         /**
-         * Returns if current context supports FLOAT textures.
+         * Returns false if gl.LINEAR is not supported as a texture
+         *     filter mode for textures of type gl.FLOAT.
          * @param {GLContext} context [description]
-         * @return {boolean}
+         * @return {boolean} [description]
          */
-        export function isTextureFloat(context: GLContext): boolean {
+        export function canUseFloatingPointTextures(context: GLContext): boolean {
             const gl = context.gl;
             if (gl instanceof WebGL2RenderingContext) {
                 return true;
             } else {
                 return !!Extensions.get(context, "OES_texture_float");
+            }
+        };
+
+        export function canUseFloatingPointLinearFiltering(context: GLContext): boolean {
+            return !!Extensions.get(context, "ES_texture_float_linear");
+        };
+
+        /**
+         * Returns false if gl.HALF_FLOAT_OES is not supported as a
+         *     texture type.
+         * WebGL2 supports this without extension.
+         * @param {GLContext} context [description]
+         * @return {boolean} [description]
+         */
+        export function canUseHalfFloatingPointTextures(context: GLContext): boolean {
+            const gl = context.gl;
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            } else {
+                return !!Extensions.get(context, "OES_texture_half_float");
+            }
+        };
+
+        /**
+         * Returns false if gl.LINEAR is not supported as a texture
+         *     filter mode for textures of type gl.HALF_FLOAT_OES.
+         * WebGL2 supports this without extension.
+         * @param {GLContext} context [description]
+         * @return {boolean} [description]
+         */
+        export function canUseHalfFloatingPointLinearFiltering(context: GLContext): boolean {
+            const gl = context.gl;
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            } else {
+                return !!Extensions.get(context, "OES_texture_half_float_linear");
             }
         };
         /**

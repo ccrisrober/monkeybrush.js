@@ -43,6 +43,7 @@ namespace MB {
             this.bind();
             if (data instanceof HTMLImageElement) {
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY ? options.flipY : 0);
+                gl.pixelStorei(gl.UNPACK_ALIGNMENT, this._unpackAlignment);
                 gl.texImage2D(
                     this._target,
                     this._level,

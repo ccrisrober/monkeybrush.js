@@ -17,6 +17,48 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+        layout(location = 0) in vec3 vertPosition;
+        out vec2 uv;
+        void main(void) {
+            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+            gl_Position = vec4(vertPosition, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform sampler2D tex;
+
+        const float kernel[9] = float[9](
+            /*-1.0,-1.0,-1.0,
+            -1.0, 8.0,-1.0,
+            -1.0,-1.0,-1.0*/
+            0.0, 1.0, 0.0,
+            1.0, 5.0, 1.0,
+            0.0, 1.0, 0.0
+        );
+
+        void main() {
+            //determine the inverse of texture size
+            vec2 t = vec2(textureSize(tex, 0));
+            vec2 delta = 1.0 / t;
+
+            vec4 color = vec4(0);
+            int index = 8;
+            for(int j=-1; j <= 1; ++j) {
+                for(int i=-1; i <= 1;++i) {
+                    color += kernel[index--] * texture(tex, uv + (vec2(i, j) * delta));
+                }
+            }
+            color /= 9.0;
+            fragColor = color + texture(tex, uv);
+        }
+    </script>
     <script type="text/javascript">
         var __extends = (this && this.__extends) || function (d, b) {
             for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -46,8 +88,8 @@
 
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/convolution.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
                     prog.compile();
                     prog.use();
                     prog.addUniforms(["tex"]);

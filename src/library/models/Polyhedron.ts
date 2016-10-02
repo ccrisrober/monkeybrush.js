@@ -107,18 +107,6 @@ namespace MB {
 
             // this.createWireframe();
 
-            // WIREFRAME!!
-            let newcells = [];
-            for (let i = 0; i < el.length; i += 3) {
-                let a = el[i + 0];
-                let b = el[i + 1];
-                let c = el[i + 2];
-                if (a !== null && b !== null) newcells.push(a, b);
-                if (b !== null && c !== null) newcells.push(b, c);
-                if (a !== null && c !== null) newcells.push(c, a);
-            }
-            el = newcells;
-
 
             this._handle = [];
             this._vao.bind();

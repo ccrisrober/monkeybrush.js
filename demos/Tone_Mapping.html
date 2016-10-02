@@ -36,7 +36,7 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "myTex");
+                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -44,8 +44,8 @@
                 var myTexture = MB.ResourceMap.retrieveAsset("myTex");
                 this.tex2d = new MB.Texture2D(this.context, myTexture, {
                     flipY: 1,
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });

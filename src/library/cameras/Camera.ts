@@ -20,11 +20,17 @@
 "use strict";
 
 namespace MB {
+    export interface InputKeysCamera {
+        moveUp: MB.ctes.KeyState;
+        moveLeft: MB.ctes.KeyState;
+        moveRight: MB.ctes.KeyState;
+        moveDown: MB.ctes.KeyState;
+    };
     /**
      * Camera abstract class
      * @class Camera
      */
-    abstract class Camera {
+    export abstract class Camera {
         /**
          * Camera current position.
          * @type {MB.Vect3}
@@ -45,6 +51,8 @@ namespace MB {
          * @type {number}
          */
         protected _fov: number;
+        protected _isDirty: boolean = true;
+        protected _isDirtyProj: boolean = true;
         /**
          * Camera aspect ratio
          * @type {number}
@@ -54,7 +62,7 @@ namespace MB {
         protected _far: number;
 
         protected _up: MB.Vect3;
-        protected _look: MB.Vect3;
+        protected _front: MB.Vect3;
         /**
          * Camera constructor
          * @param {MB.Vect3}
@@ -76,18 +84,16 @@ namespace MB {
             this._view = new MB.Mat4();
 
             this._up = up;
-            this._look = target;
+            this._front = target;
             this._fov = fovy;
             this._ar = aspRatio;
             this._near = near;
             this._far = far;
-
-            this.update();
         };
         /**
          * Update view and projection matrix
          */
-        abstract update();
+        abstract update(dT: number);
         /**
          * Get current camera position
          * @return {MB.Vect3}
@@ -136,21 +142,41 @@ namespace MB {
          * Set near
          * @param {number} near: New near value
          */
-        set near(near: number) { this._near = near; };
+        set near(near: number) {
+            if (this._near !== near) {
+                this._near = near;
+                this._isDirtyProj = true;
+            };
+        };
         /**
          * Set far
          * @param {number} far: New far value
          */
-        set far(far: number) { this._far = far; };
+        set far(far: number) {
+            if (this._far !== far) {
+                this._far = far;
+                this._isDirtyProj = true;
+            }
+        };
         /**
          * Set field of view
          * @param {number} fovy: New field of view value
          */
-        set fov(fovy: number) { this._fov = fovy; };
+        set fov(fovy: number) {
+            if (this._fov !== fovy) {
+                this._fov = fovy;
+                this._isDirtyProj = true;
+            }
+        };
         /**
          * Set aspect ratio
          * @param {number} ar: New aspect ratio value
          */
-        set aspRatio(ar: number) { this._ar = ar; };
+        set aspRatio(ar: number) {
+            if (this._ar !== ar) {
+                this._ar = ar;
+                this._isDirtyProj = true;
+            }
+        };
     };
 };

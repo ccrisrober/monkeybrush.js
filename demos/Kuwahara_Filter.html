@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kuwahara Filter</title>
+    <title>Kuwahara filter</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -18,21 +18,20 @@
     <script type="text/javascript" src="../dist/output.js"></script>
 
     <script type="text/javascript">
-        alert("TODO: SHADER SIN COMPLETAR");
         var __extends = (this && this.__extends) || function (d, b) {
             for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var Configuration = function () {
+        var MyConfig = function () {
             return {
-                amount: 0.5
+                filter_size: 3
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                _super.call(this, "App", new MB.GLContextW2(), MyConfig());
                 this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
@@ -53,10 +52,10 @@
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/kuwaharaFilter.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/kuwahara.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex", "amount"]);
+                    prog.addUniforms(["tex", "texSize", "filter_size"]);
                     console.log(prog);
                     return prog;
                 });
@@ -69,15 +68,17 @@
                 this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
+                var ww = this.context.canvas.width;
+                var hh = this.context.canvas.height
+                prog.sendUniform2f("texSize", ww, hh);
+                prog.sendUniform1i("filter_size", this.text.filter_size);
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("amount", this.text.amount);
 
                 this.postProcess.render();
-                this.text.render = false;
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "amount", 0.0, 1.0);
+                gui.add(this.text, "filter_size").min(1).max(15).step(1);
             };
             return MyScene;
         }(MB.App));
