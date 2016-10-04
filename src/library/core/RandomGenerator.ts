@@ -150,5 +150,32 @@ namespace MB {
                   b = randomInt() >>> 6;
             return (a * 67108864.0 + b) * (1.0 / 9007199254740992.0);
         };
+
+        let rnorm = {
+            v2: null
+        };
+        export function randomGaussian(mean: number = 0.0,
+            stdev: number = 1.0): number {
+            let u1, u2;
+            let v1, v2, s;
+
+            if (rnorm.v2 === null) {
+                do {
+                    u1 = random();
+                    u2 = random();
+
+                    v1 = 2 * u1 - 1;
+                    v2 = 2 * u2 - 1;
+                    s = v1 * v1 + v2 * v2;
+                } while (s === 0 || s >= 1);
+
+                rnorm.v2 = v2 * Math.sqrt(-2 * Math.log(s) / s);
+                return stdev * v1 * Math.sqrt(-2 * Math.log(s) / s) + mean;
+            }
+
+            v2 = rnorm.v2;
+            rnorm.v2 = null;
+            return stdev * v2 + mean;
+        };
     };
 };

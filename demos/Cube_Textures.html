@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cube Textures</title>
+   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+    <canvas id="canvas" width="800" height="500"></canvas>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+        layout(location = 2) in vec2 uv;
+
+        out vec2 outUV;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            outUV = uv;
+            gl_Position = projection * view * model * vec4(position, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec2 outUV;
+
+        out vec4 fragColor;
+
+        uniform vec3 color;
+
+        uniform sampler2D tex;
+
+        void main() {
+            fragColor = vec4(texture(tex, outUV).xyz * color, 1.0);
+        }
+    </script>
+
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")));
+                this.homePoint = new MB.Vect3(0.0, -2.16, 20.25);
+                this.camera = new MB.Camera2(this.homePoint);
+                this.angle = 0;
+                this.mainShader = "prog";
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
+                MB.Loaders.loadVideo("../assets/video/Possum vs Cat.mp4", "video");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+                this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"), {
+                    flipY: 1
+                });
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+                this.sphere = new MB.Cube(this.context, 3.5);
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program(_this.context);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["projection", "view", "model", "tex", "color"]);
+
+                    return prog;
+                });
+                this.cameraUpdate();
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+                this.camera.update(this.cameraUpdate.bind(this));
+                this.angle += MB.Timer.deltaTime() * 0.001;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                var x_pos = [-11.0, -3.5, 4, 11.5];
+                var colors = [
+                    [1.0, 1.0, 1.0],
+                    [0.0,, 1.0, 0.0],
+                    [1.0, 1.0, 1.0],
+                    [0.0, 1.0, 0.0]
+                ];
+                prog.sendUniform1i("tex", 0);
+                for (var ii = 0, l = x_pos.length; ii < l; ++ii) {
+                    var i = x_pos[ii];
+                    var j = 0.0;
+                    var color = colors[ii];
+
+                    if (ii < 2) {
+                        this.tex2d.bind(0);
+                    } else {
+                        this.tex.bind(0);
+                    }
+                    prog.sendUniform3f("color", color[0], color[1], color[2]);
+                    this.model =
+                        this.identityMatrix.clone()
+                            .translate(new MB.Vect3(i, j, 0.0))
+                            .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                            .rotate(this.angle * 0.5, new MB.Vect3(1.0, 1.0, 0.0))
+                    prog.sendUniformMat4("model", this.model);
+                    this.sphere.render();
+                }
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                this.view = this.camera.GetViewMatrix();
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                prog.sendUniformVec3("viewPos", this.camera.GetPos());
+                prog.sendUniformMat4("projection", this.projection);
+                prog.sendUniformMat4("view", this.view);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>
