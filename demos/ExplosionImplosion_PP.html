@@ -31,21 +31,15 @@
 
         out vec4 fragColor;
         in vec2 uv;
-        uniform float amount;
         uniform sampler2D tex;
-
-        const float offset[6] = float[] ( 0.001, 0.003, 0.005, 0.007, 0.009, 0.011 );
+        uniform float radius;
 
         void main() {
-            fragColor = texture(tex, uv);
-            if (uv.x >= amount) {
-                for (int i = 0; i < 6; ++i) {
-                    fragColor += texture(tex, uv + offset[i]);
-                    fragColor += texture(tex, uv - offset[i]);
-                }
-                fragColor.rgb = vec3((fragColor.r + fragColor.g + fragColor.b)/3.0);
-                fragColor.rgb /= 9.5;
-            }
+            vec2 cen = vec2(0.5) - uv;
+
+            vec2 mcen = radius*log(length(cen))*normalize(cen);
+            vec2 uvv = uv + mcen;
+            fragColor = texture(tex, uvv);
         }
     </script>
     <script type="text/javascript">
@@ -56,7 +50,7 @@
         };
         var Configuration = function () {
             return {
-                amount: 0.5
+                radius: 0.17
             };
         };
         var MyScene = (function (_super) {
@@ -66,7 +60,7 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -86,7 +80,7 @@
                     prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex", "amount"]);
+                    prog.addUniforms(["tex", "radius"]);
                     console.log(prog);
                     return prog;
                 });
@@ -101,12 +95,12 @@
                 prog.use();
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("amount", this.text.amount);
+                prog.sendUniform1f("radius", this.text.radius);
 
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "amount", 0.0, 1.0);
+                gui.add(this.text, "radius", -1.0, 1.0);
             };
             return MyScene;
         }(MB.App));

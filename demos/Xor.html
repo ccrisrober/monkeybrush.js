@@ -31,21 +31,29 @@
 
         out vec4 fragColor;
         in vec2 uv;
-        uniform float amount;
-        uniform sampler2D tex;
-
-        const float offset[6] = float[] ( 0.001, 0.003, 0.005, 0.007, 0.009, 0.011 );
+        uniform float iGlobalTime;
 
         void main() {
-            fragColor = texture(tex, uv);
-            if (uv.x >= amount) {
-                for (int i = 0; i < 6; ++i) {
-                    fragColor += texture(tex, uv + offset[i]);
-                    fragColor += texture(tex, uv - offset[i]);
-                }
-                fragColor.rgb = vec3((fragColor.r + fragColor.g + fragColor.b)/3.0);
-                fragColor.rgb /= 9.5;
-            }
+            vec2 p = -1. + 2. * uv;
+            float t = iGlobalTime * 0.5;
+            vec2 off1 = vec2(0.5 * cos(5.0 * t), 0.5 * sin(3.0 * t));
+            vec2 off2 = vec2(0.6 * sin(3.0 * t), 0.4 * cos(2.0 * t));
+
+            // Cartesian equation
+            float r1 = sqrt(dot(p - off1, p - off1));
+            float r2 = sqrt(dot(p - off2, p - off2));
+
+            bool t1 = mod(r1, 0.2) > 0.1;
+            bool t2 = mod(r2, 0.2) > 0.1;
+
+            // XOR time
+            float c = 0.0;
+            if (t1) c = 1.0;
+            if (t2) c = 1.0;
+            if ((t1) && (t2)) c = 0.0;
+
+            fragColor = vec4(vec3(c),1.0);
+            //fragColor = vec4(t1, t2, 0.0, 1.0);
         }
     </script>
     <script type="text/javascript">
@@ -54,31 +62,14 @@
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-        var Configuration = function () {
-            return {
-                amount: 0.5
-            };
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                _super.call(this, "App", new MB.GLContextW2());
                 this.mainShader = "prog";
-            };
-            MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
-                    flipY: 1,
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
-                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
-                    wrapT: MB.ctes.WrapMode.Clamp2Edge
-                });
 
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);
@@ -86,27 +77,22 @@
                     prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex", "amount"]);
+                    prog.addUniforms(["iGlobalTime"]);
                     console.log(prog);
                     return prog;
                 });
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
+                this.dt = dt;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
-                this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("amount", this.text.amount);
-
+                prog.sendUniform1f("iGlobalTime", this.dt * 0.5);
                 this.postProcess.render();
-            };
-            MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "amount", 0.0, 1.0);
             };
             return MyScene;
         }(MB.App));

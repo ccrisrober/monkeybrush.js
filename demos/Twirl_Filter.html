@@ -35,7 +35,7 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/Kamelot.jpg", "myTex");
+                MB.Loaders.loadImage("../assets/images/water.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -45,8 +45,8 @@
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
-                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
-                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                    wrapS: MB.ctes.WrapMode.Repeat,
+                    wrapT: MB.ctes.WrapMode.Repeat
                 });
 
                 MB.ProgramManager.addWithFun("prog", function () {

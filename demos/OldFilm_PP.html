@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convolution matrix</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+        layout(location = 0) in vec3 vertPosition;
+        out vec2 uv;
+        void main(void) {
+            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+            gl_Position = vec4(vertPosition, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+
+        uniform float iGlobalTime;
+        uniform float SepiaValue;
+        uniform float RandomValue;
+        uniform float NoiseValue;
+        uniform float ScratchValue;
+        uniform float Radius;
+        uniform float Softness;
+
+        uniform sampler2D tex;
+        const vec3 sepia = vec3(112.0, 66.0, 20.0) / 255.0;
+        vec3 blendOverlay(vec3 base, vec3 blend) {
+            return mix(1.0 - 2.0 * (1.0 - base) * (1.0 - blend), 2.0 * base * blend, step(base, vec3(0.5)));
+        }
+
+        vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+        float snoise (vec2 v) {
+            const vec4 C = vec4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
+                        0.366025403784439,  // 0.5*(sqrt(3.0)-1.0)
+                        -0.577350269189626, // -1.0 + 2.0 * C.x
+                        0.024390243902439); // 1.0 / 41.0
+
+            // First corner
+            vec2 i  = floor(v + dot(v, C.yy) );
+            vec2 x0 = v -   i + dot(i, C.xx);
+
+            // Other corners
+            vec2 i1;
+            i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+            vec4 x12 = x0.xyxy + C.xxzz;
+            x12.xy -= i1;
+
+            // Permutations
+            i = mod289(i); // Avoid truncation effects in permutation
+            vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+                + i.x + vec3(0.0, i1.x, 1.0 ));
+
+            vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+            m = m*m ;
+            m = m*m ;
+
+            // Gradients: 41 points uniformly over a line, mapped onto a diamond.
+            // The ring size 17*17 = 289 is close to a multiple of 41 (41*7 = 287)
+
+            vec3 x = 2.0 * fract(p * C.www) - 1.0;
+            vec3 h = abs(x) - 0.5;
+            vec3 ox = floor(x + 0.5);
+            vec3 a0 = x - ox;
+
+            // Normalise gradients implicitly by scaling m
+            // Approximation of: m *= inversesqrt( a0*a0 + h*h );
+            m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+
+            // Compute final noise value at P
+            vec3 g;
+            g.x  = a0.x  * x0.x  + h.x  * x0.y;
+            g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+            return 130.0 * dot(m, g);
+        }
+
+        void main() {
+            vec3 finalColor = texture(tex, uv).rgb;
+
+            // Step 1: Convert to grayscale
+            float gray = finalColor.r * 0.299 + finalColor.g * 0.587 + finalColor.b * 0.114;
+            vec3 grayscale = vec3(gray);
+
+            // Step 2: Apply sepia overlay
+
+            finalColor = blendOverlay(grayscale, sepia);
+
+            // Step 3: Lerp final sepia colour
+            finalColor = grayscale + SepiaValue * (finalColor - grayscale);
+
+            // Step 4: Add noise
+            float noise = snoise(uv * vec2(1024.0 + RandomValue * 512.0, 1024.0 + RandomValue * 512.0)) * 0.5;
+            finalColor += noise * NoiseValue;
+
+            // Optionally add noise as an overlay, simulating ISO on the camera
+            vec3 noiseOverlay = blendOverlay(finalColor, vec3(noise));
+            finalColor = finalColor + NoiseValue * (finalColor - noiseOverlay);
+
+            // Step 5: Apply scratches
+            if ( RandomValue < ScratchValue )
+            {
+                // Pick a random spot to show scratches
+                float dist = 1.0 / ScratchValue;
+                float d = distance(uv, vec2(RandomValue * dist, RandomValue * dist));
+                if ( d < 0.4 )
+                {
+                    // Generate the scratch
+                    float xPeriod = 8.0;
+                    float yPeriod = 1.0;
+                    float pi = 3.141592;
+                    float phase = iGlobalTime;
+                    float turbulence = snoise(uv * 2.5);
+                    float vScratch = 0.5 + (sin(((uv.x * xPeriod + uv.y * yPeriod + turbulence)) * pi + phase) * 0.5);
+                    vScratch = clamp((vScratch * 10000.0) + 0.35, 0.0, 1.0);
+
+                    finalColor *= vScratch;
+                }
+            }
+
+            //our vignette effect, using smoothstep
+            float vignette = smoothstep(Radius, Radius - Softness, length(uv - vec2(0.5)));
+            //apply our vignette
+            finalColor.rgb *= vignette;
+
+            fragColor = vec4(finalColor, 1.0);
+        }
+    </script>
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var Configuration = function () {
+            return {
+                SepiaValue: 1.0,
+                NoiseValue: 0.2,
+                ScratchValue: 0.3,
+                Radius: 0.65,
+                Softness: 0.25
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                this.mainShader = "prog";
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program(_this.context);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["tex", "iGlobalTime", "SepiaValue", "NoiseValue", "ScratchValue", "RandomValue", "Radius", "Softness"]);
+                    console.log(prog);
+                    return prog;
+                });
+                this.postProcess = new MB.PostProcess(this.context);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.dt = dt;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.tex2d.bind(0);
+                prog.sendUniform1i("tex", 0);
+                prog.sendUniform1f("iGlobalTime", this.dt);
+                prog.sendUniform1f("SepiaValue", this.text.SepiaValue);
+                prog.sendUniform1f("NoiseValue", this.text.NoiseValue);
+                prog.sendUniform1f("ScratchValue", this.text.ScratchValue);
+                prog.sendUniform1f("RandomValue", MB.RandomGenerator.random());
+                prog.sendUniform1f("Radius", this.text.Radius);
+                prog.sendUniform1f("Softness", this.text.Softness);
+
+                this.postProcess.render();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "SepiaValue", 0.0, 1.0);
+                gui.add(this.text, "NoiseValue", 0.0, 1.0);
+                gui.add(this.text, "ScratchValue", 0.0, 1.0);
+                gui.add(this.text, "Radius", 0.0, 1.0);
+                gui.add(this.text, "Softness", 0.0, 1.0);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

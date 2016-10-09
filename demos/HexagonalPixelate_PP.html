@@ -31,21 +31,45 @@
 
         out vec4 fragColor;
         in vec2 uv;
-        uniform float amount;
         uniform sampler2D tex;
 
-        const float offset[6] = float[] ( 0.001, 0.003, 0.005, 0.007, 0.009, 0.011 );
-
+        uniform float scale;
         void main() {
-            fragColor = texture(tex, uv);
-            if (uv.x >= amount) {
-                for (int i = 0; i < 6; ++i) {
-                    fragColor += texture(tex, uv + offset[i]);
-                    fragColor += texture(tex, uv - offset[i]);
-                }
-                fragColor.rgb = vec3((fragColor.r + fragColor.g + fragColor.b)/3.0);
-                fragColor.rgb /= 9.5;
+            vec2 center = -1. + 2. * uv;
+            vec2 texSize = vec2(textureSize(tex, 0));
+
+            vec2 tex_ = (uv * texSize - center) / scale;
+            tex_.y /= 0.866025404;
+            tex_.x -= tex_.y * 0.5;
+
+            vec2 a;
+            if (tex_.x + tex_.y - floor(tex_.x) - floor(tex_.y) < 1.0) a = vec2(floor(tex_.x), floor(tex_.y));
+            else a = vec2(ceil(tex_.x), ceil(tex_.y));
+            vec2 b = vec2(ceil(tex_.x), floor(tex_.y));
+            vec2 c = vec2(floor(tex_.x), ceil(tex_.y));
+
+            vec3 TEX = vec3(tex_.x, tex_.y, 1.0 - tex_.x - tex_.y);
+            vec3 A = vec3(a.x, a.y, 1.0 - a.x - a.y);
+            vec3 B = vec3(b.x, b.y, 1.0 - b.x - b.y);
+            vec3 C = vec3(c.x, c.y, 1.0 - c.x - c.y);
+
+            float alen = length(TEX - A);
+            float blen = length(TEX - B);
+            float clen = length(TEX - C);
+
+            vec2 choice;
+            if (alen < blen) {
+                if (alen < clen) choice = a;
+                else choice = c;
+            } else {
+                if (blen < clen) choice = b;
+                else choice = c;
             }
+
+            choice.x += choice.y * 0.5;
+            choice.y *= 0.866025404;
+            choice *= scale / texSize;
+            fragColor = texture(tex, choice + center / texSize);
         }
     </script>
     <script type="text/javascript">
@@ -56,7 +80,7 @@
         };
         var Configuration = function () {
             return {
-                amount: 0.5
+                scale: 3.0
             };
         };
         var MyScene = (function (_super) {
@@ -66,7 +90,7 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -86,7 +110,7 @@
                     prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex", "amount"]);
+                    prog.addUniforms(["tex", "scale"]);
                     console.log(prog);
                     return prog;
                 });
@@ -101,12 +125,12 @@
                 prog.use();
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("amount", this.text.amount);
+                prog.sendUniform1f("scale", this.text.scale);
 
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "amount", 0.0, 1.0);
+                gui.add(this.text, "scale", 1.0, 25.0);
             };
             return MyScene;
         }(MB.App));

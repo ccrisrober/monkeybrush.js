@@ -31,21 +31,33 @@
 
         out vec4 fragColor;
         in vec2 uv;
-        uniform float amount;
         uniform sampler2D tex;
 
-        const float offset[6] = float[] ( 0.001, 0.003, 0.005, 0.007, 0.009, 0.011 );
+        uniform float scale;
+
+        const float angle = 3.14149;
+
+        vec2 texSize;
+        vec2 center;
+
+        float pattern() {
+            float s = sin(angle), c = cos(angle);
+            vec2 tex_ = uv * texSize - center;
+            vec2 point = vec2(
+                c * tex_.x - s * tex_.y,
+                s * tex_.x + c * tex_.y
+            ) * scale;
+            return (sin(point.x) * sin(point.y)) * 4.0;
+        }
 
         void main() {
-            fragColor = texture(tex, uv);
-            if (uv.x >= amount) {
-                for (int i = 0; i < 6; ++i) {
-                    fragColor += texture(tex, uv + offset[i]);
-                    fragColor += texture(tex, uv - offset[i]);
-                }
-                fragColor.rgb = vec3((fragColor.r + fragColor.g + fragColor.b)/3.0);
-                fragColor.rgb /= 9.5;
-            }
+            center = -1. + 2. * uv;
+            texSize = vec2(textureSize(tex, 0));
+
+            vec3 color = texture(tex, uv).rgb;
+
+            float average = color.r * 0.299 + color.g * 0.587 + color.b * 0.114;
+            fragColor = vec4(vec3(average * 10.0 - 5.0 + pattern()), 1.0);
         }
     </script>
     <script type="text/javascript">
@@ -56,7 +68,7 @@
         };
         var Configuration = function () {
             return {
-                amount: 0.5
+                scale: 1.57
             };
         };
         var MyScene = (function (_super) {
@@ -66,7 +78,7 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
-                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -86,7 +98,7 @@
                     prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["tex", "amount"]);
+                    prog.addUniforms(["tex", "scale"]);
                     console.log(prog);
                     return prog;
                 });
@@ -101,12 +113,12 @@
                 prog.use();
                 this.tex2d.bind(0);
                 prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("amount", this.text.amount);
+                prog.sendUniform1f("scale", this.text.scale);
 
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "amount", 0.0, 1.0);
+                gui.add(this.text, "scale", 0.0, 2.0);
             };
             return MyScene;
         }(MB.App));
