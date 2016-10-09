@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convolution matrix</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+        layout(location = 0) in vec3 vertPosition;
+        out vec2 uv;
+        void main(void) {
+            uv = (vec2(vertPosition.xy * 0.5) + vec2(0.5)) * 4.0;
+            gl_Position = vec4(vertPosition, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        precision mediump float;
+        uniform float iGlobalTime;
+
+        uniform sampler2D tex;
+        uniform vec2 uvspeed;
+        uniform vec3 color;
+
+        void main() {
+            fragColor = texture(tex, uv + (uvspeed * iGlobalTime));
+            fragColor.rgb *= color;
+        }
+    </script>
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var MyConfig = function () {
+            return {
+                USpeed: 0.5,
+                VSpeed: 0.5,
+                RChannel: 1.0,
+                GChannel: 1.0,
+                BChannel: 1.0
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(), MyConfig());
+                this.mainShader = "prog";
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/water.png", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+
+                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
+                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Repeat,
+                    wrapT: MB.ctes.WrapMode.Repeat
+                });
+
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program(_this.context);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["tex", "uvspeed", "iGlobalTime", "color"]);
+                    console.log(prog);
+                    return prog;
+                });
+                this.postProcess = new MB.PostProcess(this.context);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.dt = dt;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.tex2d.bind(0);
+                prog.sendUniform1i("tex", 0);
+                prog.sendUniform3f("color", this.text.RChannel, this.text.GChannel, this.text.BChannel);
+                prog.sendUniform1f("iGlobalTime", this.dt * 0.1);
+                prog.sendUniform2f("uvspeed", this.text.USpeed, this.text.VSpeed);
+                this.postProcess.render();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "USpeed", -6, 6);
+                gui.add(this.text, "VSpeed", -6, 6);
+
+                gui.add(this.text, "RChannel", 0.0, 1.0);
+                gui.add(this.text, "GChannel", 0.0, 1.0);
+                gui.add(this.text, "BChannel", 0.0, 1.0);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

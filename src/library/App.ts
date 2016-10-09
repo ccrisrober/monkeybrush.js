@@ -143,8 +143,6 @@ namespace MB {
 
                         MB.Timer.update();
 
-                        // self.__resize__();
-
                         if (self._resume) {
                             self.update(dt);
                             self.draw();    // Draw user function

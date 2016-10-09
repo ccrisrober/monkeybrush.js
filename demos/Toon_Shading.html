@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Toon Shading</title>
+   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+    <canvas id="canvas" width="800" height="500"></canvas>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+        layout(location = 2) in vec2 uv;
+
+        out vec3 outPosition;
+        out vec3 outNormal;
+        out vec2 outUV;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            outPosition = vec3(model * vec4(position, 1.0));
+
+            gl_Position = projection * view * vec4(outPosition, 1.0);
+            mat3 normalMatrix = mat3(inverse(transpose(model)));
+            outNormal = normalize(normalMatrix * normal);
+            outUV = uv;
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec3 outPosition;
+        in vec3 outNormal;
+        in vec2 outUV;
+
+        out vec4 fragColor;
+
+        uniform sampler2D tex;
+
+        uniform vec3 viewPos;
+        uniform vec3 color;
+
+        uniform float levels; // = 5.0;
+
+        void main() {
+            float scaleFactor = 1.0 / levels;
+            vec3 n = normalize(outNormal);
+            vec3 s = normalize( viewPos.xyz - outPosition.xyz );
+            vec3 ambient = color * vec3(0.135, 0.2225, 0.1575);
+            float cosine = dot( s, n );
+            vec3 diffuse = color * floor( cosine * levels ) * scaleFactor;
+
+            fragColor = vec4(vec3(ambient + diffuse), 1.0);
+        }
+    </script>
+
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var Configuration = function () {
+            return {
+                levels: 3.0
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")), Configuration());
+                this.homePoint = new MB.Vect3(0.0, 5.0, 20.);
+                this.camera = new MB.Camera2(this.homePoint);
+                this.angle = 0;
+                this.mainShader = "prog";
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+                this.cubito = new MB.Mesh(this.context, "../assets/objects/dragon.json");
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program(_this.context);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["projection", "view", "model", "viewPos", "color", "levels"]);
+
+                    prog.sendUniform3f("color", 0.54, 0.89, 0.63);
+                    return prog;
+                });
+                this.cameraUpdate();
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+                this.camera.update(this.cameraUpdate.bind(this));
+                this.angle += MB.Timer.deltaTime() * 0.001;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.model =
+                    this.identityMatrix.clone()
+                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
+                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
+                        .scale(new MB.Vect3(1.25, 1.25, 1.25));
+                prog.sendUniformMat4("model", this.model);
+                prog.sendUniform1f("levels", this.text.levels);
+                this.cubito.render();
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                this.view = this.camera.GetViewMatrix();
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                prog.sendUniformVec3("viewPos", this.camera.GetPos());
+                prog.sendUniformMat4("projection", this.projection);
+                prog.sendUniformMat4("view", this.view);
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "levels").min(2).max(10).step(1);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

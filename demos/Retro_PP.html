@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convolution matrix</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+        layout(location = 0) in vec3 vertPosition;
+        out vec2 uv;
+        void main(void) {
+            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+            gl_Position = vec4(vertPosition, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform sampler2D tex;
+
+        const vec3 Color0 = vec3(0.0);
+        const vec3 Color1 = vec3(0.0, 0.0, 1.0);
+        const vec3 Color2 = vec3(0.0, 1.0, 0.0);
+        const vec3 Color3 = vec3(1.0, 0.0, 0.0);
+        const vec3 Color4 = vec3(1.0);
+
+        void main() {
+            vec3 color = texture(tex, uv).rgb;
+            float dist0 = distance(color, Color0);
+            float dist1 = distance(color, Color1);
+            float dist2 = distance(color, Color2);
+            float dist3 = distance(color, Color3);
+            float dist4 = distance(color, Color4);
+
+            vec3 col = vec3(0.0);
+            float dist = 10.0;
+
+            if (dist0 < dist) {
+                dist = dist0;
+                col = Color0;
+            }
+
+            if (dist1 < dist) {
+                dist = dist1;
+                col = Color1;
+            }
+
+            if (dist2 < dist) {
+                dist = dist2;
+                col = Color2;
+            }
+
+            if (dist3 < dist) {
+                dist = dist3;
+                col = Color3;
+            }
+
+            if (dist4 < dist) {
+                dist = dist4;
+                col = Color4;
+            }
+
+            fragColor = vec4(col, 1.0);
+        }
+    </script>
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2());
+                this.mainShader = "prog";
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+
+                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
+                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program(_this.context);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["tex"]);
+                    console.log(prog);
+                    return prog;
+                });
+                this.postProcess = new MB.PostProcess(this.context);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.tex2d.bind(0);
+                prog.sendUniform1i("tex", 0);
+
+                this.postProcess.render();
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

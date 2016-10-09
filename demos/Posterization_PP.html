@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convolution matrix</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+        layout(location = 0) in vec3 vertPosition;
+        out vec2 uv;
+        void main(void) {
+            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+            gl_Position = vec4(vertPosition, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+        uniform vec2 size;
+        uniform sampler2D tex;
+
+        uniform float gamma;
+        uniform float numColors;
+
+        void main() {
+            vec3 c = texture(tex, uv).rgb;
+            c = pow(c, vec3(gamma));
+            c = c * numColors;
+            c = floor(c);
+            c = c / numColors;
+            c = pow(c, vec3(1.0/gamma));
+            fragColor = vec4(c, 1.0);
+        }
+    </script>
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var Configuration = function () {
+            return {
+                gamma: 1.5,
+                numColors: 4.0
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                this.mainShader = "prog";
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+
+                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
+                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program(_this.context);
+                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["tex", "gamma", "size", "numColors"]);
+                    console.log(prog);
+                    return prog;
+                });
+                this.postProcess = new MB.PostProcess(this.context);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.tex2d.bind(0);
+                prog.sendUniform1i("tex", 0);
+                prog.sendUniform1f("gamma", this.text.gamma);
+                prog.sendUniform1f("numColors", this.text.numColors * 1.0);
+                prog.sendUniform2f("size", this.context.canvas.width, this.context.height);
+
+                this.postProcess.render();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "gamma", 0.0, 2.2);
+                gui.add(this.text, "numColors").min(1).max(30).step(1);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>
