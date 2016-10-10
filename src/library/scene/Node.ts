@@ -4,6 +4,16 @@ namespace MBS {
         public _parentNode: Node;
         public _children: Array<Node>;
 
+        protected _name: string;
+        protected _id: string;
+
+        constructor(name: string, scene: Scene) {
+            this._name = name;
+            this._id = this._generateUUID();
+            this._scene = scene;
+            this.parent = this._scene.root;
+        };
+
         public set parent(parent: Node) {
             if (this._parentNode === parent) {
                 return;
@@ -26,16 +36,6 @@ namespace MBS {
         public get parent(): Node {
             return this._parentNode;
         }
-
-        protected _name: string;
-        protected _id: string;
-
-        constructor(name: string, scene: Scene) {
-            this._name = name;
-            this._id = this._generateUUID();
-            this._scene = scene;
-        };
-
         public getScene(): Scene {
             return this._scene;
         }

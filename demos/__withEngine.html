@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+    <!--<link rel="stylesheet" type="text/css" href="./libs/style.css" />-->
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+    <canvas id="canvas" width="800" height="500"></canvas>
+
+    <script type="text/javascript">
+        var engine, scene, stats;
+        var node, node2, node3, node4, node5
+        window.onload = function () {
+            console.log("Creando engine");
+            engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
+            console.log("Creando scene");
+            scene = new MBS.Scene(engine);
+
+            stats = new Stats();
+            scene.clearColor = MB.Color3.Blue;
+            document.body.appendChild( stats.dom );
+
+            node = new MBS.Node("node1", scene);
+            node2 = new MBS.Node("node2", scene);
+            node3 = new MBS.Node("node3", scene);
+            node4 = new MBS.Node("node4", scene);
+            node5 = new MBS.Node("node5", scene);
+
+            var renderLoop = function(dt) {
+                stats.begin();
+                scene.render(dt);
+                stats.end();
+            };
+            engine.run(renderLoop);
+            console.log("Engine RL OK");
+        };
+    </script>
+</body>
+</html>

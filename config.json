@@ -18,6 +18,7 @@
             "./src/library/Camera2.ts",
             "./src/library/Decorators.ts",
             "./src/library/App.ts",
+            "./src/library/App2.ts",
 
             "./src/library/models/Drawable.ts",
             "./src/library/models/Polyhedron.ts",
@@ -56,6 +57,7 @@
             "./src/library/Camera2.ts",
             "./src/library/Decorators.ts",
             "./src/library/App.ts",
+            "./src/library/App2.ts",
 
             "./src/library/models/Drawable.ts",
             "./src/library/models/Polyhedron.ts",
