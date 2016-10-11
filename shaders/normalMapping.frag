@@ -9,6 +9,7 @@ uniform vec3 lightPosition;
 out vec4 fragColor;
 
 uniform sampler2D texDiffuse;
+uniform sampler2D texNormal;
 
 uniform vec3 viewPos;
 
@@ -16,13 +17,13 @@ void main() {
     vec3 color = texture(texDiffuse, outUV).rgb;
 
     // Ambient
-    vec3 ambient = vec3(0.2);
+    vec3 ambient = vec3(1.0);
 
     // Diffuse
-    vec3 norm = normalize(outNormal);
+    vec3 norm = normalize((texture(texNormal, outUV).rgb * 2.0 - 1.0));
     vec3 lightDir = normalize(lightPosition - outPosition);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = vec3(0.5) * diff;
+    vec3 diffuse = vec3(1.0) * diff;
 
     // Specular
     vec3 viewDir = normalize(viewPos - outPosition);

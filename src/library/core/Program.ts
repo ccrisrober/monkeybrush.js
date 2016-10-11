@@ -135,6 +135,12 @@ namespace MB {
                 this.uniformLocations[unif] = unifID;
             }
         };
+        public loadsFromScript(vsShaderID: string, fgShaderID: string) {
+            this.addShader(vsShaderID, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+            this.addShader(fgShaderID, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+            this.compile();
+            this.autocatching();
+        };
         /**
          * Return internal program identifier
          * @return {WebGLProgram} [description]
@@ -220,6 +226,11 @@ namespace MB {
             this._isLinked = true;
             return true;
         };
+
+        public complete() {
+            this.compile();
+            this.autocatching();
+        }
         /**
          * Create shader from file route.
          * @param {string} filePath   File route.

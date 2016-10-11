@@ -24,8 +24,35 @@ namespace MB {
         zyx, zyz, zxy, zxz, yxz, yxy, yzx, yzy, xyz, xyx, xzy, xzx
     };
     export class EulerAngle {
+        protected _value: Float32Array;
 
-        protected static _twoaxisrot(r11: number, r12: number, r21: number,
+        get x(): number { return this._value[0]; };
+        get y(): number { return this._value[1]; };
+        get z(): number { return this._value[2]; };
+        set x(v: number) { this._value[0] = v; };
+        set y(v: number) { this._value[1] = v; };
+        set z(v: number) { this._value[2] = v; };
+
+        static create(values: Float32Array): EulerAngle {
+            return new EulerAngle(values[0], values[1], values[2]);
+        };
+
+        public reset() {
+            for (let i = 0; i < 3; ++i) {
+                this._value[i] = 0.0;
+            }
+        }
+
+        /**
+         * EulerAngle constructor
+         * @param {number = 0.0} x
+         * @param {number = 0.0} y
+         * @param {number = 0.0} z
+         */
+        constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
+            this._value = new Float32Array([x, y, z]);
+        }
+        /*protected static _twoaxisrot(r11: number, r12: number, r21: number,
             r31: number, r32: number): Vect3 {
             let res = new Vect3();
             res.x = Math.atan2(r11, r12);
@@ -133,6 +160,6 @@ namespace MB {
                     throw new Error("Unknown rotation sequence");
             }
 
-        }
+        }*/
     };
 };

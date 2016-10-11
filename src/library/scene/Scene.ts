@@ -23,28 +23,58 @@ namespace MBS {
             return this._sceneGraph;
         }
 
+        protected _postProcess: MBS.PostProcess = null;
+
         constructor(engine: Engine) {
             this._engine = engine;
             engine._scenes.push(this);
             this._sceneGraph = new MBS.Node("root", this);
+
+
+            let bgColor = MB.Color4.fromColor3(MB.Color3.Black);
+
+            this._engine.context.state.depth.setStatus(true);
+            this._engine.context.state.depth.setFunc(MB.ctes.ComparisonFunc.Less);
+
+            this._engine.context.state.culling.setStatus(true);
+            this._engine.context.state.blending.setStatus(false);
+            this._engine.context.state.color.setClearColor(bgColor);
+
+
+            this._postProcess = new MBS.PostProcess(this);
+
         }
         public getEngine(): Engine {
             return this._engine;
         }
         public render(dt: number) {
+            // TODO: Shadow mapping time
+            this._totalMeshes = this._totalVertices = this._drawCalls = this._totalIndices = 0;
+
             this._engine.context.state.clearBuffers();
+
+            // Clear color
             // console.log("Render", dt);
+            // TODO: DRAW OBJECTS
+            /*
+                For each object in scene
+                    - Set material => Setear cullface, blending, dephts, ...
+             */
         }
         get clearColor(): MB.Color3 {
             return this._clearColor;
         };
         set clearColor(c: MB.Color3) {
             this._clearColor = c;
+            let bgColor = MB.Color4.fromColor3(this._clearColor);
+            this._engine.context.state.color.setClearColor(bgColor);
         }
 
         protected _totalMeshes: number = 0;
         protected _totalVertices: number = 0;
         protected _drawCalls: number = 0;
         protected _totalIndices: number = 0;
+
+        public camera: MB.Camera2;
     }
 }

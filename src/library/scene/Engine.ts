@@ -11,8 +11,9 @@ namespace MBS {
         }
         constructor(context: MB.GLContext, options = {}) {
             this._context = context;
+            MB.Input.initialize();
             // TODO: Cache VENDOOR and RENDERER
-            this._onFullScreenChange = function() {
+            /*this._onFullScreenChange = function() {
                 if (document["fullscreen"] !== undefined) {
                     this.isFullscreen = document["fullscreen"];
                 } else if (document["mozFullScreen"] !== undefined) {
@@ -39,7 +40,7 @@ namespace MBS {
             document.addEventListener("fullscreenchange", this._onFullScreenChange, false);
             document.addEventListener("mozfullscreenchange", this._onFullScreenChange, false);
             document.addEventListener("webkitfullscreenchange", this._onFullScreenChange, false);
-            document.addEventListener("msfullscreenchange", this._onFullScreenChange, false);
+            document.addEventListener("msfullscreenchange", this._onFullScreenChange, false);*/
         }
         public run(loop: Function) {
             let self: Engine = this;

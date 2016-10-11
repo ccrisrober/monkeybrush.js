@@ -4,8 +4,32 @@ namespace MBS {
         public _parentNode: Node;
         public _children: Array<Node>;
 
+
+        public position = new MB.Vect3();
+        public rotation = new MB.EulerAngle();
+        public quaternion = new MB.Quat();
+        public scale = new MB.Vect3(1.0, 1.0, 1.0);
+
+
         protected _name: string;
         protected _id: string;
+
+        protected _isEnabled: boolean = true;
+
+        public isEnabled(): boolean {
+            if (!this._isEnabled) {
+                return false;
+            }
+
+            if (this._parentNode) {
+                return this._parentNode.isEnabled();
+            }
+
+            return true;
+        };
+        public setEnabled(v: boolean) {
+            this._isEnabled = v;
+        }
 
         constructor(name: string, scene: Scene) {
             this._name = name;
@@ -39,11 +63,6 @@ namespace MBS {
         public getScene(): Scene {
             return this._scene;
         }
-
-        public getEngine(): Engine {
-            return this._scene.getEngine();
-        }
-
         protected _generateUUID(): string {
             let d = new Date().getTime();
             let uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
@@ -53,5 +72,45 @@ namespace MBS {
             });
             return uuid;
         };
+
+        public add(object: MBS.Node) {
+
+            if (arguments.length > 1 ) {
+                for (var i = 0, l = arguments.length; i < l; ++i) {
+                    this.add( arguments[ i ] );
+                }
+                return this;
+            }
+
+            if (object === this) {
+                MB.Log.error("MBS.Node.add: object can't be added as a child of itself.", object);
+                return this;
+            }
+            //if ((object && object.isObject3D)) {
+                if ( object.parent !== null ) {
+                    object.parent.remove( object );
+                }
+                object.parent = this;
+                this._children.push( object );
+            //} else {
+            //    MB.Log.error("MBS.Node.add: object not an instance of MBS.Node.", object);
+            //}
+
+            return this;
+
+        }
+
+        public remove(object: MBS.Node) {
+            if ( arguments.length > 1 ) {
+                for ( var i = 0; i < arguments.length; i ++ ) {
+                    this.remove( arguments[ i ] );
+                }
+            }
+            var index = this._children.indexOf( object );
+            if ( index !== - 1 ) {
+                object.parent = null;
+                this._children.splice( index, 1 );
+            }
+        }
     }
 }

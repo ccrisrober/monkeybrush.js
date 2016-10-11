@@ -19,7 +19,6 @@ void main() {
     outPosition = vec3(model * vec4(position, 1.0));
 	gl_Position = projection * view * vec4(outPosition, 1.0);
 	mat3 normalMatrix = mat3(inverse(transpose(model)));
-    vec2 uvv = vec2(uv.x, 1.0 - uv.y);
-	outNormal = normalize(normalMatrix * (texture(texNormal, uvv).rgb * 2.0 - 1.0));
-	outUV = uvv;
+	outNormal = normalize(normalMatrix * (texture(texNormal, uv).rgb * 2.0 - 1.0));
+	outUV = uv;
 }

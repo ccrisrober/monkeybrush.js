@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Normal mapping</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="text/javascript">
+        var __extends = (this && this.__extends) || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2());
+                this.homePoint = new MB.Vect3(0.08, 0.16, 5.25);
+                this.camera = new MB.Camera2(this.homePoint);
+                this.angle = 0;
+                this.mainShader = "prog";
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/chesterfieldDiffuseMap.png", "diffuseMap");
+                MB.Loaders.loadImage("../assets/images/chesterfieldNormalMap.png", "normalMap");
+            };
+            MyScene.prototype.initialize = function () {
+                var _this = this;
+                this.cubito = new MB.Cube(this.context, 17.5);
+
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("diffuseMap"), {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
+                });
+
+                this.tex2d2 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("normalMap"), {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
+                });
+
+                MB.ProgramManager.addWithFun("prog", function () {
+                    var prog = new MB.Program(_this.context);
+                    prog.addShader("../shaders/normalMapping.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
+                    prog.addShader("../shaders/normalMapping.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
+                    prog.compile();
+                    prog.use();
+                    prog.addUniforms(["projection", "view", "model", "texDiffuse", "texNormal", "lightPosition"]);
+                    return prog;
+                });
+                this.cameraUpdate();
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+                this.camera.update(this.cameraUpdate.bind(this));
+                this.angle += MB.Timer.deltaTime() * 0.001;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                this.tex2d.bind(0);
+                this.tex2d2.bind(1);
+                this.model =
+                    this.identityMatrix.clone()
+                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
+                        .rotate(90.0 * Math.PI / 180, MB.Vect3.xAxis)
+                        .rotate(this.angle * 0.5, MB.Vect3.zAxis)
+                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                prog.sendUniformMat4("model", this.model);
+                prog.sendUniform1i("texDiffuse", 0);
+                prog.sendUniform1i("texNormal", 1);
+                this.cubito.render();
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                this.view = this.camera.GetViewMatrix();
+                this.projection = this.camera.GetProjectionMatrix(this.canvas);
+                var prog = MB.ProgramManager.get(this.mainShader);
+                prog.use();
+                prog.sendUniformVec3("viewPos", this.camera.GetPos());
+                prog.sendUniformVec3("lightPosition", this.camera.GetPos());
+                prog.sendUniformMat4("projection", this.projection);
+                prog.sendUniformMat4("view", this.view);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>
