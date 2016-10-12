@@ -41,20 +41,22 @@ namespace MB {
                 }
             }
             if (this._gl === null) {
-                let domElement = document.createElement( 'div' );
+                let domElement = document.createElement("div");
 
-                domElement.style.fontFamily = 'monospace';
-                domElement.style.fontSize = '13px';
-                domElement.style.textAlign = 'center';
-                domElement.style.background = '#eee';
-                domElement.style.color = '#000';
-                domElement.style.padding = '1em';
-                domElement.style.width = '475px';
-                domElement.style.margin = '5em auto 0';
+                domElement.style.fontFamily = "monospace";
+                domElement.style.fontSize = "13px";
+                domElement.style.textAlign = "center";
+                domElement.style.background = "#eee";
+                domElement.style.color = "#000";
+                domElement.style.padding = "1em";
+                domElement.style.width = "475px";
+                domElement.style.margin = "5em auto 0";
                 domElement.innerHTML = window["WebGLRenderingContext"] ?
-                    `Sorry, your graphics card doesn\'t support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a>`
+                    `Sorry, your graphics card doesn\'t support
+                    <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a>`
                 :
-                    `Sorry, your browser doesn\'t support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a><br/>
+                    `Sorry, your browser doesn\'t support
+                    <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a><br/>
                     Please try with
                     <a href="http://www.google.com/chrome">Chrome</a>,
                     <a href="http://www.mozilla.com/en-US/firefox/new/">Firefox 4</a> or

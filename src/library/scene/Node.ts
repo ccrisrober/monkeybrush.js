@@ -75,9 +75,9 @@ namespace MBS {
 
         public add(object: MBS.Node) {
 
-            if (arguments.length > 1 ) {
-                for (var i = 0, l = arguments.length; i < l; ++i) {
-                    this.add( arguments[ i ] );
+            if (arguments.length > 1) {
+                for (let i = 0, l = arguments.length; i < l; ++i) {
+                    this.add(arguments[i]);
                 }
                 return this;
             }
@@ -86,30 +86,30 @@ namespace MBS {
                 MB.Log.error("MBS.Node.add: object can't be added as a child of itself.", object);
                 return this;
             }
-            //if ((object && object.isObject3D)) {
+            // if ((object && object.isObject3D)) {
                 if ( object.parent !== null ) {
                     object.parent.remove( object );
                 }
                 object.parent = this;
                 this._children.push( object );
-            //} else {
-            //    MB.Log.error("MBS.Node.add: object not an instance of MBS.Node.", object);
-            //}
+            // } else {
+            //     MB.Log.error("MBS.Node.add: object not an instance of MBS.Node.", object);
+            // }
 
             return this;
 
         }
 
         public remove(object: MBS.Node) {
-            if ( arguments.length > 1 ) {
-                for ( var i = 0; i < arguments.length; i ++ ) {
-                    this.remove( arguments[ i ] );
+            if (arguments.length > 1) {
+                for (let i = 0, l = arguments.length; i < l; ++i) {
+                    this.remove(arguments[i]);
                 }
             }
-            var index = this._children.indexOf( object );
-            if ( index !== - 1 ) {
+            let index = this._children.indexOf(object);
+            if (index !== - 1) {
                 object.parent = null;
-                this._children.splice( index, 1 );
+                this._children.splice(index, 1);
             }
         }
     }

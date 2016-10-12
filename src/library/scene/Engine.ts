@@ -7,7 +7,7 @@ namespace MBS {
             return this._context;
         }
         public setViewport(vp: MB.Vector4<number>) {
-            this._context.state.setViewport(vp)
+            this._context.state.setViewport(vp);
         }
         constructor(context: MB.GLContext, options = {}) {
             this._context = context;
@@ -43,14 +43,7 @@ namespace MBS {
             document.addEventListener("msfullscreenchange", this._onFullScreenChange, false);*/
         }
         public run(loop: Function) {
-            let self: Engine = this;
             MB.ResourceMap.setLoadCompleteCallback(function() {
-                MB.Log.info("ALL RESOURCES LOADED!!!!");
-
-                // Remove loader css3 window
-                let spinner = document.getElementById("spinner");
-                if (spinner) spinner.remove();
-
                 try {
                     (function __render__(dt?: number) {
                         requestAnimationFrame(__render__);
