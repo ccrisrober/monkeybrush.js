@@ -550,6 +550,35 @@ namespace MB {
                 this._value[9],
                 this._value[10]
             ]);
+        };
+        /**
+         * [toCSSMatrix description]
+         * @return {string} [description]
+         *
+         * Example:
+         *     var m = new MB.Mat4(...);
+         *     $("#myElem").css("transform", m.toCSSMatrix());
+         */
+        public toCSSMatrix(): string {
+            let str = '';
+            str += this._value[0].toFixed(20) + ',';
+            str += this._value[1].toFixed(20) + ',';
+            str += this._value[2].toFixed(20) + ',';
+            str += this._value[3].toFixed(20) + ',';
+            str += this._value[4].toFixed(20) + ',';
+            str += this._value[5].toFixed(20) + ',';
+            str += this._value[6].toFixed(20) + ',';
+            str += this._value[7].toFixed(20) + ',';
+            str += this._value[8].toFixed(20) + ',';
+            str += this._value[9].toFixed(20) + ',';
+            str += this._value[10].toFixed(20) + ',';
+            str += this._value[11].toFixed(20) + ',';
+            str += this._value[12].toFixed(20) + ',';
+            str += this._value[13].toFixed(20) + ',';
+            str += this._value[14].toFixed(20) + ',';
+            str += this._value[15].toFixed(20);
+
+            return `matrix3d(${str})`;
         }
     };
 };
