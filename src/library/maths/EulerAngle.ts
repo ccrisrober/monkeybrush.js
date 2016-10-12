@@ -33,8 +33,14 @@ namespace MB {
         set y(v: number) { this._value[1] = v; };
         set z(v: number) { this._value[2] = v; };
 
+        public set(vx: number, vy: number, vz: number) {
+            this.x = vx;
+            this.y = vy;
+            this.z = vz;
+        };
+
         static create(values: Float32Array): EulerAngle {
-            return new EulerAngle(values[0], values[1], values[2]);
+            return new EulerAngle(values[0], values[1], values[2], RotSeq.xyz);
         };
 
         public reset() {
@@ -49,7 +55,9 @@ namespace MB {
          * @param {number = 0.0} y
          * @param {number = 0.0} z
          */
-        constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
+        constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0,
+            public order: RotSeq = RotSeq.xyz) {
+
             this._value = new Float32Array([x, y, z]);
         }
         /*protected static _twoaxisrot(r11: number, r12: number, r21: number,

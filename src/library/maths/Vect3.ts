@@ -507,7 +507,7 @@ namespace MB {
             this.x = vx;
             this.y = vy;
             this.z = vz;
-        }
+        };
 
         /*public reset(v: Vect3): Vect3 {
             this.x = v.x;

@@ -97,8 +97,7 @@ namespace MBS {
             // }
 
             return this;
-
-        }
+        };
 
         public remove(object: MBS.Node) {
             if (arguments.length > 1) {
@@ -111,6 +110,16 @@ namespace MBS {
                 object.parent = null;
                 this._children.splice(index, 1);
             }
+        };
+        protected _matrix: MB.Mat4 = MB.Mat4.identity.clone();
+        public get model(): MB.Mat4 {
+            return this._matrix;
         }
+        public updateMatrix() {
+            this._matrix = MB.Mat4.identity.clone();
+            this._matrix.compose( this.position,
+                this.quaternion.setFromEuler(this.rotation),// this.quaternion,
+                this.scale );
+        };
     }
 }

@@ -19,7 +19,6 @@ namespace MBS {
             function diff2(o1, o2): { [key: string]: MBS.IUniformMaterial; } {
                 let res: { [key: string]: MBS.IUniformMaterial; } = {};
                 for (let key in o1) {
-                    console.log(key);
                     if (o2.hasOwnProperty(key)) {
                         res[key] = o2[key];
                     }
@@ -32,7 +31,6 @@ namespace MBS {
             this._program.loadsFromScript(params.vertexShader, params.fragmentShader);
 
             let unifs = diff2(this._program.uniformLocations, params.uniforms);
-            console.log(unifs);
 
             this._uniforms = {};
             let aux: MBS.IUniformMaterial;
@@ -43,6 +41,18 @@ namespace MBS {
         };
         get uniforms(): { [key: string]: MBS.IUniformMaterial; } {
             return this._uniforms;
+        };
+        public render(model: MB.Drawable) {
+            this.use();
+            model.render();
+        };
+        public render2(model: MB.Drawable) {
+            this.use();
+            model.render2();
+        };
+        public render3(model: MB.Drawable) {
+            this.use();
+            model.render3();
         };
         public use() {
             this._program.use();

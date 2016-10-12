@@ -102,7 +102,7 @@
         var cubito;
         var angle = 0.0;
 
-        var node;
+        var node, node2;
         var myProg;
         window.onload = function () {
             engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
@@ -132,6 +132,7 @@
             cubito = new MB.Cube(engine.context, 2.0);
 
             node = new MBS.Node("box", scene);
+            node2 = new MBS.Node("box2", scene);
 
             onWindowResize();
 
@@ -181,40 +182,39 @@
                     5.0 * Math.sin(e_angle) + config.positionY,
                     0.0 + config.positionZ
                 );
-                node.scale.x = node.scale.y = node.scale.z = config.size * 2.0;
+                node.rotation.x = -angle * 2.0;
+                node.scale.set(
+                    config.size * 2.0,
+                    config.size * 2.0,
+                    config.size * 2.0
+                );
 
-                model =
-                    identityMatrix.clone()
-                        .translate(node.position)
-                        .scale(node.scale);
-                myProg.uniforms.model.value = model;
+                node.updateMatrix();
+                myProg.uniforms.model.value = node.model;
                 myProg.uniforms.color.value = [1.0, 0.0, 0.0];
-                myProg.use();
-                cubito.render();
+                myProg.render(cubito);
 
                 var m_angle = t * 0.8;
-                node.position.set(
+                node2.position.set(
                     5.0 * Math.cos(m_angle) + node.position.x,
                     5.0 * Math.sin(m_angle) + node.position.y,
                     0.0 + node.position.z
                 );
-                node.rotation.x = angle * 2.0;
-                node.rotation.y = angle;
-                node.rotation.z = angle * 3.0;
-                node.scale.x = 1.0;
-                node.scale.y = node.scale.z = config.size;
+                node2.rotation.set(
+                    angle * 2.0,
+                    angle,
+                    angle * 3.0
+                );
+                node2.scale.set(
+                    config.size,
+                    config.size,
+                    config.size
+                );
 
-                model =
-                    identityMatrix.clone()
-                        .translate(node.position)
-                        .rotate(node.rotation.x, MB.Vect3.xAxis)
-                        .rotate(node.rotation.y, MB.Vect3.yAxis)
-                        .rotate(node.rotation.z, MB.Vect3.zAxis)
-                        .scale(node.scale);
-                myProg.uniforms.model.value = model;
+                node2.updateMatrix();
+                myProg.uniforms.model.value = node2.model;
                 myProg.uniforms.color.value = [0.0, 1.0, 0.0];
-                myProg.use();
-                cubito.render();
+                myProg.render(cubito);
 
                 stats.update();
             };
