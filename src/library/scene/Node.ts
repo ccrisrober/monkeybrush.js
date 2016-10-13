@@ -35,7 +35,7 @@ namespace MBS {
             this._name = name;
             this._id = this._generateUUID();
             this._scene = scene;
-            this.parent = this._scene.root;
+            this.parent = null;//this._scene.root;
         };
 
         public set parent(parent: Node) {
@@ -91,7 +91,7 @@ namespace MBS {
                     object.parent.remove( object );
                 }
                 object.parent = this;
-                this._children.push( object );
+                //this._children.push( object );
             // } else {
             //     MB.Log.error("MBS.Node.add: object not an instance of MBS.Node.", object);
             // }
@@ -120,6 +120,26 @@ namespace MBS {
             this._matrix.compose( this.position,
                 this.quaternion.setFromEuler(this.rotation),// this.quaternion,
                 this.scale );
+        };
+
+
+        public addChild(elem) {
+            this.removeChild(elem);
+            this._children.push(elem);
+        };
+        public removeChild(elem) {
+            this._children = this._children.filter(function(e) {
+                if (elem === e) {
+                    elem._parent = null;
+                }
+                return elem !== e;
+            });
+        };
+        public removeAll() {
+            this._children = this._children.filter(function(e) {
+                e._parentNode = null;
+            })
+            this._children.length = 0;
         };
     }
 }

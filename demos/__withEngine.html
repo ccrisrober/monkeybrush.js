@@ -104,11 +104,15 @@
 
         var node, node2;
         var myProg;
+
+        var sun, earthPivot, earth, moonPivot, moon;
+        var root_;
+
         window.onload = function () {
             engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
-            scene = new MBS.Scene(engine);
+            scene = new MBS.Scene("myScene", engine);
 
-            scene.camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 15.0));
+            scene.camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 25.0));
             scene.fov = 70.0;
 
             stats = new Stats();
@@ -140,9 +144,9 @@
 
             var clock = new MB.Clock();
 
-            var sun, earthPivot, earth;
-
+            root_ = new MBS.Node("root", scene);
             sun = new MBS.Node("sun", scene);
+            root_.add(sun);
 
             earthPivot = new MBS.Node("earthPivot", scene);
             sun.add(earthPivot);
@@ -151,11 +155,12 @@
             earth.position.x = 1000;
             earthPivot.add(earth);
 
-            var moonPivot = new MBS.Node("moonPivot", scene);
+            moonPivot = new MBS.Node("moonPivot", scene);
             moonPivot.position = earth.position;
             earthPivot.add( moonPivot );
-            var moon = new MBS.Node("moon", scene);
-            moonPivot.add(moon)
+            moon = new MBS.Node("moon", scene);
+            moonPivot.add(moon);
+            console.log(root_);
 
             var renderLoop = function(dt) {
                 scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
@@ -171,8 +176,8 @@
                 //prog.sendUniform3f("color", 1.0, 0.0, 1.0);
 
 
-                earthPivot.rotation.y += 0.1;
-                moonPivot.rotation += 0.1;
+                //earthPivot.rotation.y += 0.1;
+                //moonPivot.rotation += 0.1;
 
                 var t = clock.elapsedTime();
 

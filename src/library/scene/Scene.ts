@@ -23,10 +23,24 @@ namespace MBS {
             return this._sceneGraph;
         }
 
-        protected _postProcess: MBS.PostProcess = null;
+        public addModel(m) {
 
-        constructor(engine: Engine) {
+        }
+        public addLight(lg: MB.Light) {
+            for (let i = 0, l = this._lights.length; i < l; ++i) {
+                if (this._lights[i] == lg) {
+                    return;
+                }
+            }
+            this._lights.push(lg);
+        }
+
+        protected _postProcess: MBS.PostProcess = null;
+        protected _name: string;
+
+        constructor(name: string, engine: Engine) {
             this._engine = engine;
+            this._name = name;
             engine._scenes.push(this);
             this._sceneGraph = new MBS.Node("root", this);
 

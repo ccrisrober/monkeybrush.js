@@ -7,7 +7,7 @@ namespace MBS {
 
         constructor(context: MB.GLContext) {
             this._engine = new MBS.Engine(context);
-            this._scene = new MBS.Scene(this._engine);
+            this._scene = new MBS.Scene("demo", this._engine);
 
         }
 
