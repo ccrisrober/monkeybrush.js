@@ -93,3 +93,4 @@ function _processImports(src: string): string {
 };
 
 loadShader("SimpleNoise3D", "../src/shaders/SimpleNoise3D.glsl");
+loadShader("ClassicNoise", "../src/shaders/ClassicNoise.glsl");

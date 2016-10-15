@@ -22,8 +22,7 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.homePoint = new MB.Vect3(3.73, 7.31, 10.77);
-                this.camera = new MB.Camera2(this.homePoint, new MB.Vect3(0.006, 0.93, -0.34), -80.025, -20.43);
+                this.camera = new MB.Camera2(new MB.Vect3(3.73, 7.31, 10.77), new MB.Vect3(0.006, 0.93, -0.34), -80.025, -20.43);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.pos = 0;

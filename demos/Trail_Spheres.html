@@ -69,8 +69,7 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")));
-                this.homePoint = new MB.Vect3(0.08, 0.16, 60.25);
-                this.camera = new MB.Camera2(this.homePoint);
+                this.camera = new MB.Camera2(0.08, 0.16, 20.25);
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();

@@ -10519,6 +10519,7 @@ function _processImports(src) {
 }
 ;
 loadShader("SimpleNoise3D", "../src/shaders/SimpleNoise3D.glsl");
+loadShader("ClassicNoise", "../src/shaders/ClassicNoise.glsl");
 
 "use strict";
 var MB;
@@ -11018,10 +11019,18 @@ var MB;
             _super.call(this, context, MB.ctes.TextureTarget.Texture2D, options);
             var gl = context.gl;
             this.bind();
-            if (data instanceof HTMLImageElement) {
+            console.log("lol");
+            if ((typeof data === "string") || data instanceof HTMLImageElement) {
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY ? options.flipY : 0);
                 gl.pixelStorei(gl.UNPACK_ALIGNMENT, this._unpackAlignment);
-                gl.texImage2D(this._target, this._level, this._internalFormat, this._format, this._type, data);
+                var auxData = void 0;
+                if (typeof data === "string") {
+                    auxData = MB.ResourceMap.retrieveAsset(data);
+                }
+                else {
+                    auxData = data;
+                }
+                gl.texImage2D(this._target, this._level, this._internalFormat, this._format, this._type, auxData);
             }
             else {
                 gl.texImage2D(this._target, this._level, this._internalFormat, data.width, data.height, this._border, this._format, this._type, data.pixels || null);

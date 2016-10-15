@@ -106,8 +106,7 @@
                 MB.Loaders.loadImage("../assets/images/zaun_a.png", "noiseTex");
             };
             MyScene.prototype.initialize = function () {
-                var myTexture = MB.ResourceMap.retrieveAsset("noiseTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, "noiseTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
