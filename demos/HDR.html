@@ -17,6 +17,36 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        #import<VertexPP>
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform sampler2D tex;
+
+        uniform float exposure;
+
+        vec3 decode_pnghdr(const in vec4 color){
+            // remove gamma correction
+            vec4 res = color * color;
+            // decoded RI
+            float ri = pow(2.0, res.w * 32.0 - 16.0);
+            // decoded HDR pixel
+            res.xyz = res.xyz * ri;
+            return res.xyz;
+        }
+
+        void main() {
+            vec4 color = texture(tex, uv).xyzw;
+            color.xyz  = decode_pnghdr(color);
+            // apply gamma correction and exposure
+            fragColor = vec4(pow(exposure * color.xyz, vec3(0.474)), 1.0);
+        }
+    </script>
     <script type="text/javascript">
         var Configuration = function () {
             return {
@@ -33,10 +63,7 @@
                 MB.Loaders.loadImage("../assets/images/memorial.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
@@ -44,16 +71,20 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/hdr.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "exposure"]);
-                    console.log(prog);
-                    return prog;
+                this.prog = new MB.ShaderMaterial(this.context, {
+                    name: "ppShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        exposure: { type: MB.UniformType.Float },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
+
+                this.tex2d.bind(0);
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
@@ -61,12 +92,8 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("exposure", this.text.exposure);
-
+                this.prog.uniforms.exposure.value = this.text.exposure;
+                this.prog.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
@@ -74,8 +101,9 @@
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

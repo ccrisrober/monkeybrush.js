@@ -33,9 +33,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("sphereTex");
-                this.tex = new MB.Texture2D(this.context, myTexture, {
+                this.tex = new MB.Texture2D(this.context, "sphereTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,

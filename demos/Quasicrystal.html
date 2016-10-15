@@ -20,13 +20,7 @@
     <canvas id="canvas" width="512" height="512"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-        layout(location = 0) in vec3 vertPosition;
-        out vec2 uv;
-        void main(void) {
-            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-            gl_Position = vec4(vertPosition, 1.0);
-        }
+        #import<VertexPP>
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
@@ -49,18 +43,18 @@
             vec2 uvv = (uv - 0.5) * 150.;   // Center radius
 
             for (idx = 0.; idx < 20.; idx++) {
-                if ( idx < ratio ) {
+                if (idx < ratio) {
                     value = idx * step;
-                    s = sin( value );
-                    c = cos( value );
-                    ans += ( cos( c * uvv.x + s * uvv.y + iGlobalTime ) + 1. ) / 5.;
+                    s = sin(value);
+                    c = cos(value);
+                    ans += (cos(c * uvv.x + s * uvv.y + iGlobalTime) + 1.) / 5.;
                 }
             }
 
             float v = mod(ans, 1.);
             float k = ans - v;
 
-            ans = ( mod( abs( k ), 2. ) ) <= 0.0001 ? v : 1. - v;
+            ans = (mod(abs(k), 2.)) <= 0.0001 ? v : 1. - v;
 
             fragColor.rgb = texture(tex, vec2(ans, 0.0)).rgb;
             fragColor.w = 1.;
@@ -81,10 +75,7 @@
                 MB.Loaders.loadImage("../assets/images/gradientTexture.jpg", "1DTex");
             };
             MyScene.prototype.initialize = function () {
-                var that = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("1DTex");
-                this.tex = new MB.Texture2D(this.context, myTexture, {
+                this.tex = new MB.Texture2D(this.context, "1DTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -92,30 +83,32 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(that._context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "iGlobalTime", "ratio"]);
-                    return prog;
+                this.prog = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        iGlobalTime: { type: MB.UniformType.Float },
+                        ratio: { type: MB.UniformType.Float }
+                    }
                 });
+
+                this.tex.bind(0);
                 this.pp = new MB.PostProcess(this.context);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
-                this.dt = dt;
+                this.prog.uniforms.iGlobalTime.value = dt;
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get("prog");
-                prog.use();
-                this.tex.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("iGlobalTime", this.dt);
-                prog.sendUniform1f("ratio", this.text.ratio);
+                this.prog.uniforms.ratio.value = this.text.ratio;
+                this.prog.use();
                 this.pp.render();
             };
             MyScene.prototype.textCB = function (gui) {

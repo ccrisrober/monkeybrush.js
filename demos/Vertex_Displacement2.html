@@ -93,7 +93,7 @@
             };
             MyScene.prototype.initialize = function () {
                 this.cubito = new MB.Sphere(this.context, 20.0, 150.0);
-                this.tex = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("1DTex"), {
+                this.tex = new MB.Texture2D(this.context, "1DTex", {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
@@ -108,10 +108,12 @@
                         view: { type: MB.UniformType.Matrix4 },
                         model: { type: MB.UniformType.Matrix4 },
                         iGlobalTime: { type: MB.UniformType.Float },
-                        tex: { type: MB.UniformType.Integer }
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
                     }
                 });
-                this.myProg.uniforms.tex.value = 0;
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {

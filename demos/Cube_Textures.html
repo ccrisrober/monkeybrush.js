@@ -15,7 +15,6 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <canvas id="canvas" width="800" height="500"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
         precision highp float;
@@ -55,7 +54,7 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")));
+                _super.call(this, "App", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.0, -2.16, 20.25));
                 this.angle = 0;
                 this.mainShader = "prog";
@@ -71,7 +70,7 @@
                 this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"), {
                     flipY: 1
                 });
-                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,

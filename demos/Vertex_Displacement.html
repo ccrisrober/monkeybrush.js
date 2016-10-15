@@ -66,7 +66,7 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.camera = new MB.Camera2(new MB.Vect3(0.08, 5.16, 15.25););
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 5.16, 15.25));
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -78,7 +78,7 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("heightmap"), {
+                this.tex2d = new MB.Texture2D(this.context, "heightmap", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

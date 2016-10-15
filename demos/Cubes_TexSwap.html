@@ -37,14 +37,14 @@
                 this.cubito = new MB.Cube(this.context, 25.0);
 
                 this.customPP = new MB.CustomPingPong(
-                    new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("tex1"), {
+                    new MB.Texture2D(this.context, "tex1", {
                         flipY: 1,
                         minFilter: MB.ctes.TextureFilter.Nearest,
                         magFilter: MB.ctes.TextureFilter.Nearest,
                         wrapS: MB.ctes.TextureFilter.Clamp2Edge,
                         wrapT: MB.ctes.TextureFilter.Clamp2Edge
                     }),
-                    new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("tex2"), {
+                    new MB.Texture2D(this.context, "tex2", {
                         flipY: 1,
                         minFilter: MB.ctes.TextureFilter.Nearest,
                         magFilter: MB.ctes.TextureFilter.Nearest,

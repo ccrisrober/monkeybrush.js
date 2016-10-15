@@ -90,7 +90,7 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("heightmap"), {
+                this.tex2d = new MB.Texture2D(this.context, "heightmap", {
                     flipY: 0,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

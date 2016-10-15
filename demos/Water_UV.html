@@ -18,13 +18,7 @@
     <script type="text/javascript" src="../dist/output.js"></script>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-        layout(location = 0) in vec3 vertPosition;
-        out vec2 uv;
-        void main(void) {
-            uv = (vec2(vertPosition.xy * 0.5) + vec2(0.5)) * 4.0;
-            gl_Position = vec4(vertPosition, 1.0);
-        }
+        #import<VertexPP>
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
@@ -64,7 +58,7 @@
                 MB.Loaders.loadImage("../assets/images/water.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -77,12 +71,16 @@
                     vertexShader: "shader-vs",
                     fragmentShader: "shader-fs",
                     uniforms: {
-                        tex: { type: MB.UniformType.Integer },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
                         uvspeed: { type: MB.UniformType.Vector2 },
                         color: { type: MB.UniformType.Vector3 },
                         iGlobalTime: { type: MB.UniformType.Float }
                     }
                 });
+                this.tex2d.bind(0);
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
@@ -91,8 +89,6 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                this.tex2d.bind(0);
-                this.myProg.uniforms.tex.value = 0;
                 this.myProg.uniforms.color.value = new MB.Vect3(this.text.RChannel, this.text.GChannel, this.text.BChannel);
                 this.myProg.uniforms.uvspeed.value = new MB.Vect2(this.text.USpeed, this.text.VSpeed);
                 this.myProg.use();

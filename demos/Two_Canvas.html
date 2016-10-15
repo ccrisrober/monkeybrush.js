@@ -18,53 +18,6 @@
     <canvas id="canvas" width="250" height="250"></canvas>
     <canvas id="canvas2" width="250" height="250"></canvas>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-
-        layout(location = 0) in vec3 position;
-        layout(location = 1) in vec3 normal;
-        layout(location = 2) in vec2 uv;
-
-        out vec3 outPosition;
-        out vec3 outNormal;
-        out vec2 outUV;
-
-        uniform mat4 projection;
-        uniform mat4 view;
-        uniform mat4 model;
-
-        void main() {
-            outPosition = vec3(model * vec4(position, 1.0));
-
-            gl_Position = projection * view * vec4(outPosition, 1.0);
-            mat3 normalMatrix = mat3(inverse(transpose(model)));
-            outNormal = normalize(normalMatrix * normal);
-            outUV = uv;
-        }
-    </script>
-    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
-        precision highp float;
-
-        in vec3 outPosition;
-        in vec3 outNormal;
-        in vec2 outUV;
-
-        out vec4 fragColor;
-
-        uniform sampler2D tex;
-
-        uniform vec3 viewPos;
-        uniform vec3 color;
-
-        void main() {
-            vec3 N = normalize(outNormal);
-            vec3 L = normalize(viewPos - outPosition);
-            float dif = dot(N, L);
-            dif = clamp(dif, 0.0, 1.0);
-            fragColor = vec4(color * dif, 1.0) + vec4(color * 0.3, 1.0);
-        }
-    </script>
-
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);

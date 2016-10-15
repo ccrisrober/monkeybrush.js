@@ -15,8 +15,6 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <canvas id="canvas" width="800" height="500"></canvas>
-
     <script type="x-shader/x-vertex" id="flat-vs">#version 300 es
         precision highp float;
 
@@ -86,42 +84,38 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")));
-                this.homePoint = ;
+                _super.call(this, "App", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.0, 5.0, 20.));
                 this.angle = 0;
-                this.mainShader = "progSmooth";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
-                this.programs = ["progSmooth", "progFlat"];
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
                 this.cubito = new MB.Mesh(this.context, "../assets/objects/dragon.json");
-                MB.ProgramManager.addWithFun("progSmooth", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("smooth-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("smooth-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
 
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model"]);
-
-                    return prog;
+                this.progSmooth = new MB.ShaderMaterial(this.context, {
+                    name: "smoothShader",
+                    vertexShader: "smooth-vs",
+                    fragmentShader: "smooth-fs",
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 }
+                    }
                 });
-                MB.ProgramManager.addWithFun("progFlat", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("flat-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("flat-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model"]);
-
-                    return prog;
+                this.progFlat = new MB.ShaderMaterial(this.context, {
+                    name: "flatShader",
+                    vertexShader: "flat-vs",
+                    fragmentShader: "flat-fs",
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 }
+                    }
                 });
+                this.programs = [ this.progSmooth, this.progFlat ];
                 this.programs.reverse();
-                this.mainShader = this.programs[0];
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
@@ -130,30 +124,23 @@
                 this.__resize__();
                 if (MB.Input.isKeyClicked(MB.ctes.KeyState.X)) {
                     this.programs.reverse();
-                    this.mainShader = this.programs[0];
                     this.cameraUpdate();
                 }
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(1.25, 1.25, 1.25));
-                prog.sendUniformMat4("model", this.model);
-                this.cubito.render();
+                this.programs[0].uniforms.model.value = this.model;
+                this.programs[0].render(this.cubito);
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.programs[0].uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.programs[0].uniforms.view.value = this.camera.GetViewMatrix();
             };
             return MyScene;
         }(MB.App));

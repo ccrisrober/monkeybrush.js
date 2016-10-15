@@ -18,13 +18,7 @@
     <script type="text/javascript" src="../dist/output.js"></script>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-        layout(location = 0) in vec3 vertPosition;
-        out vec2 uv;
-        void main(void) {
-            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-            gl_Position = vec4(vertPosition, 1.0);
-        }
+        #import<VertexPP>
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
@@ -32,7 +26,6 @@
         out vec4 fragColor;
         in vec2 uv;
         uniform float amount;
-        uniform vec2 size;
 
         uniform sampler2D tex;
 
@@ -121,10 +114,7 @@
                 MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -132,16 +122,19 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "amount", "size"]);
-                    console.log(prog);
-                    return prog;
+                this.prog = new MB.ShaderMaterial(this.context, {
+                    name: "alphaShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        amount: { type: MB.UniformType.Float }
+                    }
                 });
+                this.tex2d.bind(0);
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
@@ -149,13 +142,8 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("amount", this.text.amount);
-                prog.sendUniform2f("size", this.context.canvas.width, this.context.height);
-
+                this.prog.uniforms.amount.value = this.text.amount;
+                this.prog.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {

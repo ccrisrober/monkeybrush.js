@@ -18,13 +18,7 @@
     <script type="text/javascript" src="../dist/output.js"></script>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-        layout(location = 0) in vec3 vertPosition;
-        out vec2 uv;
-        void main(void) {
-            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-            gl_Position = vec4(vertPosition, 1.0);
-        }
+        #import<VertexPP>
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
@@ -167,7 +161,7 @@
             MyScene.prototype.initialize = function () {
                 var _this = this;
 
-                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

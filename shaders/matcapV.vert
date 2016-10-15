@@ -11,17 +11,7 @@ uniform mat4 view;
 uniform mat4 model;
 uniform vec3 viewPos;
 
-vec2 matcap(vec3 eye, vec3 normal) {
-    vec3 reflected = reflect(eye, normal);
-
-    float m = 2.0 * sqrt(
-        pow(reflected.x, 2.0) +
-        pow(reflected.y, 2.0) +
-        pow(reflected.z + 1.0, 2.0)
-    );
-
-    return reflected.xy / m + 0.5;
-}
+#import<MatCap>
 
 void main() {
     gl_Position = projection * view * model * vec4(position, 1.0);

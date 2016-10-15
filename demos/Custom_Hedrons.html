@@ -189,7 +189,7 @@
                             .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                             .scale(new MB.Vect3(2.5, 2.5, 2.5));
                     prog.sendUniformMat4("model", this.model);
-                    this[v.name + i].render2();
+                    this[v.name + i].render();
                 }.bind(this));
             };
             MyScene.prototype.cameraUpdate = function () {

@@ -29,12 +29,14 @@ namespace MBX {
         /**
          * [constructor description]
          * @param {GLContext} context [description]
-         * @param {HTMLVideoElement} video [description]
+         * @param {string | HTMLVideoElement} video [description]
          * @param {boolean = true} loop [description]
          * @param {number = 15} frameTime [description]
          * @param {() => void = null} onSuccess Optional callback that runs when creating VideoTexture.
          */
-        constructor(context: MB.GLContext, video: HTMLVideoElement, loop: boolean = true,
+        constructor(context: MB.GLContext, video: string);
+        constructor(context: MB.GLContext, video: HTMLVideoElement);
+        constructor(context: MB.GLContext, video: string | HTMLVideoElement, loop: boolean = true,
             frameTime: number = 15, onSuccess: () => void = null) {
             super(context, MB.ctes.TextureTarget.Texture2D, {
                 internalFormat: MB.ctes.PixelFormat.RGBA,
@@ -54,7 +56,13 @@ namespace MBX {
                 this._target,
                 gl.TEXTURE_MAG_FILTER, MB.ctes.TextureFilter.Linear);
 
-            this._video = video;
+            let auxVideo: HTMLVideoElement;
+            if (typeof video === "string") {
+                auxVideo = MB.ResourceMap.retrieveAsset(<string>video);
+            } else {
+                auxVideo = video;
+            }
+            this._video = auxVideo;
             this._video.muted = true;
             this._video.loop = loop;
 

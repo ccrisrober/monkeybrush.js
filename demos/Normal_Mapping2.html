@@ -22,8 +22,7 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.homePoint = ;
-                this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 5.25));
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 15.25));
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -37,7 +36,7 @@
                 var _this = this;
                 this.cubito = new MB.Cube(this.context, 17.5);
 
-                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("diffuseMap"), {
+                this.tex2d = new MB.Texture2D(this.context, "diffuseMap", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -45,7 +44,7 @@
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.tex2d2 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("normalMap"), {
+                this.tex2d2 = new MB.Texture2D(this.context, "normalMap", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

@@ -10520,6 +10520,8 @@ function _processImports(src) {
 ;
 loadShader("SimpleNoise3D", "../src/shaders/SimpleNoise3D.glsl");
 loadShader("ClassicNoise", "../src/shaders/ClassicNoise.glsl");
+loadShader("VertexPP", "../src/shaders/VertexPP.glsl");
+loadShader("MatCap", "../src/shaders/MatCap.glsl");
 
 "use strict";
 var MB;
@@ -10756,7 +10758,7 @@ var MB;
             this._minFilter = options.minFilter || MB.ctes.TextureFilter.Linear;
             this._magFilter = options.magFilter || MB.ctes.TextureFilter.Linear;
             this._unpackAlignment = options.unpackAlignment || 4;
-            this._flipY = options.flipY || 0;
+            this._flipY = options.flipY || 1;
         }
         ;
         Texture.prototype.bind = function (slot) {
@@ -11168,7 +11170,14 @@ var MBX;
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
             gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, MB.ctes.TextureFilter.Linear);
             gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, MB.ctes.TextureFilter.Linear);
-            this._video = video;
+            var auxVideo;
+            if (typeof video === "string") {
+                auxVideo = MB.ResourceMap.retrieveAsset(video);
+            }
+            else {
+                auxVideo = video;
+            }
+            this._video = auxVideo;
             this._video.muted = true;
             this._video.loop = loop;
             this.update();

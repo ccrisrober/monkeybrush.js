@@ -36,7 +36,7 @@
                 var _this = this;
                 this.cubito = new MB.Sphere(this.context, 17.5, 45, 45);
 
-                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("diffuseMap"), {
+                this.tex2d = new MB.Texture2D(this.context, "diffuseMap", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -44,7 +44,7 @@
                     wrapT: MB.ctes.TextureFilter.Clamp2Edge
                 });
 
-                this.tex2d2 = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("normalMap"), {
+                this.tex2d2 = new MB.Texture2D(this.context, "normalMap", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,

@@ -71,10 +71,12 @@
                     fragmentShader: "shader-fs",
                     uniforms: {
                         viewProj: { type: MB.UniformType.Matrix4 },
-                        tex: { type: MB.UniformType.Integer }
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
                     }
                 });
-                this.myProg.uniforms.tex.value = 0;
 
                 var texSize = 1024;
                 var bb1 = new Uint8Array(texSize * texSize * 3);

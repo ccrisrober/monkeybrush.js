@@ -21,11 +21,7 @@
     <canvas id="canvas" width="512" height="512"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-        layout(location = 0) in vec3 vertPosition;
-        void main(void) {
-            gl_Position = vec4(vertPosition, 1.0);
-        }
+        #import<VertexPP>
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;

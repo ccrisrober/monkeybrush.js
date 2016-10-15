@@ -14,7 +14,7 @@ uniform sampler2D texNormal;
 uniform vec3 viewPos;
 
 void main() {
-    vec3 color = texture(texDiffuse, outUV).rgb;
+    vec3 color = vec3(1.0); //texture(texDiffuse, outUV).rgb;
 
     // Ambient
     vec3 ambient = vec3(1.0);

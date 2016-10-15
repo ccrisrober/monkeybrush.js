@@ -175,7 +175,7 @@
         </div>
         <iframe id="viewer" allowfullscreen onmousewheel=""></iframe>
         <script>
-        var files = {
+        /*var files = {
             "Hello World": [
                 "Hello_World",
                 "First_Scene",
@@ -219,8 +219,7 @@
                 "Toonify_PP",
                 "Posterization_PP",
                 "FreiChen_PP",
-                "DreamVision_PP",
-                "DreamVision2",
+                "DreamVision",
                 "Pixelization",
                 "Retro_PP",
                 "Hand_LikeEffect",
@@ -279,7 +278,9 @@
                 "Manga_EffectLine",
                 "Trail_Spheres",
                 "Xor",
-                "Tunnel_Effect"
+                "Tunnel_Effect",
+                "Brownian_Motion",
+                "Random_Textures"
             ],
             "GPGPU": [
                 "Mandelbrot",
@@ -291,7 +292,77 @@
                 "Conway_Life",
                 "Flat_Wave"
             ]
-        };
+        };*/
+        var files = {
+            "Demos": [
+                "First_Scene",
+                "First_App",
+
+                "Ripple_effect",
+                "Ripple_effect2",
+                "Cubes_Fog",
+                "Instancing",
+
+                "Integer_Texture",
+                "Normal_Mapping",
+                "Normal_Mapping2",
+                "Earth_Map",
+                "Canvas_Painter",
+                "Video_Texture",
+                "Webcam_Texture",
+
+                "Desintegration_Effect",
+                "PaintSpatter_Effect",
+                "FreiChen_PP",
+                "OldFilm_PP",
+
+                "Heat",
+                "Hatching",
+                "Hatching3D",
+                "Gooch",
+                "Plasma_Isosurface",
+
+                "Ambient_Light",
+                "Directional_Light",
+                "Hemispheric_Light",
+                "Point_Light",
+                "Rim_Light",
+                "Water_Reflection",
+
+                "Obj_Loader",
+                "Random_Hedrons",
+                "Heightmap",
+                "Lathe",
+                "Parametric_Geometry",
+                "Vertex_Displacement",
+                "Lattice",
+
+                "Deferred_Shading",
+                "Matcap_Vertex",
+                "Matcap_Fragment",
+                "Spherical_Harmonics",
+                "Ray_Tracing",
+                "Path_Tracing",
+                "Ray_Marching",
+
+                "Cubes_TexSwap",
+                "Photosphere",
+                "Trail_Spheres",
+
+                "Mandelbrot",
+                "Julia",
+                "Point_TF",
+                "Ubo_Spline",
+                "Conway_Life"
+            ]
+        }
+        for (var key in files) {
+            files[key].sort(function(a, b) {
+                if(a < b) return -1;
+                if (a > b) return 1;
+                return 0;
+            });
+        }
         var panel = document.getElementById("panel");
         var content = document.getElementById("content");
         var viewer = document.getElementById("viewer");

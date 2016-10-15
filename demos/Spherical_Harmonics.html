@@ -22,7 +22,7 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.camera = new MB.Camera2(new MB.Vect3(-0.18, 1.60, 25.23));
+                this.camera = new MB.Camera2(new MB.Vect3(-0.18, 1.60, 5.23));
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -30,7 +30,7 @@
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
-                this.cubito = new MB.Mesh(this.context, "../assets/objects/teddy.json");
+                this.cubito = new MB.Mesh(this.context, "../assets/objects/dragon.json");
                 MB.ProgramManager.addWithFun("prog", function () {
                     var prog = new MB.Program(_this.context);
                     prog.addShader("../shaders/sh.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);

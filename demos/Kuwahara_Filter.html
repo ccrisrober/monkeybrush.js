@@ -17,6 +17,101 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        #import<VertexPP>
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform sampler2D tex;
+
+        uniform int filter_size;
+        uniform vec2 texSize;
+        void main() {
+            vec2 texelSize = vec2(1.0, 1.0) / texSize;
+
+            float n = float((filter_size + 1) * (filter_size + 1));
+            int i;
+            int j;
+            vec3 m0 = vec3(0.0); vec3 m1 = vec3(0.0); vec3 m2 = vec3(0.0); vec3 m3 = vec3(0.0);
+            vec3 s0 = vec3(0.0); vec3 s1 = vec3(0.0); vec3 s2 = vec3(0.0); vec3 s3 = vec3(0.0);
+            vec3 c;
+
+            for (int j = -filter_size; j <= 0; ++j)  {
+                for (int i = -filter_size; i <= 0; ++i)  {
+                    c = texture(tex, uv + vec2(i,j) * texelSize).rgb;
+                    m0 += c;
+                    s0 += c * c;
+                }
+            }
+
+            for (int j = -filter_size; j <= 0; ++j)  {
+                for (int i = 0; i <= filter_size; ++i)  {
+                    c = texture(tex, uv + vec2(i,j) * texelSize).rgb;
+                    m1 += c;
+                    s1 += c * c;
+                }
+            }
+
+            for (int j = 0; j <= filter_size; ++j)  {
+                for (int i = 0; i <= filter_size; ++i)  {
+                    c = texture(tex, uv + vec2(i,j) * texelSize).rgb;
+                    m2 += c;
+                    s2 += c * c;
+                }
+            }
+
+            for (int j = 0; j <= filter_size; ++j)  {
+                for (int i = -filter_size; i <= 0; ++i)  {
+                    c = texture(tex, uv + vec2(i,j) * texelSize).rgb;
+                    m3 += c;
+                    s3 += c * c;
+                }
+            }
+
+
+            float min_sigma2 = 1e+2;
+            m0 /= n;
+            s0 = abs(s0 / n - m0 * m0);
+
+            float sigma2 = s0.r + s0.g + s0.b;
+            if (sigma2 < min_sigma2) {
+                min_sigma2 = sigma2;
+                fragColor = vec4(m0, 1.0);
+            }
+
+            m1 /= n;
+            s1 = abs(s1 / n - m1 * m1);
+
+            sigma2 = s1.r + s1.g + s1.b;
+            if (sigma2 < min_sigma2) {
+                min_sigma2 = sigma2;
+                fragColor = vec4(m1, 1.0);
+            }
+
+            m2 /= n;
+            s2 = abs(s2 / n - m2 * m2);
+
+            sigma2 = s2.r + s2.g + s2.b;
+            if (sigma2 < min_sigma2) {
+                min_sigma2 = sigma2;
+                fragColor = vec4(m2, 1.0);
+            }
+
+            m3 /= n;
+            s3 = abs(s3 / n - m3 * m3);
+
+            sigma2 = s3.r + s3.g + s3.b;
+            if (sigma2 < min_sigma2) {
+                min_sigma2 = sigma2;
+                fragColor = vec4(m3, 1.0);
+            }
+        }
+    </script>
+
     <script type="text/javascript">
         var MyConfig = function () {
             return {
@@ -27,16 +122,12 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), MyConfig());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
@@ -44,32 +135,30 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/kuwahara.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "texSize", "filter_size"]);
-                    console.log(prog);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "kuwaharaFilter",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        texSize: { type: MB.UniformType.Vector2 },
+                        filter_size: { type: MB.UniformType.Integer }
+                    }
                 });
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
+                this.myProg.uniforms.texSize.value = new MB.Vect2(this.context.canvas.width, this.context.canvas.height);
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                var ww = this.context.canvas.width;
-                var hh = this.context.canvas.height
-                prog.sendUniform2f("texSize", ww, hh);
-                prog.sendUniform1i("filter_size", this.text.filter_size);
                 this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-
+                this.myProg.uniforms.filter_size.value = this.text.filter_size;
+                this.myProg.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
@@ -77,8 +166,9 @@
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>
