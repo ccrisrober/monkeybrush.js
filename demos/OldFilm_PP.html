@@ -26,7 +26,6 @@
         out vec4 fragColor;
         in vec2 uv;
 
-
         uniform float iGlobalTime;
         uniform float SepiaValue;
         uniform float RandomValue;
@@ -159,8 +158,6 @@
                 MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
                 this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
@@ -169,36 +166,40 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "iGlobalTime", "SepiaValue", "NoiseValue", "ScratchValue", "RandomValue", "Radius", "Softness"]);
-                    console.log(prog);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        iGlobalTime: { type: MB.UniformType.Float },
+                        SepiaValue: { type: MB.UniformType.Float },
+                        NoiseValue: { type: MB.UniformType.Float },
+                        ScratchValue: { type: MB.UniformType.Float },
+                        RandomValue: { type: MB.UniformType.Float },
+                        Radius: { type: MB.UniformType.Float },
+                        Softness: { type: MB.UniformType.Float },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
+                this.tex2d.bind(0);
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
-                this.dt = dt;
                 this.__resize__();
+                this.myProg.uniforms.iGlobalTime.value = dt;
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("iGlobalTime", this.dt);
-                prog.sendUniform1f("SepiaValue", this.text.SepiaValue);
-                prog.sendUniform1f("NoiseValue", this.text.NoiseValue);
-                prog.sendUniform1f("ScratchValue", this.text.ScratchValue);
-                prog.sendUniform1f("RandomValue", MB.RandomGenerator.random());
-                prog.sendUniform1f("Radius", this.text.Radius);
-                prog.sendUniform1f("Softness", this.text.Softness);
-
+                this.myProg.uniforms.SepiaValue.value = this.text.SepiaValue;
+                this.myProg.uniforms.NoiseValue.value = this.text.NoiseValue;
+                this.myProg.uniforms.ScratchValue.value = this.text.ScratchValue;
+                this.myProg.uniforms.RandomValue.value = MB.RandomGenerator.random();
+                this.myProg.uniforms.Radius.value = this.text.Radius;
+                this.myProg.uniforms.Softness.value = this.text.Softness;
+                this.myProg.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {

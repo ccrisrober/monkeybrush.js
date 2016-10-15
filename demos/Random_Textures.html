@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convolution matrix</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        #import<VertexPP>
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform sampler2D tex;
+        uniform sampler2D tex2;
+        uniform sampler2D tex3;
+        uniform sampler2D tex4;
+        uniform sampler2D tex5;
+
+        void main(void) {
+            if (uv.x <= 0.45) {
+                if (uv.y <= 0.45) {
+                    fragColor = vec4(texture(tex, uv).xyz, 1.0);
+                }
+                else if (uv.y >= 0.55) {
+                    fragColor = vec4(texture(tex2, uv).xyz, 1.0);
+                }
+                else {
+                    fragColor = vec4(texture(tex5, uv).xyz, 1.0);
+                }
+            }
+            else if (uv.x >= 0.55) {
+                if (uv.y <= 0.45) {
+                    fragColor = vec4(texture(tex3, uv).xyz, 1.0);
+                }
+                else if (uv.y >= 0.55) {
+                    fragColor = vec4(texture(tex4, uv).xyz, 1.0);
+                }
+                else {
+                    fragColor = vec4(texture(tex5, uv).xyz, 1.0);
+                }
+            }
+            else {
+                fragColor = vec4(texture(tex5, uv).xyz, 1.0);
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2());
+                this.mainShader = "prog";
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Kamelot.jpg", "myTex");
+                MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex4");
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex3");
+                MB.Loaders.loadImage("../assets/images/UV_Grid_Sm.jpg", "myTex2");
+                MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "myTex5");
+            };
+            MyScene.prototype.initialize = function () {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
+                    flipY: 1
+                });
+                this.tex2d2 = new MB.Texture2D(this.context, "myTex2", {
+                    flipY: 1
+                });
+                this.tex2d3 = new MB.Texture2D(this.context, "myTex3", {
+                    flipY: 1
+                });
+                this.tex2d4 = new MB.Texture2D(this.context, "myTex4", {
+                    flipY: 0
+                });
+                this.tex2d.update(MB.ResourceMap.retrieveAsset("myTex5"));
+
+                var ww = 256;
+                var hh = 256;
+                var pixels = [];
+                for (var i = 0; i < ww; ++i) {
+                    for (var j = 0; j < hh; ++j) {
+                        if (i > j)
+                            pixels.push(0, 0.0, 0.0, 0.0);
+                        else
+                            pixels.push(255.0, 0.0, 0.0, 0.0);
+                    }
+                }
+                this.tex2d32 = new MB.Texture2D(this.context, {
+                    pixels: new Uint8Array(pixels),
+                    width: ww,
+                    height: hh
+                }, {
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest
+                });
+
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "ppShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        tex2: {
+                            type: MB.UniformType.Integer,
+                            value: 1
+                        },
+                        tex3: {
+                            type: MB.UniformType.Integer,
+                            value: 2
+                        },
+                        tex4: {
+                            type: MB.UniformType.Integer,
+                            value: 3
+                        },
+                        tex5: {
+                            type: MB.UniformType.Integer,
+                            value: 4
+                        }
+                    }
+                });
+                this.tex2d.bind(0);
+                this.tex2d2.bind(1);
+                this.tex2d3.bind(2);
+                this.tex2d4.bind(3);
+                this.tex2d32.bind(4);
+                this.postProcess = new MB.PostProcess(this.context);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.myProg.use();
+                this.postProcess.render();
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

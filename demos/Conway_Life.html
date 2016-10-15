@@ -78,23 +78,27 @@
             }
             MyScene.prototype.initialize = function () {
                 var that = this;
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(that._context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex"]);
-                    return prog;
+                this.prog = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
-                MB.ProgramManager.addWithFun("prog_show", function () {
-                    var prog = new MB.Program(that._context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("show-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex"]);
-                    return prog;
+                this.prog_show = new MB.ShaderMaterial(this.context, {
+                    name: "prog_show",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "show-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
                 var ww = 256; // this.context.canvas.width;
                 var hh = 256; // this.context.canvas.height;
@@ -132,7 +136,6 @@
                 this.pp = new MB.PostProcess(this.context);
                 this.textures = [this.tex, this.tex2];
 
-
                 this.customPP = new MB.CustomPingPong(
                     this.tex, this.tex2
                 );
@@ -150,20 +153,14 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog;
                 this.state.setViewport(new MB.Vector4(0.0, 0.0, 256.0, 256.0));
-                prog = MB.ProgramManager.get("prog");
-                prog.use();
-                prog.sendUniform1i("tex", 0);
-
+                this.prog.use();
                 this.customPP.swap();
                 this.fbo.unbind();
 
                 this.state.setViewport(new MB.Vector4(0.0, 0.0, 512.0, 512.0));
-                prog = MB.ProgramManager.get("prog_show");
-                prog.use();
                 this.tex.bind(0);
-                prog.sendUniform1i("tex", 0);
+                this.prog_show.use();
                 this.pp.render();
             };
             MyScene.prototype.textCB = function (gui) {
@@ -184,19 +181,6 @@
                     }
                 }
                 var size = new MB.Vect2(ww, hh);
-                // TODO: DEBERIA CREAR UN UPDATE
-                /*this.tex.destroy();
-                this.tex = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
-                    type: this.context.gl.FLOAT // TODO
-                });
-                this.tex2.destroy();
-                this.tex2 = new MB.SimpleTexture2D(this.context, new Float32Array(pixels), size, {
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
-                    type: this.context.gl.FLOAT // TODO
-                });*/
 
                 this.tex.update({
                     pixels: new Float32Array(pixels),

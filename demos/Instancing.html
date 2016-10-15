@@ -17,16 +17,45 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+
+        flat out int instance;
+
+        void main() {
+            instance = gl_InstanceID;
+            gl_Position = vec4(
+                position.xy + vec2(
+                    float(gl_InstanceID) * 0.5 - 3.0,
+                    cos(float(gl_InstanceID)/10.0*2.0*3.14))*0.2,
+                0.0,
+                1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        flat in int instance;
+
+        out vec4 fragColor;
+
+        void main() {
+            fragColor = vec4(
+                1.0 - float(instance) * 0.1,
+                0.5,
+                0.0 + float(instance) * 0.1,
+                1.0);
+        }
+    </script>
+
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 28.25));
-                this.angle = 0;
-                this.mainShader = "prog";
-                this.identityMatrix = MB.Mat4.identity.clone();
-                this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
                 var _this = this;
@@ -35,27 +64,21 @@
                         0, 1, 2
                     ],
                     vertices: [
-                         -0.25, -0.25, 0.0,
-                          0.25, -0.25, 0.0,
-                          0.0,  0.25, 0.0
+                        -0.25, -0.25, 0.0,
+                         0.25, -0.25, 0.0,
+                         0.0,   0.25, 0.0
                     ]
                 });
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-
-                    prog.addShader("../shaders/triangleShaderInstancing.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/triangleShaderInstancing.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-
-                    prog.compile();
-                    prog.use();
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs"
                 });
                 this.cameraUpdate();
                 this.numInstances = 10;
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
-
                 if (MB.Input.isKeyClicked(MB.ctes.KeyState.Z)) {
                     this.numInstances--;
                     this.numInstances = this.numInstances < 1 ? 1 : this.numInstances;
@@ -66,14 +89,7 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.model =
-                    this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
-                        .scale(new MB.Vect3(10.0, 10.0, 10.0));
-
+                this.myProg.use();
                 this.triangleModel.renderInstanced(this.numInstances);
             };
             return MyScene;

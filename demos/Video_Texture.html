@@ -17,6 +17,38 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+        layout(location = 2) in vec2 uv;
+
+        out vec2 outUV;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            gl_Position = projection * view * model * vec4(position, 1.0);
+            outUV = uv;
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec2 outUV;
+
+        uniform sampler2D tex;
+
+        out vec4 fragColor;
+
+        void main() {
+            fragColor = texture(tex, outUV);
+        }
+    </script>
+
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
@@ -24,7 +56,6 @@
                 _super.call(this, "App", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
@@ -32,20 +63,25 @@
                 MB.Loaders.loadVideo("../assets/video/Possum vs Cat.mp4", "video");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                this.cubito = new MB.Cube(this.context, 14.0);
+                this.cubeTexture = new MB.Cube(this.context, 14.0);
 
                 this.tex = new MBX.VideoTexture(this.context, "video");
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/texShader.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "tex"]);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
+
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
@@ -55,10 +91,9 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
+
                 this.tex.bind(0);
-                prog.sendUniform1i("tex", 0);
+
                 for(var i = -5; i < 10; i += 5) {
                     for(var j = -5; j < 10; j += 5) {
                         if (i === j) continue;
@@ -68,18 +103,14 @@
                                 .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                                 .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                                 .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                        prog.sendUniformMat4("model", this.model);
-                        this.cubito.render();
+                        this.myProg.uniforms.model.value = this.model;
+                        this.myProg.render(this.cubeTexture);
                     }
                 }
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
             };
             return MyScene;
         }(MB.App));

@@ -17,26 +17,63 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        #import<VertexPP>
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec2 uv;
+        uniform float zoom;
+        uniform vec2 offset;
+        uniform int iter;
+
+        uniform sampler2D tex;
+
+        out vec4 fragColor;
+
+        void main() {
+            vec2 z, c;
+
+            c.x = 1.3333 * (uv.x - 0.5) * zoom - offset.x;
+            c.y = (uv.y - 0.5) * zoom - offset.y;
+
+            int i;
+            z = c;
+            for(i=0; i<iter; i++) {
+                float x = (z.x * z.x - z.y * z.y) + c.x;
+                float y = (z.y * z.x + z.x * z.y) + c.y;
+
+                //float ii = float(i);
+                //fragColor = vec4(sin(ii * 2.0), ii, sin(ii * 2.0), 1.0);
+
+                if((x * x + y * y) > 4.0) break;
+                z.x = x;
+                z.y = y;
+            }
+
+            fragColor = texture(tex, vec2((i == iter ? 0.0 : float(i)) / 100.0, 0));
+            //fragColor = texture(tex, vec2(uv.x, 0.0));
+        }
+    </script>
     <script type="text/javascript">
         var Configuration = function () {
             return {
                 zoom: 2.0,
                 offsetX: 0.7,
                 offsetY: -0.01,
-                iter: 50
+                iter: 25
             }
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.mainShader = "prog";
+                _super.call(this, "Mandelbrot", new MB.GLContextW2(), Configuration());
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/gradientTexture.jpg", "1DTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.tex = new MB.Texture2D(this.context, "1DTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
@@ -45,16 +82,21 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/mandelbrot.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["zoom", "offset", "tex", "iter"]);
-                    console.log(prog);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "handLikePP",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        offset: { type: MB.UniformType.Vector2 },
+                        iter: { type: MB.UniformType.Integer },
+                        zoom: { type: MB.UniformType.Float }
+                    }
                 });
+                this.tex.bind(0);
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
@@ -62,13 +104,10 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1i("iter", this.text.iter);
-                prog.sendUniform1f("zoom", this.text.zoom);
-                prog.sendUniform2f("offset", this.text.offsetX, this.text.offsetY);
+                this.myProg.uniforms.iter.value = this.text.iter;
+                this.myProg.uniforms.zoom.value = this.text.zoom;
+                this.myProg.uniforms.offset.value = new MB.Vect2(this.text.offsetX, this.text.offsetY);
+                this.myProg.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
@@ -79,8 +118,9 @@
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

@@ -18,7 +18,7 @@ namespace MB {
     };
     export interface ShaderMaterialParams {
         name: string,
-        uniforms: { [key: string]: MB.IUniformMaterial; };
+        uniforms?: { [key: string]: MB.IUniformMaterial; };
         vertexShader: string;
         fragmentShader: string;
     };

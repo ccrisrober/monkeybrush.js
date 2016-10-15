@@ -30,7 +30,6 @@
 
         uniform float iGlobalTime;
         uniform vec2 iResolution;
-        uniform sampler2D tex;
 
         uniform bool scanlines;
         uniform float brightness;
@@ -38,45 +37,45 @@
         uniform float particles;
         uniform float energy;
 
-        float noise( vec2 co ){
-            return fract( sin( dot( co.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453 );
+        float noise(vec2 co){
+            return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
         }
 
-        void main( void ) {
+        void main(void) {
 
-            vec2 position = ( gl_FragCoord.xy / iResolution.x );
+            vec2 position = (gl_FragCoord.xy / iResolution.x);
             float t = iGlobalTime * energy;
 
             float a = 0.0;
             float b = 0.0;
             float c = 0.0;
 
-            vec2 pos, center = vec2( 0.5, 0.5 * (iResolution.y / iResolution.x) );
+            vec2 pos, center = vec2(0.5, 0.5 * (iResolution.y / iResolution.x));
 
             float na, nb, nc, nd, d;
             float limit = particles / 80.0;
             float step = 1.0 / particles;
             float n = 0.0;
 
-            for ( float i = 0.0; i <= 1.0; i += 0.025 ) {
+            for (float i = 0.0; i <= 1.0; i += 0.025) {
 
-                if ( i <= limit ) {
+                if (i <= limit) {
 
                     vec2 np = vec2(n, 1-1);
 
-                    na = noise( np * 0.1 );
-                    nb = noise( np * 3.1 );
-                    nc = noise( np * 1.8 );
-                    nd = noise( np * 2.7 );
+                    na = noise(np * 0.1);
+                    nb = noise(np * 3.1);
+                    nc = noise(np * 1.8);
+                    nd = noise(np * 2.7);
 
                     pos = center;
                     pos.x += sin(t*na) * cos(t*nb) * tan(t*na*0.15) * 0.3;
                     pos.y += tan(t*nc) * sin(t*nd) * 0.1;
 
-                    d = pow( 1.6*na / length( pos - position ), blobiness );
+                    d = pow(1.6*na / length(pos - position), blobiness);
 
-                    if ( i < limit * 0.3333 ) a += d;
-                    else if ( i < limit * 0.6666 ) b += d;
+                    if (i < limit * 0.3333) a += d;
+                    else if (i < limit * 0.6666) b += d;
                     else c += d;
 
                     n += step;
@@ -85,11 +84,12 @@
 
             vec3 col = vec3(a * c, b * c, a * b) * 0.0001 * brightness;
             fragColor = vec4(col, 1.0);
-            if ( scanlines ) {
-                fragColor.rgb -= mod( gl_FragCoord.y, 5.0 ) < 1.0 ? 0.5 : 0.0;
+            if (scanlines) {
+                fragColor.rgb -= mod(gl_FragCoord.y, 5.0) < 1.0 ? 0.5 : 0.0;
             }
         }
     </script>
+
     <script type="text/javascript">
         var MyConfig = function () {
             return {
@@ -107,35 +107,35 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["iGlobalTime", "iResolution", "brightness", "blobiness", "particles", "scanlines", "energy"]);
-                    console.log(prog);
-                    return prog;
+                this.prog = new MB.ShaderMaterial(this.context, {
+                    name: "alphaShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        iGlobalTime: { type: MB.UniformType.Float },
+                        brightness: { type: MB.UniformType.Float },
+                        blobiness: { type: MB.UniformType.Float },
+                        particles: { type: MB.UniformType.Float },
+                        energy: { type: MB.UniformType.Float },
+                        scanlines: { type: MB.UniformType.Boolean },
+                        iResolution: { type: MB.UniformType.Vector2 }
+                    }
                 });
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
-                this.dt = dt;
+                this.prog.uniforms.iGlobalTime.value = dt;
+                this.prog.uniforms.iResolution.value = new MB.Vect2(this.canvas.width, this.canvas.height);
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniform1f("iGlobalTime", this.dt);
-                var canvas = this.canvas;
-                prog.sendUniform2f("iResolution", canvas.width, canvas.height);
-                prog.sendUniform1f("brightness", this.text.brightness);
-                prog.sendUniform1f("blobiness", this.text.blobiness);
-                prog.sendUniform1f("energy", this.text.energy);
-                prog.sendUniform1b("scanlines", this.text.scanlines);
-                prog.sendUniform1f("particles", this.text.particles);
+                this.prog.uniforms.brightness.value = this.text.brightness;
+                this.prog.uniforms.blobiness.value = this.text.blobiness;
+                this.prog.uniforms.energy.value = this.text.energy;
+                this.prog.uniforms.scanlines.value = this.text.scanlines;
+                this.prog.uniforms.particles.value = this.text.particles;
+                this.prog.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {

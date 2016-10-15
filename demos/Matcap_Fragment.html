@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Matcap Vertex</title>
+    <title>Matcap Fragment</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -17,6 +17,41 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+
+        out vec3 outNormal;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            gl_Position = projection * view * model * vec4(position, 1.0);
+            mat3 normalMatrix = mat3(inverse(transpose(view * model)));
+            outNormal = normalize(normalMatrix * normal);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec3 outNormal;
+
+        out vec4 fragColor;
+
+        uniform sampler2D tex;
+
+        uniform vec3 viewPos;
+
+        #import<MatCap>
+
+        void main() {
+            fragColor = texture(tex, matcap(viewPos, normalize(outNormal)));
+        }
+    </script>
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
@@ -32,7 +67,6 @@
                 MB.Loaders.loadImage("../assets/images/matcap_044.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
@@ -40,16 +74,26 @@
                     wrapS: MB.ctes.WrapMode.MirroredRepeat,
                     wrapT: MB.ctes.WrapMode.MirroredRepeat
                 });
+
                 this.cubito = new MB.Mesh(this.context, "../assets/objects/dragon.json");
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/matcapF.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/matcapF.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "tex", "viewPos"]);
-                    return prog;
+
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        viewPos: { type: MB.UniformType.Vector3 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
+
+                this.tex2d.bind(0);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
@@ -59,28 +103,19 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                this.cubito.render();
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.render(this.cubito);
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                console.log(this.camera.GetPos());
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.viewPos.value = this.camera.GetPos();
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
             };
             return MyScene;
         }(MB.App));

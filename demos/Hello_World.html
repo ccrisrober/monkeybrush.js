@@ -22,7 +22,6 @@
 
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec3 normal;
-        layout(location = 2) in vec2 uv;
 
         out vec3 outPosition;
         out vec3 outNormal;
@@ -38,7 +37,6 @@
             gl_Position = projection * view * vec4(outPosition, 1.0);
             mat3 normalMatrix = mat3(inverse(transpose(model)));
             outNormal = normalize(normalMatrix * normal);
-            outUV = uv;
         }
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
@@ -46,7 +44,6 @@
 
         in vec3 outPosition;
         in vec3 outNormal;
-        in vec2 outUV;
 
         out vec4 fragColor;
 
@@ -83,10 +80,12 @@
                         view: { type: MB.UniformType.Matrix4 },
                         model: { type: MB.UniformType.Matrix4 },
                         viewPos: { type: MB.UniformType.Vector3 },
-                        color: { type: MB.UniformType.Vector3 }
+                        color: {
+                            type: MB.UniformType.Vector3,
+                            value: new MB.Vect3(1.0, 0.0, 1.0)
+                        }
                     }
                 });
-                this.myProg.uniforms.color.value = new MB.Vect3(1.0, 0.0, 1.0);
             };
             MyScene.prototype.update = function (dt) {
                 this.camera.update(dt * 0.5, this.cameraUpdate.bind(this));
