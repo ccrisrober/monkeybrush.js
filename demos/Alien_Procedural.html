@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Matcap Vertex</title>
-    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+    <title>Alien Procedural</title>
+   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
     <div class="spinner" id="spinner">
@@ -12,70 +12,133 @@
         <div></div>
     </div>
     <div id="stats"></div>
-    <div id="samplesPassed"></div>
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
+    <canvas id="canvas" width="800" height="500"></canvas>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+
+        out vec3 outPosition;
+        out vec3 outNormal;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            outPosition = vec3(model * vec4(position, 1.0));
+
+            gl_Position = projection * view * vec4(outPosition, 1.0);
+            mat3 normalMatrix = mat3(inverse(transpose(model)));
+            outNormal = normalize(normalMatrix * normal);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec3 outPosition;
+        in vec3 outNormal;
+
+        out vec4 fragColor;
+
+        uniform vec3 viewPos;
+        uniform float base_freq;
+
+        const vec3 SkinColor1 = vec3(0.3, 0.5, 0.2);
+        const vec3 SkinColor2 = vec3(0.8, 0.8, 0.5);
+        const vec3 SkinColor3 = vec3(0.7, 0.8, 0.8);
+
+        #import<SimpleNoise3D>
+
+        void main() {
+            float noise =
+                snoise(outPosition * base_freq) * 8.0 +
+                snoise(outPosition * base_freq * 2.0) * 4.0 +
+                snoise(outPosition * base_freq * 4.0) * 2.0 +
+                snoise(outPosition * base_freq * 8.0);
+            noise = (noise / 8.0 + 1.0) / 2.0;
+
+            noise -= 0.3;
+            noise *= 2.0;
+
+            float intensity = noise;
+            vec3 color;
+
+            intensity = clamp(intensity, 0.0, 1.0);
+
+            if (intensity < 0.50)
+                color = mix(SkinColor1, SkinColor2, intensity/0.50);
+            else
+                color = mix(SkinColor1, SkinColor3, (intensity - 0.50)/0.50);
+
+            vec3 N=normalize(outNormal);
+            vec3 L = normalize(viewPos - outPosition);
+            float dif=dot(N,L);
+            dif=clamp(dif,0.0,1.0);
+            fragColor = vec4(color*dif,1.0)+vec4(color*0.3,1.0);
+        }
+    </script>
 
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        var MyConfig = function () {
+            return {
+                base_freq: 6.9
+            };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2());
-                this.homePoint = new MB.Vect3(-0.18, 1.60, 25.23);
-                this.camera = new MB.Camera2(this.homePoint);
+                _super.call(this, "Alien Procedural", new MB.GLContextW2(document.getElementById("canvas")), MyConfig());
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 1.0, 5.0));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                this.cubito = new MB.Mesh(this.context, "../assets/objects/teddy.json");
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/alien.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "viewPos"]);
-                    return prog;
+                this.cubito = new MB.Mesh(this.context, "../assets/objects/dragon.json");
+
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        viewPos: { type: MB.UniformType.Vector3 },
+                        base_freq: { type: MB.UniformType.Float }
+                    }
                 });
-                this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(dt * 0.5, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                this.cubito.render();
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.uniforms.base_freq.value = this.text.base_freq;
+                this.myProg.render(this.cubito);
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                console.log(this.camera.GetPos());
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.viewPos.value = this.camera.GetPos();
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "base_freq", 1.0, 25.0);
             };
             return MyScene;
         }(MB.App));

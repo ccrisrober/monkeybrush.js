@@ -160,5 +160,19 @@ namespace MB {
             a["download"] = name;
             a.click();
         };
+
+        export function arrayToVector(elements: Array<number>): any {
+            if (Array.isArray(elements)) {
+                if(typeof(elements[3]) !== 'undefined') {
+                    return new MB.Vect4(elements[0], elements[1], elements[2], elements[3]);
+                } else if (typeof(elements[2]) !== 'undefined') {
+                    return new MB.Vect3(elements[0], elements[1], elements[2]);
+                } else {
+                    return new MB.Vect2(elements[0], elements[1]);
+                }
+            } else {
+                return elements;
+            }
+        };
     };
 };

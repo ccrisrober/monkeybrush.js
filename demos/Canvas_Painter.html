@@ -93,12 +93,6 @@
             ctx.rotate(-pos);
         }
 
-
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
@@ -129,8 +123,7 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 //this.__resize__();
                 this.tex2d.update();

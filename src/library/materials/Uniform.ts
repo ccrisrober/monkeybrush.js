@@ -1,4 +1,4 @@
-namespace MBS {
+namespace MB {
     export class Uniform {
         public isDirty: boolean;
         public _type: UniformType;

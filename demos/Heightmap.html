@@ -54,7 +54,7 @@
             float s12 = textureOffset(texH, outUV, off.yz).x;
             vec3 va = normalize(vec3(size.xy,s21-s01));
             vec3 vb = normalize(vec3(size.yx,s12-s10));
-            vec4 bump = vec4( cross(va,vb), s11 );
+            vec4 bump = vec4( cross(va,vb), s11);
 
             pos.y += heightFactor * bump.w;
             outNormal = bump.xyz;
@@ -69,11 +69,6 @@
     </script>
 
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var Configuration = function () {
             return {
                 heightFactor: 3.5
@@ -117,8 +112,7 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };

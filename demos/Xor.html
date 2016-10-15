@@ -57,11 +57,6 @@
         }
     </script>
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
@@ -69,29 +64,23 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["iGlobalTime"]);
-                    console.log(prog);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "xorShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        iGlobalTime: { type: MB.UniformType.Float }
+                    }
                 });
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
-                this.dt = dt;
+                this.myProg.uniforms.iGlobalTime.value = dt * 0.5;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniform1f("iGlobalTime", this.dt * 0.5);
+                this.myProg.use();
                 this.postProcess.render();
             };
             return MyScene;

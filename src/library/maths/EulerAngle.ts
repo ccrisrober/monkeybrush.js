@@ -29,14 +29,34 @@ namespace MB {
         get x(): number { return this._value[0]; };
         get y(): number { return this._value[1]; };
         get z(): number { return this._value[2]; };
-        set x(v: number) { this._value[0] = v; };
-        set y(v: number) { this._value[1] = v; };
-        set z(v: number) { this._value[2] = v; };
+        set x(v: number) {
+            this._value[0] = v;
+            if (this.onChange) {
+                this.onChange();
+            }
+        };
+        set y(v: number) {
+            this._value[1] = v;
+            if (this.onChange) {
+                this.onChange();
+            }
+        };
+        set z(v: number) {
+            this._value[2] = v;
+            if (this.onChange) {
+                this.onChange();
+            }
+        };
+
+        public onChange: Function;
 
         public set(vx: number, vy: number, vz: number) {
             this.x = vx;
             this.y = vy;
             this.z = vz;
+            if (this.onChange) {
+                this.onChange();
+            }
         };
 
         static create(values: Float32Array): EulerAngle {
@@ -46,6 +66,9 @@ namespace MB {
         public reset() {
             for (let i = 0; i < 3; ++i) {
                 this._value[i] = 0.0;
+            }
+            if (this.onChange) {
+                this.onChange();
             }
         }
 

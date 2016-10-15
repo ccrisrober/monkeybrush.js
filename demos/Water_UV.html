@@ -45,11 +45,6 @@
         }
     </script>
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyConfig = function () {
             return {
                 USpeed: 0.5,
@@ -69,10 +64,7 @@
                 MB.Loaders.loadImage("../assets/images/water.png", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -80,31 +72,30 @@
                     wrapT: MB.ctes.WrapMode.Repeat
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "uvspeed", "iGlobalTime", "color"]);
-                    console.log(prog);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "waterUV",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: { type: MB.UniformType.Integer },
+                        uvspeed: { type: MB.UniformType.Vector2 },
+                        color: { type: MB.UniformType.Vector3 },
+                        iGlobalTime: { type: MB.UniformType.Float }
+                    }
                 });
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
-                this.dt = dt;
+                this.myProg.uniforms.iGlobalTime.value = dt;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform3f("color", this.text.RChannel, this.text.GChannel, this.text.BChannel);
-                prog.sendUniform1f("iGlobalTime", this.dt * 0.1);
-                prog.sendUniform2f("uvspeed", this.text.USpeed, this.text.VSpeed);
+                this.myProg.uniforms.tex.value = 0;
+                this.myProg.uniforms.color.value = new MB.Vect3(this.text.RChannel, this.text.GChannel, this.text.BChannel);
+                this.myProg.uniforms.uvspeed.value = new MB.Vect2(this.text.USpeed, this.text.VSpeed);
+                this.myProg.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {
@@ -117,8 +108,9 @@
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

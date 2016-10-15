@@ -50,9 +50,9 @@
 
             float gray = dot(color, W);
             if(gray > 0.5)
-                return vec3(220.0/255.0, 220.0/255.0, 220.0/255.0);
+                return vec3(220.0/255.0);
             else
-                return vec3(120.0/255.0, 120.0/255.0, 120.0/255.0);
+                return vec3(120.0/255.0);
         }
         void main ( void ) {
             vec3 color;
@@ -96,11 +96,6 @@
         }
     </script>
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
@@ -111,40 +106,34 @@
                 MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, MB.ResourceMap.retrieveAsset("myTex"), {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "iResolution"]);
-                    console.log(prog);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "handLikePP",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        tex: { type: MB.UniformType.Integer },
+                        iResolution: { type: MB.UniformType.Vector2 }
+                    }
                 });
+                this.myProg.uniforms.tex.value = 0;
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
+                var canvas = this.canvas;
+                this.myProg.uniforms.iResolution.value = new MB.Vect2(canvas.width, canvas.height);
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                var canvas = this.canvas;
-                prog.sendUniform2f("iResolution", canvas.width, canvas.height);
+                this.myProg.use();
                 this.postProcess.render();
             };
             return MyScene;

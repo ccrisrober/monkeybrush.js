@@ -90,7 +90,7 @@ var webserver = require('gulp-webserver');
 
 gulp.task("build-debug", function() {
     var tsResult = gulp.src(config.core.ts_files)
-        .pipe(sourcemaps.init()) // This means sourcemaps will be generated
+       // .pipe(sourcemaps.init()) // This means sourcemaps will be generated
         .pipe(ts({
             sortOutput: true,
             target: "ES5",
@@ -104,11 +104,11 @@ gulp.task("build-debug", function() {
 
     return tsResult.js
         .pipe(concat('output.js'))
-        //.pipe(cleants())
+        .pipe(cleants())
         //.pipe(replace(/var\s__extends[\s\S]+?\};/g, ""))
         //.pipe(replace(/var\s__decorate[\s\S]+?\};/g, ""))
         //.pipe(addModuleExports("MonkeyBrush"))
-        .pipe(sourcemaps.write())
+        //.pipe(sourcemaps.write())
         .pipe(gulp.dest(config.build.outputDirectory))
         /*.pipe(notify({
             title: "monkeybrush.js",

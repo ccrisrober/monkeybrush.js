@@ -1,5 +1,5 @@
 namespace MBS {
-    export class SimpleMaterial extends MBS.Material {
+    export class SimpleMaterial extends MB.Material {
         protected _ambientColor: MB.Color3 = MB.Color3.Black.clone();
         get ambientColor(): MB.Color3 { return this._ambientColor; };
         set ambientColor(c: MB.Color3) { this._ambientColor = c; };

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Template MBS</title>
+    <style>
+        body {
+            color: #ffffff;
+            font-family:Monospace;
+            font-size:13px;
+            text-align:center;
+            font-weight: bold;
+
+            background-color: #050505;
+            margin: 0px;
+            overflow: hidden;
+        }
+        #info {
+            position: absolute;
+            top: 0px; width: 100%;
+            padding: 5px;
+        }
+        a {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </div>
+    <div id="info"><a href="./" target="_blank">MonkeyBrush</a> - muahaha</div>
+
+    <script type="text/javascript" src="../bower_components/log4javascript/log4javascript.js"></script>
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="text/javascript">
+        var engine, scene;
+        window.onload = function () {
+            engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
+            scene = new MBS.Scene("myScene", engine);
+        };
+    </script>
+</body>
+</html>

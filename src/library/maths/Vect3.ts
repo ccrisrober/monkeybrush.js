@@ -516,5 +516,22 @@ namespace MB {
 
             return this;
         }*/
+
+        public applyQuat(q: Quat, dest: Vect3 = null): Vect3 {
+            if (!dest) dest = new Vect3();
+
+            // calculate quat * vector
+            const ix =  q.w * this.x + q.y * this.z - q.z * this.y;
+            const iy =  q.w * this.y + q.z * this.x - q.x * this.z;
+            const iz =  q.w * this.z + q.x * this.y - q.y * this.x;
+            const iw = -q.x * this.x - q.y * this.y - q.z * this.z;
+
+            // calculate result * inverse quat
+            dest.x = ix * q.w + iw * - q.x + iy * - q.z - iz * - q.y;
+            dest.y = iy * q.w + iw * - q.y + iz * - q.x - ix * - q.z;
+            dest.z = iz * q.w + iw * - q.z + ix * - q.y - iy * - q.x;
+
+            return dest;
+        }
     };
 };

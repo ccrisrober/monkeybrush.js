@@ -4,23 +4,23 @@
     <title>Engine MBS</title>
     <style>
         body {
-            color: #ffffff;
-            font-family:Monospace;
-            font-size:13px;
-            text-align:center;
+            color: white;
+
+            font-family: Verdana;
+            font-size: 13px;
+            text-align: center;
             font-weight: bold;
 
             background-color: #050505;
             margin: 0px;
             overflow: hidden;
         }
-
         #info {
             position: absolute;
-            top: 0px; width: 100%;
+            top: 0px;
+            width: 100%;
             padding: 5px;
         }
-
         a {
             color: #ffffff;
         }
@@ -59,24 +59,18 @@
 
         void main() {
             outPosition = vec3(model * vec4(position, 1.0));
-
             gl_Position = projection * view * vec4(outPosition, 1.0);
-            //gl_Position = projection * view * model * vec4(position, 1.0);
             mat3 normalMatrix = mat3(inverse(transpose(model)));
             outNormal = normalize(normalMatrix * normal);
         }
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
-
         in vec3 outPosition;
         in vec3 outNormal;
-
         out vec4 fragColor;
-
         uniform vec3 viewPos;
         uniform vec3 color;
-
         void main() {
             vec3 N = normalize(outNormal);
             vec3 L = normalize(viewPos - outPosition);
@@ -95,6 +89,7 @@
             this.positionX = 0.0;
             this.positionY = 0.0;
             this.positionZ = 0.0;
+            this.innerRadius = 5.0;
         };
 
         var SPEED = 0.001;
@@ -113,7 +108,7 @@
             scene = new MBS.Scene("myScene", engine);
 
             scene.camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 25.0));
-            scene.fov = 70.0;
+            scene.camera.fov = 70.0;
 
             stats = new Stats();
             scene.clearColor = MB.Color3.Indigo;
@@ -121,15 +116,15 @@
             var container = document.getElementById("container");
             container.appendChild(stats.dom);
 
-            myProg = new MBS.ShaderMaterial(engine.context, {
+            myProg = new MB.ShaderMaterial(engine.context, {
                 vertexShader: "shader-vs",
                 fragmentShader: "shader-fs",
                 uniforms: {
-                    projection: { type: "m4" },
-                    view: { type: "m4" },
-                    model: { type: "m4" },
-                    viewPos: { type: "v3" },
-                    color: { type: "v3" }
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 },
+                    viewPos: { type: MB.UniformType.Vector3 },
+                    color: { type: MB.UniformType.Vector3 }
                 }
             });
 
@@ -162,6 +157,7 @@
             moonPivot.add(moon);
             console.log(root_);
 
+
             var renderLoop = function(dt) {
                 scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
                 scene.camera.update(updateCamera.bind(this));
@@ -183,16 +179,19 @@
 
                 var e_angle = t * 0.8;
                 node.position.set(
-                    5.0 * Math.cos(e_angle) + config.positionX,
-                    5.0 * Math.sin(e_angle) + config.positionY,
+                    config.innerRadius * Math.cos(e_angle) + config.positionX,
+                    config.innerRadius * Math.sin(e_angle) + config.positionY,
                     0.0 + config.positionZ
                 );
-                node.rotation.x = -angle * 2.0;
+                node.rotation.x += 0.01;
+                node.rotation.y = -angle * 2.0;
+                //node.RotateZ(0.01);
                 node.scale.set(
                     config.size * 2.0,
                     config.size * 2.0,
                     config.size * 2.0
                 );
+                //node.TranslateZ(0.5 * Math.cos(dt));
 
                 node.updateMatrix();
                 myProg.uniforms.model.value = node.model;
@@ -201,8 +200,8 @@
 
                 var m_angle = t * 0.8;
                 node2.position.set(
-                    5.0 * Math.cos(m_angle) + node.position.x,
-                    5.0 * Math.sin(m_angle) + node.position.y,
+                    config.innerRadius * Math.cos(m_angle) + node.position.x,
+                    config.innerRadius * Math.sin(m_angle) + node.position.y,
                     0.0 + node.position.z
                 );
                 node2.rotation.set(
@@ -231,6 +230,7 @@
             gui.add(config, "positionX", -10.0, 10.0);
             gui.add(config, "positionY", -10.0, 10.0);
             gui.add(config, "positionZ", -10.0, 10.0);
+            gui.add(config, "innerRadius", 1.0, 10.0);
             gui.add(config, "rotate", true);
 
             engine.run(renderLoop);

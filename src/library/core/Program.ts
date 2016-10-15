@@ -290,21 +290,19 @@ namespace MB {
             return this.compileShader(shaderSource, shaderType);
         };
 
-        // TODO: HARCODED
-        public _cache = {
-            "msg": "// MESSAGE\n"
-        };
-        public _parse(str) {
-            const regex = /#import +<([\w\d.]+)>/g;
-            function replace(match, include) {
-                MB.Log.debug(include);
-                const replace = this._cache[include]; // Acceso al fichero de turno;
-                if (replace === undefined) {
-                    throw new Error("Can not resolve #import <" + include + ">");
+        protected _processImports(src: string): string {
+            const regex = /#import<(.+)>(\((.*)\))*/g;
+            let match = regex.exec(src);
+            let ret = src;
+            while (match) {
+                let includeFile = match[1];
+                if (MB.ResourceShader.exist(includeFile)) {
+                    let includeContent = MB.ResourceShader.get(includeFile);
+                    ret = ret.replace(match[0], this._processImports(includeContent));
                 }
-                return this._parse(replace);
+                match = regex.exec(src);
             }
-            return str.replace(regex, replace.bind(this));
+            return ret;
         }
 
         /**
@@ -316,7 +314,7 @@ namespace MB {
             const gl: WebGL2RenderingContext = this._context.gl;
             let compiledShader: WebGLShader;
 
-            shaderSource = this._parse(shaderSource);
+            shaderSource = this._processImports(shaderSource);
 
             if (shaderType === gl.VERTEX_SHADER) {
                 this._vertexSource = shaderSource;
@@ -442,7 +440,7 @@ namespace MB {
             } else {
                 val = <Float32Array>value;
             }
-            gl.uniform3fv(this.uniformLocations[name], val);
+            gl.uniform2fv(this.uniformLocations[name], val);
         };
         /**
          * Send uniform vector of float with 3 values.
@@ -472,7 +470,7 @@ namespace MB {
             } else {
                 val = <Float32Array>value;
             }
-            gl.uniform3fv(this.uniformLocations[name], val);
+            gl.uniform4fv(this.uniformLocations[name], val);
         };
         /**
          * Send uniform mat2.
