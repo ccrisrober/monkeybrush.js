@@ -3,7 +3,6 @@ precision highp float;
 
 in vec3 outPosition;
 in vec3 outNormal;
-in vec2 outUV;
 
 out vec4 fragColor;
 

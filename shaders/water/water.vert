@@ -3,11 +3,9 @@ precision highp float;
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 uv;
 
 out vec3 outPosition;
 out vec3 outNormal;
-out vec2 outUV;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -17,35 +15,14 @@ const float amplitude = 10.0;
 const float frequency = 0.05;
 uniform float iGlobalTime;
 
-
-
-vec3 mod289(vec3 x)
-{
-    return x - floor(x * (1.0 / 289.0)) * 289.0;
-}
-
-vec4 mod289(vec4 x)
-{
-    return x - floor(x * (1.0 / 289.0)) * 289.0;
-}
-
-vec4 permute(vec4 x)
-{
-    return mod289(((x*34.0)+1.0)*x);
-}
-
-vec4 taylorInvSqrt(vec4 r)
-{
-    return 1.79284291400159 - 0.85373472095314 * r;
-}
-
-vec3 fade(vec3 t) {
-    return t*t*t*(t*(t*6.0-15.0)+10.0);
-}
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+vec3 fade(vec3 t) { return t*t*t*(t*(t*6.0-15.0)+10.0); }
 
 // Classic Perlin noise
-float cnoise(vec3 P)
-{
+float cnoise(vec3 P) {
     vec3 Pi0 = floor(P); // Integer part for indexing
     vec3 Pi1 = Pi0 + vec3(1.0); // Integer part + 1
     Pi0 = mod289(Pi0);
@@ -113,30 +90,25 @@ float cnoise(vec3 P)
     return 2.2 * n_xyz;
 }
 
+const vec2 size = vec2(0.5,0.0);
+const vec3 off = vec3(-1.,0.,1.);
+
 void main() {
     mat3 normalMatrix = mat3(inverse(transpose(model)));
 
     vec3 pos = position;
 
-
-
-
-    const vec2 size = vec2(0.5,0.0);
-    const vec3 off = vec3(-1.,0.,1.);
     float s11 = cnoise(frequency * position + iGlobalTime);
-    float s01 = cnoise(frequency * (position + vec3(off.xy, 0.)) + iGlobalTime); //textureOffset(tex, outUV, off.xy).x;
-    float s21 = cnoise(frequency * (position + vec3(off.zy, 0.)) + iGlobalTime); //textureOffset(tex, outUV, off.zy).x;
-    float s10 = cnoise(frequency * (position + vec3(off.yz, 0.)) + iGlobalTime); //textureOffset(tex, outUV, off.yx).x;
-    float s12 = cnoise(frequency * (position + vec3(off.yz, 0.)) + iGlobalTime); //textureOffset(tex, outUV, off.yz).x;
+    float s01 = cnoise(frequency * (position + vec3(off.xy, 0.)) + iGlobalTime);
+    float s21 = cnoise(frequency * (position + vec3(off.zy, 0.)) + iGlobalTime);
+    float s10 = cnoise(frequency * (position + vec3(off.yz, 0.)) + iGlobalTime);
+    float s12 = cnoise(frequency * (position + vec3(off.yz, 0.)) + iGlobalTime);
     vec3 va = normalize(vec3(size.xy,s21-s01));
     vec3 vb = normalize(vec3(size.yx,s12-s10));
     vec4 bump = vec4( cross(va,vb), s11 );
 
     pos.y += amplitude * bump.w;
     outNormal = bump.xyz;
-
-
-    outUV = uv;
 
     vec4 pp = model * vec4(pos, 1.0);
     pp = view * pp;

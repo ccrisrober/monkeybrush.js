@@ -17,6 +17,21 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        in vec3 aPos;
+        void main(void) {
+            gl_PointSize = 50.0;
+            gl_Position = vec4(-aPos.x, aPos.yz, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+        out vec4 fragColor;
+        void main(void) {
+            fragColor = vec4( 1.,0.,0., 1. );
+        }
+    </script>
+
     <script type="text/javascript">
         var Configuration = function () {
             return {
@@ -33,16 +48,23 @@
                 this.mainShader = "prog";
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("#version 300 es\n            in vec3 aPos;\n            void main(void) {\n                gl_PointSize = 50.0;\n                gl_Position = vec4(-aPos.x, aPos.yz, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-                    prog.addShader("#version 300 es\n            precision highp float;\n            out vec4 fragColor;\n            void main(void) {\n                fragColor = vec4( 1.,0.,0., 1. );\n            }\n            ", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-                    prog._compile();
-                    prog.feedbackVarying(_this.context, ["gl_Position"], MB.ctes.TFMode.Separate);
-                    prog._link();
-                    prog.use();
-                    return prog;
+                this.myProg = new MB.TFMaterial(this.context, {
+                    name: "textureShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "shader-fs",
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    },
+                    tfs: {
+                        varying: ["gl_Position"],
+                        mode: MB.ctes.TFMode.Separate
+                    }
                 });
                 this.context.gl.enableVertexAttribArray(0);
                 this.bA = new MB.VertexBuffer(this.context, MB.ctes.BufferType.Array);
@@ -59,8 +81,7 @@
                     return;
                 }
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
+                this.myProg.use();
                 var gl = this.context.gl;
                 this.ttf.bind();
                 this.bA.bind();
@@ -73,7 +94,6 @@
                 console.log(this.ttf.extractData(3));
 
                 gl.bindBufferBase(MB.ctes.BufferType.TransformFeedback, 0, null);
-
 
                 this.drawTick = false;
                 var t = this.bA;

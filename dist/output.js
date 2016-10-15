@@ -6338,6 +6338,12 @@ var MB;
             return true;
         };
         ;
+        Program.prototype.compileWithTF = function (varyings, mode) {
+            this._compile();
+            this.feedbackVarying(varyings, mode);
+            this._link();
+        };
+        ;
         Program.prototype.compile = function () {
             var gl = this._context.gl;
             this._handler = gl.createProgram();
@@ -6654,7 +6660,7 @@ var MB;
             return this._isLinked;
         };
         ;
-        Program.prototype.feedbackVarying = function (context, varyings, mode) {
+        Program.prototype.feedbackVarying = function (varyings, mode) {
             if (this._isLinked === true) {
                 alert("ONLY EXEC THIS BEFORE LINK");
                 return;
@@ -6664,7 +6670,7 @@ var MB;
                 alert("NEED WEBGL2 CONTEXT");
                 return;
             }
-            MB.TransformFeedback.varyings(context, this, varyings, mode);
+            MB.TransformFeedback.varyings(this._context, this, varyings, mode);
         };
         ;
         Program.prototype.setFooFragment = function () {
@@ -11021,7 +11027,6 @@ var MB;
             _super.call(this, context, MB.ctes.TextureTarget.Texture2D, options);
             var gl = context.gl;
             this.bind();
-            console.log("lol");
             if ((typeof data === "string") || data instanceof HTMLImageElement) {
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY ? options.flipY : 0);
                 gl.pixelStorei(gl.UNPACK_ALIGNMENT, this._unpackAlignment);
@@ -11433,6 +11438,117 @@ var MBS;
     }(MB.Material));
     MBS.SimpleMaterial = SimpleMaterial;
 })(MBS || (MBS = {}));
+
+
+
+
+
+
+
+var MB;
+(function (MB) {
+    ;
+    var TFMaterial = (function (_super) {
+        __extends(TFMaterial, _super);
+        function TFMaterial(context, params) {
+            _super.call(this);
+            this._uniforms = {};
+            function diff2(o1, o2) {
+                var res = {};
+                for (var key in o1) {
+                    if (o2.hasOwnProperty(key)) {
+                        res[key] = o2[key];
+                    }
+                }
+                return res;
+            }
+            this.id = params.name || "";
+            this._context = context;
+            this._program = new MB.Program(this._context);
+            this._program.addShader(params.vertexShader, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+            this._program.addShader(params.fragmentShader, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+            this._program._compile();
+            this._program.feedbackVarying(params.tfs.varying, params.tfs.mode);
+            this._program._link();
+            this._program.autocatching();
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = diff2(this._program.uniformLocations, params.uniforms);
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(TFMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        TFMaterial.prototype.render = function (model) {
+            this.use();
+            model.render();
+        };
+        ;
+        TFMaterial.prototype.render2 = function (model) {
+            this.use();
+            model.render2();
+        };
+        ;
+        TFMaterial.prototype.render3 = function (model) {
+            this.use();
+            model.render3();
+        };
+        ;
+        TFMaterial.prototype.use = function () {
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return TFMaterial;
+    }(MB.Material));
+    MB.TFMaterial = TFMaterial;
+    ;
+})(MB || (MB = {}));
 
 var MB;
 (function (MB) {

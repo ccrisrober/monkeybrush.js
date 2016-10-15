@@ -36,11 +36,61 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        #import<VertexPP>
+    </script>
+    <script type="x-shader/x-fragment" id="float-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+
+        in vec2 uv;
+
+        uniform sampler2D tex;
+        uniform bool op;
+        uniform int Division;
+
+        void main() {
+            float divi = float(Division);
+            vec4 floatColor = texture(tex, uv);
+            if (op) {
+                floatColor = floatColor / divi * divi;
+            }
+            fragColor = vec4(floatColor);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="integer-fs">#version 300 es
+        precision highp float;
+        precision highp usampler2D;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform usampler2D tex;
+        uniform bool op;
+        uniform int Division;
+
+        void main() {
+            uint divi = uint(Division);
+            vec2 uvv = vec2(1.0 - uv.x, uv.y);
+            uvec4 intColor = texture(tex, uvv);
+            if (!op) {
+                intColor = intColor / divi * divi;
+            }
+            fragColor = vec4(intColor) / 255.0;
+        }
+    </script>
+
     <script type="text/javascript">
+        var MyConfig = function () {
+            return {
+                Division: 64
+            };
+        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2());
+                _super.call(this, "App", new MB.GLContextW2(), MyConfig());
                 this.viewports = new Array(4);
                 this.drawTick = true;
                 this.angle = 0;
@@ -49,26 +99,31 @@
                 MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                MB.ProgramManager.addWithFun("progF", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("#version 300 es\n#import<VertexPP>", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-                    prog.addShader("#version 300 es\n            precision highp float;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler2D tex;\n            uniform bool op;\n\n            void main() {\n                vec4 floatColor = texture(tex, uv);\n                if (op) {\n                    floatColor = floatColor / 64.0 * 64.0;\n                }\n                fragColor = vec4(floatColor);\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-                    prog._compile();
-                    prog._link();
-                    prog.use();
-                    prog.addUniforms(["tex", "op"]);
-                    return prog;
+                this.progF = new MB.ShaderMaterial(this.context, {
+                    name: "firsStepShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "float-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        op: { type: MB.UniformType.Boolean },
+                        Division: { type: MB.UniformType.Integer }
+                    }
                 });
-                MB.ProgramManager.addWithFun("progI", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                gl_Position = vec4(vertPosition, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-                    prog.addShader("#version 300 es\n            precision highp float;\n            precision highp usampler2D;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform usampler2D tex;\n            uniform bool op;\n\n            void main() {\n                vec2 uvv = vec2(1.0 - uv.x, uv.y);\n                uvec4 intColor = texture(tex, uvv);\n                if (!op) {\n                    intColor = intColor / 64u * 64u;\n                }\n                fragColor = vec4(intColor) / 255.0;\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-                    prog._compile();
-                    prog._link();
-                    prog.use();
-                    prog.addUniforms(["tex", "op"]);
-                    return prog;
+                this.progI = new MB.ShaderMaterial(this.context, {
+                    name: "firsStepShader",
+                    vertexShader: "shader-vs",
+                    fragmentShader: "integer-fs",
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        op: { type: MB.UniformType.Boolean },
+                        Division: { type: MB.UniformType.Integer }
+                    }
                 });
                 this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
@@ -103,42 +158,41 @@
                     return;
                 }
                 this.clearColorAndDepth();
-                var prog, vp;
+                var vp;
                 // Floating textures
-                prog = MB.ProgramManager.get("progF");
-                prog.use();
-                prog.sendUniform1i("tex", 0);
                 this.tex2d.bind(0);
+                this.progF.uniforms.Division.value = this.text.Division;
                 // Top-left
-                prog.sendUniform1b("op", false);
+                this.progF.uniforms.op.value = false;
                 vp = this.viewports[3];
                 this.state.setViewport(vp);
+                this.progF.use();
                 this.postProcess.render();
                 // Bottom-left
-                prog.sendUniform1b("op", true);
+                this.progF.uniforms.op.value = true;
                 vp = this.viewports[0];
                 this.state.setViewport(vp);
+                this.progF.use();
                 this.postProcess.render();
                 // Integer textures
-                prog = MB.ProgramManager.get("progI");
-                prog.use();
-                prog.sendUniform1i("tex", 0);
                 this.tex2d2.bind(0);
+                this.progI.uniforms.Division.value = this.text.Division;
                 // Bottom-right
-                prog.sendUniform1b("op", false);
+                this.progI.uniforms.op.value = false;
                 vp = this.viewports[1];
                 this.state.setViewport(vp);
+                this.progI.use();
                 this.postProcess.render();
                 // Top-right
-                prog.sendUniform1b("op", true);
+                this.progI.uniforms.op.value = true;
                 vp = this.viewports[2];
                 this.state.setViewport(vp);
+                this.progI.use();
                 this.postProcess.render();
                 this.text.resume = false;
             };
-            MyScene.prototype.cameraUpdate = function () {
-            };
             MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "Division").min(1).max(128).step(1);
             };
             return MyScene;
         }(MB.App));

@@ -42,7 +42,6 @@ namespace MB {
             super(context, ctes.TextureTarget.Texture2D, options);
             const gl = context.gl;
             this.bind();
-            console.log("lol");
             if ((typeof data === "string") || data instanceof HTMLImageElement) {
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY ? options.flipY : 0);
                 gl.pixelStorei(gl.UNPACK_ALIGNMENT, this._unpackAlignment);

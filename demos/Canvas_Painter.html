@@ -74,8 +74,8 @@
             (minute*Math.PI/(6*60))+
             (second*Math.PI/(360*60));
             drawHand(ctx, hour, radius*0.5, radius*0.07);
-            //minute
-            minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
+            // minute
+            minute = (minute*Math.PI/30)+(second*Math.PI/(30*60));
             drawHand(ctx, minute, radius*0.8, radius*0.07);
             // second
             second=(second*Math.PI/30);
@@ -116,7 +116,7 @@
                     prog.addShader("../shaders/demoShaderTex.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
                     prog.compile();
                     prog.use();
-                    prog.addUniforms(["projection", "view", "model", "tex", "viewPos"]);
+                    prog.addUniforms(["projection", "view", "model", "tex"]);
                     return prog;
                 });
                 this.cameraUpdate();
@@ -147,7 +147,6 @@
                 this.projection = this.camera.GetProjectionMatrix(this.canvas);
                 var prog = MB.ProgramManager.get(this.mainShader);
                 prog.use();
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
                 prog.sendUniformMat4("projection", this.projection);
                 prog.sendUniformMat4("view", this.view);
             };

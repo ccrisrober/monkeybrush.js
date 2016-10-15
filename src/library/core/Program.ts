@@ -200,6 +200,11 @@ namespace MB {
             this._isLinked = true;
             return true;
         };
+        public compileWithTF(varyings: Array<string>, mode: MB.ctes.TFMode) {
+            this._compile();
+            this.feedbackVarying(varyings, mode);
+            this._link();
+        };
         /**
          * Compile and link program
          * @return {boolean}: True if not errors
@@ -663,11 +668,10 @@ namespace MB {
         /**
          * Attach transform feedback varying to this program.
          * Only call this before linking program.
-         * @param {GLContext} context [description]
          * @param {Array<string>} varyings Array of string that contains varying attributes.
          * @param {MB.ctes.TFMode}        mode     Transform Feedback mode (record mode).
          */
-        public feedbackVarying(context: GLContext, varyings: Array<string>, mode: MB.ctes.TFMode) {
+        public feedbackVarying(varyings: Array<string>, mode: MB.ctes.TFMode) {
             if (this._isLinked === true) {
                 alert("ONLY EXEC THIS BEFORE LINK");
                 return;
@@ -677,7 +681,7 @@ namespace MB {
                 alert("NEED WEBGL2 CONTEXT");
                 return;
             }
-            TransformFeedback.varyings(context, this, varyings, mode);
+            TransformFeedback.varyings(this._context, this, varyings, mode);
         };
         /**
          * Add a foo fragment shader.
