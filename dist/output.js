@@ -11263,6 +11263,112 @@ var MB;
 
 var MB;
 (function (MB) {
+    var NormalMaterial = (function (_super) {
+        __extends(NormalMaterial, _super);
+        function NormalMaterial(context) {
+            _super.call(this);
+            this._uniforms = {};
+            var params = {
+                name: "normalShader",
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 }
+                }
+            };
+            this.id = params.name;
+            this._program = new MB.Program(context);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n                layout(location = 1) in vec3 normal;\n\n                out vec3 outNormal;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                void main() {\n                    mat3 normalMatrix = mat3(inverse(transpose(view * model)));\n                    outNormal = normalize(normalMatrix * normal);\n                    gl_Position = projection * view * model * vec4(position, 1.0);\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                in vec3 outNormal;\n\n                out vec4 fragColor;\n\n                void main() {\n                    fragColor = vec4(normalize(outNormal), 1.0);\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.compile();
+            this._program.autocatching();
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = params.uniforms;
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(NormalMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        NormalMaterial.prototype.render = function (model) {
+            this.use();
+            model.render();
+        };
+        ;
+        NormalMaterial.prototype.render2 = function (model) {
+            this.use();
+            model.render2();
+        };
+        ;
+        NormalMaterial.prototype.render3 = function (model) {
+            this.use();
+            model.render3();
+        };
+        ;
+        NormalMaterial.prototype.use = function () {
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return NormalMaterial;
+    }(MB.Material));
+    MB.NormalMaterial = NormalMaterial;
+    ;
+})(MB || (MB = {}));
+
+
+
+
+
+
+
+var MB;
+(function (MB) {
     (function (UniformType) {
         UniformType[UniformType["Float"] = 0] = "Float";
         UniformType[UniformType["Integer"] = 1] = "Integer";
@@ -11294,8 +11400,7 @@ var MB;
                 return res;
             }
             this.id = params.name || "";
-            this._context = context;
-            this._program = new MB.Program(this._context);
+            this._program = new MB.Program(context);
             this._program.loadsFromScript(params.vertexShader, params.fragmentShader);
             MB.ProgramManager.add(this.id, this._program);
             var unifs = diff2(this._program.uniformLocations, params.uniforms);
@@ -11463,13 +11568,10 @@ var MB;
                 return res;
             }
             this.id = params.name || "";
-            this._context = context;
-            this._program = new MB.Program(this._context);
+            this._program = new MB.Program(context);
             this._program.addShader(params.vertexShader, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
             this._program.addShader(params.fragmentShader, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-            this._program._compile();
-            this._program.feedbackVarying(params.tfs.varying, params.tfs.mode);
-            this._program._link();
+            this._program.compileWithTF(params.tfs.varying, params.tfs.mode);
             this._program.autocatching();
             MB.ProgramManager.add(this.id, this._program);
             var unifs = diff2(this._program.uniformLocations, params.uniforms);

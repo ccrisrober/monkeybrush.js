@@ -57,7 +57,6 @@
                 _super.call(this, "App", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.0, -2.16, 20.25));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
@@ -66,7 +65,6 @@
                 MB.Loaders.loadVideo("../assets/video/Possum vs Cat.mp4", "video");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.tex = new MBX.VideoTexture(this.context, MB.ResourceMap.retrieveAsset("video"), {
                     flipY: 1
                 });

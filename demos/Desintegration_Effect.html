@@ -101,7 +101,6 @@
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
@@ -109,7 +108,6 @@
                 MB.Loaders.loadImage("../assets/images/perlin_fractal_max_clamped.jpg", "noiseTex");
             };
             MyScene.prototype.initialize = function () {
-
                 this.tex2d = new MB.Texture2D(this.context, "noiseTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,

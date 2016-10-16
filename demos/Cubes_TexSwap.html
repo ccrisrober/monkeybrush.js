@@ -56,7 +56,6 @@
                 _super.call(this, "App", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.58, 59.79));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
@@ -65,7 +64,6 @@
                 MB.Loaders.loadImage("../assets/images/woodenBox.png", "tex2");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.cubito = new MB.Cube(this.context, 25.0);
 
                 this.customPP = new MB.CustomPingPong(

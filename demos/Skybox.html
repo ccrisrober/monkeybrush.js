@@ -28,9 +28,7 @@
                 MB.Loaders.loadCubeMap("../assets/images/canyon");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.skybox = new MBX.Skybox(this.context, "../assets/images/canyon");
-                console.log(this.skybox);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {

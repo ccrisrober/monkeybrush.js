@@ -43,12 +43,12 @@
             fragColor = texture(tex, uv_);
         }
     </script>
+
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/water.png", "myTex");

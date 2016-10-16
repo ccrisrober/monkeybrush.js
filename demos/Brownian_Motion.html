@@ -15,7 +15,6 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <canvas id="canvas" width="800" height="500"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
         precision highp float;
@@ -31,7 +30,7 @@
 
         void main() {
             gl_Position = projection * view * model * vec4(position, 1.0);
-            mat3 normalMatrix = mat3(inverse(transpose(model)));
+            mat3 normalMatrix = mat3(inverse(transpose(view * model)));
             outNormal = normalize(normalMatrix * normal);
         }
     </script>
@@ -52,7 +51,7 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")));
+                _super.call(this, "App", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.0, -2.16, 20.25));
                 this.angle = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -61,16 +60,7 @@
             MyScene.prototype.initialize = function () {
                 this.sphere = new MB.Sphere(this.context, 2.5, 25.0);
 
-                this.myProg = new MB.ShaderMaterial(this.context, {
-                    name: "brownianMotion",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
-                    uniforms: {
-                        projection: { type: MB.UniformType.Matrix4 },
-                        view: { type: MB.UniformType.Matrix4 },
-                        model: { type: MB.UniformType.Matrix4 }
-                    }
-                });
+                this.myProg = new MB.NormalMaterial(this.context);
 
                 this.x_pos = [-7.5, 0.0, 7.5, 0.0];
                 this.y_pos = [-3.5, 3.0, -3.5, -7.5];

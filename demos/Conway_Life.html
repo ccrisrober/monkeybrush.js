@@ -77,7 +77,6 @@
                 _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")), MyConfig());
             }
             MyScene.prototype.initialize = function () {
-                var that = this;
                 this.prog = new MB.ShaderMaterial(this.context, {
                     name: "diffuseShader",
                     vertexShader: "shader-vs",

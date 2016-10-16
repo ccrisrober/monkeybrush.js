@@ -1,41 +1,54 @@
 namespace MB {
-    export interface TFMaterialParams {
-        name: string,
-        uniforms?: { [key: string]: MB.IUniformMaterial; };
-        tfs: {
-            varying: Array<string>,
-            mode: MB.ctes.TFMode
-        },
-        vertexShader: string;
-        fragmentShader: string;
-    };
-    export class TFMaterial extends MB.Material {
+    export class NormalMaterial extends MB.Material {
         protected _uniforms: { [key: string]: MB.Uniform; } = {};
         protected _program: MB.Program;
-        protected _context: MB.GLContext;
-        constructor(context: MB.GLContext, params: MB.TFMaterialParams) {
+        constructor(context: MB.GLContext) {
             super();
 
-            function diff2(o1, o2): { [key: string]: MB.IUniformMaterial; } {
-                let res: { [key: string]: MB.IUniformMaterial; } = {};
-                for (let key in o1) {
-                    if (o2.hasOwnProperty(key)) {
-                        res[key] = o2[key];
-                    }
+            let params =  {
+                name: "normalShader",
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 }
                 }
-                return res;
-            }
+            };
 
-            this.id = params.name || "";
+            this.id = params.name;
             this._program = new MB.Program(context);
-            this._program.addShader(params.vertexShader, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-            this._program.addShader(params.fragmentShader, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-            this._program.compileWithTF(params.tfs.varying, params.tfs.mode);
+            this._program.addShader(`#version 300 es
+                precision highp float;
+
+                layout(location = 0) in vec3 position;
+                layout(location = 1) in vec3 normal;
+
+                out vec3 outNormal;
+
+                uniform mat4 projection;
+                uniform mat4 view;
+                uniform mat4 model;
+
+                void main() {
+                    mat3 normalMatrix = mat3(inverse(transpose(view * model)));
+                    outNormal = normalize(normalMatrix * normal);
+                    gl_Position = projection * view * model * vec4(position, 1.0);
+                }`, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this._program.addShader(`#version 300 es
+                precision highp float;
+
+                in vec3 outNormal;
+
+                out vec4 fragColor;
+
+                void main() {
+                    fragColor = vec4(normalize(outNormal), 1.0);
+                }`, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.compile();
             this._program.autocatching();
 
             MB.ProgramManager.add(this.id, this._program);
 
-            let unifs = diff2(this._program.uniformLocations, params.uniforms);
+            let unifs = params.uniforms;
 
             this._uniforms = {};
             let aux: MB.IUniformMaterial;

@@ -48,7 +48,6 @@
                 this.angle = 0;
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.prog = new MB.ShaderMaterial(this.context, {
                     name: "posterizationShader",
                     vertexShader: "shader-vs",

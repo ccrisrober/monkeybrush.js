@@ -40,14 +40,11 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
                 this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,

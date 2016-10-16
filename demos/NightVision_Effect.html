@@ -59,13 +59,11 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/bergsjostolen.jpg", "tex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.tex = new MB.Texture2D(this.context, "tex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,

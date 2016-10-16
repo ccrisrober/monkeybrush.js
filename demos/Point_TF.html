@@ -45,7 +45,6 @@
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.drawTick = true;
-                this.mainShader = "prog";
             };
             MyScene.prototype.initialize = function () {
                 this.myProg = new MB.TFMaterial(this.context, {

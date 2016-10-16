@@ -104,7 +104,6 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.mainShader = "prog";
             };
             MyScene.prototype.initialize = function () {
                 this.prog = new MB.ShaderMaterial(this.context, {

@@ -51,7 +51,6 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");

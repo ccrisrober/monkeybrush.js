@@ -91,7 +91,6 @@
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.cubito = new MB.Capsule(this.context, 17.5, 7.5);
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "latticeShader",

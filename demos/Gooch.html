@@ -89,7 +89,6 @@
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.cubito = new MB.Mesh(this.context, "../assets/objects/teddy.json");
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "diffuseShader",

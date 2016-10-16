@@ -40,8 +40,7 @@ namespace MB {
             }
 
             this.id = params.name || "";
-            this._context = context;
-            this._program = new MB.Program(this._context);
+            this._program = new MB.Program(context);
             this._program.loadsFromScript(params.vertexShader, params.fragmentShader);
 
             MB.ProgramManager.add(this.id, this._program);
