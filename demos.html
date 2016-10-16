@@ -177,9 +177,7 @@
         <script>
         var files = {
             "Hello World": [
-                "Hello_World",
-                "First_Scene",
-                "First_App"
+                "Hello_World"
             ],
             "Introduction": [
                 "Hello_Triangle",
@@ -189,28 +187,15 @@
                 "Cubes_Fog",
                 "Normal_Interpolation",
                 "Instancing"
-                //"Click_Points",
-                //"Stencil_Reflection",
-                //"Stencil_Shadow_And_Reflection",
             ],
-            /*"Views": [
-                "Free_Camera",
-                "Orbit_Camera",
-                "Depth_Picking",
-                "Stencil_Picking",
-                "Color_Picking",
-                "Intersection_Query"
-            ],*/
             "Textures": [
                 "Twirl_Filter",
                 "Skybox",
                 "Texture2DArray",
                 "Integer_Texture",
                 "3D_Texture",
-                //"Clouds",
                 "Normal_Mapping",
-                //"Bump_Mapping",
-                //"Parallax_Mapping",
+                "Normal_Mapping2",
                 "Earth_Map",
                 "Alpha_Maps",
                 "Brick_Texture",
@@ -219,12 +204,6 @@
                 "Video_Texture",
                 "Webcam_Texture"
             ],
-            /*"Framebuffer": [
-                "Mirror",
-                "Reflection_And_Refraction",
-                "Glow",
-                "Convolution_Matrix"
-            ],*/
             "PostProcess Effects": [
                 "Desintegration_Effect",
                 "PaintSpatter_Effect",
@@ -237,17 +216,18 @@
                 "Mouse_Color",
                 "Toonify_PP",
                 "Posterization_PP",
-                "FreiChen_PP",
-                "DreamVision_PP",
-                "DreamVision2",
+                // "FreiChen_PP",
+                "DreamVision",
                 "Pixelization",
                 "Retro_PP",
                 "Hand_LikeEffect",
+                "Image_Processing",
                 "Ripple_PP",
                 "OldFilm_PP",
                 "HexagonalPixelate_PP",
                 "ExplosionImplosion_PP",
-                "DotScreen_PP"
+                "DotScreen_PP",
+                "SelfProjection_PP"
             ],
             "Procedural": [
                 "Cloud_Effect",
@@ -255,6 +235,7 @@
                 "Heat",
                 "Hatching",
                 "Hatching3D",
+                "Marble",
                 "Gooch",
                 "Granite",
                 "Quasicrystal",
@@ -266,14 +247,11 @@
             "Lighting": [
                 "Ambient_Light",
                 "Directional_Light",
-                "Hemispheric_Light",
+                // "Hemispheric_Light",
                 "Point_Light",
-                //"Spot_Light",
-                //"Random_Lights",
-                "Rim_Light",
+                // "Rim_Light",
                 "Water_Reflection",
                 "Toon_Shading"
-                //"Cemetery_Scene"
             ],
             "Meshes": [
                 "Obj_Loader",
@@ -287,7 +265,6 @@
             ],
             "Global Ilumination": [
                 "Deferred_Shading",
-                //"SSAO",
                 "Matcap_Vertex",
                 "Matcap_Fragment",
                 "Spherical_Harmonics",
@@ -298,23 +275,21 @@
             "Others": [
                 "Cubes_TexSwap",
                 "Photosphere",
+                "Videosphere",
                 "Water_UV",
                 "Manga_EffectLine",
+                "Alpha_Textures",
                 "Trail_Spheres",
                 "Xor",
-                "Tunnel_Effect"
+                "Tunnel_Effect",
+                "Brownian_Motion",
+                "Random_Textures",
+                "Two_Canvas"
             ],
             "GPGPU": [
-                //"Particle_System",
-                //"Particle_System_TF",
                 "Mandelbrot",
                 "Julia",
                 "Fractal_World",
-                //"Metaballs",
-                //"Flock",
-                //"Flock_TF",
-                //"Water_Simulation",
-                //"Cloth_Simulation",
                 "Point_TF",
                 "Ubo_Spline",
                 "2D_Advention",
@@ -322,6 +297,16 @@
                 "Flat_Wave"
             ]
         };
+        var files_ = {
+            "Demos": []
+        }
+        for (var key in files) {
+            files[key].sort(function(a, b) {
+                if(a < b) return -1;
+                if (a > b) return 1;
+                return 0;
+            });
+        }
         var panel = document.getElementById("panel");
         var content = document.getElementById("content");
         var viewer = document.getElementById("viewer");

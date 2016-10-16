@@ -17,32 +17,67 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 vertPosition;
+        out vec2 uv;
+
+        uniform mat4 viewProj;
+
+        void main(void) {
+            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+            vec3 pos = vertPosition;
+            pos *= 50.0;
+            gl_Position = viewProj * vec4(pos, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+        precision highp sampler2DArray;
+        out vec4 fragColor;
+        in vec2 uv;
+        uniform sampler2DArray tex;
+
+        void main() {
+            if (uv.x < 0.5) {
+                if (uv.y < 0.5) {
+                    fragColor = texture(tex, vec3(uv, 0.0));
+                } else {
+                    fragColor = texture(tex, vec3(uv, 2.0));
+                }
+            } else {
+                    if (uv.y > 0.5) {
+                    fragColor = texture(tex, vec3(uv, 1.0));
+                } else {
+                    fragColor = texture(tex, vec3(uv, 3.0));
+                }
+            }
+        }
+    </script>
+
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
                 this.drawTick = true;
-                this.mainShader = "prog";
                 this.angle = 0;
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("#version 300 es\n            precision highp float;\n            layout(location = 0) in vec3 vertPosition;\n            out vec2 uv;\n            uniform mat4 viewProj;\n            void main(void) {\n                uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n                vec3 pos = vertPosition;\n                pos *= 50.0;\n                gl_Position = viewProj * vec4(pos, 1.0);\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-                    prog.addShader("#version 300 es\n            precision highp float;\n            precision highp sampler2DArray;\n\n            out vec4 fragColor;\n            in vec2 uv;\n\n            uniform sampler2DArray tex;\n\n            void main() {\n                if (uv.x < 0.5) {\n                    if (uv.y < 0.5) {\n                        fragColor = texture(tex, vec3(uv, 0.0));\n                    } else {\n                        fragColor = texture(tex, vec3(uv, 2.0));\n                    }\n                } else {\n                    if (uv.y > 0.5) {\n                        fragColor = texture(tex, vec3(uv, 1.0));\n                    } else {\n                        fragColor = texture(tex, vec3(uv, 3.0));\n                    }\n                }\n            }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-                    prog._compile();
-                    prog._link();
-                    prog.use();
-                    prog.addUniforms(["viewProj", "tex"]);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "texture2DArray",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        viewProj: { type: MB.UniformType.Matrix4 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
+
                 var texSize = 1024;
                 var bb1 = new Uint8Array(texSize * texSize * 3);
                 var checkSize = 5;
@@ -137,8 +172,6 @@
                     return;
                 }
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 var viewProj = mat4.create();
                 var proj = mat4.create();
                 var canvas = this.canvas;
@@ -147,13 +180,9 @@
                 mat4.lookAt(view, new Float32Array([0.0, 1.0, 5.0]), new Float32Array([0.0, 0.0, 0.0]), new Float32Array([0.0, 1.0, 0.0]));
                 mat4.mul(viewProj, proj, view);
                 this.tex2.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniformMat4("viewProj", viewProj);
+                this.myProg.uniforms.viewProj.value = viewProj;
+                this.myProg.use();
                 this.postProcess.render();
-            };
-            MyScene.prototype.cameraUpdate = function () {
-            };
-            MyScene.prototype.textCB = function (gui) {
             };
             return MyScene;
         }(MB.App));

@@ -17,26 +17,39 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            gl_Position = projection * view * model * vec4(position, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        void main() {
+            fragColor = vec4(1.0);
+        }
+    </script>
+
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.homePoint = new MB.Vect3(3.91, -4.52, 60.35);
-                this.camera = new MB.Camera2(this.homePoint);
+                this.camera = new MB.Camera2(new MB.Vect3(3.91, -4.52, 60.35));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
                 this.cuboctahedron0 = new MB.Cuboctahedron(this.context, 12.5, 0.0);
                 this.cuboctahedron1 = new MB.Cuboctahedron(this.context, 12.5, 1.0);
                 this.cuboctahedron2 = new MB.Cuboctahedron(this.context, 12.5, 2.0);
@@ -86,15 +99,17 @@
                     [ 1, 1, -1.2, -1, -1.1, 1, -1, 0, -1, 1, -0.2, -1 ],
                     indices, 12.5, 4.0);
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.setFooFragment();
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model"]);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 }
+                    }
                 });
+
                 this.cameraUpdate();
 
                 this.renders = [
@@ -107,15 +122,12 @@
                 ];
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 for (var i = 0; i < 5; ++i) {
                     this.renders.forEach(function(v) {
                         this.model =
@@ -124,24 +136,21 @@
                                 .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                                 .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                                 .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                        prog.sendUniformMat4("model", this.model);
+                        this.myProg.uniforms.model.value = this.model;
+                        this.myProg.use();
                         this[v.name + i].render2();
                     }.bind(this));
                 }
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

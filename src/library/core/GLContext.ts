@@ -14,6 +14,7 @@ namespace MB {
         public get version(): number {
             return this._version;
         };
+
         constructor(canvas: HTMLCanvasElement) {
             if (!canvas) {
                 Log.info("Not canvas. Create one ...");
@@ -40,12 +41,32 @@ namespace MB {
                 }
             }
             if (this._gl === null) {
-                document.write("<br><b>WebGL is not supported!</b>");
+                let domElement = document.createElement("div");
+
+                domElement.style.fontFamily = "monospace";
+                domElement.style.fontSize = "13px";
+                domElement.style.textAlign = "center";
+                domElement.style.background = "#eee";
+                domElement.style.color = "#000";
+                domElement.style.padding = "1em";
+                domElement.style.width = "475px";
+                domElement.style.margin = "5em auto 0";
+                domElement.innerHTML = window["WebGLRenderingContext"] ?
+                    `Sorry, your graphics card doesn\'t support
+                    <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a>`
+                :
+                    `Sorry, your browser doesn\'t support
+                    <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a><br/>
+                    Please try with
+                    <a href="http://www.google.com/chrome">Chrome</a>,
+                    <a href="http://www.mozilla.com/en-US/firefox/new/">Firefox 4</a> or
+                    <a href="http://nightly.webkit.org/">Webkit Nightly (Mac)</a>`;
+                document.appendChild(domElement);
                 throw new Error("WebGL is not supported!");
             } else {
                 this._version = numVersion;
                 this._getVendors();
-                
+
                 this._state = new GlobalState(this);
                 Log.info("WebGL2RenderingContext OK :)");
             }

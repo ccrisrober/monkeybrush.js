@@ -17,24 +17,76 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+        layout(location = 2) in vec2 uv;
+
+        out vec2 outUV;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        uniform sampler2D tex;
+        uniform float heightFactor;
+
+        void main() {
+            mat3 normalMatrix = mat3(inverse(transpose(model)));
+
+            vec3 pos = position;
+
+            outUV = uv;
+
+            const vec2 size = vec2(0.5,0.0);
+            const ivec3 off = ivec3(-1,0,1);
+            vec4 wave = texture(tex, outUV);
+            float s11 = wave.x;
+            float s01 = textureOffset(tex, outUV, off.xy).x;
+            float s21 = textureOffset(tex, outUV, off.zy).x;
+            float s10 = textureOffset(tex, outUV, off.yx).x;
+            float s12 = textureOffset(tex, outUV, off.yz).x;
+            vec3 va = normalize(vec3(size.xy,s21-s01));
+            vec3 vb = normalize(vec3(size.yx,s12-s10));
+            vec4 bump = vec4( cross(va,vb), s11 );
+
+            pos.y += heightFactor * bump.w;
+
+            vec4 pp = model * vec4(pos, 1.0);
+            pp = view * pp;
+            gl_Position = projection * pp;
+            gl_PointSize = 5.0;
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec2 outUV;
+
+        out vec4 fragColor;
+
+        uniform sampler2D tex;
+        uniform sampler2D tex2;
+
+        void main() {
+            fragColor = vec4(texture(tex2, outUV).rgb, 1.0);
+        }
+    </script>
+
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var Configuration = function () {
             return {
-                render: "0"
+                render: "0",
+                heightFactor: 3.5
             };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.homePoint = new MB.Vect3(-0.18, 2.60, 10.23);
-                this.camera = new MB.Camera2(this.homePoint);
-                this.mainShader = "prog";
+                this.camera = new MB.Camera2(new MB.Vect3(-0.18, 2.60, 10.23));
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
@@ -43,50 +95,53 @@
                 MB.Loaders.loadImage("../assets/images/3_no_ice_clouds_8k.jpg", "earth");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                console.log(MB.ResourceMap);
                 this.plane = new MB.Plane(this.context, 50.0, 30.0, 200.0, 200.0);
 
-                let grassImage = MB.ResourceMap.retrieveAsset("heightmap");
-                this.tex2d = new MB.Texture2D(this.context, grassImage, {
-                    flipY: 0,
-                    minFilter: MB.ctes.TextureFilter.Nearest,
-                    magFilter: MB.ctes.TextureFilter.Nearest,
-                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
-                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "desintegrationShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        tex2: {
+                            type: MB.UniformType.Integer,
+                            value: 1
+                        },
+                        heightFactor: { type: MB.UniformType.Float }
+                    }
                 });
 
-                var heightmapImage = MB.ResourceMap.retrieveAsset("earth");
-                this.tex2d2 = new MB.Texture2D(this.context, heightmapImage, {
+                this.tex2d = new MB.Texture2D(this.context, "heightmap", {
                     flipY: 0,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/earth/earth.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/earth/earth.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "tex", "tex2"]);
-                    return prog;
+                this.tex2d2 = new MB.Texture2D(this.context, "earth", {
+                    flipY: 0,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
+                this.tex2d.bind(0);
+                this.tex2d2.bind(1);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex2d.bind(0);
-                this.tex2d2.bind(1);
                 var renderMode = this.text.render;
                 var mode;
                 switch (renderMode) {
@@ -104,18 +159,14 @@
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1i("tex2", 1);
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.uniforms.heightFactor.value = this.text.heightFactor;
+                this.myProg.use();
                 this.plane[mode]();
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "render", {
@@ -123,6 +174,7 @@
                     lines: 1,
                     points: 2
                 });
+                gui.add(this.text, "heightFactor", 0.01, 10.0);
             };
             return MyScene;
         }(MB.App));

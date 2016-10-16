@@ -20,5 +20,5 @@
 "use strict";
 
 namespace MB {
-    export const VERSION: string = "1.9.1";
+    export const VERSION: string = "1.9.2";
 };

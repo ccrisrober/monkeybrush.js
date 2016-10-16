@@ -60,7 +60,8 @@ namespace MB {
 
             this.updateCameraVectors();
         }
-        public update(callback: Function) {
+        public update(timeElapsed: number, callback: Function) {
+            this.timeElapsed = timeElapsed;
             this._updateCamera = false;
 
             let speed = 1.0;
@@ -188,10 +189,16 @@ namespace MB {
         public GetProjectionMatrix(canvas: HTMLCanvasElement): MB.Mat4 {
             const w: number = canvas.clientWidth;
             const h: number = canvas.clientHeight;
-            return MB.Mat4.perspective(this.fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
+            return MB.Mat4.perspective(this._fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
         }
 
-        public fov: number = 45.0;
+        public _fov: number = 45.0;
+        public get fov(): number {
+            return this._fov;
+        };
+        public set fov(f: number) {
+            this._fov = f;
+        };
 
         public updateCameraVectors() {
             const front: MB.Vect3 = new MB.Vect3(

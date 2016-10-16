@@ -18,6 +18,7 @@
             "./src/library/Camera2.ts",
             "./src/library/Decorators.ts",
             "./src/library/App.ts",
+            "./src/library/App2.ts",
 
             "./src/library/models/Drawable.ts",
             "./src/library/models/Polyhedron.ts",
@@ -39,6 +40,9 @@
             "./src/library/textures/Texture.ts",
             "./src/library/textures/**/*.ts",
 
+            "./src/library/materials/Material.ts",
+            "./src/library/materials/ShaderMaterial.ts",
+            "./src/library/materials/**/*.ts",
             "./src/library/scene/**/*.ts",
             "./src/library/Transform.ts",
 
@@ -56,6 +60,7 @@
             "./src/library/Camera2.ts",
             "./src/library/Decorators.ts",
             "./src/library/App.ts",
+            "./src/library/App2.ts",
 
             "./src/library/models/Drawable.ts",
             "./src/library/models/Polyhedron.ts",
@@ -77,6 +82,9 @@
             "./src/library/textures/Texture.ts",
             "./src/library/textures/**/*.ts",
 
+            "./src/library/materials/Material.ts",
+            "./src/library/materials/ShaderMaterial.ts",
+            "./src/library/materials/**/*.ts",
             "./src/library/scene/**/*.ts",
             "./src/library/Transform.ts",
 

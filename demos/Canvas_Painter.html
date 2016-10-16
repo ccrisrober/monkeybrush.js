@@ -17,7 +17,38 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <!--<canvas id="canvas" style="position: fixed; bottom: 0; right: 0;"></canvas>-->
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+        layout(location = 2) in vec2 uv;
+
+        out vec2 outUV;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            gl_Position = projection * view * model * vec4(position, 1.0);
+            outUV = uv;
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec2 outUV;
+
+        uniform sampler2D tex;
+
+        out vec4 fragColor;
+
+        void main() {
+            fragColor = texture(tex, outUV);
+        }
+    </script>
+
     <script type="text/javascript">
         var canvas, ctx;
         function drawClock() {
@@ -63,23 +94,23 @@
             }
         }
 
-        function drawTime(ctx, radius){
+        function drawTime(ctx, radius) {
             var now = new Date();
             var hour = now.getHours();
             var minute = now.getMinutes();
             var second = now.getSeconds();
             //hour
-            hour=hour%12;
-            hour=(hour*Math.PI/6)+
-            (minute*Math.PI/(6*60))+
-            (second*Math.PI/(360*60));
-            drawHand(ctx, hour, radius*0.5, radius*0.07);
-            //minute
-            minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
-            drawHand(ctx, minute, radius*0.8, radius*0.07);
+            hour = hour % 12;
+            hour = (hour * Math.PI / 6) +
+                (minute * Math.PI / (6 * 60)) +
+                (second * Math.PI / (360 * 60));
+            drawHand(ctx, hour, radius * 0.5, radius * 0.07);
+            // minute
+            minute = (minute * Math.PI / 30);
+            minute += (second * Math.PI / (30 * 60));
             // second
-            second=(second*Math.PI/30);
-            drawHand(ctx, second, radius*0.9, radius*0.02);
+            second = (second * Math.PI / 30);
+            drawHand(ctx, second, radius * 0.9, radius * 0.02);
         }
 
         function drawHand(ctx, pos, length, width) {
@@ -93,71 +124,59 @@
             ctx.rotate(-pos);
         }
 
-
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
-                this.camera = new MB.Camera2(this.homePoint);
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
                 this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
                 this.tex2d = new MBX.CanvasTexture(this.context, canvas, {
                     flipY: 1
                 });
                 this.cubito = new MB.Cube(this.context, 30.0);
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/demoShader.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/demoShaderTex.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "tex", "viewPos"]);
-                    return prog;
+
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "ppShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
-                //this.__resize__();
+                this.__resize__();
                 this.tex2d.update();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                this.cubito.render();
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.render(this.cubito);
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
             };
             return MyScene;
         }(MB.App));

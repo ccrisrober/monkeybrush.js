@@ -15,7 +15,6 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <canvas id="canvas" width="800" height="500"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
         precision highp float;
@@ -65,39 +64,31 @@
     </script>
 
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")));
-                this.homePoint = new MB.Vect3(0.08, 0.16, 60.25);
-                this.camera = new MB.Camera2(this.homePoint);
+                _super.call(this, "App", new MB.GLContextW2());
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, -4.03, 68.78));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.sphereRadius = 22.5;
                 this.cubito = new MB.Sphere(this.context, 1.0, 25.0);
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
 
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "viewPos", "color"]);
-
-                    prog.sendUniform3f("color", 1.0, 0.0, 1.0);
-                    return prog;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "desintegrationShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        viewPos: { type: MB.UniformType.Vector3 },
+                        color: { type: MB.UniformType.Vector3 }
+                    }
                 });
-
 
                 this.t = 0.0;
                 this.s = 0.0;
@@ -111,13 +102,9 @@
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.dt = dt;
-
-
-
 
                 var radianS = MB.Mathf.degToRad(this.s);
                 var z = this.sphereRadius * Math.cos(radianS);
@@ -142,25 +129,24 @@
                     x = 2.5624574546615064, y = 1.1948935348050256, z=224.98223494585864;
                 }
 
-
+                // animate position across surface of sphere
+                this.t += 25; // speed around sphere
+                this.s += 0.72; // speed across sphere
 
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.model =
                     this.identityMatrix.clone()
                         .rotate(this.dt * 0.1, MB.Vect3.xAxis)
                         .rotate(this.dt * 0.2, MB.Vect3.zAxis)
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .scale(new MB.Vect3(this.sphereRadius, this.sphereRadius, this.sphereRadius));
-                prog.sendUniformMat4("model", this.model);
-                prog.sendUniform3f("color", 1.0, 1.0, 1.0);
-                this.cubito.render();
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.uniforms.color.value = new MB.Vect3(1.0, 1.0, 1.0);
+                this.myProg.render(this.cubito);
 
-                prog.sendUniform3f("color", 1.0, 0.0, 1.0);
                 for (var i = 0; i < this.trail.length; ++i) {
                     var pos = this.trail[i];
                     this.model =
@@ -169,25 +155,15 @@
                             .rotate(this.dt * 0.2, MB.Vect3.zAxis)
                             .translate(new MB.Vect3(pos.x, pos.y, pos.z))
                         .scale(new MB.Vect3(2.5, 2.5, 2.5));
-                    prog.sendUniformMat4("model", this.model);
-                    prog.sendUniform3f("color", 1.0 / (i+1), 1.0 / (i+1), 1.0 / (i+1));
-                    this.cubito.render();
+                    this.myProg.uniforms.model.value = this.model;
+                    this.myProg.uniforms.color.value = new MB.Vect3(1.0 / (i+1), 1.0 / (i+1), 1.0 / (i+1));
+                    this.myProg.render(this.cubito);
                 }
-
-
-
-                // animate position across surface of sphere
-                this.t += 25; // speed around sphere
-                this.s += 0.72; // speed across sphere
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.viewPos.value = this.camera.GetPos();
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
             };
             return MyScene;
         }(MB.App));

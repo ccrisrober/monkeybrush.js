@@ -550,6 +550,81 @@ namespace MB {
                 this._value[9],
                 this._value[10]
             ]);
+        };
+        /**
+         * [toCSSMatrix description]
+         * @return {string} [description]
+         *
+         * Example:
+         *     var m = new MB.Mat4(...);
+         *     $("#myElem").css("transform", m.toCSSMatrix());
+         */
+        public toCSSMatrix(): string {
+            let str = "";
+            str += this._value[0].toFixed(20) + ",";
+            str += this._value[1].toFixed(20) + ",";
+            str += this._value[2].toFixed(20) + ",";
+            str += this._value[3].toFixed(20) + ",";
+            str += this._value[4].toFixed(20) + ",";
+            str += this._value[5].toFixed(20) + ",";
+            str += this._value[6].toFixed(20) + ",";
+            str += this._value[7].toFixed(20) + ",";
+            str += this._value[8].toFixed(20) + ",";
+            str += this._value[9].toFixed(20) + ",";
+            str += this._value[10].toFixed(20) + ",";
+            str += this._value[11].toFixed(20) + ",";
+            str += this._value[12].toFixed(20) + ",";
+            str += this._value[13].toFixed(20) + ",";
+            str += this._value[14].toFixed(20) + ",";
+            str += this._value[15].toFixed(20);
+
+            return `matrix3d(${str})`;
+        };
+
+        public compose(position: MB.Vect3, quaternion: MB.Quat, scale: MB.Vect3) {
+            /// ROTATION
+            let x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
+            let x2 = x + x, y2 = y + y, z2 = z + z;
+            let xx = x * x2, xy = x * y2, xz = x * z2;
+            let yy = y * y2, yz = y * z2, zz = z * z2;
+            let wx = w * x2, wy = w * y2, wz = w * z2;
+
+            this._value[0] = 1 - (yy + zz);
+            this._value[4] = xy - wz;
+            this._value[8] = xz + wy;
+
+            this._value[1] = xy + wz;
+            this._value[5] = 1 - (xx + zz);
+            this._value[9] = yz - wx;
+
+            this._value[2] = xz - wy;
+            this._value[6] = yz + wx;
+            this._value[10] = 1.0 - (xx + yy);
+
+            // last column
+            this._value[3] = 0.0;
+            this._value[7] = 0.0;
+            this._value[11] = 0.0;
+
+            // bottom row
+            this._value[12] = 0.0;
+            this._value[13] = 0.0;
+            this._value[14] = 0.0;
+            this._value[15] = 1.0;
+
+            /// SCALE
+            x = scale.x;
+            y = scale.y;
+            z = scale.z;
+            this._value[0] *= x; this._value[4] *= y; this._value[8] *= z;
+            this._value[1] *= x; this._value[5] *= y; this._value[9] *= z;
+            this._value[2] *= x; this._value[6] *= y; this._value[10] *= z;
+            this._value[3] *= x; this._value[7] *= y; this._value[11] *= z;
+
+            /// POSITION
+            this._value[12] = position.x;
+            this._value[13] = position.y;
+            this._value[14] = position.z;
         }
     };
 };

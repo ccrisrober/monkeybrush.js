@@ -27,30 +27,37 @@ namespace MB {
     };
     // TODO: Support update setSubImage
     export class Texture2D extends Texture {
+        constructor(context: GLContext, data: string, options: TexOptions, onSuccess?: () => void);
         constructor(context: GLContext, data: HTMLImageElement, options: TexOptions, onSuccess?: () => void);
         constructor(context: GLContext, data: ITexture2D, options: TexOptions, onSuccess?: () => void);
         /**
          * Texture2D constructor.
          * @param {GLContext}           context [description]
-         * @param {HTMLImageElement |       ITexture2D}  data      [description]
+         * @param {string | HTMLImageElement |       ITexture2D}  data      [description]
          * @param {TexOptions = {}} options: Texture options
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture2D.
          */
-        constructor(context: GLContext, data: HTMLImageElement | ITexture2D, options: TexOptions = {},
+        constructor(context: GLContext, data: string | HTMLImageElement | ITexture2D, options: TexOptions = {},
             onSuccess: () => void) {
             super(context, ctes.TextureTarget.Texture2D, options);
             const gl = context.gl;
             this.bind();
-            if (data instanceof HTMLImageElement) {
+            if ((typeof data === "string") || data instanceof HTMLImageElement) {
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flipY ? options.flipY : 0);
                 gl.pixelStorei(gl.UNPACK_ALIGNMENT, this._unpackAlignment);
+                let auxData: HTMLImageElement;
+                if (typeof data === "string") {
+                    auxData = MB.ResourceMap.retrieveAsset(<string>data);
+                } else {
+                    auxData = data;
+                }
                 gl.texImage2D(
                     this._target,
                     this._level,
                     this._internalFormat,
                     this._format,
                     this._type,
-                    data
+                    auxData
                 );
             } else {
                 gl.texImage2D(

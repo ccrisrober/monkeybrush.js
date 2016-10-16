@@ -17,12 +17,36 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform sampler2D tex;
+        uniform float radius;
+        uniform vec2 size;
+
+        // Returns the relative luminance of the color value
+        float luminance(vec3 color) {
+            return dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+        }
+
+        float noise(vec2 co){
+            return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+        }
+
+        void main() {
+            float noiseValue = noise(uv);
+            vec4 color = texture(tex, uv);
+            float green = luminance( color.rgb );
+            float dist1 = length(gl_FragCoord.xy - vec2(size.x * 0.25, size.y * 0.5));
+            float dist2 = length(gl_FragCoord.xy - vec2(3.0 * size.x * 0.25, size.y * 0.5));
+            if( dist1 > radius && dist2 > radius ) green = 0.0;
+            fragColor = vec4(0.0, green * clamp(noiseValue + 0.25, 0.0, 1.0), 0.0 ,1.0);
+        }
+    </script>
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var Configuration = function () {
             return {
                 radius: 430
@@ -32,16 +56,12 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/bergsjostolen.jpg", "tex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("tex");
-                this.tex = new MB.Texture2D(this.context, myTexture, {
+                this.tex = new MB.Texture2D(this.context, "tex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -49,32 +69,29 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/nightvision.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "radius", "size"]);
-                    console.log(prog);
-                    return prog;
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "nightVisionShader",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        radius: { type: MB.UniformType.Float },
+                        size: { type: MB.UniformType.Vector2 }
+                    }
                 });
+                this.tex.bind(0);
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
+                this.prog.uniforms.size.value = new MB.Vect2(this.canvas.width, this.canvas.height);
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex.bind(0);
-
-                var canvas = this.canvas;
-
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("radius", this.text.radius);
-                prog.sendUniform2f("size", canvas.width, canvas.height);
+                this.prog.uniforms.radius.value = this.text.radius;
+                this.prog.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {

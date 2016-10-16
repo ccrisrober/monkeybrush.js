@@ -17,12 +17,59 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform sampler2D tex;
+        uniform int mode;
+        uniform float brightness;
+
+        float sRGB_gamma_correct(float c) {
+            const float a = 0.055;
+            if (c < 0.0031308) return 12.92*c;
+            else return (1.0+a)*pow(c, 1.0/2.4) - a;
+        }
+
+        void main() {
+            fragColor = texture(tex, uv);
+            if (mode == 1) {
+                fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction
+            } else if (mode == 2) {
+                fragColor.rgb = fragColor.rgb / ( 1.0 + fragColor.rgb );
+                fragColor.rgb = brightness * pow( abs( fragColor.rgb ), vec3( 1.0 / 2.2 ) ); // gamma correction
+            } else if (mode == 3) {
+                vec3 color = fragColor.rgb * pow( abs( brightness ), 2.2 );
+                color = max(vec3(0.), color - vec3(0.004));
+                color = (color * (6.2 * color + .5)) / (color * (6.2 * color + 1.7) + 0.06);
+                fragColor.rgb = color;
+            } else if (mode == 4) {
+                fragColor.r = sRGB_gamma_correct(fragColor.r);
+                fragColor.g = sRGB_gamma_correct(fragColor.g);
+                fragColor.b = sRGB_gamma_correct(fragColor.b);
+            } else if (mode == 5) {
+                float A = 0.15;
+                float B = 0.50;
+                float C = 0.10;
+                float D = 0.20;
+                float E = 0.02;
+                float F = 0.30;
+                float W = 11.2;
+                float exposure = brightness;
+                fragColor.rgb *= exposure;
+                fragColor.rgb = ((fragColor.rgb *
+                    (A * fragColor.rgb + C * B) + D * E) / (fragColor.rgb *
+                    (A * fragColor.rgb + B) + D * F)) - E / F;
+                float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
+                fragColor.rgb /= white;
+                fragColor.rgb = pow(fragColor.rgb, vec3(1. / 2.2));
+            }
+        }
+    </script>
+
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var Configuration = function () {
             return {
                 mode: 0,
@@ -33,16 +80,12 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Linear,
                     magFilter: MB.ctes.TextureFilter.Linear,
@@ -50,16 +93,20 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/tonemapping.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "mode", "brightness"]);
-                    console.log(prog);
-                    return prog;
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "toneMappingShader",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        mode: { type: MB.UniformType.Integer },
+                        brightness: { type: MB.UniformType.Float }
+                    }
                 });
+                this.tex2d.bind(0);
+
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
@@ -67,13 +114,9 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                prog.sendUniform1f("brightness", this.text.brightness);
-                prog.sendUniform1i("mode", parseInt(this.text.mode + ""));
-
+                this.prog.uniforms.brightness.value = this.text.brightness;
+                this.prog.uniforms.mode.value = this.text.mode;
+                this.prog.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {

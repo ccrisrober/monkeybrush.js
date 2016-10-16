@@ -18,30 +18,21 @@
     <script type="text/javascript" src="../dist/output.js"></script>
 
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.homePoint = new MB.Vect3(-2.7, -1.4, 11.8);
-                this.camera = new MB.Camera2(this.homePoint);
+                this.camera = new MB.Camera2(new MB.Vect3(-2.7, -1.4, 11.8));
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadCubeMap("../assets/images/canyon");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.skybox = new MBX.Skybox(this.context, "../assets/images/canyon");
-                console.log(this.skybox);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };

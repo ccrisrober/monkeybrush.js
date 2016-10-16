@@ -106,7 +106,7 @@ namespace MB {
                 attr = attrs[attr];
                 const attrID = gl.getAttribLocation(this._handler, attr);
                 if (attrID < 0) {
-                    console.error(attr + " undefined");
+                    console.warn(attr + " undefined");
                     continue;
                 }
                 this.attribLocations[attr] = attrID;
@@ -128,12 +128,25 @@ namespace MB {
             for (let unif in unifs) {
                 unif = unifs[unif];
                 const unifID: WebGLUniformLocation = gl.getUniformLocation(this._handler, unif);
+                if (unifID === null) continue;
                 if (unifID < 0) {
-                    console.error(unif + " undefined");
+                    console.warn(unif + " undefined");
                     continue;
                 }
                 this.uniformLocations[unif] = unifID;
             }
+        };
+        public loadsFromScript(vsShaderID: string, fsShaderID: string) {
+            this.addShader(vsShaderID, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
+            this.addShader(fsShaderID, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+            this.compile();
+            this.autocatching();
+        };
+        public load(vsShaderCode: string, fsShaderCode: string) {
+            this.addShader(vsShaderCode, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this.addShader(fsShaderCode, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this.compile();
+            this.autocatching();
         };
         /**
          * Return internal program identifier
@@ -194,6 +207,11 @@ namespace MB {
             this._isLinked = true;
             return true;
         };
+        public compileWithTF(varyings: Array<string>, mode: MB.ctes.TFMode) {
+            this._compile();
+            this.feedbackVarying(varyings, mode);
+            this._link();
+        };
         /**
          * Compile and link program
          * @return {boolean}: True if not errors
@@ -220,6 +238,11 @@ namespace MB {
             this._isLinked = true;
             return true;
         };
+
+        public complete() {
+            this.compile();
+            this.autocatching();
+        }
         /**
          * Create shader from file route.
          * @param {string} filePath   File route.
@@ -279,21 +302,49 @@ namespace MB {
             return this.compileShader(shaderSource, shaderType);
         };
 
-        // TODO: HARCODED
-        public _cache = {
-            "msg": "// MESSAGE\n"
-        };
-        public _parse(str) {
-            const regex = /#import +<([\w\d.]+)>/g;
-            function replace(match, include) {
-                MB.Log.debug(include);
-                const replace = this._cache[include]; // Acceso al fichero de turno;
-                if (replace === undefined) {
-                    throw new Error("Can not resolve #import <" + include + ">");
+        protected _processImports(src: string): string {
+            const regex = /#import<(.+)>(\[(.*)\])*(\((.*)\))*/g;
+            let match = regex.exec(src);
+            let ret = src.slice(0);
+            while (match != null) {
+                let includeFile = match[1];
+                if (MB.ResourceShader.exist(includeFile)) {
+                    let content = MB.ResourceShader.get(includeFile);
+                    if (match[4]) {
+                        let splits = match[5].split(",");
+                        let sp;
+                        for (let idx = 0, size = splits.length; idx < size; ++idx) {
+                            sp = splits[idx].split("=");
+                            content = content.replace(new RegExp(sp[0], "g"), sp[1]);
+                        }
+                    }
+                    if (match[2]) {
+                        let idxStr = match[3];
+                        if (idxStr.indexOf("..") !== -1) {
+                            let idxSplits = idxStr.split("..");
+                            let min = parseInt(idxSplits[0]);
+                            let max = parseInt(idxSplits[1]);
+                            let srcContent = content.slice(0);
+                            content = "";
+                            if (isNaN(max)) {
+                                max = min;
+                            }
+                            for (let i = min; i <= max; i++) {
+                                content += srcContent.replace(/\{N\}/g, i + "") + "\n";
+                            }
+                        } else {
+                            content = content.replace(/\{N\}/g, idxStr);
+                        }
+                    }
+                    ret = ret.replace(match[0], this._processImports(content));
+                } else {
+                    // TODO: let includeShaderUrl = "";
+                    // ...
+                    ret = ret.replace(match[0], "FAIL");
                 }
-                return this._parse(replace);
+                match = regex.exec(src);
             }
-            return str.replace(regex, replace.bind(this));
+            return ret;
         }
 
         /**
@@ -305,7 +356,7 @@ namespace MB {
             const gl: WebGL2RenderingContext = this._context.gl;
             let compiledShader: WebGLShader;
 
-            shaderSource = this._parse(shaderSource);
+            shaderSource = this._processImports(shaderSource);
 
             if (shaderType === gl.VERTEX_SHADER) {
                 this._vertexSource = shaderSource;
@@ -431,7 +482,7 @@ namespace MB {
             } else {
                 val = <Float32Array>value;
             }
-            gl.uniform3fv(this.uniformLocations[name], val);
+            gl.uniform2fv(this.uniformLocations[name], val);
         };
         /**
          * Send uniform vector of float with 3 values.
@@ -461,7 +512,7 @@ namespace MB {
             } else {
                 val = <Float32Array>value;
             }
-            gl.uniform3fv(this.uniformLocations[name], val);
+            gl.uniform4fv(this.uniformLocations[name], val);
         };
         /**
          * Send uniform mat2.
@@ -571,11 +622,33 @@ namespace MB {
             }
             return Program.GL_TABLE[type];
         };
+        public ubos: { [key: string]: VertexUBO; } = {};
+        /**
+         * Caches a list of ubos using array of any (name, id)
+         * @param {Array<any>} attrs Array of string that contains ubos names
+         */
+        public addUbos(ubos: Array<any>) {
+            for (let ubo in ubos) {
+                ubo = ubos[ubo];
+                this.ubos[ubo["name"]] = new VertexUBO(this._context, this, ubo["name"], ubo["id"]);
+            }
+        };
         /**
          * Autocatching all actives uniforms and attributes for program.
          */
         public autocatching() {
             const gl: WebGL2RenderingContext = this._context.gl;
+            const numUBOS = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORM_BLOCKS);
+            let ubos: Array<any> = [];
+            for (let i = 0; i < numUBOS; ++i) {
+                const name = gl.getActiveUniformBlockName(this._handler, i);
+                // const size = gl.getActiveUniformBlockParameter(this._handler, i, gl.UNIFORM_BLOCK_DATA_SIZE);
+                ubos.push({
+                    name: name,
+                    id: i
+                });
+            }
+            this.addUbos(ubos);
             const numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
             let unifs: Array<string> = [];
             for (let i = 0; i < numUniforms; ++i) {
@@ -654,11 +727,10 @@ namespace MB {
         /**
          * Attach transform feedback varying to this program.
          * Only call this before linking program.
-         * @param {GLContext} context [description]
          * @param {Array<string>} varyings Array of string that contains varying attributes.
          * @param {MB.ctes.TFMode}        mode     Transform Feedback mode (record mode).
          */
-        public feedbackVarying(context: GLContext, varyings: Array<string>, mode: MB.ctes.TFMode) {
+        public feedbackVarying(varyings: Array<string>, mode: MB.ctes.TFMode) {
             if (this._isLinked === true) {
                 alert("ONLY EXEC THIS BEFORE LINK");
                 return;
@@ -668,7 +740,7 @@ namespace MB {
                 alert("NEED WEBGL2 CONTEXT");
                 return;
             }
-            TransformFeedback.varyings(context, this, varyings, mode);
+            TransformFeedback.varyings(this._context, this, varyings, mode);
         };
         /**
          * Add a foo fragment shader.

@@ -31,18 +31,42 @@ namespace MB {
         get y(): number { return this._value[1]; };
         get z(): number { return this._value[2]; };
         get w(): number { return this._value[3]; };
-        set x(v: number) { this._value[0] = v; };
-        set y(v: number) { this._value[1] = v; };
-        set z(v: number) { this._value[2] = v; };
-        set w(v: number) { this._value[3] = v; };
+        set x(v: number) {
+            this._value[0] = v;
+            if (this.onChange) {
+                this.onChange();
+            }
+        };
+        set y(v: number) {
+            this._value[1] = v;
+            if (this.onChange) {
+                this.onChange();
+            }
+        };
+        set z(v: number) {
+            this._value[2] = v;
+            if (this.onChange) {
+                this.onChange();
+            }
+        };
+        set w(v: number) {
+            this._value[3] = v;
+            if (this.onChange) {
+                this.onChange();
+            }
+        };
 
         static create(values: Float32Array): Quat {
             return new Quat(values[0], values[1], values[2], values[3]);
         };
 
         public reset() {
-            for (let i = 0; i < 4; ++i) {
-                this._value[i] = 0.0;
+            this._value[0] = 0.0;
+            this._value[1] = 0.0;
+            this._value[2] = 0.0;
+            this._value[3] = 1.0;
+            if (this.onChange) {
+                this.onChange();
             }
         }
 
@@ -51,19 +75,19 @@ namespace MB {
          * @param {number = 0.0} x
          * @param {number = 0.0} y
          * @param {number = 0.0} z
-         * @param {number = 0.0} w
+         * @param {number = 1.0} w
          */
-        constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
+        constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0, w: number = 1.0) {
             this._value = new Float32Array([x, y, z, w]);
         }
         /**
          * Set quaternion value to identity
          */
         public setIdentity(): Quat {
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-            this.w = 1;
+            this._value[0] = 0;
+            this._value[1] = 0;
+            this._value[2] = 0;
+            this._value[3] = 1;
 
             return this;
         }
@@ -82,20 +106,20 @@ namespace MB {
         static add(q: Quat, q2: Quat, dest: Quat = null): Quat {
             if (!dest) dest = new Quat();
 
-            dest.x = q.x + q2.x;
-            dest.y = q.y + q2.y;
-            dest.z = q.z + q2.z;
-            dest.w = q.w + q2.w;
+            dest._value[0] = q.x + q2.x;
+            dest._value[1] = q.y + q2.y;
+            dest._value[2] = q.z + q2.z;
+            dest._value[3] = q.w + q2.w;
 
             return dest;
         }
         static rem(q: Quat, q2: Quat, dest: Quat = null): Quat {
             if (!dest) dest = new Quat();
 
-            dest.x = q.x - q2.x;
-            dest.y = q.y - q2.y;
-            dest.z = q.z - q2.z;
-            dest.w = q.w - q2.w;
+            dest._value[0] = q.x - q2.x;
+            dest._value[1] = q.y - q2.y;
+            dest._value[2] = q.z - q2.z;
+            dest._value[3] = q.w - q2.w;
 
             return dest;
         }
@@ -154,10 +178,10 @@ namespace MB {
                 q2z = q.z,
                 q2w = q.w;
 
-            this.x = q1x * q2w + q1w * q2x + q1y * q2z - q1z * q2y;
-            this.y = q1y * q2w + q1w * q2y + q1z * q2x - q1x * q2z;
-            this.z = q1z * q2w + q1w * q2z + q1x * q2y - q1y * q2x;
-            this.w = q1w * q2w - q1x * q2x - q1y * q2y - q1z * q2z;
+            this._value[0] = q1x * q2w + q1w * q2x + q1y * q2z - q1z * q2y;
+            this._value[1] = q1y * q2w + q1w * q2y + q1z * q2x - q1x * q2z;
+            this._value[2] = q1z * q2w + q1w * q2z + q1x * q2y - q1y * q2x;
+            this._value[3] = q1w * q2w - q1x * q2x - q1y * q2y - q1z * q2z;
 
             return this;
         }
@@ -227,12 +251,61 @@ namespace MB {
             angle *= 0.5;
             const sin = Math.sin(angle);
 
-            dest.x = axis.x * sin;
-            dest.y = axis.y * sin;
-            dest.z = axis.z * sin;
-            dest.w = Math.cos(angle);
+            dest._value[0] = axis.x * sin;
+            dest._value[1] = axis.y * sin;
+            dest._value[2] = axis.z * sin;
+            dest._value[3] = Math.cos(angle);
 
             return dest;
+        }
+
+        public onChange: Function;
+
+        public setFromEuler (euler: MB.EulerAngle): MB.Quat {
+            // Based on http://www.mathworks.com/matlabcentral/fileexchange/
+            //     20696-function-to-convert-between-dcm-euler-angles-quaternions-
+            //     and-euler-vectors/content/SpinCalc.m
+
+            const s1 = Math.sin(euler.x / 2.0);
+            const s2 = Math.sin(euler.y / 2.0);
+            const s3 = Math.sin(euler.z / 2.0);
+            const c1 = Math.cos(euler.x / 2.0);
+            const c2 = Math.cos(euler.y / 2.0);
+            const c3 = Math.cos(euler.z / 2.0);
+
+            const order = euler.order;
+            if (order === MB.RotSeq.xyz) {
+                this._value[0] = s1 * c2 * c3 + c1 * s2 * s3;
+                this._value[1] = c1 * s2 * c3 - s1 * c2 * s3;
+                this._value[2] = c1 * c2 * s3 + s1 * s2 * c3;
+                this._value[3] = c1 * c2 * c3 - s1 * s2 * s3;
+            } else if (order === MB.RotSeq.yxz) {
+                this._value[0] = s1 * c2 * c3 + c1 * s2 * s3;
+                this._value[1] = c1 * s2 * c3 - s1 * c2 * s3;
+                this._value[2] = c1 * c2 * s3 - s1 * s2 * c3;
+                this._value[3] = c1 * c2 * c3 + s1 * s2 * s3;
+            } else if (order === MB.RotSeq.zxy) {
+                this._value[0] = s1 * c2 * c3 - c1 * s2 * s3;
+                this._value[1] = c1 * s2 * c3 + s1 * c2 * s3;
+                this._value[2] = c1 * c2 * s3 + s1 * s2 * c3;
+                this._value[3] = c1 * c2 * c3 - s1 * s2 * s3;
+            } else if (order === MB.RotSeq.zyx) {
+                this._value[0] = s1 * c2 * c3 - c1 * s2 * s3;
+                this._value[1] = c1 * s2 * c3 + s1 * c2 * s3;
+                this._value[2] = c1 * c2 * s3 - s1 * s2 * c3;
+                this._value[3] = c1 * c2 * c3 + s1 * s2 * s3;
+            } else if (order === MB.RotSeq.yzx) {
+                this._value[0] = s1 * c2 * c3 + c1 * s2 * s3;
+                this._value[1] = c1 * s2 * c3 + s1 * c2 * s3;
+                this._value[2] = c1 * c2 * s3 - s1 * s2 * c3;
+                this._value[3] = c1 * c2 * c3 - s1 * s2 * s3;
+            } else if (order === MB.RotSeq.xzy) {
+                this._value[0] = s1 * c2 * c3 - c1 * s2 * s3;
+                this._value[1] = c1 * s2 * c3 - s1 * c2 * s3;
+                this._value[2] = c1 * c2 * s3 + s1 * s2 * c3;
+                this._value[3] = c1 * c2 * c3 + s1 * s2 * s3;
             }
+            return this;
+        }
     };
 };

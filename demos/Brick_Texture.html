@@ -17,12 +17,78 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform vec2 brickSize;
+        uniform vec3 brickColor;
+        uniform vec3 jointColor;
+
+        float rand(vec2 n) {
+            return fract(cos(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+        }
+
+        float noise(vec2 n) {
+            const vec2 d = vec2(0.0, 1.0);
+            vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
+            return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);
+        }
+
+        float fbm(vec2 n) {
+            float total = 0.0, amplitude = 1.0;
+            for (int i = 0; i < 4; i++) {
+                total += noise(n) * amplitude;
+                n += n;
+                amplitude *= 0.5;
+            }
+            return total;
+        }
+        /* Only WebGL1
+        float round(float number){
+            return sign(number)*floor(abs(number) + 0.5);
+        }*/
+
+        void main(void)
+        {
+            float brickW = 1.0 / brickSize.x;
+            float brickH = 1.0 / brickSize.y;
+            float jointWPercentage = 0.01;
+            float jointHPercentage = 0.05;
+            vec3 color = brickColor;
+            float yi = uv.y / brickH;
+            float nyi = round(yi);
+            float xi = uv.x / brickW;
+
+            if (mod(floor(yi), 2.0) == 0.0){
+                xi = xi - 0.5;
+            }
+
+            float nxi = round(xi);
+            vec2 brickuv = vec2((xi - floor(xi)) / brickH, (yi - floor(yi)) /  brickW);
+
+            if (yi < nyi + jointHPercentage && yi > nyi - jointHPercentage){
+                color = mix(jointColor, vec3(0.37, 0.25, 0.25), (yi - nyi) / jointHPercentage + 0.2);
+            }
+            else if (xi < nxi + jointWPercentage && xi > nxi - jointWPercentage){
+                color = mix(jointColor, vec3(0.44, 0.44, 0.44), (xi - nxi) / jointWPercentage + 0.2);
+            }
+            else {
+                float brickColorSwitch = mod(floor(yi) + floor(xi), 3.0);
+
+                if (brickColorSwitch == 0.0)
+                    color = mix(color, vec3(0.33, 0.33, 0.33), 0.3);
+                else if (brickColorSwitch == 2.0)
+                    color = mix(color, vec3(0.11, 0.11, 0.11), 0.3);
+            }
+
+            fragColor = vec4(color, 1.0);
+        }
+    </script>
+
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var Configuration = function () {
             return {
                 brickW: 25,
@@ -35,20 +101,16 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.mainShader = "prog";
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/ppShaderv2.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/procedurals/brick.glsl", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["brickSize", "brickColor", "jointColor"]);
-                    console.log(prog);
-                    return prog;
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "alphaShader",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        brickSize: { type: MB.UniformType.Vector2 },
+                        brickColor: { type: MB.UniformType.Vector3 },
+                        jointColor: { type: MB.UniformType.Vector3 }
+                    }
                 });
                 this.postProcess = new MB.PostProcess(this.context);
                 this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
@@ -59,13 +121,10 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-
-                prog.sendUniform2f("brickSize", this.text.brickW, this.text.brickH);
-                prog.sendUniform3f("brickColor", this.brickColor.r, this.brickColor.g, this.brickColor.b);
-                prog.sendUniform3f("jointColor", this.jointColor.r, this.jointColor.g, this.jointColor.b);
-
+                this.prog.uniforms.brickSize.value = new MB.Vect2(this.text.brickW, this.text.brickH);
+                this.prog.uniforms.brickColor.value = new MB.Vect3(this.brickColor.r, this.brickColor.g, this.brickColor.b);
+                this.prog.uniforms.jointColor.value = new MB.Vect3(this.jointColor.r, this.jointColor.g, this.jointColor.b);
+                this.prog.use();
                 this.postProcess.render();
             };
             MyScene.prototype.textCB = function (gui) {

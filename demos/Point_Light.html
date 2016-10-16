@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ambient light</title>
+    <title>Point Light</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -17,65 +17,131 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+
+        out vec3 outPosition;
+        out vec3 outNormal;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            outPosition = vec3(model * vec4(position, 1.0));
+            gl_Position = projection * view * vec4(outPosition, 1.0);
+            mat3 normalMatrix = mat3(inverse(transpose(model)));
+            outNormal = normalize(normalMatrix * normal);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec3 outPosition;
+        in vec3 outNormal;
+
+        out vec4 fragColor;
+        uniform mat4 view;
+
+        uniform vec3 viewPos;
+        uniform vec3 color;
+        uniform vec3 lightColor;
+        uniform float ambientStrength;
+
+        const vec3 lightDirection = vec3(1.0, 5.0, 6.0);
+
+        void main() {
+            vec3 ambient = ambientStrength * lightColor;
+
+            // Diffuse
+            vec3 norm = normalize(outNormal);
+            vec3 lightDir = normalize(lp - outPosition);
+            float diff = max(dot(norm, lightDir), 0.0);
+            vec3 diffuse = vec3(0.5) * diff;
+
+            // Specular
+            vec3 viewDir = normalize(viewPos - outPosition);
+            vec3 reflectDir = reflect(-lightDir, norm);
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1.0);
+            vec3 specular = vec3(spec);
+
+            // Attenuation
+            float dst    = length(lp - outPosition);
+            float attenuation = 1.0f / (1.0 + 0.09 * dst + 0.032 * (dst * dst));
+
+            ambient  *= attenuation;
+            diffuse  *= attenuation;
+            specular *= attenuation;
+
+            fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
+        }
+    </script>
+
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        var MyConfig = function () {
+            return {
+                ambientStrength: 0.7
+            };
         };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2());
-                this.homePoint = new MB.Vect3(0.08, 0.16, 20.25);
-                this.camera = new MB.Camera2(this.homePoint);
+                _super.call(this, "Point Light", new MB.GLContextW2(), MyConfig());
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
-                this.mainShader = "prog";
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
                 this.cubito = new MB.Cube(this.context, 15.0);
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("../shaders/passLight.vert", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_file);
-                    prog.addShader("../shaders/pointLight.frag", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_file);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["projection", "view", "model", "lightPosition", "viewPos"]);
-                    return prog;
+
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "ambientalShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        color: {
+                            type: MB.UniformType.Vector3,
+                            value: new MB.Vect3(0.0, 1.0, 0.3)
+                        },
+                        lightColor: {
+                            type: MB.UniformType.Vector3,
+                            value: new MB.Vect3(1.0, 0.0, 1.0)
+                        },
+                        ambientStrength: { type: MB.UniformType.Float }
+                    }
                 });
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
-                this.camera.update(this.cameraUpdate.bind(this));
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
-                prog.sendUniformMat4("model", this.model);
-                prog.sendUniform3f("lightPosition", 1.2, 1.0, 2.0);
-                this.cubito.render();
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.uniforms.ambientStrength.value = this.text.ambientStrength;
+                this.myProg.render(this.cubito);
             };
             MyScene.prototype.cameraUpdate = function () {
-                this.view = this.camera.GetViewMatrix();
-                this.projection = this.camera.GetProjectionMatrix(this.canvas);
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
-                prog.sendUniformVec3("viewPos", this.camera.GetPos());
-                prog.sendUniformMat4("projection", this.projection);
-                prog.sendUniformMat4("view", this.view);
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "ambientStrength", 0.01, 1.0);
             };
             return MyScene;
         }(MB.App));

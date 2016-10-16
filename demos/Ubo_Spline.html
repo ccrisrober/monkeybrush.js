@@ -17,12 +17,44 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        uniform int lod;
+        uniform int numPoints;
+        uniform mat4 transform;
+
+        uniform ControlPoints {
+            vec3[256] points;
         };
+
+        void main(void) {
+            int i = gl_VertexID % lod;
+            int segment = gl_VertexID / lod;
+            int start = -3 + segment;
+            float t = float(i) / float(lod);
+            float t2 = t * t;
+            float t3 = t2 * t;
+            float it = 1.0 - t;
+            float w0 = it * it * it / 6.0;
+            float w1 = 0.5 * t3 - t2 + 2.0 / 3.0;
+            float w2 = 0.5 * (-t3 + t2 + t) + 1.0 / 6.0;
+            float w3 = t3 / 6.0;
+            vec3 p = w0 * points[clamp(start+0, 0, numPoints - 1)] +
+                     w1 * points[clamp(start+1, 0, numPoints - 1)] +
+                     w2 * points[clamp(start+2, 0, numPoints - 1)] +
+                     w3 * points[clamp(start+3, 0, numPoints - 1)];
+            gl_Position = transform * vec4(p, 1.0);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+        out vec4 fragColor;
+
+        void main(void) {
+            fragColor = vec4(1.0);
+        }
+    </script>
+
+    <script type="text/javascript">
         var Configuration = function () {
             return {
                 lod: 1,
@@ -33,23 +65,20 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2(), Configuration());
-                this.drawTick = true;
-                this.mainShader = "prog";
                 this.angle = 0;
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("#version 300 es\n            uniform int lod;\n            uniform int numPoints;\n            uniform mat4 transform;\n\n            uniform ControlPoints {\n                vec3[256] points;\n            };\n\n            void main(void) {\n                int i = gl_VertexID % lod;\n                int segment = gl_VertexID / lod;\n                int start = -3 + segment;\n                float t = float(i) / float(lod);\n                float t2 = t * t;\n                float t3 = t2 * t;\n                float it = 1.0 - t;\n                float w0 = it * it * it / 6.0;\n                float w1 = 0.5 * t3 - t2 + 2.0 / 3.0;\n                float w2 = 0.5 * (-t3 + t2 + t) + 1.0 / 6.0;\n                float w3 = t3 / 6.0;\n                vec3 p =    w0 * points[clamp(start+0, 0, numPoints - 1)] +\n                            w1 * points[clamp(start+1, 0, numPoints - 1)] +\n                            w2 * points[clamp(start+2, 0, numPoints - 1)] +\n                            w3 * points[clamp(start+3, 0, numPoints - 1)];\n                gl_Position = transform * vec4(p, 1.0);\n                gl_PointSize = 10.0;\n            }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-                    prog.addShader("#version 300 es\n            precision highp float;\n            out vec4 fragColor;\n            void main(void) {\n                fragColor = vec4(1.0);\n            }\n            ", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["transform", "lod", "numPoints"]);
-                    return prog;
+                this.prog = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        transform: { type: MB.UniformType.Matrix4 },
+                        lod: { type: MB.UniformType.Integer },
+                        numPoints: { type: MB.UniformType.Integer }
+                    }
                 });
-                var program = MB.ProgramManager.get(this.mainShader);
-                var uniformPerDrawBuffer = new MB.VertexUBO(this.context, program, "ControlPoints", 0);
+                var uniformPerDrawBuffer = this.prog._program.ubos["ControlPoints"];
                 this.numPoints = 256;
                 var pointsPerCircle = 25;
                 var fb = new Float32Array(4 * this.numPoints);
@@ -72,25 +101,22 @@
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
-            };
-            MyScene.prototype.draw = function () {
-                if (this.drawTick === false) {
-                    return;
-                }
-                this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
+
                 var pp = mat4.create();
                 mat4.perspective(pp, MB.Mathf.degToRad(45.0), 1.0, 0.1, 100.0);
                 var vv = mat4.create();
                 mat4.lookAt(vv, vec3.fromValues(0.0, 0.0, 50.0), vec3.fromValues(0.0, 20.0, 0.0), vec3.fromValues(0.0, 1.0, 0.0));
-                var mm = mat4.create();
-                mat4.mul(mm, pp, vv);
-                mat4.rotateY(mm, mm, this.angle);
+                var tt = mat4.create();
+                mat4.mul(tt, pp, vv);
+                mat4.rotateY(tt, tt, this.angle);
+                this.prog.uniforms.transform.value = tt;
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.prog.uniforms.lod.value = this.text.lod;
+                this.prog.uniforms.numPoints.value = this.text.numPoints;
                 var gl = this.context.gl;
-                prog.sendUniformMat4("transform", mm);
-                prog.sendUniform1i("lod", this.text.lod);
-                prog.sendUniform1i("numPoints", this.text.numPoints);
+                this.prog.use();
                 gl.drawArrays(MB.ctes.RenderMode.LineStrip, 0, this.text.lod * (this.text.numPoints + 1) + 1);
             };
             MyScene.prototype.textCB = function (gui) {

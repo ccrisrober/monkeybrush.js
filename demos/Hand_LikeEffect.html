@@ -17,15 +17,6 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-        layout(location = 0) in vec3 vertPosition;
-        out vec2 uv;
-        void main(void) {
-            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-            gl_Position = vec4(vertPosition, 1.0);
-        }
-    </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
 
@@ -38,8 +29,7 @@
         uniform sampler2D tex;
         const vec3 W = vec3(0.2125, 0.7154, 0.0721);
 
-        vec3 StripsPattern(vec2 position)
-        {
+        vec3 StripsPattern(vec2 position) {
             vec2 p = (position - 0.5) * 500.0;
 
             float angle = 0.7;
@@ -50,11 +40,11 @@
 
             float gray = dot(color, W);
             if(gray > 0.5)
-                return vec3(220.0/255.0, 220.0/255.0, 220.0/255.0);
+                return vec3(220.0/255.0);
             else
-                return vec3(120.0/255.0, 120.0/255.0, 120.0/255.0);
+                return vec3(120.0/255.0);
         }
-        void main ( void ) {
+        void main () {
             vec3 color;
 
             //find the edge and draw
@@ -78,12 +68,9 @@
 
             float gray = dot(sample4, W);
 
-            if (border.r > 0.5 || border.g > 0.5 || border.b > 0.5)
-            {
+            if (border.r > 0.5 || border.g > 0.5 || border.b > 0.5) {
                 color = vec3(0.0) ;
-            }
-            else
-            {
+            } else {
                 if(gray < 0.25)
                     color = vec3(20.0/255.0, 20.0/255.0, 20.0/255.0);
                 else if(gray >= 0.25 && gray < 0.4)
@@ -96,55 +83,44 @@
         }
     </script>
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.mainShader = "prog";
             };
             MyScene.prototype.loadAssets = function () {
                 MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                var _this = this;
-
-                var myTexture = MB.ResourceMap.retrieveAsset("myTex");
-                this.tex2d = new MB.Texture2D(this.context, myTexture, {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(_this.context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex", "iResolution"]);
-                    console.log(prog);
-                    return prog;
+                this.myProg = new MB.PostProcessMaterial(this.context, {
+                    name: "handLikePP",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        iResolution: { type: MB.UniformType.Vector2 }
+                    }
                 });
                 this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
+                var canvas = this.canvas;
+                this.myProg.uniforms.iResolution.value = new MB.Vect2(canvas.width, canvas.height);
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-                var prog = MB.ProgramManager.get(this.mainShader);
-                prog.use();
                 this.tex2d.bind(0);
-                prog.sendUniform1i("tex", 0);
-                var canvas = this.canvas;
-                prog.sendUniform2f("iResolution", canvas.width, canvas.height);
+                this.myProg.use();
                 this.postProcess.render();
             };
             return MyScene;

@@ -18,15 +18,6 @@
     <script type="text/javascript" src="../dist/output.js"></script>
     <canvas id="canvas" width="1024" height="1024"></canvas>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-        layout(location = 0) in vec3 vertPosition;
-        out vec2 uv;
-        void main(void) {
-            uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
-            gl_Position = vec4(vertPosition, 1.0);
-        }
-    </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
 
@@ -70,11 +61,6 @@
         }
     </script>
     <script type="text/javascript">
-        var __extends = (this && this.__extends) || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
         var MyConfig = function () {
             return {
                 Ro: 0.3,
@@ -89,26 +75,25 @@
                 _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")), MyConfig());
             }
             MyScene.prototype.initialize = function () {
-                var that = this;
-                MB.ProgramManager.addWithFun("prog", function () {
-                    var prog = new MB.Program(that._context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("shader-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex"]);
-                    prog.sendUniform1i("tex", 0);
-                    return prog;
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "firsStepShader",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
-                MB.ProgramManager.addWithFun("prog_show", function () {
-                    var prog = new MB.Program(that._context);
-                    prog.addShader("shader-vs", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-                    prog.addShader("show-fs", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-                    prog.compile();
-                    prog.use();
-                    prog.addUniforms(["tex"]);
-                    prog.sendUniform1i("tex", 0);
-                    return prog;
+                this.prog_show = new MB.PostProcessMaterial(this.context, {
+                    name: "secondStepShader",
+                    fragmentShader: MB.Utils.readScriptShader("show-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
                 });
                 var ww = this.context.canvas.width;
                 var hh = this.context.canvas.height;
@@ -161,16 +146,12 @@
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
-
-                var prog;
-                prog = MB.ProgramManager.get("prog");
-                prog.use();
+                this.prog.use();
 
                 this.customPP.swap();
                 this.fbo.unbind();
 
-                prog = MB.ProgramManager.get("prog_show");
-                prog.use();
+                this.prog_show.use();
                 this.tex.bind(0);
                 this.pp.render();
             };

@@ -84,7 +84,7 @@ namespace MB {
 
             this._unpackAlignment = options.unpackAlignment || 4;
 
-            this._flipY = options.flipY || 0;
+            this._flipY = options.flipY || 1;
 
         };
         public bind(slot?: number) {
