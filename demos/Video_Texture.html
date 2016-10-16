@@ -70,7 +70,16 @@
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "diffuseShader",
                     vertexShader: MB.Utils.readScriptShader("shader-vs"),
-                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    fragmentShader: [
+                        "#version 300 es",
+                        "precision highp float;",
+                        "in vec2 outUV;",
+                        "uniform sampler2D tex;",
+                        "out vec4 fragColor;",
+                        "void main() {",
+                        "    fragColor = texture(tex, outUV);",
+                        "}"
+                    ].join("\n"),
                     uniforms: {
                         projection: { type: MB.UniformType.Matrix4 },
                         view: { type: MB.UniformType.Matrix4 },
