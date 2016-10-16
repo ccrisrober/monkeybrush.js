@@ -1226,22 +1226,22 @@ var MB;
         };
         ;
         Mat4.prototype.toCSSMatrix = function () {
-            var str = '';
-            str += this._value[0].toFixed(20) + ',';
-            str += this._value[1].toFixed(20) + ',';
-            str += this._value[2].toFixed(20) + ',';
-            str += this._value[3].toFixed(20) + ',';
-            str += this._value[4].toFixed(20) + ',';
-            str += this._value[5].toFixed(20) + ',';
-            str += this._value[6].toFixed(20) + ',';
-            str += this._value[7].toFixed(20) + ',';
-            str += this._value[8].toFixed(20) + ',';
-            str += this._value[9].toFixed(20) + ',';
-            str += this._value[10].toFixed(20) + ',';
-            str += this._value[11].toFixed(20) + ',';
-            str += this._value[12].toFixed(20) + ',';
-            str += this._value[13].toFixed(20) + ',';
-            str += this._value[14].toFixed(20) + ',';
+            var str = "";
+            str += this._value[0].toFixed(20) + ",";
+            str += this._value[1].toFixed(20) + ",";
+            str += this._value[2].toFixed(20) + ",";
+            str += this._value[3].toFixed(20) + ",";
+            str += this._value[4].toFixed(20) + ",";
+            str += this._value[5].toFixed(20) + ",";
+            str += this._value[6].toFixed(20) + ",";
+            str += this._value[7].toFixed(20) + ",";
+            str += this._value[8].toFixed(20) + ",";
+            str += this._value[9].toFixed(20) + ",";
+            str += this._value[10].toFixed(20) + ",";
+            str += this._value[11].toFixed(20) + ",";
+            str += this._value[12].toFixed(20) + ",";
+            str += this._value[13].toFixed(20) + ",";
+            str += this._value[14].toFixed(20) + ",";
             str += this._value[15].toFixed(20);
             return "matrix3d(" + str + ")";
         };
@@ -6239,6 +6239,7 @@ var MB;
         function Program(context) {
             this.uniformLocations = {};
             this.attribLocations = {};
+            this.ubos = {};
             this._context = context;
             this._shaders = [];
             this._isLinked = false;
@@ -6258,7 +6259,7 @@ var MB;
                 attr = attrs[attr];
                 var attrID = gl.getAttribLocation(this._handler, attr);
                 if (attrID < 0) {
-                    console.error(attr + " undefined");
+                    console.warn(attr + " undefined");
                     continue;
                 }
                 this.attribLocations[attr] = attrID;
@@ -6278,17 +6279,26 @@ var MB;
             for (var unif in unifs) {
                 unif = unifs[unif];
                 var unifID = gl.getUniformLocation(this._handler, unif);
+                if (unifID === null)
+                    continue;
                 if (unifID < 0) {
-                    console.error(unif + " undefined");
+                    console.warn(unif + " undefined");
                     continue;
                 }
                 this.uniformLocations[unif] = unifID;
             }
         };
         ;
-        Program.prototype.loadsFromScript = function (vsShaderID, fgShaderID) {
+        Program.prototype.loadsFromScript = function (vsShaderID, fsShaderID) {
             this.addShader(vsShaderID, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-            this.addShader(fgShaderID, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+            this.addShader(fsShaderID, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
+            this.compile();
+            this.autocatching();
+        };
+        ;
+        Program.prototype.load = function (vsShaderCode, fsShaderCode) {
+            this.addShader(vsShaderCode, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this.addShader(fsShaderCode, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             this.compile();
             this.autocatching();
         };
@@ -6410,14 +6420,44 @@ var MB;
         };
         ;
         Program.prototype._processImports = function (src) {
-            var regex = /#import<(.+)>(\((.*)\))*/g;
+            var regex = /#import<(.+)>(\[(.*)\])*(\((.*)\))*/g;
             var match = regex.exec(src);
-            var ret = src;
-            while (match) {
+            var ret = src.slice(0);
+            while (match != null) {
                 var includeFile = match[1];
                 if (MB.ResourceShader.exist(includeFile)) {
-                    var includeContent = MB.ResourceShader.get(includeFile);
-                    ret = ret.replace(match[0], this._processImports(includeContent));
+                    var content = MB.ResourceShader.get(includeFile);
+                    if (match[4]) {
+                        var splits = match[5].split(",");
+                        var sp = void 0;
+                        for (var idx = 0, size = splits.length; idx < size; ++idx) {
+                            sp = splits[idx].split("=");
+                            content = content.replace(new RegExp(sp[0], "g"), sp[1]);
+                        }
+                    }
+                    if (match[2]) {
+                        var idxStr = match[3];
+                        if (idxStr.indexOf("..") !== -1) {
+                            var idxSplits = idxStr.split("..");
+                            var min = parseInt(idxSplits[0]);
+                            var max = parseInt(idxSplits[1]);
+                            var srcContent = content.slice(0);
+                            content = "";
+                            if (isNaN(max)) {
+                                max = min;
+                            }
+                            for (var i = min; i <= max; i++) {
+                                content += srcContent.replace(/\{N\}/g, i + "") + "\n";
+                            }
+                        }
+                        else {
+                            content = content.replace(/\{N\}/g, idxStr);
+                        }
+                    }
+                    ret = ret.replace(match[0], this._processImports(content));
+                }
+                else {
+                    ret = ret.replace(match[0], "FAIL");
                 }
                 match = regex.exec(src);
             }
@@ -6587,8 +6627,25 @@ var MB;
             return Program.GL_TABLE[type];
         };
         ;
+        Program.prototype.addUbos = function (ubos) {
+            for (var ubo in ubos) {
+                ubo = ubos[ubo];
+                this.ubos[ubo["name"]] = new MB.VertexUBO(this._context, this, ubo["name"], ubo["id"]);
+            }
+        };
+        ;
         Program.prototype.autocatching = function () {
             var gl = this._context.gl;
+            var numUBOS = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORM_BLOCKS);
+            var ubos = [];
+            for (var i = 0; i < numUBOS; ++i) {
+                var name_1 = gl.getActiveUniformBlockName(this._handler, i);
+                ubos.push({
+                    name: name_1,
+                    id: i
+                });
+            }
+            this.addUbos(ubos);
             var numUniforms = gl.getProgramParameter(this._handler, gl.ACTIVE_UNIFORMS);
             var unifs = [];
             for (var i = 0; i < numUniforms; ++i) {
@@ -7247,10 +7304,10 @@ var MB;
         ;
         function arrayToVector(elements) {
             if (Array.isArray(elements)) {
-                if (typeof (elements[3]) !== 'undefined') {
+                if (typeof (elements[3]) !== "undefined") {
                     return new MB.Vect4(elements[0], elements[1], elements[2], elements[3]);
                 }
-                else if (typeof (elements[2]) !== 'undefined') {
+                else if (typeof (elements[2]) !== "undefined") {
                     return new MB.Vect3(elements[0], elements[1], elements[2]);
                 }
                 else {
@@ -7262,6 +7319,19 @@ var MB;
             }
         }
         Utils.arrayToVector = arrayToVector;
+        ;
+        function readScriptShader(script) {
+            var shaderText, shaderSource;
+            shaderText = document.getElementById(script);
+            shaderSource = shaderText.firstChild.textContent;
+            if (shaderSource === null) {
+                alert("WARNING: " + script + " failed");
+                MB.Log.warn(this._fragmentSource);
+                throw "SHADER ERROR";
+            }
+            return shaderSource;
+        }
+        Utils.readScriptShader = readScriptShader;
         ;
     })(Utils = MB.Utils || (MB.Utils = {}));
     ;
@@ -11263,6 +11333,126 @@ var MB;
 
 var MB;
 (function (MB) {
+    (function (UniformType) {
+        UniformType[UniformType["Float"] = 0] = "Float";
+        UniformType[UniformType["Integer"] = 1] = "Integer";
+        UniformType[UniformType["Unsigned"] = 2] = "Unsigned";
+        UniformType[UniformType["Boolean"] = 3] = "Boolean";
+        UniformType[UniformType["Vector2"] = 4] = "Vector2";
+        UniformType[UniformType["Vector3"] = 5] = "Vector3";
+        UniformType[UniformType["Vector4"] = 6] = "Vector4";
+        UniformType[UniformType["Matrix2"] = 7] = "Matrix2";
+        UniformType[UniformType["Matrix3"] = 8] = "Matrix3";
+        UniformType[UniformType["Matrix4"] = 9] = "Matrix4";
+    })(MB.UniformType || (MB.UniformType = {}));
+    var UniformType = MB.UniformType;
+    ;
+    ;
+    ;
+    var ShaderMaterial = (function (_super) {
+        __extends(ShaderMaterial, _super);
+        function ShaderMaterial(context, params) {
+            _super.call(this);
+            this._uniforms = {};
+            function diff2(o1, o2) {
+                var res = {};
+                for (var key in o1) {
+                    if (o2.hasOwnProperty(key)) {
+                        res[key] = o2[key];
+                    }
+                }
+                return res;
+            }
+            this.id = params.name || "";
+            this._program = new MB.Program(context);
+            this._program.load(params.vertexShader, params.fragmentShader);
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = diff2(this._program.uniformLocations, params.uniforms);
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(ShaderMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ShaderMaterial.prototype.render = function (model) {
+            this.use();
+            model.render();
+        };
+        ;
+        ShaderMaterial.prototype.render2 = function (model) {
+            this.use();
+            model.render2();
+        };
+        ;
+        ShaderMaterial.prototype.render3 = function (model) {
+            this.use();
+            model.render3();
+        };
+        ;
+        ShaderMaterial.prototype.use = function () {
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return ShaderMaterial;
+    }(MB.Material));
+    MB.ShaderMaterial = ShaderMaterial;
+    ;
+})(MB || (MB = {}));
+
+
+
+
+
+
+
+var MB;
+(function (MB) {
     var NormalMaterial = (function (_super) {
         __extends(NormalMaterial, _super);
         function NormalMaterial(context) {
@@ -11369,115 +11559,20 @@ var MB;
 
 var MB;
 (function (MB) {
-    (function (UniformType) {
-        UniformType[UniformType["Float"] = 0] = "Float";
-        UniformType[UniformType["Integer"] = 1] = "Integer";
-        UniformType[UniformType["Unsigned"] = 2] = "Unsigned";
-        UniformType[UniformType["Boolean"] = 3] = "Boolean";
-        UniformType[UniformType["Vector2"] = 4] = "Vector2";
-        UniformType[UniformType["Vector3"] = 5] = "Vector3";
-        UniformType[UniformType["Vector4"] = 6] = "Vector4";
-        UniformType[UniformType["Matrix2"] = 7] = "Matrix2";
-        UniformType[UniformType["Matrix3"] = 8] = "Matrix3";
-        UniformType[UniformType["Matrix4"] = 9] = "Matrix4";
-    })(MB.UniformType || (MB.UniformType = {}));
-    var UniformType = MB.UniformType;
     ;
-    ;
-    ;
-    var ShaderMaterial = (function (_super) {
-        __extends(ShaderMaterial, _super);
-        function ShaderMaterial(context, params) {
-            _super.call(this);
-            this._uniforms = {};
-            function diff2(o1, o2) {
-                var res = {};
-                for (var key in o1) {
-                    if (o2.hasOwnProperty(key)) {
-                        res[key] = o2[key];
-                    }
-                }
-                return res;
-            }
-            this.id = params.name || "";
-            this._program = new MB.Program(context);
-            this._program.loadsFromScript(params.vertexShader, params.fragmentShader);
-            MB.ProgramManager.add(this.id, this._program);
-            var unifs = diff2(this._program.uniformLocations, params.uniforms);
-            this._uniforms = {};
-            var aux;
-            for (var key in unifs) {
-                aux = unifs[key];
-                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
-            }
+    var PostProcessMaterial = (function (_super) {
+        __extends(PostProcessMaterial, _super);
+        function PostProcessMaterial(context, params) {
+            _super.call(this, context, {
+                name: params.name,
+                uniforms: params.uniforms,
+                vertexShader: "#version 300 es\n#import<VertexPP>",
+                fragmentShader: params.fragmentShader
+            });
         }
-        ;
-        Object.defineProperty(ShaderMaterial.prototype, "uniforms", {
-            get: function () {
-                return this._uniforms;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ShaderMaterial.prototype.render = function (model) {
-            this.use();
-            model.render();
-        };
-        ;
-        ShaderMaterial.prototype.render2 = function (model) {
-            this.use();
-            model.render2();
-        };
-        ;
-        ShaderMaterial.prototype.render3 = function (model) {
-            this.use();
-            model.render3();
-        };
-        ;
-        ShaderMaterial.prototype.use = function () {
-            this._program.use();
-            var uniform;
-            for (var key in this._uniforms) {
-                uniform = this._uniforms[key];
-                if (!uniform.isDirty)
-                    continue;
-                if (uniform.type === MB.UniformType.Float) {
-                    this._program.sendUniform1f(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Integer) {
-                    this._program.sendUniform1i(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Boolean) {
-                    this._program.sendUniform1b(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Unsigned) {
-                    this._program.sendUniform1u(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Matrix2) {
-                    this._program.sendUniformMat2(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Matrix3) {
-                    this._program.sendUniformMat3(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Matrix4) {
-                    this._program.sendUniformMat4(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Vector2) {
-                    this._program.sendUniformVec2(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Vector3) {
-                    this._program.sendUniformVec3(key, uniform.value);
-                }
-                else if (uniform.type === MB.UniformType.Vector4) {
-                    this._program.sendUniformVec4(key, uniform.value);
-                }
-                uniform.isDirty = false;
-            }
-        };
-        return ShaderMaterial;
-    }(MB.Material));
-    MB.ShaderMaterial = ShaderMaterial;
+        return PostProcessMaterial;
+    }(MB.ShaderMaterial));
+    MB.PostProcessMaterial = PostProcessMaterial;
     ;
 })(MB || (MB = {}));
 
@@ -12073,9 +12168,10 @@ var MBS;
         });
         Scene.prototype.addModel = function (m) {
         };
+        ;
         Scene.prototype.addLight = function (lg) {
             for (var i = 0, l = this._lights.length; i < l; ++i) {
-                if (this._lights[i] == lg) {
+                if (this._lights[i] === lg) {
                     return;
                 }
             }

@@ -266,14 +266,14 @@ namespace MB {
             //     20696-function-to-convert-between-dcm-euler-angles-quaternions-
             //     and-euler-vectors/content/SpinCalc.m
 
-            const s1 = Math.sin(euler.x/2.0);
-            const s2 = Math.sin(euler.y/2.0);
-            const s3 = Math.sin(euler.z/2.0);
-            const c1 = Math.cos(euler.x/2.0);
-            const c2 = Math.cos(euler.y/2.0);
-            const c3 = Math.cos(euler.z/2.0);
+            const s1 = Math.sin(euler.x / 2.0);
+            const s2 = Math.sin(euler.y / 2.0);
+            const s3 = Math.sin(euler.z / 2.0);
+            const c1 = Math.cos(euler.x / 2.0);
+            const c2 = Math.cos(euler.y / 2.0);
+            const c3 = Math.cos(euler.z / 2.0);
 
-            var order = euler.order;
+            const order = euler.order;
             if (order === MB.RotSeq.xyz) {
                 this._value[0] = s1 * c2 * c3 + c1 * s2 * s3;
                 this._value[1] = c1 * s2 * c3 - s1 * c2 * s3;

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Engine MBS</title>
+    <style>
+        body {
+            color: white;
+
+            font-family: Verdana;
+            font-size: 13px;
+            text-align: center;
+            font-weight: bold;
+
+            background-color: #050505;
+            margin: 0px;
+            overflow: hidden;
+        }
+        #info {
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            padding: 5px;
+        }
+        a {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="container">
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </div>
+    <div id="info"><a href="./" target="_blank">MonkeyBrush</a> - muahaha</div>
+
+    <script type="text/javascript" src="../../bower_components/stats.js/build/stats.min.js"></script>
+    <script type="text/javascript" src="../../bower_components/dat.gui/dat.gui.min.js"></script>
+    <script type="text/javascript" src="../../bower_components/log4javascript/log4javascript.js"></script>
+
+    <script type="text/javascript" src="../../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+
+        out vec3 outPosition;
+        out vec3 outNormal;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        void main() {
+            outPosition = vec3(model * vec4(position, 1.0));
+            gl_Position = projection * view * vec4(outPosition, 1.0);
+            mat3 normalMatrix = mat3(inverse(transpose(model)));
+            outNormal = normalize(normalMatrix * normal);
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+        in vec3 outPosition;
+        in vec3 outNormal;
+        out vec4 fragColor;
+        uniform vec3 viewPos;
+        uniform vec3 color;
+        void main() {
+            vec3 N = normalize(outNormal);
+            vec3 L = normalize(viewPos - outPosition);
+            float dif = dot(N, L);
+            dif = clamp(dif, 0.0, 1.0);
+            fragColor = vec4(color * dif, 1.0) + vec4(color * 0.3, 1.0);
+        }
+    </script>
+
+    <script type="text/javascript">
+        var engine, scene, stats;
+
+        var Configuration = function() {
+            this.size = 1.0;
+            this.rotate = true;
+            this.positionX = 0.0;
+            this.positionY = 0.0;
+            this.positionZ = 0.0;
+            this.innerRadius = 5.0;
+        };
+
+        var SPEED = 0.001;
+
+        var cubito;
+        var angle = 0.0;
+
+        var node, node2;
+        var myProg;
+
+        var sun, earthPivot, earth, moonPivot, moon;
+        var root_;
+
+        window.onload = function () {
+            engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
+            scene = new MBS.Scene("myScene", engine);
+
+            scene.camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 25.0));
+            scene.camera.fov = 70.0;
+
+            stats = new Stats();
+            scene.clearColor = MB.Color3.Indigo;
+
+            var container = document.getElementById("container");
+            container.appendChild(stats.dom);
+
+            myProg = new MB.ShaderMaterial(engine.context, {
+                vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 },
+                    viewPos: { type: MB.UniformType.Vector3 },
+                    color: { type: MB.UniformType.Vector3 }
+                }
+            });
+
+            cubito = new MB.Cube(engine.context, 2.0);
+
+            node = new MBS.Node("box", scene);
+            node2 = new MBS.Node("box2", scene);
+
+            onWindowResize();
+
+            window.addEventListener("resize", onWindowResize, false);
+
+            var clock = new MB.Clock();
+
+            root_ = new MBS.Node("root", scene);
+            sun = new MBS.Node("sun", scene);
+            root_.add(sun);
+
+            earthPivot = new MBS.Node("earthPivot", scene);
+            sun.add(earthPivot);
+
+            earth = new MBS.Node("earth", scene);
+            earth.position.x = 1000;
+            earthPivot.add(earth);
+
+            moonPivot = new MBS.Node("moonPivot", scene);
+            moonPivot.position = earth.position;
+            earthPivot.add( moonPivot );
+            moon = new MBS.Node("moon", scene);
+            moonPivot.add(moon);
+            console.log(root_);
+
+
+            var renderLoop = function(dt) {
+                scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+                scene.camera.update(updateCamera.bind(this));
+
+                if (config.rotate) {
+                    angle -= MB.Timer.deltaTime() * SPEED;
+                }
+
+                scene.render(dt);
+                engine.context.state.clearBuffers();
+
+                //prog.sendUniform3f("color", 1.0, 0.0, 1.0);
+
+
+                //earthPivot.rotation.y += 0.1;
+                //moonPivot.rotation += 0.1;
+
+                var t = clock.elapsedTime();
+
+                var e_angle = t * 0.8;
+                node.position.set(
+                    config.innerRadius * Math.cos(e_angle) + config.positionX,
+                    config.innerRadius * Math.sin(e_angle) + config.positionY,
+                    0.0 + config.positionZ
+                );
+                node.rotation.x += 0.01;
+                node.rotation.y = -angle * 2.0;
+                //node.RotateZ(0.01);
+                node.scale.set(
+                    config.size * 2.0,
+                    config.size * 2.0,
+                    config.size * 2.0
+                );
+                //node.TranslateZ(0.5 * Math.cos(dt));
+
+                node.updateMatrix();
+                myProg.uniforms.model.value = node.model;
+                myProg.uniforms.color.value = [1.0, 0.0, 0.0];
+                myProg.render(cubito);
+
+                var m_angle = t * 0.8;
+                node2.position.set(
+                    config.innerRadius * Math.cos(m_angle) + node.position.x,
+                    config.innerRadius * Math.sin(m_angle) + node.position.y,
+                    0.0 + node.position.z
+                );
+                node2.rotation.set(
+                    angle * 2.0,
+                    angle,
+                    angle * 3.0
+                );
+                node2.scale.set(
+                    config.size,
+                    config.size,
+                    config.size
+                );
+
+                node2.updateMatrix();
+                myProg.uniforms.model.value = node2.model;
+                myProg.uniforms.color.value = [0.0, 1.0, 0.0];
+                myProg.render(cubito);
+
+                stats.update();
+            };
+            updateCamera();
+
+            var config = new Configuration();
+            var gui = new dat.GUI();
+            gui.add(config, "size", 0.01, 2.5);
+            gui.add(config, "positionX", -10.0, 10.0);
+            gui.add(config, "positionY", -10.0, 10.0);
+            gui.add(config, "positionZ", -10.0, 10.0);
+            gui.add(config, "innerRadius", 1.0, 10.0);
+            gui.add(config, "rotate", true);
+
+            engine.run(renderLoop);
+        };
+
+        var updateCamera = function() {
+            var view = scene.camera.GetViewMatrix();
+            var projection = scene.camera.GetProjectionMatrix(engine.context.canvas);
+            myProg.uniforms.viewPos.value = scene.camera.GetPos();
+            myProg.uniforms.projection.value = projection;
+            myProg.uniforms.view.value = view;
+        }
+
+        var identityMatrix = MB.Mat4.identity.clone();
+        var model = new MB.Mat4();
+
+        function onWindowResize( event ) {
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+
+            engine.context.canvas.width = width;
+            engine.context.canvas.height = height;
+            engine.context.canvas.style.width = width + 'px';
+            engine.context.canvas.style.height = height + 'px';
+
+            engine.context.state.setViewport(new MB.Vector4(0.0, 0.0, width, height));
+            updateCamera();
+        }
+    </script>
+</body>
+</html>

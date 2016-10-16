@@ -40,6 +40,8 @@
             "./src/library/textures/Texture.ts",
             "./src/library/textures/**/*.ts",
 
+            "./src/library/materials/Material.ts",
+            "./src/library/materials/ShaderMaterial.ts",
             "./src/library/materials/**/*.ts",
             "./src/library/scene/**/*.ts",
             "./src/library/Transform.ts",
@@ -80,6 +82,8 @@
             "./src/library/textures/Texture.ts",
             "./src/library/textures/**/*.ts",
 
+            "./src/library/materials/Material.ts",
+            "./src/library/materials/ShaderMaterial.ts",
             "./src/library/materials/**/*.ts",
             "./src/library/scene/**/*.ts",
             "./src/library/Transform.ts",

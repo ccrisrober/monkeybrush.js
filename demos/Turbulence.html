@@ -104,8 +104,8 @@
                 this.cubito = new MB.Mesh(this.context, "../assets/objects/teddy.json");
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "turbulenceShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         projection: { type: MB.UniformType.Matrix4 },
                         view: { type: MB.UniformType.Matrix4 },

@@ -17,9 +17,6 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        #import<VertexPP>
-    </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
 
@@ -108,10 +105,9 @@
                 _super.call(this, "App", new MB.GLContextW2());
             };
             MyScene.prototype.initialize = function () {
-                this.prog = new MB.ShaderMaterial(this.context, {
-                    name: "raymarching",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "pathTracing",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         iGlobalTime: { type: MB.UniformType.Float },
                         iResolution: { type: MB.UniformType.Vector2 }

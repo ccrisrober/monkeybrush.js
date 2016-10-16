@@ -67,8 +67,8 @@
             MyScene.prototype.initialize = function () {
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "texture2DArray",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         viewProj: { type: MB.UniformType.Matrix4 },
                         tex: {

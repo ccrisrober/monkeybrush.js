@@ -19,9 +19,6 @@
     <script type="text/javascript" src="../dist/output.js"></script>
     <canvas id="canvas" width="512" height="512"></canvas>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        #import<VertexPP>
-    </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
 
@@ -83,10 +80,9 @@
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
 
-                this.prog = new MB.ShaderMaterial(this.context, {
+                this.prog = new MB.PostProcessMaterial(this.context, {
                     name: "diffuseShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,

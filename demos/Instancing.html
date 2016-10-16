@@ -70,8 +70,8 @@
                 });
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "diffuseShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs"
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs")
                 });
                 this.cameraUpdate();
                 this.numInstances = 10;

@@ -24,11 +24,11 @@ namespace MBS {
         }
 
         public addModel(m) {
-
-        }
+            // TODO
+        };
         public addLight(lg: MB.Light) {
             for (let i = 0, l = this._lights.length; i < l; ++i) {
-                if (this._lights[i] == lg) {
+                if (this._lights[i] === lg) {
                     return;
                 }
             }

@@ -32,7 +32,6 @@
 
         void main() {
             gl_Position = projection * view * model * vec4(position, 1.0);
-            gl_PointSize = 25.0;
             outUV = uv;
         }
     </script>
@@ -88,8 +87,8 @@
 
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "ppShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         projection: { type: MB.UniformType.Matrix4 },
                         view: { type: MB.UniformType.Matrix4 },

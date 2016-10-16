@@ -1,11 +1,11 @@
 namespace MB {
     export interface TFMaterialParams {
-        name: string,
+        name: string;
         uniforms?: { [key: string]: MB.IUniformMaterial; };
         tfs: {
             varying: Array<string>,
             mode: MB.ctes.TFMode
-        },
+        };
         vertexShader: string;
         fragmentShader: string;
     };

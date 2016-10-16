@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convolution matrix</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <!-- TODO: DEMO WITH FBO -->
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        uniform float iGlobalTime;
+
+        #define PI 3.1415
+        #define TWO_PI PI * 2.0
+        #define SIDES 10.0
+
+        uniform sampler2D tex;
+        void main() {
+            // Center UV
+            vec2 p = uv - 0.5;
+
+            // Convert from cartesian coordinates to polar coordinates
+            float r = length(p);        // r = âˆš( x2 + y2 )
+            float angle = atan(p.y, p.x);   // Î¸ = tan-1 ( y / x )
+
+            // Kaleidoscope effect
+            angle = mod(angle, TWO_PI / SIDES);
+            angle = abs(angle - PI / SIDES);
+
+            // Convert from polar coordinates to cartesian coordinates
+            p = r * vec2(cos(angle), sin(angle));   // x = r Ã— cos( Î¸ ), y = r Ã— sin( Î¸ )
+
+            // Final color
+            fragColor = texture(tex, p - cos(iGlobalTime) / 2.0);
+        }
+    </script>
+    <script type="text/javascript">
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2());
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "alphaShader",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        iGlobalTime: { type: MB.UniformType.Float }
+                    }
+                });
+                this.tex2d.bind(0);
+                this.postProcess = new MB.PostProcess(this.context);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.__resize__();
+                this.prog.uniforms.iGlobalTime.value = dt / 2*3.14159 * .75
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.prog.use();
+                this.postProcess.render();
+            };
+            return MyScene;
+        }(MB.App));
+        var myScene;
+        window.onload = function () {
+            myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

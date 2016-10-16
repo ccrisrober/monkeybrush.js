@@ -58,9 +58,6 @@
         }
     </script>
 
-    <script type="x-shader/x-vertex" id="pp-vs">#version 300 es
-        #import<VertexPP>
-    </script>
     <script type="x-shader/x-fragment" id="pp-fs">#version 300 es
         precision highp float;
 
@@ -102,8 +99,8 @@
                 this.cubito = new MB.Cube(this.context, 15.0);
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "ppShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         projection: { type: MB.UniformType.Matrix4 },
                         view: { type: MB.UniformType.Matrix4 },
@@ -115,10 +112,9 @@
                         }
                     }
                 });
-                this.ppprog = new MB.ShaderMaterial(this.context, {
+                this.ppprog = new MB.PostProcessMaterial(this.context, {
                     name: "dreamVisionShader",
-                    vertexShader: "pp-vs",
-                    fragmentShader: "pp-fs",
+                    fragmentShader: MB.Utils.readScriptShader("pp-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,

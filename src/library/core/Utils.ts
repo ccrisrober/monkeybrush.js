@@ -163,9 +163,9 @@ namespace MB {
 
         export function arrayToVector(elements: Array<number>): any {
             if (Array.isArray(elements)) {
-                if(typeof(elements[3]) !== 'undefined') {
+                if (typeof(elements[3]) !== "undefined") {
                     return new MB.Vect4(elements[0], elements[1], elements[2], elements[3]);
-                } else if (typeof(elements[2]) !== 'undefined') {
+                } else if (typeof(elements[2]) !== "undefined") {
                     return new MB.Vect3(elements[0], elements[1], elements[2]);
                 } else {
                     return new MB.Vect2(elements[0], elements[1]);
@@ -173,6 +173,22 @@ namespace MB {
             } else {
                 return elements;
             }
+        };
+
+        export function readScriptShader(script: string): string {
+            let shaderText: HTMLElement, shaderSource: string;
+
+            // Get shader from index.html
+            shaderText = document.getElementById(script);
+            shaderSource = shaderText.firstChild.textContent;
+
+            if (shaderSource === null) {
+                alert("WARNING: " + script + " failed");
+                MB.Log.warn(this._fragmentSource);
+                throw "SHADER ERROR";
+            }
+
+            return shaderSource;
         };
     };
 };

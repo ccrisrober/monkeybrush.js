@@ -100,7 +100,7 @@ namespace MBS {
             this._name = name;
             this._id = this._generateUUID();
             this._scene = scene;
-            this.parent = null;//this._scene.root;
+            this.parent = null; // this._scene.root;
 
             this._rotation.onChange = function() {
                 this._quaternion = this._quaternion.setFromEuler(this._rotation);
@@ -163,7 +163,7 @@ namespace MBS {
                     object.parent.remove( object );
                 }
                 object.parent = this;
-                //this._children.push( object );
+                // this._children.push( object );
             // } else {
             //     MB.Log.error("MBS.Node.add: object not an instance of MBS.Node.", object);
             // }
@@ -214,7 +214,7 @@ namespace MBS {
                 return elem;
             }
             // Search in childrens
-            for(let i = 0, l = elem._children.length; i < l; ++i) {
+            for (let i = 0, l = elem._children.length; i < l; ++i) {
                 let children = this.searchElem(name, elem);
                 if (children) {
                     return children;

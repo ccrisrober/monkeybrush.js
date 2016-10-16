@@ -17,10 +17,7 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        #import<VertexPP>
-    </script>
-    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+    <script type="x-shader/x-fragment" id="pp-fs">#version 300 es
         precision highp float;
 
         out vec4 fragColor;
@@ -92,10 +89,9 @@
                 });
                 this.tex2d.bind(0);
 
-                this.prog = new MB.ShaderMaterial(this.context, {
-                    name: "alphaShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "retroShader",
+                    fragmentShader: MB.Utils.readScriptShader("pp-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,

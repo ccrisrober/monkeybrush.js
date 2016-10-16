@@ -36,9 +36,6 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        #import<VertexPP>
-    </script>
     <script type="x-shader/x-fragment" id="float-fs">#version 300 es
         precision highp float;
 
@@ -99,10 +96,9 @@
                 MB.Loaders.loadImage("../assets/images/35479_subitem_full.jpg", "myTex");
             };
             MyScene.prototype.initialize = function () {
-                this.progF = new MB.ShaderMaterial(this.context, {
+                this.progF = new MB.PostProcessMaterial(this.context, {
                     name: "firsStepShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "float-fs",
+                    fragmentShader: MB.Utils.readScriptShader("float-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,
@@ -112,10 +108,9 @@
                         Division: { type: MB.UniformType.Integer }
                     }
                 });
-                this.progI = new MB.ShaderMaterial(this.context, {
+                this.progI = new MB.PostProcessMaterial(this.context, {
                     name: "firsStepShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "integer-fs",
+                    fragmentShader: MB.Utils.readScriptShader("integer-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,
@@ -192,7 +187,7 @@
                 this.text.resume = false;
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "Division").min(1).max(128).step(1);
+                gui.add(this.text, "Division").min(1).max(256).step(1);
             };
             return MyScene;
         }(MB.App));

@@ -15,7 +15,6 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <canvas id="canvas" width="800" height="500"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
         precision highp float;
@@ -62,7 +61,7 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "Hello World", new MB.GLContextW2(document.getElementById("canvas")));
+                _super.call(this, "Hello World", new MB.GLContextW2());
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -73,8 +72,8 @@
 
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "diffuseShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         projection: { type: MB.UniformType.Matrix4 },
                         view: { type: MB.UniformType.Matrix4 },

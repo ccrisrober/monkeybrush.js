@@ -18,9 +18,6 @@
     <script type="text/javascript" src="../dist/output.js"></script>
     <canvas id="canvas" width="512" height="512"></canvas>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        #import<VertexPP>
-    </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
 
@@ -77,10 +74,9 @@
                 _super.call(this, "App", new MB.GLContextW2(document.getElementById("canvas")), MyConfig());
             }
             MyScene.prototype.initialize = function () {
-                this.prog = new MB.ShaderMaterial(this.context, {
+                this.prog = new MB.PostProcessMaterial(this.context, {
                     name: "diffuseShader",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,
@@ -88,10 +84,9 @@
                         }
                     }
                 });
-                this.prog_show = new MB.ShaderMaterial(this.context, {
+                this.prog_show = new MB.PostProcessMaterial(this.context, {
                     name: "prog_show",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "show-fs",
+                    fragmentShader: MB.Utils.readScriptShader("show-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,

@@ -16,9 +16,7 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        #import<VertexPP>
-    </script>
+
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
 
@@ -59,10 +57,9 @@
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-                this.myProg = new MB.ShaderMaterial(this.context, {
-                    name: "handLikePP",
-                    vertexShader: "shader-vs",
-                    fragmentShader: "shader-fs",
+                this.myProg = new MB.PostProcessMaterial(this.context, {
+                    name: "greyFilterShader",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         tex: {
                             type: MB.UniformType.Integer,

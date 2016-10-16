@@ -17,7 +17,7 @@ namespace MB {
         value?: any;
     };
     export interface ShaderMaterialParams {
-        name: string,
+        name: string;
         uniforms?: { [key: string]: MB.IUniformMaterial; };
         vertexShader: string;
         fragmentShader: string;
@@ -41,7 +41,7 @@ namespace MB {
 
             this.id = params.name || "";
             this._program = new MB.Program(context);
-            this._program.loadsFromScript(params.vertexShader, params.fragmentShader);
+            this._program.load(params.vertexShader, params.fragmentShader);
 
             MB.ProgramManager.add(this.id, this._program);
 
