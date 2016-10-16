@@ -175,7 +175,7 @@
         </div>
         <iframe id="viewer" allowfullscreen onmousewheel=""></iframe>
         <script>
-        /*var files = {
+        var files = {
             "Hello World": [
                 "Hello_World"
             ],
@@ -200,7 +200,7 @@
                 "Alpha_Maps",
                 "Brick_Texture",
                 "Polka_Texture",
-                "Canvas_Painter",
+                // "Canvas_Painter",
                 "Video_Texture",
                 "Webcam_Texture"
             ],
@@ -216,11 +216,12 @@
                 "Mouse_Color",
                 "Toonify_PP",
                 "Posterization_PP",
-                "FreiChen_PP",
+                // "FreiChen_PP",
                 "DreamVision",
                 "Pixelization",
                 "Retro_PP",
                 "Hand_LikeEffect",
+                "Image_Processing",
                 "Ripple_PP",
                 "OldFilm_PP",
                 "HexagonalPixelate_PP",
@@ -245,9 +246,9 @@
             "Lighting": [
                 "Ambient_Light",
                 "Directional_Light",
-                "Hemispheric_Light",
+                // "Hemispheric_Light",
                 "Point_Light",
-                "Rim_Light",
+                // "Rim_Light",
                 "Water_Reflection",
                 "Toon_Shading"
             ],
@@ -262,7 +263,7 @@
                 "Lattice"
             ],
             "Global Ilumination": [
-                "Deferred_Shading",
+                // "Deferred_Shading",
                 "Matcap_Vertex",
                 "Matcap_Fragment",
                 "Spherical_Harmonics",
@@ -276,36 +277,27 @@
                 "Videosphere",
                 "Water_UV",
                 "Manga_EffectLine",
+                "Alpha_Textures",
                 "Trail_Spheres",
                 "Xor",
                 "Tunnel_Effect",
                 "Brownian_Motion",
-                "Random_Textures"
+                "Random_Textures",
+                "Two_Canvas"
             ],
             "GPGPU": [
                 "Mandelbrot",
                 "Julia",
                 "Fractal_World",
                 "Point_TF",
-                "Ubo_Spline",
+                // "Ubo_Spline",
                 "2D_Advention",
                 "Conway_Life",
                 "Flat_Wave"
             ]
-        };*/
-        var files = {
-            "Demos": [
-                "Canvas_Painter",
-
-                "FreiChen_PP",
-
-                "Hemispheric_Light",
-                "Rim_Light",
-
-                "Deferred_Shading",
-
-                "Ubo_Spline"
-            ]
+        };
+        var files_ = {
+            "Demos": []
         }
         for (var key in files) {
             files[key].sort(function(a, b) {
