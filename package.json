@@ -1,6 +1,6 @@
 {
   "name": "monkeybrush.js",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "WebGL 2 wrapper for Data visualization",
   "main": "index.html",
   "scripts": {
