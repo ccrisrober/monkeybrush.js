@@ -31,10 +31,15 @@
         uniform mat4 view;
         uniform mat4 model;
 
+        // out vec3 outNormal;
+
         void main() {
-            outPosition = vec3(model * vec4(position, 1.0));
-            gl_Position = projection * view * vec4(outPosition, 1.0);
+            outPosition = vec3(view * model * vec4(position, 1.0));
+            gl_Position = projection * vec4(outPosition, 1.0);
             outUV = uv;
+
+            // mat3 normalMatrix = mat3(inverse(transpose(view * model)));
+            // outNormal = normalize(normalMatrix * normal);
         }
     </script>
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
@@ -45,20 +50,49 @@
 
         out vec4 fragColor;
 
+        uniform sampler2D texDiffuse;
         uniform sampler2D texNormal;
         uniform mat4 view;
 
+        uniform float normalScale;
+
         uniform vec3 viewPos;
-        const vec3 lightPosition = vec3(2.0, 5.0, 15.0);
+
+        // in vec3 outNormal;
+        // Code based on http://www.thetenthplanet.de/archives/1180
+        vec3 perturb_normal(vec3 p, vec3 n) {
+            vec3 dp1 = dFdx(p);
+            vec3 dp2 = dFdy(p);
+            vec2 duv1 = dFdx(outUV);
+            vec2 duv2 = dFdy(outUV);
+
+            vec3 S = normalize(dp1 * duv2.t - dp2 * duv1.t);
+            vec3 T = normalize(-dp1 * duv2.s + dp2 * duv1.s);
+            vec3 N = normalize(n);
+
+            vec3 mapN = texture(texNormal, outUV).xyz * 2.0 - 1.0;
+            mapN.xy = normalScale * mapN.xy;
+            mat3 tsn = mat3(S, T, N);
+            return normalize(tsn * mapN);
+        }
+
+        vec3 normals(vec3 pos) {
+            vec3 fdx = dFdx(pos);
+            vec3 fdy = dFdy(pos);
+            return normalize(cross(fdx, fdy));
+        }
 
         void main() {
-            vec3 color = vec3(0.45);
+            vec3 lightPosition = vec3(view * vec4(2.0, 5.0, 15.0, 1.0));
+            vec3 color = texture(texDiffuse, outUV).rgb;
 
             // Ambient
-            vec3 ambient = vec3(1.0);
+            vec3 ambient = vec3(0.4);
 
             // Diffuse
-            vec3 norm = normalize(texture(texNormal, outUV).rgb * 2.0 - 1.0);
+            vec3 norm = normalize(normals(outPosition));
+            norm = perturb_normal(-outPosition, norm);
+
             vec3 lightDir = normalize(lightPosition - outPosition);
             float diff = max(dot(norm, lightDir), 0.0);
             vec3 diffuse = vec3(1.0) * diff;
@@ -66,38 +100,43 @@
             // Specular
             vec3 viewDir = normalize(viewPos - outPosition);
             vec3 reflectDir = reflect(-lightDir, norm);
-            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1.0);
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
             vec3 specular = vec3(spec);
-
-            // Attenuation
-            float dst    = length(lightPosition - outPosition);
-            float attenuation = 1.0f / (1.0 + 0.09 * dst + 0.032 * (dst * dst));
-
-            ambient  *= attenuation;
-            diffuse  *= attenuation;
-            specular *= attenuation;
 
             fragColor = vec4((ambient + diffuse + specular) * color, 1.0);
         }
     </script>
 
     <script type="text/javascript">
+        var Configuration = function () {
+            return {
+                NormalScale: 0.47
+            };
+        };
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2());
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 15.25));
                 this.angle = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/chesterfieldDiffuseMap.png", "diffuseMap");
                 MB.Loaders.loadImage("../assets/images/chesterfieldNormalMap.png", "normalMap");
             };
             MyScene.prototype.initialize = function () {
                 this.cubito = new MB.Cube(this.context, 17.5);
 
-                this.tex2d = new MB.Texture2D(this.context, "normalMap", {
+                this.tex2d = new MB.Texture2D(this.context, "diffuseMap", {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.TextureFilter.Clamp2Edge,
+                    wrapT: MB.ctes.TextureFilter.Clamp2Edge
+                });
+                this.tex2d2 = new MB.Texture2D(this.context, "normalMap", {
                     flipY: 1,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
@@ -114,14 +153,23 @@
                         view: { type: MB.UniformType.Matrix4 },
                         model: { type: MB.UniformType.Matrix4 },
                         viewPos: { type: MB.UniformType.Vector3 },
-                        texNormal: {
+                        texDiffuse: {
                             type: MB.UniformType.Integer,
                             value: 0
+                        },
+                        texNormal: {
+                            type: MB.UniformType.Integer,
+                            value:1
+                        },
+                        normalScale: {
+                            type: MB.UniformType.Float,
+                            value: 1
                         }
                     }
                 });
 
                 this.tex2d.bind(0);
+                this.tex2d2.bind(1);
 
                 this.cameraUpdate();
             };
@@ -136,15 +184,19 @@
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .rotate(90.0 * Math.PI / 180, MB.Vect3.xAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.zAxis)
+                        .rotate(this.angle * 0.15, MB.Vect3.zAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 this.myProg.uniforms.model.value = this.model;
+                this.myProg.uniforms.normalScale.value = this.text.NormalScale;
                 this.myProg.render(this.cubito);
             };
             MyScene.prototype.cameraUpdate = function () {
                 this.myProg.uniforms.viewPos.value = this.camera.GetPos();
                 this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
                 this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "NormalScale", -2.0, 2.0);
             };
             return MyScene;
         }(MB.App));

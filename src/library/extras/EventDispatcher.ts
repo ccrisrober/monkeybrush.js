@@ -35,7 +35,7 @@ namespace MBX {
             if (!this._callbacks.hasOwnProperty(ev.type)) {
                 return;
             }
-            for (var i in this._callbacks[ev.type]) {
+            for (let i in this._callbacks[ev.type]) {
                 this._callbacks[ev.type][i](ev);
             }
         };

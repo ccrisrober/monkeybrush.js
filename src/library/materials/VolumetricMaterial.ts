@@ -103,7 +103,8 @@ namespace MB {
                 this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
             }
             // this._context.state.blending.setStatus(true);
-            // this._context.state.blending.setFunc(MB.ctes.BlendingMode.SrcAlpha, MB.ctes.BlendingMode.OneMinusSrcAlpha);
+            // this._context.state.blending.setFunc(MB.ctes.BlendingMode.SrcAlpha,
+            //         MB.ctes.BlendingMode.OneMinusSrcAlpha);
         };
         get uniforms(): { [key: string]: MB.IUniformMaterial; } {
             return this._uniforms;
