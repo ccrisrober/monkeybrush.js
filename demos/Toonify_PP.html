@@ -130,16 +130,13 @@
                     }
                 });
                 this.tex2d.bind(0);
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
                 this.prog.uniforms.amount.value = this.text.amount;
-                this.prog.use();
-                this.postProcess.render();
+                this.prog.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "amount", 0.0, 1.0);

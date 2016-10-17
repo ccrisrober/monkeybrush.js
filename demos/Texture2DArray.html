@@ -161,7 +161,6 @@
                     format: MB.ctes.PixelFormat.RGB,
                     type: MB.ctes.DataType.UnsignedByte
                 });
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
@@ -181,8 +180,7 @@
                 mat4.mul(viewProj, proj, view);
                 this.tex2.bind(0);
                 this.myProg.uniforms.viewProj.value = viewProj;
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
             };
             return MyScene;
         }(MB.App));

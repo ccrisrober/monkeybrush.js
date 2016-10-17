@@ -63,16 +63,13 @@
                     }
                 });
                 this.tex2d.bind(0);
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
                 this.prog.uniforms.iGlobalTime.value = dt / 2*3.14159 * .75
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
-                this.prog.use();
-                this.postProcess.render();
+                this.prog.renderPP();
             };
             return MyScene;
         }(MB.App));

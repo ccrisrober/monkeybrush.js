@@ -62,16 +62,13 @@
                     }
                 });
                 this.tex2d.bind(0);
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
                 this.prog.uniforms.mousePos.value = new MB.Vect2(MB.Input.getMousePosY()/this.canvas.width, MB.Input.getMousePosY()/this.canvas.height);
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
-                this.prog.use();
-                this.postProcess.render();
+                this.prog.renderPP();
             };
             return MyScene;
         }(MB.App));

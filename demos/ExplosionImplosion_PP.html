@@ -67,17 +67,14 @@
                         radius: { type: MB.UniformType.Float }
                     }
                 });
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
                 this.tex2d.bind(0);
                 this.myProg.uniforms.radius.value = this.text.radius;
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "radius", -1.0, 1.0);

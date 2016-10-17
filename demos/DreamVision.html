@@ -124,8 +124,6 @@
                     }
                 });
 
-                this.postProcess = new MB.PostProcess(this.context);
-
                 var configTex = {
                     internalFormat: MB.ctes.PixelFormat.RGB,
                     format: MB.ctes.PixelFormat.RGB,
@@ -142,7 +140,6 @@
                 this.fbo = new MB.Framebuffer(this.context, [
                     this.tex2d
                 ], new MB.Vect2(this.context.canvas.clientWidth, this.context.canvas.clientHeight), true, true, {});
-
 
                 this.cameraUpdate();
             };
@@ -169,8 +166,7 @@
                 this.clearColorAndDepth();
                 this.tex2d.bind(0);
                 this.ppprog.uniforms.amount.value = this.text.amount;
-                this.ppprog.use();
-                this.postProcess.render();
+                this.ppprog.renderPP();
             };
             MyScene.prototype.cameraUpdate = function () {
                 this.myProg.uniforms.viewPos.value =this.camera.GetPos();

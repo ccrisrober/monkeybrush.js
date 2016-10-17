@@ -80,17 +80,14 @@
                 });
 
                 this.tex3d.bind(0);
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
                 this.prog.uniforms.layer.value = this.text.layer;
-                this.prog.use();
-                this.postProcess.render();
+                this.prog.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "layer", 0, 64);

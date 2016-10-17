@@ -5104,6 +5104,7 @@ var MB;
     ;
     var GLContext = (function () {
         function GLContext(canvas) {
+            this.pp = null;
             if (!canvas) {
                 MB.Log.info("Not canvas. Create one ...");
                 canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
@@ -5220,6 +5221,12 @@ var MB;
             ;
         };
         ;
+        GLContext.prototype.getPP = function () {
+            if (!this.pp) {
+                this.pp = new MB.PostProcess(this);
+            }
+            return this.pp;
+        };
         return GLContext;
     }());
     MB.GLContext = GLContext;
@@ -11363,6 +11370,7 @@ var MB;
                 }
                 return res;
             }
+            this._context = context;
             this.id = params.name || "";
             this._program = new MB.Program(context);
             this._program.load(params.vertexShader, params.fragmentShader);
@@ -11570,6 +11578,12 @@ var MB;
                 fragmentShader: params.fragmentShader
             });
         }
+        ;
+        PostProcessMaterial.prototype.renderPP = function () {
+            this.use();
+            this._context.getPP().render();
+        };
+        ;
         return PostProcessMaterial;
     }(MB.ShaderMaterial));
     MB.PostProcessMaterial = PostProcessMaterial;
@@ -11662,6 +11676,7 @@ var MB;
                 }
                 return res;
             }
+            this._context = context;
             this.id = params.name || "";
             this._program = new MB.Program(context);
             this._program.addShader(params.vertexShader, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);

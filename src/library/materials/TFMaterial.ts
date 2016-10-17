@@ -25,7 +25,7 @@ namespace MB {
                 }
                 return res;
             }
-
+            this._context = context;
             this.id = params.name || "";
             this._program = new MB.Program(context);
             this._program.addShader(params.vertexShader, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);

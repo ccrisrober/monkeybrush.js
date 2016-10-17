@@ -188,7 +188,6 @@
                     }
                 });
                 this.cameraUpdate();
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
@@ -238,8 +237,7 @@
                 this.deferred.bindForReading();
                 this.clearColorAndDepth();
                 this.pp.uniforms.mode.value = drawMode;
-                this.pp.use();
-                this.postProcess.render();
+                this.pp.renderPP();
                 this.skybox.render(this.view, this.projection);
             };
             MyScene.prototype.cameraUpdate = function () {

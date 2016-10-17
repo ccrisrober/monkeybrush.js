@@ -112,7 +112,6 @@
                         jointColor: { type: MB.UniformType.Vector3 }
                     }
                 });
-                this.postProcess = new MB.PostProcess(this.context);
                 this.brickColor = MB.Color3.createFromHex(this.text.brickColor.replace("#", "0x"));
                 this.jointColor = MB.Color3.createFromHex(this.text.jointColor.replace("#", "0x"));
             };
@@ -120,12 +119,10 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
                 this.prog.uniforms.brickSize.value = new MB.Vect2(this.text.brickW, this.text.brickH);
                 this.prog.uniforms.brickColor.value = new MB.Vect3(this.brickColor.r, this.brickColor.g, this.brickColor.b);
                 this.prog.uniforms.jointColor.value = new MB.Vect3(this.jointColor.r, this.jointColor.g, this.jointColor.b);
-                this.prog.use();
-                this.postProcess.render();
+                this.prog.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "brickW", 10, 50);

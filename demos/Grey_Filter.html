@@ -68,7 +68,6 @@
                         amount: { type: MB.UniformType.Float }
                     }
                 });
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
@@ -78,8 +77,7 @@
                 this.tex2d.bind(0);
                 this.myProg.uniforms.amount.value  = this.text.amount;
 
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
                 this.text.render = false;
             };
             MyScene.prototype.textCB = function (gui) {

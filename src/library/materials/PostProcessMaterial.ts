@@ -12,6 +12,11 @@ namespace MB {
                 vertexShader: "#version 300 es\n#import<VertexPP>",
                 fragmentShader: params.fragmentShader
             });
-        }
+        };
+
+        public renderPP() {
+            this.use();
+            this._context.getPP().render();
+        };
     };
 }

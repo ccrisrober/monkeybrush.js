@@ -137,15 +137,12 @@
                 this.tex2d3.bind(2);
                 this.tex2d4.bind(3);
                 this.tex2d32.bind(4);
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
             };
             return MyScene;
         }(MB.App));

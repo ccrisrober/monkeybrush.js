@@ -110,7 +110,7 @@
                         iResolution: { type: MB.UniformType.Vector2 }
                     }
                 });
-                this.postProcess = new MB.PostProcess(this.context);
+                this.tex2d.bind(0);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
@@ -118,10 +118,7 @@
                 this.myProg.uniforms.iResolution.value = new MB.Vect2(canvas.width, canvas.height);
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
-                this.tex2d.bind(0);
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
             };
             return MyScene;
         }(MB.App));

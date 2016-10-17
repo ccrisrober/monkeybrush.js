@@ -114,5 +114,13 @@ namespace MB {
                 };
             };
         };
+
+        protected pp: MB.PostProcess = null;
+        public getPP() {
+            if (!this.pp) {
+                this.pp = new MB.PostProcess(this);
+            }
+            return this.pp;
+        }
     }
 }

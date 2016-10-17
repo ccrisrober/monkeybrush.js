@@ -144,18 +144,15 @@
                         filter_size: { type: MB.UniformType.Integer }
                     }
                 });
-                this.postProcess = new MB.PostProcess(this.context);
+                this.tex2d.bind(0);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
                 this.myProg.uniforms.texSize.value = new MB.Vect2(this.context.canvas.width, this.context.canvas.height);
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
-                this.tex2d.bind(0);
                 this.myProg.uniforms.filter_size.value = this.text.filter_size;
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "filter_size").min(1).max(15).step(1);

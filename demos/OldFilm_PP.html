@@ -180,22 +180,19 @@
                     }
                 });
                 this.tex2d.bind(0);
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
                 this.myProg.uniforms.iGlobalTime.value = dt;
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
                 this.myProg.uniforms.SepiaValue.value = this.text.SepiaValue;
                 this.myProg.uniforms.NoiseValue.value = this.text.NoiseValue;
                 this.myProg.uniforms.ScratchValue.value = this.text.ScratchValue;
                 this.myProg.uniforms.RandomValue.value = MB.RandomGenerator.random();
                 this.myProg.uniforms.Radius.value = this.text.Radius;
                 this.myProg.uniforms.Softness.value = this.text.Softness;
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "SepiaValue", 0.0, 1.0);

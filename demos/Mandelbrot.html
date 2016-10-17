@@ -93,18 +93,15 @@
                     }
                 });
                 this.tex.bind(0);
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                this.clearColorAndDepth();
                 this.myProg.uniforms.iter.value = this.text.iter;
                 this.myProg.uniforms.zoom.value = this.text.zoom;
                 this.myProg.uniforms.offset.value = new MB.Vect2(this.text.offsetX, this.text.offsetY);
-                this.myProg.use();
-                this.postProcess.render();
+                this.myProg.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
                 gui.add(this.text, "zoom", 0.0, 50.0);

@@ -137,7 +137,6 @@
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-                this.postProcess = new MB.PostProcess(this.context);
             };
             MyScene.prototype.update = function (dt) {
                 this.angle += MB.Timer.deltaTime() * 0.001;
@@ -161,14 +160,12 @@
                 this.progF.uniforms.op.value = false;
                 vp = this.viewports[3];
                 this.state.setViewport(vp);
-                this.progF.use();
-                this.postProcess.render();
+                this.progF.renderPP();
                 // Bottom-left
                 this.progF.uniforms.op.value = true;
                 vp = this.viewports[0];
                 this.state.setViewport(vp);
-                this.progF.use();
-                this.postProcess.render();
+                this.progF.renderPP();
                 // Integer textures
                 this.tex2d2.bind(0);
                 this.progI.uniforms.Division.value = this.text.Division;
@@ -176,14 +173,12 @@
                 this.progI.uniforms.op.value = false;
                 vp = this.viewports[1];
                 this.state.setViewport(vp);
-                this.progI.use();
-                this.postProcess.render();
+                this.progI.renderPP();
                 // Top-right
                 this.progI.uniforms.op.value = true;
                 vp = this.viewports[2];
                 this.state.setViewport(vp);
-                this.progI.use();
-                this.postProcess.render();
+                this.progI.renderPP();
                 this.text.resume = false;
             };
             MyScene.prototype.textCB = function (gui) {
