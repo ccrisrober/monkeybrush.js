@@ -10285,7 +10285,7 @@ var MB;
             return null;
         }
         ;
-        function loadHDRImage(imageSrc, alias) {
+        function loadBinaryFileRAW(imageSrc, alias) {
             if (alias === void 0) { alias = ""; }
             alias = _getAlias(imageSrc, alias);
             if (!MB.ResourceMap.isAssetLoaded(alias)) {
@@ -10294,10 +10294,33 @@ var MB;
                 request_1.open("GET", imageSrc, true);
                 request_1.responseType = "arraybuffer";
                 request_1.onload = function () {
-                    var texData = RGBEParser(request_1.response);
+                    var texData = request_1.response;
                     MB.ResourceMap.asyncLoadCompleted(alias, texData);
                 }.bind(this);
+                request_1.onerror = function (ev) {
+                    console.log(ev);
+                };
                 request_1.send();
+            }
+            else {
+                MB.ResourceMap.incAssetRefCount(alias);
+            }
+        }
+        Loaders.loadBinaryFileRAW = loadBinaryFileRAW;
+        ;
+        function loadHDRImage(imageSrc, alias) {
+            if (alias === void 0) { alias = ""; }
+            alias = _getAlias(imageSrc, alias);
+            if (!MB.ResourceMap.isAssetLoaded(alias)) {
+                MB.ResourceMap.asyncLoadRequested(alias);
+                var request_2 = new XMLHttpRequest();
+                request_2.open("GET", imageSrc, true);
+                request_2.responseType = "arraybuffer";
+                request_2.onload = function () {
+                    var texData = RGBEParser(request_2.response);
+                    MB.ResourceMap.asyncLoadCompleted(alias, texData);
+                }.bind(this);
+                request_2.send();
             }
             else {
                 MB.ResourceMap.incAssetRefCount(alias);
@@ -11277,6 +11300,11 @@ var MB;
             gl.texImage3D(this._target, this._level, this._internalFormat, data.width, data.height, data.depth, 0, this._format, this._type, data.pixels || null);
             gl.texParameteri(this._target, gl.TEXTURE_MIN_FILTER, options.minFilter || MB.ctes.TextureFilter.Linear);
             gl.texParameteri(this._target, gl.TEXTURE_MAG_FILTER, options.magFilter || MB.ctes.TextureFilter.Linear);
+            gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_BASE_LEVEL, 0);
+            gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAX_LEVEL, 4);
+            if (options.autoMipMap) {
+                gl.generateMipmap(gl.TEXTURE_3D);
+            }
             this.unbind();
         }
         return Texture3D;
@@ -11853,6 +11881,166 @@ var MB;
     ;
 })(MB || (MB = {}));
 ;
+
+var MBX;
+(function (MBX) {
+    var UniformMaterials;
+    (function (UniformMaterials) {
+        function bumpMapping() {
+            return {
+                bumpTex: { type: MB.UniformType.Integer },
+                bumpScale: { type: MB.UniformType.Float }
+            };
+        }
+        UniformMaterials.bumpMapping = bumpMapping;
+        ;
+        function normalMapping() {
+            return {
+                normalTex: { type: MB.UniformType.Integer },
+                normalScale: { type: MB.UniformType.Float }
+            };
+        }
+        UniformMaterials.normalMapping = normalMapping;
+        ;
+        function texture() {
+            return {
+                text: { type: MB.UniformType.Integer }
+            };
+        }
+        UniformMaterials.texture = texture;
+        ;
+        function fog() {
+            return {
+                fogDensity: {
+                    type: MB.UniformType.Float,
+                    value: 0.04
+                },
+                fogNear: {
+                    type: MB.UniformType.Float,
+                    value: 1
+                },
+                fogFar: {
+                    type: MB.UniformType.Float,
+                    value: 1000
+                },
+                fogColor: {
+                    type: MB.UniformType.Vector3,
+                    value: MB.Vect3.createFromScalar(1.0)
+                }
+            };
+        }
+        UniformMaterials.fog = fog;
+        ;
+    })(UniformMaterials = MBX.UniformMaterials || (MBX.UniformMaterials = {}));
+    ;
+})(MBX || (MBX = {}));
+;
+
+
+
+
+
+
+
+var MB;
+(function (MB) {
+    var VolumetricMaterial = (function (_super) {
+        __extends(VolumetricMaterial, _super);
+        function VolumetricMaterial(context, tex3D) {
+            _super.call(this);
+            this._uniforms = {};
+            var params = {
+                name: "volumetricShader",
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 },
+                    tex: {
+                        type: MB.UniformType.Integer,
+                        value: 0
+                    },
+                    step_size: { type: MB.UniformType.Float }
+                }
+            };
+            this.id = params.name;
+            this._program = new MB.Program(context);
+            this._tex3D = tex3D;
+            this._context = context;
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n\n                out vec3 outUV;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                out vec3 viewPos;\n\n                void main() {\n                    gl_Position = projection * view * model * vec4(position, 1.0);\n                    outUV = position + vec3(0.5);\n                    mat4 MV = view * model;\n                    MV = inverse(MV);\n                    viewPos = (MV * vec4(0.0, 0.0, 0.0, 1.0)).rgb;\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this._program.addShader("#version 300 es\n                precision highp float;\n                precision highp sampler3D;\n\n                in vec3 outUV;\n                uniform sampler3D tex;\n\n                const int MAX_SAMPLES = 300;        // total samples for each ray march step\n                const vec3 texMin = vec3(0.0);      // minimum texture access coordinate\n                const vec3 texMax = vec3(1.0);      // maximum texture access coordinate\n\n                in vec3 viewPos;\n\n                out vec4 fragColor;\n\n                bool stop = false;\n\n                uniform float step_size;\n\n                void main() {\n                    fragColor = vec4(0.0);\n                    vec3 dataPos = outUV;\n                    vec3 geomDir = normalize((outUV-vec3(0.5)) - viewPos);\n                    vec3 dirStep = geomDir * vec3(step_size);\n\n                    for (int i = 0; i < MAX_SAMPLES; ++i) {\n                        dataPos += dirStep;\n                        stop = dot(sign(dataPos-texMin),sign(texMax-dataPos)) < 3.0;\n\n                        // If the stopping condition is true we brek out of the ray marching loop\n                        if (stop)\n                            break;\n\n                        float samp = texture(tex, dataPos).r;\n\n                        float prev_alpha = samp - (samp * fragColor.a);\n                        fragColor.rgb = prev_alpha * vec3(samp) + fragColor.rgb;\n                        fragColor.a += prev_alpha;\n\n                        if (fragColor.a > 0.99) {\n                            break;\n                        }\n                    }\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.compile();
+            this._program.autocatching();
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = params.uniforms;
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(VolumetricMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        VolumetricMaterial.prototype.render = function (model) {
+            this.use();
+            this._context.state.blending.setStatus(true);
+            this._context.state.blending.setFunc(MB.ctes.BlendingMode.SrcAlpha, MB.ctes.BlendingMode.OneMinusSrcAlpha);
+            model.render();
+            this._context.state.blending.setStatus(false);
+        };
+        ;
+        VolumetricMaterial.prototype.use = function () {
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return VolumetricMaterial;
+    }(MB.Material));
+    MB.VolumetricMaterial = VolumetricMaterial;
+    ;
+})(MB || (MB = {}));
 
 var MBS;
 (function (MBS) {

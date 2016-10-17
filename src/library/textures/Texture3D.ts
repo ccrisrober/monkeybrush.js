@@ -52,6 +52,10 @@ namespace MB {
                 this._type,
                 data.pixels || null
             );
+            // set the texture parameters
+            // gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP);
+            // gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP);
+            // gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP);
             gl.texParameteri(
                 this._target,
                 gl.TEXTURE_MIN_FILTER,
@@ -60,6 +64,14 @@ namespace MB {
                 this._target,
                 gl.TEXTURE_MAG_FILTER,
                 options.magFilter || MB.ctes.TextureFilter.Linear);
+
+            // Set the mipmap levels (base and max)
+            gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_BASE_LEVEL, 0);
+            gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAX_LEVEL, 4);
+
+            if (options.autoMipMap) {
+                gl.generateMipmap(gl.TEXTURE_3D);
+            }
 
             this.unbind();
         }

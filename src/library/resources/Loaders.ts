@@ -299,6 +299,31 @@ namespace MB {
             }
             return null;
         };
+        export function loadBinaryFileRAW(imageSrc: string, alias: string = "") {
+            alias = _getAlias(imageSrc, alias);
+            if (!ResourceMap.isAssetLoaded(alias)) {
+                ResourceMap.asyncLoadRequested(alias);
+                // Async request the data from server
+                let request = new XMLHttpRequest();
+                request.open("GET", imageSrc, true);
+
+                // Specify that the request retrieves binary data.
+                request.responseType = "arraybuffer";
+
+                request.onload = function () {
+                    let texData = request.response;
+
+                    ResourceMap.asyncLoadCompleted(alias, texData);
+                }.bind(this);
+
+                request.onerror = function(ev) {
+                    console.log(ev);
+                };
+                request.send();
+            } else {
+                ResourceMap.incAssetRefCount(alias);
+            }
+        };
         /**
          * [loadHDRImage description]
          * @param {string}    imageSrc [description]
