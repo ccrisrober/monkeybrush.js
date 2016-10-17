@@ -8154,6 +8154,66 @@ var MBX;
 })(MBX || (MBX = {}));
 ;
 
+var MBX;
+(function (MBX) {
+    ;
+    ;
+    var EventDispatcher = (function () {
+        function EventDispatcher() {
+        }
+        EventDispatcher.prototype.addEventListener = function (eventType, cb) {
+            if (!this._callbacks) {
+                this._callbacks = {};
+            }
+            if (!this._callbacks.hasOwnProperty(eventType)) {
+                this._callbacks[eventType] = [cb];
+                return;
+            }
+            if (this._callbacks[eventType].indexOf(cb) !== -1) {
+                this._callbacks[eventType].push(cb);
+            }
+        };
+        ;
+        EventDispatcher.prototype.removeEventListener = function (eventType, cb) {
+            if (!this._callbacks)
+                return;
+            if (!this._callbacks.hasOwnProperty(eventType)) {
+                return;
+            }
+            var index = this._callbacks[eventType].indexOf(cb);
+            if (index !== -1) {
+                this._callbacks[eventType].splice(index, 1);
+            }
+        };
+        ;
+        EventDispatcher.prototype.dispatchEvent = function (ev) {
+            if (!this._callbacks)
+                return;
+            if (!this._callbacks.hasOwnProperty(ev.type)) {
+                return;
+            }
+            for (var i in this._callbacks[ev.type]) {
+                this._callbacks[ev.type][i](ev);
+            }
+        };
+        ;
+        EventDispatcher.prototype.hasEvent = function (eventType, cb) {
+            if (!this._callbacks)
+                return false;
+            if (this._callbacks.hasOwnProperty(eventType)
+                && this._callbacks[eventType].indexOf(cb) !== -1) {
+                return true;
+            }
+            return false;
+        };
+        ;
+        return EventDispatcher;
+    }());
+    MBX.EventDispatcher = EventDispatcher;
+    ;
+})(MBX || (MBX = {}));
+;
+
 "use strict";
 var MBX;
 (function (MBX) {

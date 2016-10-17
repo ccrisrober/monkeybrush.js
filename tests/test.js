@@ -26,3 +26,39 @@ describe("Canvas context supporting", function() {
         expect(ctx.gl).to.be.an.instanceof(WebGL2RenderingContext);
     });
 });
+describe("Geometry", function() {
+    describe("Cube geometry", function() {
+        var canvas = document.createElement("canvas");
+        var ctx = new MB.GLContextW2(canvas);
+        var size = 7.5;
+        var cube = new MB.Cube(ctx, size);
+        it("Indices", function() {
+            expect(cube._indicesLen).to.equal(6 * 6);
+        });
+        it("Size", function() {
+            expect(cube._side).to.equal(size);
+        });
+        it("Attr value", function() {
+            expect(cube._geometry._attrs.vertices._arr[0]).to.equal(-size / 2.0);
+        });
+    });
+});
+describe("Others tests", function() {
+    it("EventDispatcher", function() {
+        var MyObj = function() {
+            this.sayHello = function() {
+                this.dispatchEvent({
+                    type: "hello",
+                    target: "everybody"
+                });
+            }
+        };
+        Object.assign(MyObj.prototype, MBX.EventDispatcher.prototype);
+        var myObj = new MyObj();
+        myObj.addEventListener("hello", function(ev) {
+            console.log(ev);
+            expect(ev.target).to.equal("everybody");
+        });
+        myObj.sayHello();
+    });
+});
