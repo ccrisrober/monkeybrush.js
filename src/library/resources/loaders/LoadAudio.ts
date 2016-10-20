@@ -45,7 +45,7 @@ namespace MB {
                         function (buffer) {
                             ResourceMap.asyncLoadCompleted(alias, buffer);
                         }
-                  );
+                    );
                 }.bind(this);
                 request.send();
             }

@@ -15,7 +15,6 @@
     <script type="text/javascript" src="./libs/libraries.js"></script>
 
     <script type="text/javascript" src="../dist/output.js"></script>
-    <canvas id="canvas" width="800" height="500"></canvas>
 
     <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
         precision highp float;
@@ -116,7 +115,7 @@
                 });
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.update(dt * 0.5, this.cameraUpdate.bind(this));
+                this.camera.update(dt * 0.1, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
             };
@@ -125,8 +124,7 @@
                 this.model =
                     this.identityMatrix.clone()
                         .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
+                        //.rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.uniforms.base_freq.value = this.text.base_freq;

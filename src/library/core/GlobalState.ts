@@ -187,6 +187,9 @@ namespace MB {
                 this._currentColorMask = colorMask.clone();
             }
         };
+        public setClear(r: number, g: number, b: number, a: number) {
+            this.setClearColor(new MB.Color4(r, g, b, a));
+        }
         /**
          * Set new clear color value TODO (bad text)
          * @param {number} r Red channel value
@@ -203,8 +206,6 @@ namespace MB {
         }
         public reset() {
             this._currentColorMask = null;
-            this.setMask(new MB.Vector4<boolean>(true, true, true, true));
-            this._currentColorClear = null;
             this.setClearColor(new MB.Color4(0.0, 0.0, 0.0, 1.0));
         };
         /**
@@ -324,8 +325,9 @@ namespace MB {
          *    reference value and the stored stencil value when the test is done.
          */
         public setFunc(compFun: MB.ctes.ComparisonFunc, ref: number, mask: number) {
-            if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
-                && this._currentStencilFuncMask !== mask) {
+            if (this._currentStencilFunc !== compFun ||
+                this._currentStencilRef !== ref ||
+                this._currentStencilFuncMask !== mask) {
 
                 const gl: WebGL2RenderingContext = this._context.gl;
                 gl.stencilFunc(compFun, ref, mask);
@@ -344,8 +346,9 @@ namespace MB {
          *    and depth test passes.
          */
         public setOp(fail: MB.ctes.StencilOp, zfail: MB.ctes.StencilOp, zpass: MB.ctes.StencilOp) {
-            if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
-                && this._currentStencilZPass !== zpass) {
+            if (this._currentStencilFail !== fail
+                || this._currentStencilZFail !== zfail
+                || this._currentStencilZPass !== zpass) {
 
                 const gl: WebGL2RenderingContext = this._context.gl;
                 gl.stencilOp(fail, zfail, zpass);
@@ -355,16 +358,26 @@ namespace MB {
                 this._currentStencilZPass = zpass;
             }
         }
-        public getMasValue(mask: number) {
+        public getMaskValue(mask: number) {
             return this._currentStencilMask;
         }
-        public setClearValue(s: number) {
+        public setClear(s: number) {
             if (this._currentStencilClear !== s) {
                 const gl: WebGL2RenderingContext = this._context.gl;
                 gl.clearStencil(s);
                 this._currentStencilClear = s;
             }
         };
+        public reset() {
+            this._currentStencilClear = null;
+            this._currentStencilFail = null;
+            this._currentStencilFunc = null;
+            this._currentStencilMask = null;
+            this._currentStencilRef = null;
+            this._currentStencilZFail = null;
+            this._currentStencilZPass = null;
+            this._currentStencilFuncMask = null;
+        }
         /**
          * Control the front and/or back writing of individual bits in the stencil planes
          * @param {MB.ctes.FaceSide} face Specifies whether the front and/or back stencil writemask is updated
@@ -450,6 +463,10 @@ namespace MB {
                 this._blendingMode = mode;
             }
         };
+        public setEquationSeparate(modeRGB: MB.ctes.BlendingEq, modeA: MB.ctes.BlendingEq) {
+            const gl: WebGL2RenderingContext = this._context.gl;
+            gl.blendEquationSeparate(modeRGB, modeA);
+        };
         /**
          * Set the RGB blend equation and the alpha blend equation separately
          * @param {MB.ctes.BlendingEq} modeRGB Specifies the RGB blend equation,
@@ -522,6 +539,49 @@ namespace MB {
         public isEnabled(): boolean {
             return this._blendingEnabled === true;
         };
+
+        protected _currentBlending = MB.ctes.BlendingMode2.None;
+        public set(blend: MB.ctes.BlendingMode2) {
+            const gl: WebGL2RenderingContext = this._context.gl;
+            if (blend != MB.ctes.BlendingMode2.None) {
+                this.setStatus(true);
+            } else {
+                this.setStatus(false);
+                this._currentBlending = blend;
+            }
+            if (blend !== this._currentBlending) {
+                if (blend === MB.ctes.BlendingMode2.Additive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(
+                        MB.ctes.BlendingMode.SrcAlpha,
+                        MB.ctes.BlendingMode.One
+                    );
+                } else if (blend === MB.ctes.BlendingMode2.Substractive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(
+                        MB.ctes.BlendingMode.Zero,
+                        MB.ctes.BlendingMode.OneMinusSrcColor
+                    );
+                } else if (blend === MB.ctes.BlendingMode2.Multiply) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(
+                        MB.ctes.BlendingMode.Zero,
+                        MB.ctes.BlendingMode.SrcColor
+                    );
+                } else {
+                    this.setEquationSeparate(
+                        MB.ctes.BlendingEq.Add,
+                        MB.ctes.BlendingEq.Add
+                    );
+                    this.setFuncSeparate(
+                        MB.ctes.BlendingMode.SrcAlpha,
+                        MB.ctes.BlendingMode.OneMinusSrcAlpha,
+                        MB.ctes.BlendingMode.One,
+                        MB.ctes.BlendingMode.OneMinusSrcAlpha
+                    );
+                }
+            }
+        };
     };
     /**
      * GlobalState class
@@ -535,12 +595,25 @@ namespace MB {
         constructor(context: GLContext) {
             this._context = context;
             this.depth = new DepthState(context);
-            this.depth.reset();
             this.culling = new CullingState(context);
             this.color = new ColorState(context);
-            this.color.reset();
             this.stencil = new StencilState(context);
             this.blending = new BlendingState(context);
+
+            this.color.setClear(0.0, 0.0, 0.0, 1.0);
+            this.depth.setClear(1.0);
+            this.stencil.setClear(0.0);
+
+            this.depth.setStatus(true);
+            this.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
+
+            this.culling.setFlipSided(MB.ctes.FaceDir.InvClockwise);
+            this.culling.setMode(MB.ctes.FaceSide.Back);
+            this.culling.setStatus(true);
+
+            this.blending.set(MB.ctes.BlendingMode2.Normal);
+
+            this._capabilites = {};
         };
         public depth: DepthState;
         public culling: CullingState;
@@ -604,6 +677,23 @@ namespace MB {
             const gl = this._context.gl;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BITS);
         };
+
+        public enable(cap: number) {
+            if (this._capabilites[cap] !== true) {
+                const gl = this._context.gl;
+                gl.enable(cap);
+                this._capabilites[cap] = true;
+            }
+        };
+        public disable(cap: number) {
+            if (this._capabilites[cap] !== false) {
+                const gl = this._context.gl;
+                gl.disable(cap);
+                this._capabilites[cap] = false;
+            }
+        };
+
+        protected _capabilites: { [key: number]: boolean}
 
         // Polygon offset
     };

@@ -144,7 +144,7 @@ namespace MB {
                         MB.Timer.update();
 
                         if (self._resume) {
-                            self.update(dt);
+                            self.update(MB.Timer.deltaTime() * 0.1);
                             self.draw();    // Draw user function
                         }
 

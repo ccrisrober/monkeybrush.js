@@ -61,7 +61,9 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "Hello World", new MB.GLContextW2());
+                _super.call(this, "App", new MB.GLContextW2(null, {
+                    antialias: true
+                }));
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();

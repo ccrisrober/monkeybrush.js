@@ -148,6 +148,14 @@ namespace MB {
             this.compile();
             this.autocatching();
         };
+        public loadWithTF(vsShaderCode: string, fsShaderCode: string, varyings: Array<string>, mode: MB.ctes.TFMode) {
+            this.addShader(vsShaderCode, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this.addShader(fsShaderCode, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._compile();
+            this.feedbackVarying(varyings, mode);
+            this._link();
+            this.autocatching();
+        };
         /**
          * Return internal program identifier
          * @return {WebGLProgram} [description]
@@ -769,3 +777,8 @@ namespace MB {
         };
     };
 };
+
+// TODO:
+// --enable-privileged-webgl-extension
+// console.log(gl.getExtension("WEBGL_debug_shaders").getTranslatedShaderSource(this._shaders[0]));
+// console.log(gl.getExtension("WEBGL_debug_shaders").getTranslatedShaderSource(this._shaders[1]));

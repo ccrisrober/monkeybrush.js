@@ -121,3 +121,27 @@ namespace MB {
         set specularColor(color: MB.Color3) { this._specColor = color; }
     };
 };
+
+// TODO: (Shaders)
+//     - Directional Lights:
+//         * vec3 direction
+//         * vec3 color
+//     - Spot Light:
+//         * vec3 position
+//         * vec3 direction
+//         * vec3 color
+//         * float cutoff
+//     - Point Light:
+//         * vec3 position
+//         * vec3 color
+//     - Hemisphere Light
+//         * vec3 direction
+//         * vec3 skyColor
+//         * vec3 groundColor
+//
+//
+//  Spotlight and directional can procude shadows:
+//      * bool shadow = false
+//      * float shadowBias = 0
+//      * float shadowRadius = 1
+//      * vec2 shadowMapSize (512, 512)

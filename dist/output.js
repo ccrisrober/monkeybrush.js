@@ -312,6 +312,13 @@ var MB;
         }());
         curves.Curve2D = Curve2D;
         ;
+        var Curve3D = (function () {
+            function Curve3D() {
+            }
+            return Curve3D;
+        }());
+        curves.Curve3D = Curve3D;
+        ;
         var Ellipse = (function (_super) {
             __extends(Ellipse, _super);
             function Ellipse(center, radius, startAngle, endAngle, isClockwise) {
@@ -356,18 +363,20 @@ var MB;
         }(Curve2D));
         curves.Line2D = Line2D;
         ;
-        var Line3D = (function () {
+        var Line3D = (function (_super) {
+            __extends(Line3D, _super);
             function Line3D(x, y) {
+                _super.call(this);
                 this._p1 = x;
                 this._p2 = y;
             }
             ;
-            Line3D.prototype.interpolate = function (t) {
+            Line3D.prototype.evaluate = function (t) {
                 return MB.Vect3.add(MB.Vect3.sub(this._p2, this._p1).multByScalar(t), (this._p1));
             };
             ;
             return Line3D;
-        }());
+        }(Curve3D));
         curves.Line3D = Line3D;
         ;
         var CubicBezier = (function (_super) {
@@ -389,34 +398,77 @@ var MB;
                 return new MB.Vect2(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, this._list[3].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, this._list[3].y, t));
             };
             ;
-            CubicBezier.prototype.getPoints = function (subdivisions) {
-            };
-            ;
             return CubicBezier;
         }(Curve2D));
         curves.CubicBezier = CubicBezier;
         ;
-        var QuadraticBezier = (function (_super) {
-            __extends(QuadraticBezier, _super);
-            function QuadraticBezier(cpi, cpp, cpe) {
+        var CubicBezier3D = (function (_super) {
+            __extends(CubicBezier3D, _super);
+            function CubicBezier3D(cpi, cpp1, cpp2, cpe) {
+                _super.call(this);
+                this._curves = [];
+                this._list = [cpi, cpp1, cpp2, cpe];
+            }
+            ;
+            CubicBezier3D.prototype.bezierCurveInterpolation = function (p0, p1, p2, p3, t) {
+                return (p0 * Math.pow(1 - t, 3)) +
+                    (3 * p1 * Math.pow(1 - t, 2) * t) +
+                    (3 * p2 * t * t * (1 - t)) +
+                    (p3 * t * t * t);
+            };
+            ;
+            CubicBezier3D.prototype.evaluate = function (t) {
+                return new MB.Vect3(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, this._list[3].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, this._list[3].y, t), this.bezierCurveInterpolation(this._list[0].z, this._list[1].z, this._list[2].z, this._list[3].z, t));
+            };
+            ;
+            return CubicBezier3D;
+        }(Curve3D));
+        curves.CubicBezier3D = CubicBezier3D;
+        ;
+        var QuadraticBezier2D = (function (_super) {
+            __extends(QuadraticBezier2D, _super);
+            function QuadraticBezier2D(cpi, cpp, cpe) {
                 _super.call(this);
                 this._curves = [];
                 this._list = [cpi, cpp, cpe];
             }
             ;
-            QuadraticBezier.prototype.bezierCurveInterpolation = function (p0, p1, p2, t) {
+            QuadraticBezier2D.prototype.bezierCurveInterpolation = function (p0, p1, p2, t) {
                 return (p0 * Math.pow((1 - t), 2)) +
                     (2 * p1 * (1 - t) * t) +
                     (p2 * Math.pow(t, 2));
             };
             ;
-            QuadraticBezier.prototype.evaluate = function (t) {
+            QuadraticBezier2D.prototype.evaluate = function (t) {
                 return new MB.Vect2(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, t));
             };
             ;
-            return QuadraticBezier;
+            return QuadraticBezier2D;
         }(Curve2D));
-        curves.QuadraticBezier = QuadraticBezier;
+        curves.QuadraticBezier2D = QuadraticBezier2D;
+        ;
+        var QuadraticBezier3D = (function (_super) {
+            __extends(QuadraticBezier3D, _super);
+            function QuadraticBezier3D(cpi, cpp, cpe) {
+                _super.call(this);
+                this._curves = [];
+                this._list = [cpi, cpp, cpe];
+            }
+            ;
+            QuadraticBezier3D.prototype.bezierCurveInterpolation = function (p0, p1, p2, t) {
+                return (p0 * Math.pow((1 - t), 2)) +
+                    (2 * p1 * (1 - t) * t) +
+                    (p2 * Math.pow(t, 2));
+            };
+            ;
+            QuadraticBezier3D.prototype.evaluate = function (t) {
+                return new MB.Vect3(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, t), this.bezierCurveInterpolation(this._list[0].z, this._list[1].z, this._list[2].z, t));
+            };
+            ;
+            return QuadraticBezier3D;
+        }(Curve3D));
+        curves.QuadraticBezier3D = QuadraticBezier3D;
+        ;
     })(curves = MB.curves || (MB.curves = {}));
     ;
 })(MB || (MB = {}));
@@ -1504,7 +1556,7 @@ var MB;
         };
         ;
         Path.prototype.quadraticCurveTo = function (cpx, cpy, x, y) {
-            var curve = new MB.curves.QuadraticBezier(this._currentPoint.clone(), new MB.Vect2(cpx, cpy), new MB.Vect2(x, y));
+            var curve = new MB.curves.QuadraticBezier2D(this._currentPoint.clone(), new MB.Vect2(cpx, cpy), new MB.Vect2(x, y));
             this._curves.push(curve);
             this._currentPoint.setXY(x, y);
         };
@@ -2894,6 +2946,7 @@ var MB;
             this.movSpeed = 0.05;
             this.mouseSensivity = 0.25;
             this._updateCamera = false;
+            this._firstMouse = false;
             this._fov = 45.0;
             this.front = new MB.Vect3(0, 0, -1);
             this.position = position;
@@ -2943,19 +2996,19 @@ var MB;
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(38)) {
-                this.processMouseMovement(0.0, 2.5);
+                this.processMouseMovement(0.0, 1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(40)) {
-                this.processMouseMovement(0.0, -2.5);
+                this.processMouseMovement(0.0, -1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(37)) {
-                this.processMouseMovement(-2.5, 0.0);
+                this.processMouseMovement(-1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(39)) {
-                this.processMouseMovement(2.5, 0.0);
+                this.processMouseMovement(1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
             if (this._updateCamera && callback) {
@@ -3158,7 +3211,7 @@ var MB;
                         dt *= 0.001;
                         MB.Timer.update();
                         if (self._resume) {
-                            self.update(dt);
+                            self.update(MB.Timer.deltaTime() * 0.1);
                             self.draw();
                         }
                         self.stats.end();
@@ -3289,7 +3342,7 @@ var MB;
                         dt *= 0.001;
                         MB.Timer.update();
                         if (self._resume) {
-                            self.update(dt);
+                            self.update(MB.Timer.deltaTime());
                             self.draw();
                         }
                     })(0.0);
@@ -3983,15 +4036,15 @@ var MB;
         })(ctes.WrapMode || (ctes.WrapMode = {}));
         var WrapMode = ctes.WrapMode;
         ;
-        (function (BlendingMode) {
-            BlendingMode[BlendingMode["None"] = 0] = "None";
-            BlendingMode[BlendingMode["Normal"] = 1] = "Normal";
-            BlendingMode[BlendingMode["Additive"] = 2] = "Additive";
-            BlendingMode[BlendingMode["Substractive"] = 3] = "Substractive";
-            BlendingMode[BlendingMode["Multiply"] = 4] = "Multiply";
-            BlendingMode[BlendingMode["Custom"] = 5] = "Custom";
-        })(ctes.BlendingMode || (ctes.BlendingMode = {}));
-        var BlendingMode = ctes.BlendingMode;
+        (function (BlendingMode2) {
+            BlendingMode2[BlendingMode2["None"] = 0] = "None";
+            BlendingMode2[BlendingMode2["Normal"] = 1] = "Normal";
+            BlendingMode2[BlendingMode2["Additive"] = 2] = "Additive";
+            BlendingMode2[BlendingMode2["Substractive"] = 3] = "Substractive";
+            BlendingMode2[BlendingMode2["Multiply"] = 4] = "Multiply";
+            BlendingMode2[BlendingMode2["Custom"] = 5] = "Custom";
+        })(ctes.BlendingMode2 || (ctes.BlendingMode2 = {}));
+        var BlendingMode2 = ctes.BlendingMode2;
         ;
         (function (CompressedTex) {
             CompressedTex[CompressedTex["R11EAC"] = 37488] = "R11EAC";
@@ -5453,6 +5506,9 @@ var MB;
             }
         };
         ;
+        ColorState.prototype.setClear = function (r, g, b, a) {
+            this.setClearColor(new MB.Color4(r, g, b, a));
+        };
         ColorState.prototype.setClearColor = function (bgColor) {
             if (!this._currentColorClear || this._currentColorClear.isEquals(bgColor) === false) {
                 var gl = this._context.gl;
@@ -5462,8 +5518,6 @@ var MB;
         };
         ColorState.prototype.reset = function () {
             this._currentColorMask = null;
-            this.setMask(new MB.Vector4(true, true, true, true));
-            this._currentColorClear = null;
             this.setClearColor(new MB.Color4(0.0, 0.0, 0.0, 1.0));
         };
         ;
@@ -5563,8 +5617,9 @@ var MB;
         };
         ;
         StencilState.prototype.setFunc = function (compFun, ref, mask) {
-            if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
-                && this._currentStencilFuncMask !== mask) {
+            if (this._currentStencilFunc !== compFun ||
+                this._currentStencilRef !== ref ||
+                this._currentStencilFuncMask !== mask) {
                 var gl = this._context.gl;
                 gl.stencilFunc(compFun, ref, mask);
                 this._currentStencilFunc = compFun;
@@ -5574,8 +5629,9 @@ var MB;
         };
         ;
         StencilState.prototype.setOp = function (fail, zfail, zpass) {
-            if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
-                && this._currentStencilZPass !== zpass) {
+            if (this._currentStencilFail !== fail
+                || this._currentStencilZFail !== zfail
+                || this._currentStencilZPass !== zpass) {
                 var gl = this._context.gl;
                 gl.stencilOp(fail, zfail, zpass);
                 this._currentStencilFail = fail;
@@ -5583,10 +5639,10 @@ var MB;
                 this._currentStencilZPass = zpass;
             }
         };
-        StencilState.prototype.getMasValue = function (mask) {
+        StencilState.prototype.getMaskValue = function (mask) {
             return this._currentStencilMask;
         };
-        StencilState.prototype.setClearValue = function (s) {
+        StencilState.prototype.setClear = function (s) {
             if (this._currentStencilClear !== s) {
                 var gl = this._context.gl;
                 gl.clearStencil(s);
@@ -5594,6 +5650,16 @@ var MB;
             }
         };
         ;
+        StencilState.prototype.reset = function () {
+            this._currentStencilClear = null;
+            this._currentStencilFail = null;
+            this._currentStencilFunc = null;
+            this._currentStencilMask = null;
+            this._currentStencilRef = null;
+            this._currentStencilZFail = null;
+            this._currentStencilZPass = null;
+            this._currentStencilFuncMask = null;
+        };
         StencilState.prototype.setMaskFace = function (face, mask) {
             var gl = this._context.gl;
             gl.stencilMaskSeparate(face, mask);
@@ -5625,6 +5691,7 @@ var MB;
     var BlendingState = (function () {
         function BlendingState(context) {
             this._blendingEnabled = false;
+            this._currentBlending = MB.ctes.BlendingMode2.None;
             this._context = context;
         }
         ;
@@ -5647,6 +5714,11 @@ var MB;
                 gl.blendEquation(mode);
                 this._blendingMode = mode;
             }
+        };
+        ;
+        BlendingState.prototype.setEquationSeparate = function (modeRGB, modeA) {
+            var gl = this._context.gl;
+            gl.blendEquationSeparate(modeRGB, modeA);
         };
         ;
         BlendingState.prototype.equationSeparate = function (modeRGB, modeAlpha) {
@@ -5693,6 +5765,35 @@ var MB;
             return this._blendingEnabled === true;
         };
         ;
+        BlendingState.prototype.set = function (blend) {
+            var gl = this._context.gl;
+            if (blend != MB.ctes.BlendingMode2.None) {
+                this.setStatus(true);
+            }
+            else {
+                this.setStatus(false);
+                this._currentBlending = blend;
+            }
+            if (blend !== this._currentBlending) {
+                if (blend === MB.ctes.BlendingMode2.Additive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(MB.ctes.BlendingMode.SrcAlpha, MB.ctes.BlendingMode.One);
+                }
+                else if (blend === MB.ctes.BlendingMode2.Substractive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(MB.ctes.BlendingMode.Zero, MB.ctes.BlendingMode.OneMinusSrcColor);
+                }
+                else if (blend === MB.ctes.BlendingMode2.Multiply) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(MB.ctes.BlendingMode.Zero, MB.ctes.BlendingMode.SrcColor);
+                }
+                else {
+                    this.setEquationSeparate(MB.ctes.BlendingEq.Add, MB.ctes.BlendingEq.Add);
+                    this.setFuncSeparate(MB.ctes.BlendingMode.SrcAlpha, MB.ctes.BlendingMode.OneMinusSrcAlpha, MB.ctes.BlendingMode.One, MB.ctes.BlendingMode.OneMinusSrcAlpha);
+                }
+            }
+        };
+        ;
         return BlendingState;
     }());
     MB.BlendingState = BlendingState;
@@ -5703,12 +5804,20 @@ var MB;
             this._viewport = new MB.Vector4(0.0, 0.0, 0.0, 0.0);
             this._context = context;
             this.depth = new DepthState(context);
-            this.depth.reset();
             this.culling = new CullingState(context);
             this.color = new ColorState(context);
-            this.color.reset();
             this.stencil = new StencilState(context);
             this.blending = new BlendingState(context);
+            this.color.setClear(0.0, 0.0, 0.0, 1.0);
+            this.depth.setClear(1.0);
+            this.stencil.setClear(0.0);
+            this.depth.setStatus(true);
+            this.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
+            this.culling.setFlipSided(MB.ctes.FaceDir.InvClockwise);
+            this.culling.setMode(MB.ctes.FaceSide.Back);
+            this.culling.setStatus(true);
+            this.blending.set(MB.ctes.BlendingMode2.Normal);
+            this._capabilites = {};
         }
         ;
         GlobalState.prototype.setLineWidth = function (width) {
@@ -5754,6 +5863,22 @@ var MB;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BITS);
         };
         ;
+        GlobalState.prototype.enable = function (cap) {
+            if (this._capabilites[cap] !== true) {
+                var gl = this._context.gl;
+                gl.enable(cap);
+                this._capabilites[cap] = true;
+            }
+        };
+        ;
+        GlobalState.prototype.disable = function (cap) {
+            if (this._capabilites[cap] !== false) {
+                var gl = this._context.gl;
+                gl.disable(cap);
+                this._capabilites[cap] = false;
+            }
+        };
+        ;
         return GlobalState;
     }());
     MB.GlobalState = GlobalState;
@@ -5781,31 +5906,32 @@ var MB;
             }
             var self = Input;
             window.addEventListener("keyup", function (ev) {
-                if (ev.keyCode === 40 || ev.keyCode === 38) {
-                    ev.preventDefault();
-                }
                 self._onKeyUp(ev);
+                ev.preventDefault();
             });
             window.addEventListener("keydown", function (ev) {
-                if (ev.keyCode === 40 || ev.keyCode === 38) {
-                    ev.preventDefault();
-                }
                 self._onKeyDown(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousedown", function (ev) {
                 self._onMouseDown(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousemove", function (ev) {
                 self._onMouseMove(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mouseup", function (ev) {
                 self._onMouseUp(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousewheel", function (ev) {
                 self._onMouseScroll(ev);
+                ev.preventDefault();
             });
             window.addEventListener("DOMMouseScroll", function (ev) {
                 self._onMouseScroll(ev);
+                ev.preventDefault();
             });
             Input._instance = this;
         }
@@ -6307,6 +6433,15 @@ var MB;
             this.addShader(vsShaderCode, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
             this.addShader(fsShaderCode, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             this.compile();
+            this.autocatching();
+        };
+        ;
+        Program.prototype.loadWithTF = function (vsShaderCode, fsShaderCode, varyings, mode) {
+            this.addShader(vsShaderCode, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this.addShader(fsShaderCode, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._compile();
+            this.feedbackVarying(varyings, mode);
+            this._link();
             this.autocatching();
         };
         ;
@@ -7340,6 +7475,23 @@ var MB;
         }
         Utils.readScriptShader = readScriptShader;
         ;
+        function recurse(arr) {
+            var result = [];
+            for (var i = 0, ii = arr.length; i != ii; ++i) {
+                var x = arr[i];
+                if (Array.isArray(x)) {
+                    result = result.concat(recurse(x));
+                }
+                else if (typeof (x) == 'number') {
+                    result.push(x);
+                }
+            }
+            return result;
+        }
+        function flattenArray(arr) {
+            return [].concat(recurse(arr));
+        }
+        Utils.flattenArray = flattenArray;
     })(Utils = MB.Utils || (MB.Utils = {}));
     ;
 })(MB || (MB = {}));
@@ -8830,6 +8982,7 @@ var MB;
             this.addBufferArray(2, this._geometry.getAttr(MB.VBType.VBTexCoord).array, 2);
             this._indicesLen = this._geometry.indices.length;
         }
+        ;
         return Box;
     }(MB.Drawable));
     MB.Box = Box;
@@ -10808,6 +10961,32 @@ var MB;
 (function (MB) {
     var Loaders;
     (function (Loaders) {
+        function loadJSON(jsonSrc, alias) {
+            if (alias === void 0) { alias = ""; }
+            alias = Loaders._getAlias(jsonSrc, alias);
+            if (!(MB.ResourceMap.isAssetLoaded(alias))) {
+                MB.ResourceMap.asyncLoadRequested(alias);
+                var request_1 = new XMLHttpRequest();
+                request_1.open("GET", jsonSrc, true);
+                request_1.responseType = "json";
+                request_1.onload = function () {
+                    MB.ResourceMap.asyncLoadCompleted(alias, JSON.parse(request_1.response));
+                }.bind(this);
+                request_1.send();
+            }
+        }
+        Loaders.loadJSON = loadJSON;
+        ;
+    })(Loaders = MB.Loaders || (MB.Loaders = {}));
+    ;
+})(MB || (MB = {}));
+;
+
+"use strict";
+var MB;
+(function (MB) {
+    var Loaders;
+    (function (Loaders) {
         function loadVideo(videoSrc, alias) {
             if (alias === void 0) { alias = ""; }
             alias = Loaders._getAlias(videoSrc, alias);
@@ -11197,6 +11376,16 @@ var MB;
                 else {
                     auxData = data;
                 }
+                if (context instanceof MB.GLContextW1) {
+                    var isPower2 = MB.Mathf.isPOT(auxData.width) && MB.Mathf.isPOT(auxData.height);
+                    if (this._wrapS !== MB.ctes.WrapMode.Clamp2Edge || this._wrapT !== MB.ctes.WrapMode.Clamp2Edge) {
+                        MB.Log.warn("Texture is not power of two. Wrappers should be set to Clamp2Edge wrapping ...");
+                    }
+                    if (this._minFilter !== MB.ctes.TextureFilter.Nearest
+                        && this._minFilter !== MB.ctes.TextureFilter.Linear) {
+                        MB.Log.warn("Texture is not power of two. MinFilter should be set to Nearest or Linear filter ...");
+                    }
+                }
                 gl.texImage2D(this._target, this._level, this._internalFormat, this._format, this._type, auxData);
             }
             else {
@@ -11410,16 +11599,29 @@ var MBX;
 })(MBX || (MBX = {}));
 ;
 
+"use strict";
 var MB;
 (function (MB) {
     var Material = (function () {
-        function Material() {
+        function Material(context) {
+            this.backFaceCull = true;
+            this.sideOrientation = MB.ctes.FaceDir.InvClockwise;
+            this.depthTest = true;
+            this.visible = true;
+            this._context = context;
+            this._state = this._context.state;
         }
+        Material.prototype.use = function () {
+            this._state.culling.setStatus(this.backFaceCull);
+            this._state.culling.setFlipSided(this.sideOrientation);
+            this._state.depth.setStatus(this.depthTest);
+        };
         return Material;
     }());
     MB.Material = Material;
 })(MB || (MB = {}));
 
+"use strict";
 
 
 
@@ -11447,7 +11649,7 @@ var MB;
     var ShaderMaterial = (function (_super) {
         __extends(ShaderMaterial, _super);
         function ShaderMaterial(context, params) {
-            _super.call(this);
+            _super.call(this, context);
             this._uniforms = {};
             function diff2(o1, o2) {
                 var res = {};
@@ -11458,7 +11660,6 @@ var MB;
                 }
                 return res;
             }
-            this._context = context;
             this.id = params.name || "";
             this._program = new MB.Program(context);
             this._program.load(params.vertexShader, params.fragmentShader);
@@ -11496,6 +11697,10 @@ var MB;
         };
         ;
         ShaderMaterial.prototype.use = function () {
+            if (!this.visible) {
+                return;
+            }
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -11541,6 +11746,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 
 
 
@@ -11552,7 +11758,7 @@ var MB;
     var NormalMaterial = (function (_super) {
         __extends(NormalMaterial, _super);
         function NormalMaterial(context) {
-            _super.call(this);
+            _super.call(this, context);
             this._uniforms = {};
             var params = {
                 name: "normalShader",
@@ -11602,6 +11808,7 @@ var MB;
         };
         ;
         NormalMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -11647,6 +11854,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 
 
 
@@ -11678,69 +11886,9 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 
-
-
-
-
-
-var MBS;
-(function (MBS) {
-    var SimpleMaterial = (function (_super) {
-        __extends(SimpleMaterial, _super);
-        function SimpleMaterial() {
-            _super.call(this);
-            this._ambientColor = MB.Color3.Black.clone();
-            this._diffuseColor = MB.Color3.White.clone();
-            this._specularColor = MB.Color3.White.clone();
-            this._emissiveColor = MB.Color3.Black.clone();
-            this._specularPower = 32.0;
-        }
-        Object.defineProperty(SimpleMaterial.prototype, "ambientColor", {
-            get: function () { return this._ambientColor; },
-            set: function (c) { this._ambientColor = c; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        Object.defineProperty(SimpleMaterial.prototype, "diffuseColor", {
-            get: function () { return this._diffuseColor; },
-            set: function (c) { this._diffuseColor = c; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        Object.defineProperty(SimpleMaterial.prototype, "specularColor", {
-            get: function () { return this._specularColor; },
-            set: function (c) { this._specularColor = c; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        Object.defineProperty(SimpleMaterial.prototype, "emissiveColor", {
-            get: function () { return this._emissiveColor; },
-            set: function (c) { this._emissiveColor = c; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        Object.defineProperty(SimpleMaterial.prototype, "specularPower", {
-            get: function () { return this._specularPower; },
-            set: function (p) { this._specularPower = p; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        return SimpleMaterial;
-    }(MB.Material));
-    MBS.SimpleMaterial = SimpleMaterial;
-})(MBS || (MBS = {}));
-
+"use strict";
 
 
 
@@ -11753,7 +11901,7 @@ var MB;
     var TFMaterial = (function (_super) {
         __extends(TFMaterial, _super);
         function TFMaterial(context, params) {
-            _super.call(this);
+            _super.call(this, context);
             this._uniforms = {};
             function diff2(o1, o2) {
                 var res = {};
@@ -11764,13 +11912,9 @@ var MB;
                 }
                 return res;
             }
-            this._context = context;
             this.id = params.name || "";
             this._program = new MB.Program(context);
-            this._program.addShader(params.vertexShader, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-            this._program.addShader(params.fragmentShader, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-            this._program.compileWithTF(params.tfs.varying, params.tfs.mode);
-            this._program.autocatching();
+            this._program.loadWithTF(params.vertexShader, params.fragmentShader, params.tfs.varying, params.tfs.mode);
             MB.ProgramManager.add(this.id, this._program);
             var unifs = diff2(this._program.uniformLocations, params.uniforms);
             this._uniforms = {};
@@ -11780,6 +11924,13 @@ var MB;
                 this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
             }
         }
+        Object.defineProperty(TFMaterial.prototype, "program", {
+            get: function () {
+                return this._program;
+            },
+            enumerable: true,
+            configurable: true
+        });
         ;
         Object.defineProperty(TFMaterial.prototype, "uniforms", {
             get: function () {
@@ -11805,6 +11956,7 @@ var MB;
         };
         ;
         TFMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -11850,6 +12002,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 var MB;
 (function (MB) {
     var Uniform = (function () {
@@ -11882,6 +12035,7 @@ var MB;
 })(MB || (MB = {}));
 ;
 
+"use strict";
 var MBX;
 (function (MBX) {
     var UniformMaterials;
@@ -11936,6 +12090,7 @@ var MBX;
 })(MBX || (MBX = {}));
 ;
 
+"use strict";
 
 
 
@@ -11947,7 +12102,7 @@ var MB;
     var VolumetricMaterial = (function (_super) {
         __extends(VolumetricMaterial, _super);
         function VolumetricMaterial(context, tex3D) {
-            _super.call(this);
+            _super.call(this, context);
             this._uniforms = {};
             var params = {
                 name: "volumetricShader",
@@ -11965,7 +12120,6 @@ var MB;
             this.id = params.name;
             this._program = new MB.Program(context);
             this._tex3D = tex3D;
-            this._context = context;
             this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n\n                out vec3 outUV;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                out vec3 viewPos;\n\n                void main() {\n                    gl_Position = projection * view * model * vec4(position, 1.0);\n                    outUV = position + vec3(0.5);\n                    mat4 MV = view * model;\n                    MV = inverse(MV);\n                    viewPos = (MV * vec4(0.0, 0.0, 0.0, 1.0)).rgb;\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
             this._program.addShader("#version 300 es\n                precision highp float;\n                precision highp sampler3D;\n\n                in vec3 outUV;\n                uniform sampler3D tex;\n\n                const int MAX_SAMPLES = 300;        // total samples for each ray march step\n                const vec3 texMin = vec3(0.0);      // minimum texture access coordinate\n                const vec3 texMax = vec3(1.0);      // maximum texture access coordinate\n\n                in vec3 viewPos;\n\n                out vec4 fragColor;\n\n                bool stop = false;\n\n                uniform float step_size;\n\n                void main() {\n                    fragColor = vec4(0.0);\n                    vec3 dataPos = outUV;\n                    vec3 geomDir = normalize((outUV-vec3(0.5)) - viewPos);\n                    vec3 dirStep = geomDir * vec3(step_size);\n\n                    for (int i = 0; i < MAX_SAMPLES; ++i) {\n                        dataPos += dirStep;\n                        stop = dot(sign(dataPos-texMin),sign(texMax-dataPos)) < 3.0;\n\n                        // If the stopping condition is true we brek out of the ray marching loop\n                        if (stop)\n                            break;\n\n                        float samp = texture(tex, dataPos).r;\n\n                        float prev_alpha = samp - (samp * fragColor.a);\n                        fragColor.rgb = prev_alpha * vec3(samp) + fragColor.rgb;\n                        fragColor.a += prev_alpha;\n\n                        if (fragColor.a > 0.99) {\n                            break;\n                        }\n                    }\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             this._program.compile();
@@ -11997,6 +12151,7 @@ var MB;
         };
         ;
         VolumetricMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -12042,6 +12197,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 var MBS;
 (function (MBS) {
     var Engine = (function () {
@@ -12087,6 +12243,7 @@ var MBS;
     MBS.Engine = Engine;
 })(MBS || (MBS = {}));
 
+"use strict";
 var MBS;
 (function (MBS) {
     var EngineApp = (function () {
@@ -12105,6 +12262,7 @@ var MBS;
     MBS.EngineApp = EngineApp;
 })(MBS || (MBS = {}));
 
+"use strict";
 var MBS;
 (function (MBS) {
     var Node = (function () {
@@ -12352,6 +12510,7 @@ var MBS;
     MBS.Node = Node;
 })(MBS || (MBS = {}));
 
+"use strict";
 var MBS;
 (function (MBS) {
     var PostProcess = (function () {
@@ -12377,6 +12536,7 @@ var MBS;
 })(MBS || (MBS = {}));
 ;
 
+"use strict";
 var MBS;
 (function (MBS) {
     var Scene = (function () {

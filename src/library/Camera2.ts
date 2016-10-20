@@ -108,28 +108,29 @@ namespace MB {
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(38)) {
-                this.processMouseMovement(0.0, 2.5);
+                this.processMouseMovement(0.0, 1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(40)) {
-                this.processMouseMovement(0.0, -2.5);
+                this.processMouseMovement(0.0, -1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(37)) {
                 // this.processMouseMovement(2.5, 0.0);
-                this.processMouseMovement(-2.5, 0.0);
+                this.processMouseMovement(-1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(39)) {
                 // this.processMouseMovement(-2.5, 0.0);
-                this.processMouseMovement(2.5, 0.0);
+                this.processMouseMovement(1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
+
             if (this._updateCamera && callback) {
                 callback();
             }
         }
-
+        protected _firstMouse: boolean = false;
         public processKeyboard(direction: number, speed: number = 1.0) {
             if (this.timeElapsed > 25) {
                 return;

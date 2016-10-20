@@ -97,7 +97,7 @@ namespace MB {
                         MB.Timer.update();
 
                         if (self._resume) {
-                            self.update(dt);
+                            self.update(MB.Timer.deltaTime());
                             self.draw();
                         }
 

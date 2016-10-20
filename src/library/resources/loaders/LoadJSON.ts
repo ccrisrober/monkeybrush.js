@@ -20,20 +20,30 @@
 "use strict";
 
 namespace MB {
-    export class Uniform {
-        public isDirty: boolean;
-        public _type: UniformType;
-        public _value: any;
-        constructor(type: UniformType, value: any) {
-            this._type = type;
-            this._value = value;
-            this.isDirty = true;
+    export namespace Loaders {
+        /**
+         * [loadJSON description]
+         * @param {string}    jsonSrc [description]
+         * @param {string =        ""}          alias [description]
+         */
+        export function loadJSON(jsonSrc: string, alias: string = "") {
+            alias = _getAlias(jsonSrc, alias);
+            if (!(ResourceMap.isAssetLoaded(alias))) {
+                // Update resources in load counter
+                ResourceMap.asyncLoadRequested(alias);
+
+                // Async request the data from server
+                let request = new XMLHttpRequest();
+                request.open("GET", jsonSrc, true);
+
+                // Specify that the request retrieves json data.
+                request.responseType = "json";
+
+                request.onload = function () {
+                    ResourceMap.asyncLoadCompleted(alias, JSON.parse(request.response));
+                }.bind(this);
+                request.send();
+            }
         };
-        get type(): UniformType { return this._type; };
-        get value(): any { return this._value; };
-        set value(v: any) {
-            this._value = v;
-            this.isDirty = true;
-        }
     };
 };

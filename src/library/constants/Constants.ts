@@ -500,7 +500,7 @@ namespace MB {
 
 
 
-        export enum BlendingMode {
+        export enum BlendingMode2 {
             // gl.disable(gl.BLEND);
             None,
             // gl.enable(BLEND)
