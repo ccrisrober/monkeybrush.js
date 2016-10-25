@@ -9,7 +9,7 @@ namespace MB {
             // Load all extensions if WebGLRenderingContext === 1
             if (!(this._gl instanceof WebGL2RenderingContext)) {
                 [
-                    "OES_element_index_uint",
+                    /*"OES_element_index_uint",
                     "EXT_sRGB",
                     "EXT_blend_minmax",
                     "EXT_frag_depth",
@@ -23,11 +23,19 @@ namespace MB {
                     "OES_vertex_array_object",
                     "WEBGL_draw_buffers",
                     "OES_fbo_render_mipmap",
-                    "ANGLE_instanced_arrays"
+                    "ANGLE_instanced_arrays"*/
+                    "WEBGL_depth_texture",
+                    "OES_texture_float",
+                    "OES_texture_float_linear",
+                    "OES_texture_half_float",
+                    "OES_texture_half_float_linear",
+                    "OES_standard_derivatives",
+                    "ANGLE_instanced_arrays",
+                    "OES_element_index_uint"
                 ].forEach((ext: string) => {
                     MB.Extensions.get(this, ext);
                 });
-                MB.Log.info("All WebGL1 extensions enabled");
+                console.info("All WebGL1 extensions enabled");
             }
         }
     }

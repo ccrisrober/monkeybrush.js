@@ -69,13 +69,16 @@ function loadShader(alias: string, filePath: string) {
         request.send();
     } catch (err) {
         alert("ERROR: " + filePath);
-        MB.Log.error("ERROR: " + filePath);
+        console.error("ERROR: " + filePath);
         return null;
     }
     let shaderSource: string = request.responseText;
     MB.ResourceShader.add(alias, _processImports(shaderSource));
-
 };
+
+function loadShaderFromText(alias: string, shaderSource: string) {
+    MB.ResourceShader.add(alias, _processImports(shaderSource));
+}
 
 function _processImports(src: string): string {
     const regex = /#import<(.+)>(\((.*)\))*/g;
@@ -94,5 +97,38 @@ function _processImports(src: string): string {
 
 loadShader("SimpleNoise3D", "../src/shaders/SimpleNoise3D.glsl");
 loadShader("ClassicNoise", "../src/shaders/ClassicNoise.glsl");
-loadShader("VertexPP", "../src/shaders/VertexPP.glsl");
-loadShader("MatCap", "../src/shaders/MatCap.glsl");
+loadShaderFromText("BlackAndWhite", `vec3 blackWhiteFilter(vec3 color) {
+    float avg = (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b);
+    return vec3(avg);
+}`);
+loadShaderFromText("RimLighting", `vec3 rimLighting(vec3 viewDir, vec3 normal, vec3 lightColor) {
+    float rim = 1.0 - max(dot(viewDir, normal), 0.0);
+    rim = smoothstep(0.8, 1.0, rim);
+    return lightColor * vec3(rim);
+}`);
+loadShaderFromText("VertexPP", `precision highp float;
+layout(location = 0) in vec3 vertPosition;
+out vec2 uv;
+void main(void) {
+    uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);
+    gl_Position = vec4(vertPosition, 1.0);
+}`);
+loadShaderFromText("MatCap", `vec2 matcap(vec3 eye, vec3 normal) {
+    vec3 reflected = reflect(eye, normal);
+
+    float m = 2.0 * sqrt(
+        pow(reflected.x, 2.0) +
+        pow(reflected.y, 2.0) +
+        pow(reflected.z + 1.0, 2.0)
+    );
+
+    return reflected.xy / m + 0.5;
+}
+
+/*
+    vec2 uv = matcap(eyeVector, normalVector);
+    gl_FragColor = vec4(texture2D(texture, uv).rgb, 1.0);
+*/`);
+loadShaderFromText("GammaCorrection", `vec3 applyGamma(float gamma, vec3 fColor) {
+    return pow(fColor, vec3(1.0, gamma));
+}`);

@@ -54,11 +54,11 @@ namespace MB {
                 if (context instanceof GLContextW1) {
                     let isPower2 = MB.Mathf.isPOT(auxData.width) && MB.Mathf.isPOT(auxData.height);
                     if (this._wrapS !== MB.ctes.WrapMode.Clamp2Edge || this._wrapT !== MB.ctes.WrapMode.Clamp2Edge) {
-                        MB.Log.warn("Texture is not power of two. Wrappers should be set to Clamp2Edge wrapping ...");
+                        console.warn("Texture is not power of two. Wrappers should be set to Clamp2Edge wrapping ...");
                     }
                     if (this._minFilter !== MB.ctes.TextureFilter.Nearest
                         && this._minFilter !== MB.ctes.TextureFilter.Linear) {
-                        MB.Log.warn("Texture is not power of two. MinFilter should be set to Nearest or Linear filter ...");
+                        console.warn("Texture is not power of two. MinFilter should be set to Nearest or Linear filter ...");
                     }
                 }
 

@@ -111,5 +111,34 @@ namespace MBS {
         protected _totalIndices: number = 0;
 
         public camera: MB.Camera2;
+
+        public autoClear: boolean = true;
+        public autoClearColor: boolean = true;
+        public autoClearDepth: boolean = true;
+        public autoClearStencil: boolean = true;
+
+        protected clear(clearColor: boolean = this.autoClearColor,
+            clearDepth: boolean = this.autoClearDepth,
+            clearStencil: boolean = this.autoClearStencil
+            ) {
+            let bits = 0;
+            const gl = this._engine.context.gl;
+            if (clearDepth === undefined || clearDepth) bits |= gl.COLOR_BUFFER_BIT;
+            if (clearDepth === undefined || clearDepth) bits |= gl.DEPTH_BUFFER_BIT;
+            if (clearStencil === undefined || clearStencil) bits |= gl.STENCIL_BUFFER_BIT;
+
+            gl.clear( bits );
+        }
+        public clearColor_() {
+            this.clear( true, false, false );
+        };
+
+        public clearDepth_() {
+            this.clear( false, true, false );
+        };
+
+        public clearStencil_() {
+            this.clear( false, false, true );
+        };
     }
 }

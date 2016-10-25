@@ -1,1 +1,0 @@
-float avg = (0.2126 * fragColor.r + 0.7152 * fragColor.g + 0.0722 * fragColor.b);

@@ -77,7 +77,7 @@ namespace MBS {
                         loop(dt);
                     })(0.0);
                 } catch (e) {
-                    MB.Log.error({
+                    console.error({
                         title: "Error:",
                         text: `${e}`,
                         type: "error"

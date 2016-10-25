@@ -39,7 +39,7 @@ namespace MB {
             let ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
 
             if (ext === null) {
-                MB.Log.warn(name + " extension not supported.");
+                console.warn(name + " extension not supported.");
                 return;
             }
             this._extensions[name] = ext;

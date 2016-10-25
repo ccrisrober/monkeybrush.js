@@ -35,7 +35,7 @@ namespace MB {
             subdivisions = Math.floor(subdivisions);
 
             if (subdivisions > 10) {
-                MB.Log.warn("Please, don´t use more than 8 subdivisions");
+                console.warn("Please, don´t use more than 8 subdivisions");
                 return;
             }
 

@@ -3124,7 +3124,7 @@ var MB;
             if (title === void 0) { title = null; }
             if (text === void 0) { text = {}; }
             this._resume = true;
-            MB.Log.info("init app");
+            console.info("init app");
             this._context = context;
             this._state = new MB.GlobalState(context);
             this._webglVersion = context.version;
@@ -3198,7 +3198,7 @@ var MB;
         App.prototype.start = function () {
             var self = this;
             MB.ResourceMap.setLoadCompleteCallback(function () {
-                MB.Log.info("ALL RESOURCES LOADED!!!!");
+                console.info("ALL RESOURCES LOADED!!!!");
                 self.initialize();
                 var spinner = document.getElementById("spinner");
                 if (spinner)
@@ -3230,12 +3230,12 @@ var MB;
         };
         ;
         App.prototype.pause = function () {
-            MB.Log.debug("PAUSE");
+            console.debug("PAUSE");
             this._resume = false;
         };
         ;
         App.prototype.resume = function () {
-            MB.Log.debug("RESUME");
+            console.debug("RESUME");
             this._resume = true;
         };
         ;
@@ -3283,7 +3283,7 @@ var MB;
         function App2(title, context) {
             if (title === void 0) { title = null; }
             this._resume = true;
-            MB.Log.info("init app");
+            console.info("init app");
             this._context = context;
             this._state = new MB.GlobalState(context);
             this._webglVersion = context.version;
@@ -3330,7 +3330,7 @@ var MB;
         App2.prototype.start = function () {
             var self = this;
             MB.ResourceMap.setLoadCompleteCallback(function () {
-                MB.Log.info("ALL RESOURCES LOADED!!!!");
+                console.info("ALL RESOURCES LOADED!!!!");
                 self.initialize();
                 var spinner = document.getElementById("spinner");
                 if (spinner)
@@ -3348,7 +3348,7 @@ var MB;
                     })(0.0);
                 }
                 catch (e) {
-                    MB.Log.error({
+                    console.error({
                         title: "Error:",
                         text: "" + e,
                         type: "error"
@@ -3360,12 +3360,12 @@ var MB;
         };
         ;
         App2.prototype.pause = function () {
-            MB.Log.debug("PAUSE");
+            console.debug("PAUSE");
             this._resume = false;
         };
         ;
         App2.prototype.resume = function () {
-            MB.Log.debug("RESUME");
+            console.debug("RESUME");
             this._resume = true;
         };
         ;
@@ -4813,7 +4813,7 @@ var MB;
             var gl = context.gl;
             var ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
             if (ext === null) {
-                MB.Log.warn(name + " extension not supported.");
+                console.warn(name + " extension not supported.");
                 return;
             }
             this._extensions[name] = ext;
@@ -5159,7 +5159,7 @@ var MB;
         function GLContext(canvas) {
             this.pp = null;
             if (!canvas) {
-                MB.Log.info("Not canvas. Create one ...");
+                console.info("Not canvas. Create one ...");
                 canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
                 canvas.width = 800;
                 canvas.height = 800;
@@ -5212,8 +5212,13 @@ var MB;
                 this._version = numVersion;
                 this._getVendors();
                 this._state = new MB.GlobalState(this);
-                MB.Log.info("WebGL2RenderingContext OK :)");
+                this._canvas.addEventListener("webglcontextlost", this._onContextLost, false);
+                console.info("WebGL2RenderingContext OK :)");
             }
+        };
+        ;
+        GLContext.prototype._onContextLost = function (ev) {
+            ev.preventDefault();
         };
         ;
         Object.defineProperty(GLContext.prototype, "gl", {
@@ -5280,6 +5285,10 @@ var MB;
             }
             return this.pp;
         };
+        ;
+        GLContext.prototype.forceGLLost = function () {
+            MB.Extensions.get(this, "WEBGL_lose_context").loseContext();
+        };
         return GLContext;
     }());
     MB.GLContext = GLContext;
@@ -5302,25 +5311,18 @@ var MB;
             this._init("webgl", 1, params);
             if (!(this._gl instanceof WebGL2RenderingContext)) {
                 [
-                    "OES_element_index_uint",
-                    "EXT_sRGB",
-                    "EXT_blend_minmax",
-                    "EXT_frag_depth",
                     "WEBGL_depth_texture",
-                    "WEBKIT_WEBGL_depth_texture",
-                    "EXT_shader_texture_lod",
-                    "OES_standard_derivatives",
                     "OES_texture_float",
+                    "OES_texture_float_linear",
                     "OES_texture_half_float",
                     "OES_texture_half_float_linear",
-                    "OES_vertex_array_object",
-                    "WEBGL_draw_buffers",
-                    "OES_fbo_render_mipmap",
-                    "ANGLE_instanced_arrays"
+                    "OES_standard_derivatives",
+                    "ANGLE_instanced_arrays",
+                    "OES_element_index_uint"
                 ].forEach(function (ext) {
                     MB.Extensions.get(_this, ext);
                 });
-                MB.Log.info("All WebGL1 extensions enabled");
+                console.info("All WebGL1 extensions enabled");
             }
         }
         return GLContextW1;
@@ -5479,7 +5481,7 @@ var MB;
             if (!(znear === this._znear && zfar === this._zfar)) {
                 var gl = this._context.gl;
                 if (znear > zfar || znear < 0.0 || zfar > 1.0) {
-                    MB.Log.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
+                    console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
                     return;
                 }
                 gl.depthRange(znear, zfar);
@@ -6058,19 +6060,6 @@ var MB;
 "use strict";
 var MB;
 (function (MB) {
-    MB.Log = function _log(logName) {
-        var Log = log4javascript.getLogger(logName);
-        var consoleAppender = new log4javascript.BrowserConsoleAppender();
-        Log.addAppender(consoleAppender);
-        Log.setLevel(log4javascript.Level.INFO);
-        return Log;
-    }("my_logger");
-})(MB || (MB = {}));
-;
-
-"use strict";
-var MB;
-(function (MB) {
     var Noise;
     (function (Noise) {
         var fractal;
@@ -6479,8 +6468,8 @@ var MB;
             gl.linkProgram(this._handler);
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -6505,8 +6494,8 @@ var MB;
             gl.linkProgram(this._handler);
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -6528,13 +6517,13 @@ var MB;
             }
             catch (err) {
                 alert("ERROR: " + filePath);
-                MB.Log.error("ERROR: " + filePath);
+                console.error("ERROR: " + filePath);
                 return null;
             }
             var shaderSource = request.responseText;
             if (shaderSource === null) {
                 alert("WARNING: " + filePath + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return this.compileShader(shaderSource, shaderType);
@@ -6543,7 +6532,7 @@ var MB;
         Program.prototype.loadAndCompileFromText = function (shaderSource, shaderType) {
             if (shaderSource === null) {
                 alert("WARNING: " + shaderSource + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return this.compileShader(shaderSource, shaderType);
@@ -6555,7 +6544,7 @@ var MB;
             shaderSource = shaderText.firstChild.textContent;
             if (shaderSource === null) {
                 alert("WARNING: " + id + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return this.compileShader(shaderSource, shaderType);
@@ -6620,8 +6609,8 @@ var MB;
             gl.compileShader(compiledShader);
             if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
                 alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.debug({
+                console.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -7468,7 +7457,7 @@ var MB;
             shaderSource = shaderText.firstChild.textContent;
             if (shaderSource === null) {
                 alert("WARNING: " + script + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return shaderSource;
@@ -8393,7 +8382,7 @@ var MBX;
                 new MB.Texture2D(context, dataTex, configTex),
                 new MB.Texture2D(context, dataTex, configTex)
             ], size, true, true, {});
-            MB.Log.debug("GBuffer created");
+            console.debug("GBuffer created");
         }
         ;
         GBuffer.prototype.bindForReading = function () {
@@ -9208,7 +9197,7 @@ var MB;
             if (subdivisions === void 0) { subdivisions = 1; }
             subdivisions = Math.floor(subdivisions);
             if (subdivisions > 10) {
-                MB.Log.warn("Please, don´t use more than 8 subdivisions");
+                console.warn("Please, don´t use more than 8 subdivisions");
                 return;
             }
             _super.call(this, context, [
@@ -9521,7 +9510,7 @@ var MB;
             if (subdivisions === void 0) { subdivisions = 1; }
             subdivisions = Math.floor(subdivisions);
             if (subdivisions > 10) {
-                MB.Log.warn("Please, don´t use more than 8 subdivisions");
+                console.warn("Please, don´t use more than 8 subdivisions");
                 return;
             }
             var t = (1 + Math.sqrt(5)) / 2;
@@ -9718,7 +9707,7 @@ var MB;
             var self = this;
             request.onload = function () {
                 if (request.status < 200 || request.status > 299) {
-                    MB.Log.error("Error: HTTP Status " + request.status + " on resource " + url);
+                    console.error("Error: HTTP Status " + request.status + " on resource " + url);
                     return {};
                 }
                 else {
@@ -9734,6 +9723,16 @@ var MB;
     ;
 })(MB || (MB = {}));
 ;
+
+var MB;
+(function (MB) {
+    var MyMesh = (function () {
+        function MyMesh(geom) {
+        }
+        return MyMesh;
+    }());
+    MB.MyMesh = MyMesh;
+})(MB || (MB = {}));
 
 "use strict";
 
@@ -10505,7 +10504,7 @@ var MB;
                 req.send(null);
             }
             catch (e) {
-                MB.Log.error("Error reading file " + filename);
+                console.error("Error reading file " + filename);
             }
             return req.responseText;
         }
@@ -10515,6 +10514,16 @@ var MB;
             split.forEach(function (value) {
                 if (!isNaN(value)) {
                     values.push(parseFloat(value));
+                }
+            });
+            return values;
+        }
+        function splitLineToIntegers(line) {
+            var values = new Array();
+            var split = line.split(" ");
+            split.forEach(function (value) {
+                if (!isNaN(value)) {
+                    values.push(parseInt(value));
                 }
             });
             return values;
@@ -10532,6 +10541,50 @@ var MB;
             }
             return values;
         }
+        function loadMTL(filename) {
+            var mtl = {
+                diffuseColor: null,
+                ambientColor: null,
+                specularColor: null,
+                specPower: 0,
+                alpha: 1.0,
+                diffuseTexSrc: null,
+                ambientTexSrc: null,
+                specularTexSrc: null,
+            };
+            var lines = loadFile(filename).split("\n");
+            var aux;
+            lines.forEach(function (line) {
+                var elems = line.split(/\s+/);
+                elems.shift();
+                var type = line.substr(0, 2).trim();
+                if (type.length === 0 || type === "#") {
+                    return;
+                }
+                type = type.toLowerCase();
+                if (type === "kd") {
+                    aux = splitLineToFloats(line);
+                    mtl.diffuseColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ka") {
+                    aux = splitLineToFloats(line);
+                    mtl.ambientColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ks") {
+                    aux = splitLineToFloats(line);
+                    mtl.specularColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ns") {
+                    mtl.specPower = splitLineToIntegers(line)[0];
+                }
+                else if (type === "d") {
+                    mtl.alpha = splitLineToFloats(line)[0];
+                }
+            });
+            return mtl;
+        }
+        ObjLoader.loadMTL = loadMTL;
+        ;
         function loadObj(filename) {
             var verts = [], normals = [], textures = [], idxCache = {}, idx = 0;
             var model = {
@@ -10545,6 +10598,10 @@ var MB;
                 var elems = line.split(/\s+/);
                 elems.shift();
                 var type = line.substr(0, 2).trim();
+                if (type.length === 0 || type === "#") {
+                    return;
+                }
+                type = type.toLowerCase();
                 if (type === "v") {
                     var values = splitLineToFloats(line);
                     verts.push(values[0], values[1], values[2]);
@@ -10815,13 +10872,16 @@ function loadShader(alias, filePath) {
     }
     catch (err) {
         alert("ERROR: " + filePath);
-        MB.Log.error("ERROR: " + filePath);
+        console.error("ERROR: " + filePath);
         return null;
     }
     var shaderSource = request.responseText;
     MB.ResourceShader.add(alias, _processImports(shaderSource));
 }
 ;
+function loadShaderFromText(alias, shaderSource) {
+    MB.ResourceShader.add(alias, _processImports(shaderSource));
+}
 function _processImports(src) {
     var regex = /#import<(.+)>(\((.*)\))*/g;
     var match = regex.exec(src);
@@ -10839,8 +10899,11 @@ function _processImports(src) {
 ;
 loadShader("SimpleNoise3D", "../src/shaders/SimpleNoise3D.glsl");
 loadShader("ClassicNoise", "../src/shaders/ClassicNoise.glsl");
-loadShader("VertexPP", "../src/shaders/VertexPP.glsl");
-loadShader("MatCap", "../src/shaders/MatCap.glsl");
+loadShaderFromText("BlackAndWhite", "vec3 blackWhiteFilter(vec3 color) {\n    float avg = (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b);\n    return vec3(avg);\n}");
+loadShaderFromText("RimLighting", "vec3 rimLighting(vec3 viewDir, vec3 normal, vec3 lightColor) {\n    float rim = 1.0 - max(dot(viewDir, normal), 0.0);\n    rim = smoothstep(0.8, 1.0, rim);\n    return lightColor * vec3(rim);\n}");
+loadShaderFromText("VertexPP", "precision highp float;\nlayout(location = 0) in vec3 vertPosition;\nout vec2 uv;\nvoid main(void) {\n    uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n    gl_Position = vec4(vertPosition, 1.0);\n}");
+loadShaderFromText("MatCap", "vec2 matcap(vec3 eye, vec3 normal) {\n    vec3 reflected = reflect(eye, normal);\n\n    float m = 2.0 * sqrt(\n        pow(reflected.x, 2.0) +\n        pow(reflected.y, 2.0) +\n        pow(reflected.z + 1.0, 2.0)\n    );\n\n    return reflected.xy / m + 0.5;\n}\n\n/*\n    vec2 uv = matcap(eyeVector, normalVector);\n    gl_FragColor = vec4(texture2D(texture, uv).rgb, 1.0);\n*/");
+loadShaderFromText("GammaCorrection", "vec3 applyGamma(float gamma, vec3 fColor) {\n    return pow(fColor, vec3(1.0, gamma));\n}");
 
 "use strict";
 var MB;
@@ -11379,11 +11442,11 @@ var MB;
                 if (context instanceof MB.GLContextW1) {
                     var isPower2 = MB.Mathf.isPOT(auxData.width) && MB.Mathf.isPOT(auxData.height);
                     if (this._wrapS !== MB.ctes.WrapMode.Clamp2Edge || this._wrapT !== MB.ctes.WrapMode.Clamp2Edge) {
-                        MB.Log.warn("Texture is not power of two. Wrappers should be set to Clamp2Edge wrapping ...");
+                        console.warn("Texture is not power of two. Wrappers should be set to Clamp2Edge wrapping ...");
                     }
                     if (this._minFilter !== MB.ctes.TextureFilter.Nearest
                         && this._minFilter !== MB.ctes.TextureFilter.Linear) {
-                        MB.Log.warn("Texture is not power of two. MinFilter should be set to Nearest or Linear filter ...");
+                        console.warn("Texture is not power of two. MinFilter should be set to Nearest or Linear filter ...");
                     }
                 }
                 gl.texImage2D(this._target, this._level, this._internalFormat, this._format, this._type, auxData);
@@ -12229,7 +12292,7 @@ var MBS;
                     })(0.0);
                 }
                 catch (e) {
-                    MB.Log.error({
+                    console.error({
                         title: "Error:",
                         text: "" + e,
                         type: "error"
@@ -12439,7 +12502,7 @@ var MBS;
                 return this;
             }
             if (object === this) {
-                MB.Log.error("MBS.Node.add: object can't be added as a child of itself.", object);
+                console.error("MBS.Node.add: object can't be added as a child of itself.", object);
                 return this;
             }
             if (object.parent !== null) {
@@ -12550,6 +12613,10 @@ var MBS;
             this._totalVertices = 0;
             this._drawCalls = 0;
             this._totalIndices = 0;
+            this.autoClear = true;
+            this.autoClearColor = true;
+            this.autoClearDepth = true;
+            this.autoClearStencil = true;
             this._engine = engine;
             this._name = name;
             engine._scenes.push(this);
@@ -12619,6 +12686,32 @@ var MBS;
             enumerable: true,
             configurable: true
         });
+        ;
+        Scene.prototype.clear = function (clearColor, clearDepth, clearStencil) {
+            if (clearColor === void 0) { clearColor = this.autoClearColor; }
+            if (clearDepth === void 0) { clearDepth = this.autoClearDepth; }
+            if (clearStencil === void 0) { clearStencil = this.autoClearStencil; }
+            var bits = 0;
+            var gl = this._engine.context.gl;
+            if (clearDepth === undefined || clearDepth)
+                bits |= gl.COLOR_BUFFER_BIT;
+            if (clearDepth === undefined || clearDepth)
+                bits |= gl.DEPTH_BUFFER_BIT;
+            if (clearStencil === undefined || clearStencil)
+                bits |= gl.STENCIL_BUFFER_BIT;
+            gl.clear(bits);
+        };
+        Scene.prototype.clearColor_ = function () {
+            this.clear(true, false, false);
+        };
+        ;
+        Scene.prototype.clearDepth_ = function () {
+            this.clear(false, true, false);
+        };
+        ;
+        Scene.prototype.clearStencil_ = function () {
+            this.clear(false, false, true);
+        };
         ;
         return Scene;
     }());

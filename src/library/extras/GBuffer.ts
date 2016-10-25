@@ -66,7 +66,7 @@ namespace MBX {
                 new MB.Texture2D(context, dataTex, configTex)
             ], size, true, true, {});
 
-            MB.Log.debug("GBuffer created");
+            console.debug("GBuffer created");
         };
         /**
          * Bind GBuffer for reading (postpass)

@@ -5,6 +5,7 @@ namespace MB {
        depth?: boolean;
        stencil?: boolean;
        premultipliedAlpha?: boolean;
+       preserveDrawingBuffer?: boolean;
     };
     export abstract class GLContext {
         protected _canvas: HTMLCanvasElement;
@@ -17,7 +18,7 @@ namespace MB {
 
         constructor(canvas: HTMLCanvasElement) {
             if (!canvas) {
-                Log.info("Not canvas. Create one ...");
+                console.info("Not canvas. Create one ...");
                 canvas = <HTMLCanvasElement>document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
                 canvas.width = 800;
                 canvas.height = 800;
@@ -68,8 +69,14 @@ namespace MB {
                 this._getVendors();
 
                 this._state = new GlobalState(this);
-                Log.info("WebGL2RenderingContext OK :)");
+
+                this._canvas.addEventListener("webglcontextlost", this._onContextLost, false);
+                console.info("WebGL2RenderingContext OK :)");
             }
+        };
+        protected _onContextLost(ev: Event) {
+            ev.preventDefault();
+            // resetState and GL
         };
         get gl(): WebGL2RenderingContext {
             return this._gl;
@@ -121,6 +128,12 @@ namespace MB {
                 this.pp = new MB.PostProcess(this);
             }
             return this.pp;
+        };
+
+
+
+        public forceGLLost() {
+            MB.Extensions.get(this, "WEBGL_lose_context").loseContext();
         }
     }
 }

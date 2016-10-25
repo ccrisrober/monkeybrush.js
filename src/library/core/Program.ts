@@ -205,8 +205,8 @@ namespace MB {
             // Checkin errors
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -236,8 +236,8 @@ namespace MB {
             // Checkin errors
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -263,13 +263,13 @@ namespace MB {
                 request.send();
             } catch (err) {
                 alert("ERROR: " + filePath);
-                MB.Log.error("ERROR: " + filePath);
+                console.error("ERROR: " + filePath);
                 return null;
             }
             let shaderSource: string = request.responseText;
             if (shaderSource === null) {
                 alert("WARNING: " + filePath + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -283,7 +283,7 @@ namespace MB {
         private loadAndCompileFromText(shaderSource: string, shaderType: number) {
             if (shaderSource === null) {
                 alert("WARNING: " + shaderSource + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -303,7 +303,7 @@ namespace MB {
 
             if (shaderSource === null) {
                 alert("WARNING: " + id + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -382,8 +382,8 @@ namespace MB {
             // Check errors
             if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
                 alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.debug({
+                console.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });

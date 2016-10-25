@@ -37,7 +37,7 @@ namespace MB {
             return this._context;
         };
         constructor(title: string = null, context: GLContext, text: Object = {}) {
-            MB.Log.info("init app");
+            console.info("init app");
             this._context = context;
             this._state = new GlobalState(context);
 
@@ -114,7 +114,7 @@ namespace MB {
         public start() {
             let self: App = this;
             MB.ResourceMap.setLoadCompleteCallback(function() {
-                MB.Log.info("ALL RESOURCES LOADED!!!!");
+                console.info("ALL RESOURCES LOADED!!!!");
 
                 self.initialize();
 
@@ -135,7 +135,7 @@ namespace MB {
                 try {
                     (function __render__(dt?: number) {
                         requestAnimationFrame(__render__);
-                        // MB.Log.debug(dt);
+                        // console.debug(dt);
                         MB.Input.update();
 
                         self.stats.begin();
@@ -163,11 +163,11 @@ namespace MB {
         };
 
         public pause() {
-            MB.Log.debug("PAUSE");
+            console.debug("PAUSE");
             this._resume = false;
         };
         public resume() {
-            MB.Log.debug("RESUME");
+            console.debug("RESUME");
             this._resume = true;
         };
         get canvas(): HTMLCanvasElement {

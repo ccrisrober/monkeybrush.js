@@ -163,7 +163,7 @@ namespace MB {
             if (!(znear === this._znear && zfar === this._zfar)) {
                 const gl: WebGL2RenderingContext = this._context.gl;
                 if (znear > zfar || znear < 0.0 || zfar > 1.0) {
-                    MB.Log.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
+                    console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
                     return;
                 }
                 gl.depthRange(znear, zfar);

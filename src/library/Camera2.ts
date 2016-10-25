@@ -136,7 +136,7 @@ namespace MB {
                 return;
             }
             const velocity = this.movSpeed * this.timeElapsed * speed;
-            // MB.Log.debug(direction);
+            // console.debug(direction);
             if (direction === 0) {
                 this.position = MB.Vect3.scaleAndAdd(this.position, this.front, velocity);
             } else if (direction === 1) {

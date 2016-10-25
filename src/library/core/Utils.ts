@@ -184,7 +184,7 @@ namespace MB {
 
             if (shaderSource === null) {
                 alert("WARNING: " + script + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 

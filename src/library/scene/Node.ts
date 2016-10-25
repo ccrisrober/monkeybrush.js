@@ -176,7 +176,7 @@ namespace MBS {
             }
 
             if (object === this) {
-                MB.Log.error("MBS.Node.add: object can't be added as a child of itself.", object);
+                console.error("MBS.Node.add: object can't be added as a child of itself.", object);
                 return this;
             }
             // if ((object && object.isObject3D)) {
@@ -186,7 +186,7 @@ namespace MBS {
                 object.parent = this;
                 // this._children.push( object );
             // } else {
-            //     MB.Log.error("MBS.Node.add: object not an instance of MBS.Node.", object);
+            //     console.error("MBS.Node.add: object not an instance of MBS.Node.", object);
             // }
 
             return this;
