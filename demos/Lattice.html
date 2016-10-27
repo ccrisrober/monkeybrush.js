@@ -91,7 +91,7 @@
                 this.model = new MB.Mat4();
             };
             MyScene.prototype.initialize = function () {
-                this.cubito = new MB.Capsule(this.context, 17.5, 7.5);
+                this.capsule = new MB.Capsule(this.context, 4.5, 2.5);
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "latticeShader",
                     vertexShader: MB.Utils.readScriptShader("shader-vs"),
@@ -117,14 +117,11 @@
                 this.clearColorAndDepth();
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
-                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis);
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.uniforms.Threshold.value = new MB.Vect2(this.text.ThresholdX, this.text.ThresholdY);
                 this.myProg.uniforms.Scale.value = new MB.Vect2(this.text.ScaleX, this.text.ScaleY);
-                this.myProg.render(this.cubito);
+                this.myProg.render(this.capsule);
             };
             MyScene.prototype.cameraUpdate = function () {
                 this.myProg.uniforms.viewPos.value = this.camera.GetPos();

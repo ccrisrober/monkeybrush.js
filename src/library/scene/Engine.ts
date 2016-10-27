@@ -85,6 +85,12 @@ namespace MBS {
                     throw e;
                 }
             });
-        }
+        };
+        public resize() {
+            // TODO
+            // window.addEventListener("resize", function() {
+            //     engine.resize();
+            // });
+        };
     }
 }

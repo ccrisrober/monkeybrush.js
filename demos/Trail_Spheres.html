@@ -100,11 +100,13 @@
                 )));
 
                 this.cameraUpdate();
+
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
                 this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
-                this.dt = dt;
+                this.dt += dt * 0.01;
 
                 var radianS = MB.Mathf.degToRad(this.s);
                 var z = this.sphereRadius * Math.cos(radianS);
@@ -141,7 +143,6 @@
                     this.identityMatrix.clone()
                         .rotate(this.dt * 0.1, MB.Vect3.xAxis)
                         .rotate(this.dt * 0.2, MB.Vect3.zAxis)
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .scale(new MB.Vect3(this.sphereRadius, this.sphereRadius, this.sphereRadius));
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.uniforms.color.value = new MB.Vect3(1.0, 1.0, 1.0);

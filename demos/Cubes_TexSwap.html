@@ -111,8 +111,6 @@
                 this.customPP.first().bind(0);
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(1.0, 1.0, 1.0));
                 this.myProg.uniforms.model.value = this.model;

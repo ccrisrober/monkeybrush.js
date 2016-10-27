@@ -69,6 +69,16 @@ namespace MB {
                 side2,  side2, -side2,
                -side2,  side2, -side2
             ]), 3));
+
+            this._geometry.setIndex(new Uint16Array([
+                0, 1, 2, 0, 2, 3,
+                4, 5, 6, 4, 6, 7,
+                8, 9, 10, 8, 10, 11,
+                12, 13, 14, 12, 14, 15,
+                16, 17, 18, 16, 18, 19,
+                20, 21, 22, 20, 22, 23
+            ]));
+
             this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array([
                 // Front
                 0.0, 0.0, 1.0,
@@ -101,6 +111,19 @@ namespace MB {
                 0.0, 1.0, 0.0,
                 0.0, 1.0, 0.0
             ]), 3));
+            /*let normals = this.computeNormals();
+            let nn = normals.array;
+            let a = 0;
+            for (let n = 0; n < nn.length; n+= 3) {
+                console.log([nn[n], nn[n+1], nn[n+2]]);
+                a++;
+                if (a === 4) {
+                    a = 0;
+                    console.log("");
+                }
+            }
+            this._geometry.addAttr(VBType.VBNormals, normals);*/
+
             this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array([
                 // Front
                 0.0, 0.0,
@@ -134,14 +157,6 @@ namespace MB {
                 0.0, 1.0
             ]), 2));
 
-            this._geometry.setIndex(new Uint16Array([
-                0, 1, 2, 0, 2, 3,
-                4, 5, 6, 4, 6, 7,
-                8, 9, 10, 8, 10, 11,
-                12, 13, 14, 12, 14, 15,
-                16, 17, 18, 16, 18, 19,
-                20, 21, 22, 20, 22, 23
-            ]));
 
             // this.createWireframe();
 
@@ -151,8 +166,13 @@ namespace MB {
             this.addElementArray(this._geometry.indices);
 
             this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
+            //this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+            //this.computeNormals(); // TODO: REMOVE
             this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
+
             this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
+
+
 
             this._indicesLen = this._geometry.indices.length;
         }

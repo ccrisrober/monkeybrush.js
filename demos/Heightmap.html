@@ -129,8 +129,7 @@
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
                 this.model =
-                    this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0));
+                    this.identityMatrix.clone();
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.uniforms.heightFactor.value = this.text.heightFactor;
                 this.myProg.render(this.cubito);

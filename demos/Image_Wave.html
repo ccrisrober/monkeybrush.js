@@ -63,10 +63,12 @@
                     }
                 });
                 this.tex2d.bind(0);
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
-                this.prog.uniforms.iGlobalTime.value = dt / 2*3.14159 * .75
+                this.dt += dt * 0.01;
+                this.prog.uniforms.iGlobalTime.value = this.dt / 2*3.14159 * .75
             };
             MyScene.prototype.draw = function () {
                 this.prog.renderPP();

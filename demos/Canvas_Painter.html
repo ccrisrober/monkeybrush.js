@@ -138,7 +138,7 @@
                 this.tex2d = new MBX.CanvasTexture(this.context, canvas, {
                     flipY: 1
                 });
-                this.cubito = new MB.Cube(this.context, 30.0);
+                this.cubito = new MB.Cube(this.context, 7.5);
 
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "ppShader",
@@ -159,7 +159,6 @@
             MyScene.prototype.update = function (dt) {
                 this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
                 this.angle += MB.Timer.deltaTime() * 0.001;
-                this.__resize__();
                 this.tex2d.update();
             };
             MyScene.prototype.draw = function () {
@@ -167,10 +166,7 @@
                 this.tex2d.bind(0);
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
-                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis);
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.render(this.cubito);
             };

@@ -6,12 +6,12 @@
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <meta name="author" value="maldicion069" />
         <!-- Icons -->
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="./favicon.ico">
-        <link rel="shortcut icon" href="./favicon.ico">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../favicon.ico">
+        <link rel="shortcut icon" href="../favicon.ico">
         <style>
             @font-face {
                 font-family: "inconsolata";
-                src: url("assets/fonts/inconsolata.woff") format("woff");
+                src: url("../assets/fonts/inconsolata.woff") format("woff");
                 font-weight: normal;
                 font-style: normal;
             }
@@ -363,7 +363,7 @@
             if (selected !== null) divs[selected].className = "link";
             divs[file].className = "link selected";
             window.location.hash = file;
-            viewer.src = "demos/" + file + ".html";
+            viewer.src = "./" + file + ".html";
             viewer.focus();
             button.style.display = "";
             selected = file;

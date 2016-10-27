@@ -1,4 +1,5 @@
 namespace MB {
+    declare var WebGL2RenderingContext: any;
     export interface ContextParams {
        alpha?: boolean;
        antialias?: boolean;
@@ -14,6 +15,29 @@ namespace MB {
         protected _version: number;
         public get version(): number {
             return this._version;
+        };
+
+        public static isSupported(): boolean {
+            try {
+                let tmpcanvas = document.createElement("canvas");
+                let contexts = [
+                    "webgl2", "experimental-webgl2",
+                    "webgl", "experimental-webgl"
+                ];
+                let ctx, gl;
+                for (let i = 0; i < contexts.length; ++i) {
+                    ctx = contexts[i];
+                    gl = tmpcanvas.getContext(contexts[i]);
+                    if (gl) {
+                        break;
+                    }
+                }
+                return gl != null && !!WebGL2RenderingContext
+                    && !!WebGLRenderingContext;
+            }
+            catch (e) {
+                return false;
+            }
         };
 
         constructor(canvas: HTMLCanvasElement) {

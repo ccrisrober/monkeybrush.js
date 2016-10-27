@@ -53,7 +53,9 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2());
+                _super.call(this, "App", new MB.GLContextW2(), {
+                    antialias: true
+                });
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -100,7 +102,6 @@
                         this.model =
                             this.identityMatrix.clone()
                                 .translate(new MB.Vect3(i, j, 0.0))
-                                .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                                 .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                                 .scale(new MB.Vect3(0.25, 0.25, 0.25));
                         this.myProg.uniforms.model.value = this.model;

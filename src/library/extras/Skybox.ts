@@ -36,10 +36,10 @@ namespace MBX {
          */
         protected _VertexBuffer: MB.VertexBuffer;
         /**
-         * Internal program that draw skybox
-         * @type {MB.Program}
+         * Internal material that draw skybox
+         * @type {MB.ShaderMaterial}
          */
-        protected _prog: MB.Program;
+        protected _prog: MB.ShaderMaterial;
         /**
          * Internal CubeMap texture
          * @type {MB.CubeMapTexture}
@@ -72,8 +72,6 @@ namespace MBX {
 
             const gl: WebGLRenderingContext = this._context.gl;
 
-            this._prog = new MB.Program(this._context);
-
             const isWebGL2: boolean = context instanceof MB.GLContextW2;
 
             let vs: string;
@@ -103,21 +101,20 @@ namespace MBX {
                 }`;
             }
 
-            this._prog.addShader(vs, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-
-            let fg: string;
+            let fs: string;
 
             if (isWebGL2) {
-                fg = `#version 300 es
+                fs = `#version 300 es
                 precision highp float;
                 in vec3 TexCoords;
                 out vec4 color;
                 uniform samplerCube skybox;
                 void main() {
                     color = texture(skybox, TexCoords);
+                    color = vec4(1.0, 0.0, 0.0, 1.0);
                 }`;
             } else {
-                fg = `precision highp float;
+                fs = `precision highp float;
                 varying vec3 TexCoords;
                 uniform samplerCube skybox;
                 void main() {
@@ -125,11 +122,19 @@ namespace MBX {
                 }`;
             }
 
-
-            this._prog.addShader(fg, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-            this._prog.compile();
-
-            this._prog.addUniforms(["view", "projection"]);
+            this._prog = new MB.ShaderMaterial(this._context, {
+                name: "skyboxShader",
+                vertexShader: vs,
+                fragmentShader: fs,
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    skybox: {
+                        type: MB.UniformType.Integer,
+                        value: 0
+                    },
+                }
+            });
 
             let skyboxVertices = new Float32Array([
                 // Positions
@@ -199,14 +204,13 @@ namespace MBX {
 
             this._context.state.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
 
-            this._prog.use();
-
             // Remove any translation
             let auxView = view.toMat3().toMat4();
 
-            this._prog.sendUniformMat4("view", auxView._value);
-            this._prog.sendUniformMat4("projection", projection._value);
+            this._prog.uniforms["view"].value = view._value;
+            this._prog.uniforms["projection"].value = projection._value;
 
+            this._prog.use();
             this._cubeMapTexture.bind(0);
 
             this._VertexArray.bind();

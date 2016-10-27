@@ -140,5 +140,15 @@ namespace MBS {
         public clearStencil_() {
             this.clear( false, false, true );
         };
+
+
+        protected _beforeRender: Array<Function> = [];
+        protected _afterRender: Array<Function> = [];
+        public registerBeforeRender(cb: Function) {
+            this._beforeRender.push(cb);
+        };
+        public registerAfterRender(cb: Function) {
+            this._afterRender.push(cb);
+        };
     }
 }

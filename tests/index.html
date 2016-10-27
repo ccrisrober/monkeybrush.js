@@ -9,8 +9,12 @@
     <div id="mocha"></div>
     <script src="../bower_components/chai/chai.js"></script>
     <script src="../bower_components/mocha/mocha.js"></script>
-    <script type="text/javascript" src="../bower_components/log4javascript/log4javascript.js"></script>
-    <script>mocha.setup('bdd')</script>
+    <script>
+        mocha.setup({
+            timeout: 5000,
+            ui: "bdd"
+        });
+    </script>
     <script src="../dist/output.js"></script>
     <script src="test.js"></script>
     <script>

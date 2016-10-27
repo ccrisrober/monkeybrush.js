@@ -99,9 +99,7 @@
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
                 this.model =
-                    this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.xAxis);
+                    this.identityMatrix.clone();
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.render(this.esferita);
             };

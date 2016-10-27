@@ -79,7 +79,7 @@
             __extends(MyScene, _super);
             function MyScene() {
                 _super.call(this, "App", new MB.GLContextW2());
-                this.camera = new MB.Camera2(new MB.Vect3(2.66, 3.58, 20.25));
+                this.camera = new MB.Camera2(new MB.Vect3(0.2, 9.0, 21.0));
                 this.angle = 0;
                 this.pos = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -125,9 +125,7 @@
                 this.clearColorAndDepth();
                 this.model =
                     this.identityMatrix.clone()
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                        .scale(new MB.Vect3(0.5, 0.5, 0.5));
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.render(this.latheModel);
             };
@@ -140,8 +138,9 @@
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

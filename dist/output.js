@@ -3498,6 +3498,21 @@ var MB;
             this._vao.unbind();
         };
         ;
+        Drawable.prototype.computeNormals = function () {
+            var vertices = this._geometry.getAttr(MB.VBType.VBVertices);
+            var indices = this._geometry.indices;
+            var normals = new MB.BufferAttribute(new Float32Array(vertices.count * 3), 3);
+            for (var i = 0, len = indices.length; i < len; i += 3) {
+                var i1 = indices[i], i2 = indices[i + 1], i3 = indices[i + 2];
+                var v1 = vertices.getXYZ(i1), v2 = vertices.getXYZ(i2), v3 = vertices.getXYZ(i3);
+                var dir1 = new MB.Vect3(v3[0] - v2[0], v3[1] - v2[1], v3[1] - v2[2]), dir2 = new MB.Vect3(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]);
+                var norm = MB.Vect3.cross(dir1, dir2).normalize();
+                normals.setXYZ(i1, norm.x, norm.y, norm.z);
+                normals.setXYZ(i2, norm.x, norm.y, norm.z);
+                normals.setXYZ(i3, norm.x, norm.y, norm.z);
+            }
+            return normals;
+        };
         return Drawable;
     }());
     MB.Drawable = Drawable;
@@ -5069,7 +5084,7 @@ var MB;
         }
         GeometryFunctions.convexHull1D = convexHull1D;
         ;
-        function removeOrphanVertices(positions, indices) {
+        function removeOrphanVertices(indices, positions) {
             var newPositions = [];
             var indexLookUp = {};
             var newIndices = indices.map(function (indice) {
@@ -5174,6 +5189,29 @@ var MB;
             enumerable: true,
             configurable: true
         });
+        ;
+        GLContext.isSupported = function () {
+            try {
+                var tmpcanvas = document.createElement("canvas");
+                var contexts = [
+                    "webgl2", "experimental-webgl2",
+                    "webgl", "experimental-webgl"
+                ];
+                var ctx = void 0, gl = void 0;
+                for (var i = 0; i < contexts.length; ++i) {
+                    ctx = contexts[i];
+                    gl = tmpcanvas.getContext(contexts[i]);
+                    if (gl) {
+                        break;
+                    }
+                }
+                return gl != null && !!WebGL2RenderingContext
+                    && !!WebGLRenderingContext;
+            }
+            catch (e) {
+                return false;
+            }
+        };
         ;
         GLContext.prototype._init = function (glVersion, numVersion, params) {
             if (params === void 0) { params = {}; }
@@ -5496,7 +5534,7 @@ var MB;
     ;
     var ColorState = (function () {
         function ColorState(context) {
-            this._currentColorClear = new MB.Color4(0.0, 0.0, 0.0, 1.0);
+            this._currentColorClear = null;
             this._context = context;
         }
         ;
@@ -7464,12 +7502,12 @@ var MB;
         }
         Utils.readScriptShader = readScriptShader;
         ;
-        function recurse(arr) {
+        function _recurse(arr) {
             var result = [];
             for (var i = 0, ii = arr.length; i != ii; ++i) {
                 var x = arr[i];
                 if (Array.isArray(x)) {
-                    result = result.concat(recurse(x));
+                    result = result.concat(_recurse(x));
                 }
                 else if (typeof (x) == 'number') {
                     result.push(x);
@@ -7478,7 +7516,7 @@ var MB;
             return result;
         }
         function flattenArray(arr) {
-            return [].concat(recurse(arr));
+            return [].concat(_recurse(arr));
         }
         Utils.flattenArray = flattenArray;
     })(Utils = MB.Utils || (MB.Utils = {}));
@@ -8551,7 +8589,6 @@ var MBX;
             faces.push(dir + "/front.jpg");
             this._context = context;
             var gl = this._context.gl;
-            this._prog = new MB.Program(this._context);
             var isWebGL2 = context instanceof MB.GLContextW2;
             var vs;
             if (isWebGL2) {
@@ -8560,17 +8597,26 @@ var MBX;
             else {
                 vs = "precision highp float;\n                attribute vec3 position;\n                varying vec3 TexCoords;\n                uniform mat4 projection;\n                uniform mat4 view;\n                void main() {\n                    vec4 pos = projection * view * vec4(position, 1.0);\n                    gl_Position = pos.xyww;\n                    TexCoords = position;\n                }";
             }
-            this._prog.addShader(vs, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-            var fg;
+            var fs;
             if (isWebGL2) {
-                fg = "#version 300 es\n                precision highp float;\n                in vec3 TexCoords;\n                out vec4 color;\n                uniform samplerCube skybox;\n                void main() {\n                    color = texture(skybox, TexCoords);\n                }";
+                fs = "#version 300 es\n                precision highp float;\n                in vec3 TexCoords;\n                out vec4 color;\n                uniform samplerCube skybox;\n                void main() {\n                    color = texture(skybox, TexCoords);\n                    color = vec4(1.0, 0.0, 0.0, 1.0);\n                }";
             }
             else {
-                fg = "precision highp float;\n                varying vec3 TexCoords;\n                uniform samplerCube skybox;\n                void main() {\n                    gl_FragColor = textureCube(skybox, TexCoords);\n                }";
+                fs = "precision highp float;\n                varying vec3 TexCoords;\n                uniform samplerCube skybox;\n                void main() {\n                    gl_FragColor = textureCube(skybox, TexCoords);\n                }";
             }
-            this._prog.addShader(fg, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-            this._prog.compile();
-            this._prog.addUniforms(["view", "projection"]);
+            this._prog = new MB.ShaderMaterial(this._context, {
+                name: "skyboxShader",
+                vertexShader: vs,
+                fragmentShader: fs,
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    skybox: {
+                        type: MB.UniformType.Integer,
+                        value: 0
+                    },
+                }
+            });
             var skyboxVertices = new Float32Array([
                 -1.0, 1.0, -1.0,
                 -1.0, -1.0, -1.0,
@@ -8631,10 +8677,10 @@ var MBX;
             var gl = this._context.gl;
             var currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
             this._context.state.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
-            this._prog.use();
             var auxView = view.toMat3().toMat4();
-            this._prog.sendUniformMat4("view", auxView._value);
-            this._prog.sendUniformMat4("projection", projection._value);
+            this._prog.uniforms["view"].value = view._value;
+            this._prog.uniforms["projection"].value = projection._value;
+            this._prog.use();
             this._cubeMapTexture.bind(0);
             this._VertexArray.bind();
             gl.drawArrays(gl.TRIANGLES, 0, 36);
@@ -9106,6 +9152,14 @@ var MB;
                 side2, side2, -side2,
                 -side2, side2, -side2
             ]), 3));
+            this._geometry.setIndex(new Uint16Array([
+                0, 1, 2, 0, 2, 3,
+                4, 5, 6, 4, 6, 7,
+                8, 9, 10, 8, 10, 11,
+                12, 13, 14, 12, 14, 15,
+                16, 17, 18, 16, 18, 19,
+                20, 21, 22, 20, 22, 23
+            ]));
             this._geometry.addAttr(MB.VBType.VBNormals, new MB.BufferAttribute(new Float32Array([
                 0.0, 0.0, 1.0,
                 0.0, 0.0, 1.0,
@@ -9158,14 +9212,6 @@ var MB;
                 1.0, 1.0,
                 0.0, 1.0
             ]), 2));
-            this._geometry.setIndex(new Uint16Array([
-                0, 1, 2, 0, 2, 3,
-                4, 5, 6, 4, 6, 7,
-                8, 9, 10, 8, 10, 11,
-                12, 13, 14, 12, 14, 15,
-                16, 17, 18, 16, 18, 19,
-                20, 21, 22, 20, 22, 23
-            ]));
             this._handle = [];
             this._vao.bind();
             this.addElementArray(this._geometry.indices);
@@ -12301,6 +12347,10 @@ var MBS;
                 }
             });
         };
+        ;
+        Engine.prototype.resize = function () {
+        };
+        ;
         return Engine;
     }());
     MBS.Engine = Engine;
@@ -12324,6 +12374,100 @@ var MBS;
     }());
     MBS.EngineApp = EngineApp;
 })(MBS || (MBS = {}));
+
+
+
+
+
+
+
+var MBSS;
+(function (MBSS) {
+    var Transform = (function () {
+        function Transform() {
+            this._pos = new MB.Vect3(0.0, 0.0, 0.0);
+            this._rot = new MB.Quat(0.0, 0.0, 0.0, 1.0);
+            this._scale = new MB.Vect3(1.0, 1.0, 1.0);
+            this._parentMatrix = MB.Mat4.identity.clone();
+        }
+        ;
+        Object.defineProperty(Transform.prototype, "position", {
+            get: function () {
+                return this._pos;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        return Transform;
+    }());
+    MBSS.Transform = Transform;
+    ;
+    var GameComponent = (function () {
+        function GameComponent() {
+        }
+        GameComponent.prototype.update = function (dt) {
+        };
+        ;
+        return GameComponent;
+    }());
+    MBSS.GameComponent = GameComponent;
+    ;
+    var MeshRenderer = (function (_super) {
+        __extends(MeshRenderer, _super);
+        function MeshRenderer(mesh, material) {
+            _super.call(this);
+            this._mesh = mesh;
+            this._material = material;
+        }
+        ;
+        MeshRenderer.prototype.update = function (dt) {
+            this._material.use();
+            this._mesh.render();
+        };
+        ;
+        return MeshRenderer;
+    }(GameComponent));
+    MBSS.MeshRenderer = MeshRenderer;
+    ;
+    var GameObject = (function () {
+        function GameObject() {
+            this._children = [];
+            this._components = [];
+            this._transform = new MBSS.Transform();
+        }
+        ;
+        GameObject.prototype.addChild = function (child) {
+            this._children.push(child);
+        };
+        ;
+        GameObject.prototype.updateAll = function (dt) {
+            this.update(dt);
+            for (var i = 0, l = this._children.length; i < l; ++i) {
+                this._children[i].updateAll(dt);
+            }
+        };
+        ;
+        GameObject.prototype.update = function (dt) {
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                this._components[i].update(dt);
+            }
+        };
+        ;
+        Object.defineProperty(GameObject.prototype, "transform", {
+            get: function () {
+                return this._transform;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        return GameObject;
+    }());
+    MBSS.GameObject = GameObject;
+    ;
+})(MBSS || (MBSS = {}));
+;
 
 "use strict";
 var MBS;
@@ -12617,6 +12761,8 @@ var MBS;
             this.autoClearColor = true;
             this.autoClearDepth = true;
             this.autoClearStencil = true;
+            this._beforeRender = [];
+            this._afterRender = [];
             this._engine = engine;
             this._name = name;
             engine._scenes.push(this);
@@ -12711,6 +12857,14 @@ var MBS;
         ;
         Scene.prototype.clearStencil_ = function () {
             this.clear(false, false, true);
+        };
+        ;
+        Scene.prototype.registerBeforeRender = function (cb) {
+            this._beforeRender.push(cb);
+        };
+        ;
+        Scene.prototype.registerAfterRender = function (cb) {
+            this._afterRender.push(cb);
         };
         ;
         return Scene;

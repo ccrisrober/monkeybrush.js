@@ -61,9 +61,11 @@
                         iGlobalTime: { type: MB.UniformType.Float }
                     }
                 });
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
-                this.prog.uniforms.iGlobalTime.value = dt * 0.5;
+                this.dt += dt * 0.01;
+                this.prog.uniforms.iGlobalTime.value = this.dt * 0.5;
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {

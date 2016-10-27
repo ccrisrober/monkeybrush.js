@@ -178,7 +178,7 @@ namespace MB {
             this._context = context;
         };
         protected _currentColorMask: Vector4<boolean>;
-        protected _currentColorClear: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);
+        protected _currentColorClear: Color4 = null; //new Color4(0.0, 0.0, 0.0, 1.0);
 
         public setMask(colorMask: MB.Vector4<boolean>) {
             if (!this._currentColorMask || this._currentColorMask.isEqual(colorMask) === false) {

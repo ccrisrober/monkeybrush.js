@@ -65,7 +65,7 @@
                 this.angle = 0;
             };
             MyScene.prototype.initialize = function () {
-                this.myProg = new MB.ShaderMaterial(this.context, {
+                this.myProg = new MB.PostProcessMaterial(this.context, {
                     name: "texture2DArray",
                     vertexShader: MB.Utils.readScriptShader("shader-vs"),
                     fragmentShader: MB.Utils.readScriptShader("shader-fs"),

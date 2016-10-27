@@ -78,19 +78,19 @@
                 });
 
                 this.cameraUpdate();
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
-                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
-                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
-                this.myProg.uniforms.iGlobalTime.value = dt;
+                this.dt += MB.Timer.deltaTime() * 0.001;
+                this.myProg.uniforms.iGlobalTime.value = this.dt;
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
+                this.__resize__();
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.uniforms.amplitude.value = this.text.amplitude;

@@ -128,7 +128,7 @@ namespace MB {
                     gl.UNSIGNED_SHORT,
                     0,
                     numInstances
-              );
+                );
             } else {
                 const ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
@@ -138,7 +138,7 @@ namespace MB {
                         gl.UNSIGNED_SHORT,
                         0,
                         numInstances
-                  );
+                    );
                 } else {
                     throw new Error("Instance array undefined");
                 }
@@ -159,7 +159,7 @@ namespace MB {
                     0,
                     this._indicesLen,
                     numInstances
-              );
+                );
             } else {
                 const ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
@@ -168,13 +168,46 @@ namespace MB {
                         0,
                         this._indicesLen,
                         numInstances
-                  );
+                    );
                 } else {
                     throw new Error("Instance array undefined");
                 }
             }
             this._vao.unbind();
         };
+
+        protected computeNormals(): MB.BufferAttribute {
+            let vertices: BufferAttribute = this._geometry.getAttr(VBType.VBVertices);
+            let indices = this._geometry.indices;
+
+            let normals = new MB.BufferAttribute(new Float32Array(vertices.count * 3), 3);
+
+            for (let i = 0, len = indices.length; i < len; i+=3) {
+                let i1 = indices[i],
+                    i2 = indices[i + 1],
+                    i3 = indices[i + 2];
+                let v1 = vertices.getXYZ(i1),
+                    v2 = vertices.getXYZ(i2),
+                    v3 = vertices.getXYZ(i3);
+
+                let dir1 = new MB.Vect3(
+                    v3[0] - v2[0],
+                    v3[1] - v2[1],
+                    v3[1] - v2[2]
+                ),
+                dir2 = new MB.Vect3(
+                    v1[0] - v2[0],
+                    v1[1] - v2[1],
+                    v1[2] - v2[2]
+                );
+
+                let norm = MB.Vect3.cross(dir1, dir2).normalize();
+                normals.setXYZ(i1, norm.x, norm.y, norm.z);
+                normals.setXYZ(i2, norm.x, norm.y, norm.z);
+                normals.setXYZ(i3, norm.x, norm.y, norm.z);
+            }
+            return normals;
+        }
 
     };
 };

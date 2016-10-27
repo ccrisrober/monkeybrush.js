@@ -146,13 +146,13 @@ namespace MB {
         };
         /**
          * Returns a new vertices and indices list removed orphan vertices
-         * @param  {Array<Array<number>>} positions Positions list
          * @param  {Array<Array<number>>} indices   Indices list
+         * @param  {Array<Array<number>>} positions Positions list
          * @return {Object}                         New indices (indices)
          *                                              and positions (positions)
          */
-        export function removeOrphanVertices(positions: Array<Array<number>>,
-            indices: Array<Array<number>>): Object {
+        export function removeOrphanVertices(indices: Array<Array<number>>,
+            positions: Array<Array<number>>): Object {
 
             let newPositions = [];
             let indexLookUp = {};
