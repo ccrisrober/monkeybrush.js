@@ -243,8 +243,22 @@ namespace MB {
             this._value[1] = -this._value[1];
             this._value[2] = -this._value[2];
 
+            if (this.onChange) {
+                this.onChange();
+            }
+
             return this;
         };
+        /**
+         * Returns whether or not current Quat and another Quat have exactly the same elements
+         *     in the same position.
+         * @param  {Vect2}   other The second vector
+         * @return {boolean} True if the quaternions are equals, false otherwise
+         */
+        public exactEquals(other: MB.Quat): boolean {
+            return this.x === other.x && this.y === other.y
+                && this.z === other.z && this.w === other.w;
+        }
         static fromAxis(axis: Vect3, angle: number, dest: Quat = null): Quat {
             if (!dest) dest = new Quat();
 

@@ -166,13 +166,8 @@ namespace MB {
             this.addElementArray(this._geometry.indices);
 
             this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
-            //this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
-            //this.computeNormals(); // TODO: REMOVE
             this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
-
             this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
-
-
 
             this._indicesLen = this._geometry.indices.length;
         }

@@ -17,6 +17,23 @@ namespace MB {
             return this._version;
         };
 
+        protected _vendor: string = null;
+        public get vendor(): string {
+            if (!this._vendor) {
+                this._vendor = this._gl.getParameter(this._gl.VENDOR);
+            }
+            return this._vendor;
+        }
+
+
+        protected _renderer: string = null;
+        public get renderer(): string {
+            if (!this._renderer) {
+                this._renderer = this._gl.getParameter(this._gl.RENDERER);
+            }
+            return this._renderer;
+        }
+
         public static isSupported(): boolean {
             try {
                 let tmpcanvas = document.createElement("canvas");

@@ -122,7 +122,7 @@ namespace MB {
     };
 };
 
-// TODO: (Shaders)
+// (Shaders)
 //     - Directional Lights:
 //         * vec3 direction
 //         * vec3 color
@@ -140,7 +140,7 @@ namespace MB {
 //         * vec3 groundColor
 //
 //
-//  Spotlight and directional can procude shadows:
+//  Spotlight and directional can produce shadows:
 //      * bool shadow = false
 //      * float shadowBias = 0
 //      * float shadowRadius = 1

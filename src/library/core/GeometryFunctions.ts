@@ -85,65 +85,6 @@ namespace MB {
 
             return tmp;
         };
-        // TODO: Not best solution ...
-        // https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain#JavaScript
-        export function getConvexHull(points: number[][]): Array<any> {
-            points.sort(function(a, b) {
-                return a[0] === b[0] ? a[1] - b[1] : a[0] - b[0];
-            });
-
-            function cross(o, a, b) {
-                return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-            }
-
-            let lower = [];
-            for (let i = 0; i < points.length; ++i) {
-                while (lower.length >= 2 && cross(lower[lower.length - 2],
-                    lower[lower.length - 1], points[i]) <= 0) {
-
-                    lower.pop();
-                }
-                lower.push(points[i]);
-            }
-
-            let upper = [];
-            for (let i = points.length - 1; i >= 0; --i) {
-                while (upper.length >= 2 && cross(upper[upper.length - 2],
-                    upper[upper.length - 1], points[i]) <= 0) {
-
-                    upper.pop();
-                }
-                upper.push(points[i]);
-            }
-
-            upper.pop();
-            lower.pop();
-            return lower.concat(upper);
-        };
-        /**
-         * Returns a convex hull from 1D points list
-         * @param  {ArrayLike<number>} points Point list
-         * @return {Array<number>}            [description]
-         */
-        export function convexHull1D(points: ArrayLike<number>): Array<number> {
-            let lo: number = 0;
-            let hi: number = 0;
-            for (let i = 0; i < points.length; ++i) {
-                if (points[i] < points[lo]) {
-                    lo = i;
-                }
-                if (points[i] > points[hi]) {
-                    hi = i;
-                }
-            }
-            if (lo < hi) {
-                return [lo, hi];
-            } else if (lo > hi) {
-                return [hi, lo];
-            } else {
-                return [lo];
-            }
-        };
         /**
          * Returns a new vertices and indices list removed orphan vertices
          * @param  {Array<Array<number>>} indices   Indices list

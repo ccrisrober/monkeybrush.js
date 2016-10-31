@@ -52,13 +52,16 @@ namespace MB {
                     auxData = data;
                 }
                 if (context instanceof GLContextW1) {
-                    let isPower2 = MB.Mathf.isPOT(auxData.width) && MB.Mathf.isPOT(auxData.height);
-                    if (this._wrapS !== MB.ctes.WrapMode.Clamp2Edge || this._wrapT !== MB.ctes.WrapMode.Clamp2Edge) {
-                        console.warn("Texture is not power of two. Wrappers should be set to Clamp2Edge wrapping ...");
+                    // let isPower2 = MB.Mathf.isPOT(auxData.width) && MB.Mathf.isPOT(auxData.height);
+                    if (this._wrapS !== MB.ctes.WrapMode.Clamp2Edge ||
+                        this._wrapT !== MB.ctes.WrapMode.Clamp2Edge) {
+                        console.warn("Texture is not power of two. Wrappers should be " +
+                            "set to Clamp2Edge wrapping ...");
                     }
-                    if (this._minFilter !== MB.ctes.TextureFilter.Nearest
-                        && this._minFilter !== MB.ctes.TextureFilter.Linear) {
-                        console.warn("Texture is not power of two. MinFilter should be set to Nearest or Linear filter ...");
+                    if (this._minFilter !== MB.ctes.TextureFilter.Nearest &&
+                        this._minFilter !== MB.ctes.TextureFilter.Linear) {
+                        console.warn("Texture is not power of two. MinFilter should be " +
+                            "set to Nearest or Linear filter ...");
                     }
                 }
 
@@ -104,6 +107,36 @@ namespace MB {
             }
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+        };
+        public setSubImage(offsetX: number, offsetY: number, data: HTMLImageElement);
+        public setSubImage(offsetX: number, offsetY: number, data: ITexture2D);
+        public setSubImage(offsetX: number, offsetY: number, data: HTMLImageElement | ITexture2D) {
+            const gl = this._context.gl;
+            this.bind();
+            if (data instanceof HTMLImageElement) {
+                gl.texSubImage2D(
+                    this._target,
+                    this._level,
+                    offsetX,
+                    offsetY,
+                    this._format,
+                    this._type,
+                    data
+                );
+            } else {
+                gl.texSubImage2D(
+                    this._target,
+                    this._level,
+                    offsetX,
+                    offsetY,
+                    data.width,
+                    data.height,
+                    this._format,
+                    this._type,
+                    data.pixels || null
+                );
+            };
+            this.unbind();
         };
         public update(data: HTMLImageElement);
         public update(data: ITexture2D);

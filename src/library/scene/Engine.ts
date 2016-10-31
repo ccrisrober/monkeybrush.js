@@ -33,7 +33,6 @@ namespace MBS {
         constructor(context: MB.GLContext, options = {}) {
             this._context = context;
             MB.Input.initialize();
-            // TODO: Cache VENDOOR and RENDERER
             /*this._onFullScreenChange = function() {
                 if (document["fullscreen"] !== undefined) {
                     this.isFullscreen = document["fullscreen"];

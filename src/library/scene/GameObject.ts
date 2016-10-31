@@ -24,7 +24,7 @@ namespace MBSS {
     };
     export abstract class GameComponent {
         public update(dt: number) {
-
+            //
         };
     };
     export class MeshRenderer extends GameComponent {

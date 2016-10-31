@@ -109,9 +109,8 @@ namespace MB {
         get handler(): WebGLTexture {
             return this._handler;
         };
-
         public resize(size: MB.Vect2) {
-            // TODO
-        }
+            // Override if necessary
+        };
     };
 };

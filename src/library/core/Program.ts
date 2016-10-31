@@ -346,7 +346,6 @@ namespace MB {
                     }
                     ret = ret.replace(match[0], this._processImports(content));
                 } else {
-                    // TODO: let includeShaderUrl = "";
                     // ...
                     ret = ret.replace(match[0], "FAIL");
                 }
@@ -775,10 +774,13 @@ namespace MB {
                     MB.ctes.ReadMode.read_text);
             }
         };
+        // --enable-privileged-webgl-extension
+        public debugShaders() {
+            const ext = MB.Extensions.get(this._context, "WEBGL_debug_shaders");
+            console.log({
+                "vertex": ext.getTranslatedShaderSource(this._shaders[0]),
+                "fragment": ext.getTranslatedShaderSource(this._shaders[1])
+            });
+        }
     };
 };
-
-// TODO:
-// --enable-privileged-webgl-extension
-// console.log(gl.getExtension("WEBGL_debug_shaders").getTranslatedShaderSource(this._shaders[0]));
-// console.log(gl.getExtension("WEBGL_debug_shaders").getTranslatedShaderSource(this._shaders[1]));

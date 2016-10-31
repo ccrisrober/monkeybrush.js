@@ -182,7 +182,7 @@ namespace MB {
 
             let normals = new MB.BufferAttribute(new Float32Array(vertices.count * 3), 3);
 
-            for (let i = 0, len = indices.length; i < len; i+=3) {
+            for (let i = 0, len = indices.length; i < len; i += 3) {
                 let i1 = indices[i],
                     i2 = indices[i + 1],
                     i3 = indices[i + 2];

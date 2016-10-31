@@ -199,13 +199,13 @@ namespace MB {
         function _recurse(arr: Array<any>): Array<number> {
             // Initialize result and process array
             let result = [];
-            for (let i = 0, ii = arr.length; i != ii; ++i) {
+            for (let i = 0, ii = arr.length; i !== ii; ++i) {
                 let x = arr[i];
                 if (Array.isArray(x)) {
                     // Continue recursively processing array
                     result = result.concat(_recurse(x));
                 }
-                else if (typeof(x) == 'number') {
+                else if (typeof(x) === "number") {
                     // Push the number onto the array
                     result.push(x);
                 }

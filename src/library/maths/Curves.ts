@@ -31,11 +31,6 @@ namespace MB {
         export abstract class Curve3D {
             public abstract evaluate(t: number): Vect3;
         };
-        /*export class CircleCurve extends Curve2D {
-            constructor() {
-                // TODO
-            }
-        };*/
         /**
          * Ellipse class.
          * @class Ellipse
@@ -219,11 +214,6 @@ namespace MB {
                );
             };
         };
-        /*export class CatmullRomCurve {
-            constructor(points: Array<Vect3>) {
-                // TODO
-            };
-        };*/
         /**
          * QuadraticBezier class
          * @class QuadraticBezier

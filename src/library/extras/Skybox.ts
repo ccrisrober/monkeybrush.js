@@ -207,7 +207,7 @@ namespace MBX {
             // Remove any translation
             let auxView = view.toMat3().toMat4();
 
-            this._prog.uniforms["view"].value = view._value;
+            this._prog.uniforms["view"].value = auxView._value;
             this._prog.uniforms["projection"].value = projection._value;
 
             this._prog.use();

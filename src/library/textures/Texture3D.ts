@@ -74,6 +74,24 @@ namespace MB {
             }
 
             this.unbind();
-        }
+        };
+        public setSubImage(offsetX: number, offsetY: number, offsetZ: number, data: ITexture3D) {
+            const gl = this._context.gl;
+            this.bind();
+            gl.texSubImage3D(
+                this._target,
+                this._level,
+                offsetX,
+                offsetY,
+                offsetZ,
+                data.width,
+                data.height,
+                data.depth,
+                this._format,
+                this._type,
+                data.pixels || null
+            );
+            this.unbind();
+        };
     };
 };

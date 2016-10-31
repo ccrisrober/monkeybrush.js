@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heightmap</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+        layout(location = 1) in vec3 normal;
+        layout(location = 2) in vec2 uv;
+
+        out vec3 outNormal;
+        out vec2 outUV;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+        uniform float heightFactor;
+
+        uniform sampler2D texH;
+
+        void main() {
+            mat3 normalMatrix = mat3(inverse(transpose(model)));
+
+            vec3 pos = position;
+
+            outUV = uv;
+
+            const vec2 size = vec2(0.5,0.0);
+            const ivec3 off = ivec3(-1,0,1);
+            vec4 wave = texture(texH, outUV);
+            float s11 = wave.x;
+            float s01 = textureOffset(texH, outUV, off.xy).x;
+            float s21 = textureOffset(texH, outUV, off.zy).x;
+            float s10 = textureOffset(texH, outUV, off.yx).x;
+            float s12 = textureOffset(texH, outUV, off.yz).x;
+            vec3 va = normalize(vec3(size.xy,s21-s01));
+            vec3 vb = normalize(vec3(size.yx,s12-s10));
+            vec4 bump = vec4( cross(va,vb), s11);
+
+            outNormal = normalMatrix * bump.rgb;
+
+            pos.y += heightFactor * bump.w;
+
+            vec4 pp = model * vec4(pos, 1.0);
+            pp = view * pp;
+            gl_Position = projection * pp;
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec3 outNormal;
+        in vec2 outUV;
+
+        uniform sampler2D tex;
+
+        out vec4 fragColor;
+
+        void main() {
+            fragColor = vec4(outNormal, 1.0);
+        }
+    </script>
+
+    <script type="text/javascript">
+        var Configuration = function () {
+            return {
+                heightFactor: 3.5
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 5.16, 15.25));
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.initialize = function () {
+                var texSize = 16;
+                var len = texSize * texSize;
+                var pixels = new Uint8Array(len);
+                for (var i = 0; i < len; ++i) {
+                    pixels[i] = MB.RandomGenerator.random() * 255;
+                }
+
+                this.tex2d = new MB.Texture2D(this.context, {
+                    width: texSize,
+                    height: texSize,
+                    pixels: pixels
+                }, {
+                    minFilter: MB.ctes.TextureFilter.Linear,
+                    magFilter: MB.ctes.TextureFilter.Linear,
+                    internalFormat: MB.ctes.PixelFormat.R8,
+                    format: MB.ctes.PixelFormat.RED,
+                    type: MB.ctes.DataType.UnsignedByte
+                });
+
+                this.cubito = new MB.Plane(this.context, 26.0, 20.0, 200, 200);
+
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        heightFactor: { type: MB.UniformType.Float }
+                    }
+                });
+                this.tex2d.bind(0);
+                this.cameraUpdate();
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.model =
+                    this.identityMatrix.clone();
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.uniforms.heightFactor.value = this.text.heightFactor;
+                this.myProg.render(this.cubito);
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "heightFactor", 0.1, 10.0);
+            };
+            return MyScene;
+        }(MB.App));
+        var myScene;
+        window.onload = function () {
+            myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

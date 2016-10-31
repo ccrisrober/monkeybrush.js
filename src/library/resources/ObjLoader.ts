@@ -116,7 +116,6 @@ namespace MB {
                     mtl.alpha = splitLineToFloats(line)[0];
                 }
 
-                // TODO:
                 // map_Ka -s 1 1 1 -o 0 0 0 -mm 0 1 chrome.mpc
                 // map_Kd -s 1 1 1 -o 0 0 0 -mm 0 1 chrome.mpc
                 // map_Ks -s 1 1 1 -o 0 0 0 -mm 0 1 chrome.mpc

@@ -51,12 +51,13 @@ namespace MB {
 
             let evalVect3;
             let u, v;
+            let i, j;
 
             const count = slices + 1;
 
-            for (let i = 0; i <= stacks; ++i) {
+            for (i = 0; i <= stacks; ++i) {
                 v = i / stacks;
-                for (let j = 0; j <= slices; ++j) {
+                for (j = 0; j <= slices; ++j) {
                     u = j / slices;
 
                     evalVect3 = func(u, v);
@@ -67,8 +68,8 @@ namespace MB {
             let pA, pB, pC, pD;
             let uva, uvb, uvc, uvd;
             // TODO: UVs error :(
-            for (let i = 0; i < stacks; ++i) {
-                for (let j = 0; j < slices; ++j) {
+            for (i = 0; i < stacks; ++i) {
+                for (j = 0; j < slices; ++j) {
                     pA = i * count + j;
                     pB = i * count + j + 1;
                     pC = (i + 1) * count + j + 1;
@@ -91,11 +92,11 @@ namespace MB {
                 }
             }
 
-            for (let i = 0; i < vertices.length; ++i) {
+            for (i = 0; i < vertices.length; ++i) {
                 normals.push(new MB.Vect3());
             }
 
-            for (let i = 0; i < indices.length; ++i) {
+            for (i = 0; i < indices.length; ++i) {
                 const ia: MB.Vect3 = vertices[indices[i].x];
                 const ib: MB.Vect3 = vertices[indices[i].y];
                 const ic: MB.Vect3 = vertices[indices[i].z];
@@ -109,27 +110,27 @@ namespace MB {
                 normals[indices[i].z] = normals[indices[i].z].add(no);
             }
 
-            for (let i = 0; i < normals.length; ++i) {
+            for (i = 0; i < normals.length; ++i) {
                 normals[i] = normals[i].normalize();
             }
 
             let vertices2: Array<number> = [];
-            for (let i = 0; i < vertices.length; ++i) {
+            for (i = 0; i < vertices.length; ++i) {
                 vertices2.push(vertices[i].x, vertices[i].y, vertices[i].z);
             }
             vertices = vertices2;
             let normals2: Array<number> = [];
-            for (let i = 0; i < normals.length; ++i) {
+            for (i = 0; i < normals.length; ++i) {
                 normals2.push(normals[i].x, normals[i].y, normals[i].z);
             }
             normals = normals2;
             let indices2: Array<number> = [];
-            for (let i = 0; i < indices.length; ++i) {
+            for (i = 0; i < indices.length; ++i) {
                 indices2.push(indices[i].x, indices[i].y, indices[i].z);
             }
             indices = indices2;
             let uvs2: Array<number> = [];
-            for (let i = 0; i < uvs.length; ++i) {
+            for (i = 0; i < uvs.length; ++i) {
                 uvs2.push(uvs[i].x, uvs[i].y);
             }
             uvs = uvs2;
