@@ -44,42 +44,6 @@
 
     <script type="text/javascript" src="../../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-
-        layout(location = 0) in vec3 position;
-        layout(location = 1) in vec3 normal;
-
-        out vec3 outPosition;
-        out vec3 outNormal;
-
-        uniform mat4 projection;
-        uniform mat4 view;
-        uniform mat4 model;
-
-        void main() {
-            outPosition = vec3(model * vec4(position, 1.0));
-            gl_Position = projection * view * vec4(outPosition, 1.0);
-            mat3 normalMatrix = mat3(inverse(transpose(model)));
-            outNormal = normalize(normalMatrix * normal);
-        }
-    </script>
-    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
-        precision highp float;
-        in vec3 outPosition;
-        in vec3 outNormal;
-        out vec4 fragColor;
-        uniform vec3 viewPos;
-        uniform vec3 color;
-        void main() {
-            vec3 N = normalize(outNormal);
-            vec3 L = normalize(viewPos - outPosition);
-            float dif = dot(N, L);
-            dif = clamp(dif, 0.0, 1.0);
-            fragColor = vec4(color * dif, 1.0) + vec4(color * 0.3, 1.0);
-        }
-    </script>
-
     <script type="text/javascript">
         var engine, scene, stats;
 
@@ -116,17 +80,7 @@
             var container = document.getElementById("container");
             container.appendChild(stats.dom);
 
-            myProg = new MB.ShaderMaterial(engine.context, {
-                vertexShader: MB.Utils.readScriptShader("shader-vs"),
-                fragmentShader: MB.Utils.readScriptShader("shader-fs"),
-                uniforms: {
-                    projection: { type: MB.UniformType.Matrix4 },
-                    view: { type: MB.UniformType.Matrix4 },
-                    model: { type: MB.UniformType.Matrix4 },
-                    viewPos: { type: MB.UniformType.Vector3 },
-                    color: { type: MB.UniformType.Vector3 }
-                }
-            });
+            myProg = new MB.SimpleShadingMaterial(engine.context);
 
             cubito = new MB.Cube(engine.context, 2.0);
 

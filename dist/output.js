@@ -3840,7 +3840,7 @@ var MB;
             PixelFormat[PixelFormat["UNSIGNED_INT_24_8"] = 34042] = "UNSIGNED_INT_24_8";
             PixelFormat[PixelFormat["HALF_FLOAT"] = 5131] = "HALF_FLOAT";
             PixelFormat[PixelFormat["RG"] = 33319] = "RG";
-            PixelFormat[PixelFormat["RG_INTEGER"] = 33320] = "RG_INTEGER";
+            PixelFormat[PixelFormat["RgInt"] = 33320] = "RgInt";
             PixelFormat[PixelFormat["INT_2_10_10_10_REV"] = 36255] = "INT_2_10_10_10_REV";
             PixelFormat[PixelFormat["RED"] = 6403] = "RED";
             PixelFormat[PixelFormat["RGB8"] = 32849] = "RGB8";
@@ -12082,6 +12082,231 @@ var MB;
 })(MB || (MB = {}));
 
 "use strict";
+
+"use strict";
+
+
+
+
+
+
+var MB;
+(function (MB) {
+    var SimpleShadingMaterial = (function (_super) {
+        __extends(SimpleShadingMaterial, _super);
+        function SimpleShadingMaterial(context) {
+            _super.call(this, context);
+            this._uniforms = {};
+            var params = {
+                name: "simpleShadingShader",
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 },
+                    viewPos: { type: MB.UniformType.Vector3 },
+                    color: {
+                        type: MB.UniformType.Vector3,
+                        value: new MB.Vect3(1.0, 1.0, 1.0)
+                    }
+                }
+            };
+            this.id = params.name;
+            this._program = new MB.Program(context);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n                layout(location = 1) in vec3 normal;\n\n                out vec3 outPosition;\n                out vec3 outNormal;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                void main() {\n                    outPosition = vec3(model * vec4(position, 1.0));\n\n                    gl_Position = projection * view * vec4(outPosition, 1.0);\n                    mat3 normalMatrix = mat3(inverse(transpose(model)));\n                    outNormal = normalize(normalMatrix * normal);\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                in vec3 outPosition;\n                in vec3 outNormal;\n\n                out vec4 fragColor;\n\n                uniform vec3 viewPos;\n                uniform vec3 color;\n\n                void main() {\n                    vec3 N = normalize(outNormal);\n                    vec3 L = normalize(viewPos - outPosition);\n                    float dif = dot(N, L);\n                    dif = clamp(dif, 0.0, 1.0);\n                    fragColor = vec4(color * dif, 1.0) + vec4(color * 0.3, 1.0);\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.compile();
+            this._program.autocatching();
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = params.uniforms;
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(SimpleShadingMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        SimpleShadingMaterial.prototype.render = function (model) {
+            this.use();
+            model.render();
+        };
+        ;
+        SimpleShadingMaterial.prototype.render2 = function (model) {
+            this.use();
+            model.render2();
+        };
+        ;
+        SimpleShadingMaterial.prototype.render3 = function (model) {
+            this.use();
+            model.render3();
+        };
+        ;
+        SimpleShadingMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return SimpleShadingMaterial;
+    }(MB.Material));
+    MB.SimpleShadingMaterial = SimpleShadingMaterial;
+    ;
+})(MB || (MB = {}));
+
+"use strict";
+
+
+
+
+
+
+var MB;
+(function (MB) {
+    var SimpleTextureMaterial = (function (_super) {
+        __extends(SimpleTextureMaterial, _super);
+        function SimpleTextureMaterial(context) {
+            _super.call(this, context);
+            this._uniforms = {};
+            var params = {
+                name: "simpleTextureShader",
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 },
+                    tex: {
+                        type: MB.UniformType.Integer,
+                        value: 0
+                    }
+                }
+            };
+            this.id = params.name;
+            this._program = new MB.Program(context);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n                layout(location = 1) in vec3 normal;\n                layout(location = 2) in vec2 uv;\n\n                out vec2 outUV;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                void main() {\n                    gl_Position = projection * view * model * vec4(position, 1.0);\n                    outUV = uv;\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                in vec2 outUV;\n\n                out vec4 fragColor;\n\n                uniform sampler2D tex;\n\n                void main() {\n                    fragColor = texture(tex, outUV);\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.compile();
+            this._program.autocatching();
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = params.uniforms;
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(SimpleTextureMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        SimpleTextureMaterial.prototype.render = function (model) {
+            this.use();
+            model.render();
+        };
+        ;
+        SimpleTextureMaterial.prototype.render2 = function (model) {
+            this.use();
+            model.render2();
+        };
+        ;
+        SimpleTextureMaterial.prototype.render3 = function (model) {
+            this.use();
+            model.render3();
+        };
+        ;
+        SimpleTextureMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return SimpleTextureMaterial;
+    }(MB.Material));
+    MB.SimpleTextureMaterial = SimpleTextureMaterial;
+    ;
+})(MB || (MB = {}));
 
 "use strict";
 

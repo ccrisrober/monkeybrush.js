@@ -17,37 +17,6 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-
-        layout(location = 0) in vec3 position;
-        layout(location = 1) in vec3 normal;
-        layout(location = 2) in vec2 uv;
-
-        out vec2 outUV;
-
-        uniform mat4 projection;
-        uniform mat4 view;
-        uniform mat4 model;
-
-        void main() {
-            gl_Position = projection * view * model * vec4(position, 1.0);
-            outUV = uv;
-        }
-    </script>
-    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
-        precision highp float;
-
-        in vec2 outUV;
-
-        uniform sampler2D tex;
-
-        out vec4 fragColor;
-
-        void main() {
-            fragColor = texture(tex, outUV);
-        }
-    </script>
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
@@ -85,20 +54,7 @@
                     this.customPP.swap();
                 }.bind(this), 1000);
 
-                this.myProg = new MB.ShaderMaterial(this.context, {
-                    name: "ppShader",
-                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
-                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
-                    uniforms: {
-                        projection: { type: MB.UniformType.Matrix4 },
-                        view: { type: MB.UniformType.Matrix4 },
-                        model: { type: MB.UniformType.Matrix4 },
-                        tex: {
-                            type: MB.UniformType.Integer,
-                            value: 0
-                        }
-                    }
-                });
+                this.myProg = new MB.SimpleTextureMaterial(this.context);
                 this.cameraUpdate();
             };
             MyScene.prototype.update = function (dt) {

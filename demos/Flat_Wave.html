@@ -104,9 +104,9 @@
                 }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
-                    internalFormat: this.context.gl.RG32I,
-                    format: this.context.gl.RG_INTEGER,
-                    type: this.context.gl.INT,
+                    internalFormat: MB.PixelFormat.RG32I,
+                    format: MB.PixelFormat.RgInt,
+                    type: MB.DataType.Int,
                     unpackAlignment: 1
                 });
                 this.tex2 = new MB.Texture2D(this.context, {
@@ -116,9 +116,9 @@
                 }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
-                    internalFormat: this.context.gl.RG32I,
-                    format: this.context.gl.RG_INTEGER,
-                    type: this.context.gl.INT,
+                    internalFormat: MB.PixelFormat.RG32I,
+                    format: MB.PixelFormat.RgInt,
+                    type: MB.DataType.Int,
                     unpackAlignment: 1
                 });
                 this.fbo = new MB.Framebuffer(this.context, [this.tex], new MB.Vect2(n, n));

@@ -235,7 +235,7 @@ namespace MB {
             UNSIGNED_INT_24_8 = 0x84FA,
             HALF_FLOAT = 0x140B,
             RG = 0x8227,
-            RG_INTEGER = 0x8228,
+            RgInt = 0x8228,
             INT_2_10_10_10_REV = 0x8D9f,
 
             RED = 0x1903,

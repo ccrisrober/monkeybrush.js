@@ -173,6 +173,9 @@ declare namespace MB {
         abstract class Curve2D {
             abstract evaluate(t: number): Vect2;
         }
+        abstract class Curve3D {
+            abstract evaluate(t: number): Vect3;
+        }
         /**
          * Ellipse class.
          * @class Ellipse
@@ -230,7 +233,7 @@ declare namespace MB {
          * @class LineCurve3D
          * Create an line from first 3D point to second.
          */
-        class Line3D {
+        class Line3D extends Curve3D {
             protected _p1: Vect3;
             protected _p2: Vect3;
             /**
@@ -244,7 +247,7 @@ declare namespace MB {
              * @param  {number} t Interpolation value [0, 1].
              * @return {Vect3}    A new Vect3 interpolated position.
              */
-            interpolate(t: number): Vect3;
+            evaluate(t: number): Vect3;
         }
         /**
          * BezierCurve class
@@ -272,7 +275,25 @@ declare namespace MB {
              * @return {Vect2}    A new Vect2 interpolated position.
              */
             evaluate(t: number): Vect2;
-            getPoints(subdivisions: number): void;
+        }
+        class CubicBezier3D extends Curve3D {
+            _list: Array<Vect3>;
+            _curves: any[];
+            /**
+             * CubicBezier constructor
+             * @param {Vect3} cpi  Starting point
+             * @param {Vect3} cpp1 First control point
+             * @param {Vect3} cpp2 Second control point
+             * @param {Vect3} cpe  Ending point
+             */
+            constructor(cpi: Vect3, cpp1: Vect3, cpp2: Vect3, cpe: Vect3);
+            protected bezierCurveInterpolation(p0: number, p1: number, p2: number, p3: number, t: number): number;
+            /**
+             * Return interpolate position based on cubic bezier definition.
+             * @param  {number} t Interpolation value [0, 1].
+             * @return {Vect3}    A new Vect3 interpolated position.
+             */
+            evaluate(t: number): Vect3;
         }
         /**
          * QuadraticBezier class
@@ -282,7 +303,7 @@ declare namespace MB {
          * It requires two points. The first point is a
          * control point and the second one is the end point.
          */
-        class QuadraticBezier extends Curve2D {
+        class QuadraticBezier2D extends Curve2D {
             _list: Array<Vect2>;
             _curves: any[];
             /**
@@ -299,6 +320,24 @@ declare namespace MB {
              * @return {Vect2}    A new Vect2 interpolated position.
              */
             evaluate(t: number): Vect2;
+        }
+        class QuadraticBezier3D extends Curve3D {
+            _list: Array<Vect3>;
+            _curves: any[];
+            /**
+             * QuadraticBezier constructor.
+             * @param {Vect3} cpi  Starting point.
+             * @param {Vect3} cpp  Middle control point.
+             * @param {Vect3} cpe  Ending point.
+             */
+            constructor(cpi: Vect3, cpp: Vect3, cpe: Vect3);
+            protected bezierCurveInterpolation(p0: number, p1: number, p2: number, t: number): number;
+            /**
+             * Return interpolate position based on cubic bezier definition.
+             * @param  {number} t Interpolation value [0, 1].
+             * @return {Vect3}    A new Vect3 interpolated position.
+             */
+            evaluate(t: number): Vect3;
         }
     }
 }
@@ -621,6 +660,7 @@ declare namespace MB {
          * @return {number}    Radians angle between points.
          */
         function angleBetween2DPoints(p0: Vect2, p1: Vect2): number;
+        function euclideanModulo(m: number, n: number): number;
         /**
          * Return angle between two 3D points
          * @param  {Vect3}  p0 First 3D point.
@@ -766,6 +806,13 @@ declare namespace MB {
          */
         inverse(): Quat;
         conjugate(): Quat;
+        /**
+         * Returns whether or not current Quat and another Quat have exactly the same elements
+         *     in the same position.
+         * @param  {Vect2}   other The second vector
+         * @return {boolean} True if the quaternions are equals, false otherwise
+         */
+        exactEquals(other: MB.Quat): boolean;
         static fromAxis(axis: Vect3, angle: number, dest?: Quat): Quat;
         onChange: Function;
         setFromEuler(euler: MB.EulerAngle): MB.Quat;
@@ -1703,6 +1750,7 @@ declare namespace MB {
         setHome(v: MB.Vect3): void;
         constructor(position?: MB.Vect3, up?: MB.Vect3, yaw?: number, pitch?: number);
         update(timeElapsed: number, callback: Function): void;
+        protected _firstMouse: boolean;
         processKeyboard(direction: number, speed?: number): void;
         processMouseMovement(xOffset: number, yOffset: number): void;
         GetViewMatrix(): MB.Mat4;
@@ -1830,6 +1878,7 @@ declare namespace MB {
          * @param {number} numInstances: Instances to render
          */
         renderArrayInstance(numInstances: number): void;
+        protected computeNormals(): MB.BufferAttribute;
     }
 }
 
@@ -2351,7 +2400,7 @@ declare namespace MB {
             Repeat = 10497,
             MirroredRepeat = 33648,
         }
-        enum BlendingMode {
+        enum BlendingMode2 {
             None = 0,
             Normal = 1,
             Additive = 2,
@@ -2701,6 +2750,7 @@ declare namespace MB {
          * @return {boolean} [description]
          */
         function canUseHalfFloatingPointLinearFiltering(context: GLContext): boolean;
+        function canUseLogarithmDepthBuffer(context: GLContext): boolean;
     }
 }
 
@@ -2816,6 +2866,7 @@ declare namespace MB {
          * @return {Color3} New color using HSL representation.
          */
         toHSL(): Color3;
+        toHSV(): Color3;
         static fromColor4(color: Color4): Color3;
         /**
          * Aqua color
@@ -3136,21 +3187,14 @@ declare namespace MB {
          * @return {Float32Array}    Incenter position of given triangle
          */
         function triangleIncenter(v1: Float32Array, v2: Float32Array, v3: Float32Array): Float32Array;
-        function getConvexHull(points: number[][]): Array<any>;
-        /**
-         * Returns a convex hull from 1D points list
-         * @param  {ArrayLike<number>} points Point list
-         * @return {Array<number>}            [description]
-         */
-        function convexHull1D(points: ArrayLike<number>): Array<number>;
         /**
          * Returns a new vertices and indices list removed orphan vertices
-         * @param  {Array<Array<number>>} positions Positions list
          * @param  {Array<Array<number>>} indices   Indices list
+         * @param  {Array<Array<number>>} positions Positions list
          * @return {Object}                         New indices (indices)
          *                                              and positions (positions)
          */
-        function removeOrphanVertices(positions: Array<Array<number>>, indices: Array<Array<number>>): Object;
+        function removeOrphanVertices(indices: Array<Array<number>>, positions: Array<Array<number>>): Object;
         /**
          * Export quad faces to triangle faces
          * @param  {Array<Array<number>>} faces [description]
@@ -3169,6 +3213,7 @@ declare namespace MB {
         depth?: boolean;
         stencil?: boolean;
         premultipliedAlpha?: boolean;
+        preserveDrawingBuffer?: boolean;
     }
     abstract class GLContext {
         protected _canvas: HTMLCanvasElement;
@@ -3176,14 +3221,21 @@ declare namespace MB {
         protected _state: GlobalState;
         protected _version: number;
         version: number;
+        protected _vendor: string;
+        vendor: string;
+        protected _renderer: string;
+        renderer: string;
+        static isSupported(): boolean;
         constructor(canvas: HTMLCanvasElement);
         protected _init(glVersion: string, numVersion: number, params?: ContextParams): void;
+        protected _onContextLost(ev: Event): void;
         gl: WebGL2RenderingContext;
         canvas: HTMLCanvasElement;
         state: GlobalState;
         protected _getVendors(): void;
         protected pp: MB.PostProcess;
         getPP(): PostProcess;
+        forceGLLost(): void;
     }
 }
 
@@ -3271,12 +3323,10 @@ declare namespace MB {
         protected _currentColorMask: Vector4<boolean>;
         protected _currentColorClear: Color4;
         setMask(colorMask: MB.Vector4<boolean>): void;
+        setClear(r: number, g: number, b: number, a: number): void;
         /**
-         * Set new clear color value TODO (bad text)
-         * @param {number} r Red channel value
-         * @param {number} g Green channel value
-         * @param {number} b Blue channel value
-         * @param {number = 1.0} a Alpha channel value
+         * Set new clear color value.
+         * @param {Color4} bgColor: New clear color.
          */
         setClearColor(bgColor: Color4): void;
         reset(): void;
@@ -3287,9 +3337,9 @@ declare namespace MB {
     }
     class ScissorsState {
         protected _context: GLContext;
-        constructor(context: GLContext);
         protected _scissorsEnabled: boolean;
         protected _scissorsBox: MB.Box2D;
+        constructor(context: GLContext);
         status: boolean;
         /**
          * Define the scissor box.
@@ -3320,7 +3370,6 @@ declare namespace MB {
     }
     class StencilState {
         protected _context: GLContext;
-        constructor(context: GLContext);
         protected _stencilEnabled: boolean;
         protected _currentStencilMask: number;
         protected _currentStencilFunc: MB.ctes.ComparisonFunc;
@@ -3330,6 +3379,7 @@ declare namespace MB {
         protected _currentStencilZFail: MB.ctes.StencilOp;
         protected _currentStencilZPass: MB.ctes.StencilOp;
         protected _currentStencilClear: number;
+        constructor(context: GLContext);
         setTest(enabled: boolean): void;
         /**
          * Control the front and back writing of individual bits in the stencil planes
@@ -3354,8 +3404,9 @@ declare namespace MB {
          *    and depth test passes.
          */
         setOp(fail: MB.ctes.StencilOp, zfail: MB.ctes.StencilOp, zpass: MB.ctes.StencilOp): void;
-        getMasValue(mask: number): number;
-        setClearValue(s: number): void;
+        getMaskValue(mask: number): number;
+        setClear(s: number): void;
+        reset(): void;
         /**
          * Control the front and/or back writing of individual bits in the stencil planes
          * @param {MB.ctes.FaceSide} face Specifies whether the front and/or back stencil writemask is updated
@@ -3364,35 +3415,37 @@ declare namespace MB {
          */
         setMaskFace(face: MB.ctes.FaceSide, mask: number): void;
         /**
-         * Get front write mask
+         * Get front write mask.
          * @return {number}
          */
         getFrontWriteMask(): number;
         /**
-         * Get back write mask
+         * Get back write mask.
          * @return {number}
          */
         getBackWriteMask(): number;
         /**
-         * Get stencil bits
+         * Get stencil bits.
          * @return {number}
          */
         getBits(): number;
         /**
-         * Clear stencil values
+         * Clear stencil values.
          */
         clearBuffer(): void;
         /**
-         * Checks if stencil test is activated
-         * @return {boolean} True if activated
+         * Checks if stencil test is activated.
+         * @return {boolean} True if activated.
          */
         isEnabled(): boolean;
     }
     class BlendingState {
         protected _context: GLContext;
+        protected _modeRGB: MB.ctes.BlendingEq;
+        protected _modeAlpha: MB.ctes.BlendingEq;
+        protected _color: MB.Vect4;
         constructor(context: GLContext);
         protected _blendingEnabled: boolean;
-        protected _blendingMode: ctes.BlendingEq;
         /**
          * Change blending status (eables or disabled)
          * @param {boolean} enabled Enable/disable blending
@@ -3400,9 +3453,9 @@ declare namespace MB {
         setStatus(enabled: boolean): void;
         /**
          * Specify the equation used for both the RGB blend equation and
-         *     the Alpha blend equation
+         *     the Alpha blend equation.
          * @param {MB.ctes.BlendingEq} mode Specifies how source and destination
-         *     colors are combined
+         *     colors are combined.
          */
         setEquation(mode: MB.ctes.BlendingEq): void;
         /**
@@ -3414,17 +3467,18 @@ declare namespace MB {
          *      how the alpha component of the source and destination colors
          *      are combined.
          */
-        equationSeparate(modeRGB: MB.ctes.BlendingEq, modeAlpha: MB.ctes.BlendingEq): void;
+        setEquationSeparate(modeRGB: MB.ctes.BlendingEq, modeAlpha: MB.ctes.BlendingEq): void;
         getquationRGB(): MB.ctes.BlendingEq;
         getEquationAlpha(): MB.ctes.BlendingEq;
         /**
-         * Set the blend color
+         * Set the source and destination blending factors.
          * @param {number = 0.0} red
          * @param {number = 0.0} green
          * @param {number = 0.0} blue
          * @param {number = 0.0} alpha
          */
         setColor(red?: number, green?: number, blue?: number, alpha?: number): void;
+        getColor(): MB.Vect4;
         /**
          * Specify pixel arithmetic.
          * @param {MB.ctes.BlendingMode = MB.ctes.BlendingMode.One} sfactor Specifies how the red,
@@ -3450,6 +3504,8 @@ declare namespace MB {
          * @return {boolean} True if activated
          */
         isEnabled(): boolean;
+        protected _currentBlending: ctes.BlendingMode2;
+        set(blend: MB.ctes.BlendingMode2): void;
     }
     /**
      * GlobalState class
@@ -3468,11 +3524,11 @@ declare namespace MB {
         blending: BlendingState;
         _currentLineWidth: number;
         setLineWidth(width: number): void;
-        _viewport: Vector4<number>;
+        protected _viewport: Vector4<number>;
+        protected _poligonOffsetEnable: boolean;
+        protected _currentPolygonOffsetFactor: number;
+        protected _currentPolygonOffsetUnits: number;
         setViewport(viewport: Vector4<number>): void;
-        _poligonOffsetEnable: boolean;
-        _currentPolygonOffsetFactor: number;
-        _currentPolygonOffsetUnits: number;
         /**
          * Specifies the scale factors and units to calculate depth values.
          * The offset is added before the depth test is performed and
@@ -3484,6 +3540,11 @@ declare namespace MB {
         setPolygonOffset(enable: boolean, factor: number, units: number): void;
         clearBuffers(): void;
         clearAllBuffers(): void;
+        enable(cap: number): void;
+        disable(cap: number): void;
+        protected _capabilites: {
+            [key: number]: boolean;
+        };
     }
 }
 
@@ -3584,14 +3645,6 @@ declare namespace MB {
         constructor(arr: ArrayLike<number>, stride: number, meshPerAttr?: number);
         meshPerAttr: number;
     }
-}
-
-declare namespace MB {
-    /**
-    * This class wraps a logger
-    * @class Logger
-    */
-    var Log: log4javascript.Logger;
 }
 
 declare namespace MB {
@@ -3962,6 +4015,7 @@ declare namespace MB {
          * Useful for transform feedback or shadow techniques.
          */
         setFooFragment(): void;
+        debugShaders(): void;
     }
 }
 
@@ -4415,6 +4469,12 @@ declare namespace MB {
         function downloadCanvasImage(canvas: HTMLCanvasElement, name?: string): void;
         function arrayToVector(elements: Array<number>): any;
         function readScriptShader(script: string): string;
+        /**
+         * Take input array and return flattened single-dim array
+         * @param  {Array<any>}    arr [description]
+         * @return {Array<number>}     [description]
+         */
+        function flattenArray(arr: Array<any>): Array<number>;
     }
 }
 
@@ -5177,10 +5237,10 @@ declare namespace MBX {
          */
         protected _VertexBuffer: MB.VertexBuffer;
         /**
-         * Internal program that draw skybox
-         * @type {MB.Program}
+         * Internal material that draw skybox
+         * @type {MB.ShaderMaterial}
          */
-        protected _prog: MB.Program;
+        protected _prog: MB.ShaderMaterial;
         /**
          * Internal CubeMap texture
          * @type {MB.CubeMapTexture}
@@ -5214,12 +5274,6 @@ declare namespace MBX {
          * @param {Array<string>} faces Array of image routes.
          */
         protected _loadCubemap(faces: Array<string>): void;
-    }
-}
-
-declare namespace MB {
-    namespace SourceFrags {
-        function parse(str: string): string;
     }
 }
 
@@ -5759,6 +5813,12 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    class MyMesh {
+        constructor(geom: MB.VertexBufferGeometry);
+    }
+}
+
+declare namespace MB {
     /**
      * Octahedron class
      * @class Octahedron
@@ -5906,6 +5966,14 @@ declare namespace MB {
 }
 
 declare namespace MB {
+    class Tube extends MB.Drawable {
+        constructor(context: MB.GLContext, path: MB.Path);
+        protected _path: MB.Path;
+        protected _generateSegment(t: number): void;
+    }
+}
+
+declare namespace MB {
     namespace Loaders {
         /**
          * [VertexBufferGeometryLoader description]
@@ -5941,6 +6009,7 @@ declare namespace MB {
 
 declare namespace MB {
     namespace ObjLoader {
+        function loadMTL(filename: string): Object;
         function loadObj(filename: string): Object;
     }
 }
@@ -6114,6 +6183,7 @@ declare namespace MB {
     }
 }
 declare function loadShader(alias: string, filePath: string): any;
+declare function loadShaderFromText(alias: string, shaderSource: string): void;
 declare function _processImports(src: string): string;
 
 declare namespace MB {
@@ -6173,6 +6243,17 @@ declare namespace MB {
          * @param {string =        ""}          alias [description]
          */
         function loadImage(imageSrc: string, alias?: string): void;
+    }
+}
+
+declare namespace MB {
+    namespace Loaders {
+        /**
+         * [loadJSON description]
+         * @param {string}    jsonSrc [description]
+         * @param {string =        ""}          alias [description]
+         */
+        function loadJSON(jsonSrc: string, alias?: string): void;
     }
 }
 
@@ -6395,6 +6476,8 @@ declare namespace MB {
         constructor(context: GLContext, data: string, options: TexOptions, onSuccess?: () => void);
         constructor(context: GLContext, data: HTMLImageElement, options: TexOptions, onSuccess?: () => void);
         constructor(context: GLContext, data: ITexture2D, options: TexOptions, onSuccess?: () => void);
+        setSubImage(offsetX: number, offsetY: number, data: HTMLImageElement): any;
+        setSubImage(offsetX: number, offsetY: number, data: ITexture2D): any;
         update(data: HTMLImageElement): any;
         update(data: ITexture2D): any;
     }
@@ -6433,6 +6516,7 @@ declare namespace MB {
          * @param {() => void = null} onSuccess Optional callback that runs when creating Texture3D.
          */
         constructor(context: GLContext, data: ITexture3D, options?: TexOptions, onSuccess?: () => void);
+        setSubImage(offsetX: number, offsetY: number, offsetZ: number, data: ITexture3D): void;
     }
 }
 
@@ -6477,6 +6561,14 @@ declare namespace MBX {
 declare namespace MB {
     abstract class Material {
         id: string;
+        backFaceCull: boolean;
+        sideOrientation: ctes.FaceDir;
+        depthTest: boolean;
+        visible: boolean;
+        protected _context: MB.GLContext;
+        protected _state: MB.GlobalState;
+        constructor(context: MB.GLContext);
+        use(): void;
     }
 }
 
@@ -6510,7 +6602,6 @@ declare namespace MB {
             [key: string]: MB.Uniform;
         };
         protected _program: MB.Program;
-        protected _context: MB.GLContext;
         constructor(context: MB.GLContext, params: MB.ShaderMaterialParams);
         uniforms: {
             [key: string]: MB.IUniformMaterial;
@@ -6554,22 +6645,22 @@ declare namespace MB {
 }
 
 declare namespace MBS {
-    class SimpleMaterial extends MB.Material {
-        protected _ambientColor: MB.Color3;
-        ambientColor: MB.Color3;
-        protected _diffuseColor: MB.Color3;
-        diffuseColor: MB.Color3;
-        protected _specularColor: MB.Color3;
-        specularColor: MB.Color3;
-        protected _emissiveColor: MB.Color3;
-        emissiveColor: MB.Color3;
-        protected _specularPower: number;
-        specularPower: number;
-        diffuseTexture: MB.Texture;
-        ambientTexture: MB.Texture;
-        emissiveTexture: MB.Texture;
-        specularTexture: MB.Texture;
-        constructor();
+}
+
+declare namespace MB {
+    class SimpleShadingMaterial extends MB.Material {
+        protected _uniforms: {
+            [key: string]: MB.Uniform;
+        };
+        protected _program: MB.Program;
+        constructor(context: MB.GLContext);
+        uniforms: {
+            [key: string]: MB.IUniformMaterial;
+        };
+        render(model: MB.Drawable): void;
+        render2(model: MB.Drawable): void;
+        render3(model: MB.Drawable): void;
+        use(): void;
     }
 }
 
@@ -6591,7 +6682,6 @@ declare namespace MB {
             [key: string]: MB.Uniform;
         };
         protected _program: MB.Program;
-        protected _context: MB.GLContext;
         program: MB.Program;
         constructor(context: MB.GLContext, params: MB.TFMaterialParams);
         uniforms: {
@@ -6638,7 +6728,6 @@ declare namespace MB {
             [key: string]: MB.Uniform;
         };
         protected _program: MB.Program;
-        protected _context: MB.GLContext;
         protected _tex3D: MB.Texture3D;
         constructor(context: MB.GLContext, tex3D: MB.Texture3D);
         uniforms: {
@@ -6658,6 +6747,7 @@ declare namespace MBS {
         setViewport(vp: MB.Vector4<number>): void;
         constructor(context: MB.GLContext, options?: {});
         run(loop: Function): void;
+        resize(): void;
     }
 }
 
@@ -6669,6 +6759,40 @@ declare namespace MBS {
         private _scene;
         constructor(context: MB.GLContext);
         run(): void;
+    }
+}
+
+declare namespace MBSS {
+    class Transform {
+        private _parent;
+        private _parentMatrix;
+        private _pos;
+        private _rot;
+        private _scale;
+        private _oldPos;
+        private _oldRot;
+        private _oldScale;
+        constructor();
+        position: MB.Vect3;
+    }
+    abstract class GameComponent {
+        update(dt: number): void;
+    }
+    class MeshRenderer extends GameComponent {
+        protected _mesh: MB.Drawable;
+        protected _material: MB.Material;
+        constructor(mesh: MB.Drawable, material: MB.Material);
+        update(dt: number): void;
+    }
+    class GameObject {
+        private _children;
+        private _components;
+        private _transform;
+        constructor();
+        addChild(child: MBSS.GameObject): void;
+        updateAll(dt: number): void;
+        update(dt: number): void;
+        transform: MBSS.Transform;
     }
 }
 
@@ -6754,5 +6878,17 @@ declare namespace MBS {
         protected _drawCalls: number;
         protected _totalIndices: number;
         camera: MB.Camera2;
+        autoClear: boolean;
+        autoClearColor: boolean;
+        autoClearDepth: boolean;
+        autoClearStencil: boolean;
+        protected clear(clearColor?: boolean, clearDepth?: boolean, clearStencil?: boolean): void;
+        clearColor_(): void;
+        clearDepth_(): void;
+        clearStencil_(): void;
+        protected _beforeRender: Array<Function>;
+        protected _afterRender: Array<Function>;
+        registerBeforeRender(cb: Function): void;
+        registerAfterRender(cb: Function): void;
     }
 }
