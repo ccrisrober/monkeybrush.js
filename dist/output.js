@@ -3295,6 +3295,7 @@ var MB;
     var App2 = (function () {
         function App2(title, context) {
             if (title === void 0) { title = null; }
+            this._debug = false;
             this._resume = true;
             console.info("init app");
             this._context = context;
@@ -3330,6 +3331,16 @@ var MB;
             this._state.clearBuffers();
         };
         ;
+        Object.defineProperty(App2.prototype, "debug", {
+            get: function () {
+                return this._debug;
+            },
+            set: function (d) {
+                this._debug = d;
+            },
+            enumerable: true,
+            configurable: true
+        });
         App2.prototype.__init__ = function () {
             var bgColor = MB.Color4.fromColor3(MB.Color3.Black);
             MB.Input.initialize();
@@ -3353,6 +3364,9 @@ var MB;
                         requestAnimationFrame(__render__);
                         MB.Input.update();
                         dt *= 0.001;
+                        if (self._debug === true) {
+                            self.context.gl.getError();
+                        }
                         MB.Timer.update();
                         if (self._resume) {
                             self.update(MB.Timer.deltaTime());
@@ -12082,6 +12096,68 @@ var MB;
 })(MB || (MB = {}));
 
 "use strict";
+
+
+
+
+
+
+var MBS;
+(function (MBS) {
+    var SimpleMaterial = (function (_super) {
+        __extends(SimpleMaterial, _super);
+        function SimpleMaterial(context) {
+            _super.call(this, context);
+            this._ambientColor = MB.Color3.Black.clone();
+            this._diffuseColor = MB.Color3.White.clone();
+            this._specularColor = MB.Color3.White.clone();
+            this._emissiveColor = MB.Color3.Black.clone();
+            this._specularPower = 32.0;
+        }
+        Object.defineProperty(SimpleMaterial.prototype, "ambientColor", {
+            get: function () { return this._ambientColor; },
+            set: function (c) { this._ambientColor = c; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Object.defineProperty(SimpleMaterial.prototype, "diffuseColor", {
+            get: function () { return this._diffuseColor; },
+            set: function (c) { this._diffuseColor = c; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Object.defineProperty(SimpleMaterial.prototype, "specularColor", {
+            get: function () { return this._specularColor; },
+            set: function (c) { this._specularColor = c; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Object.defineProperty(SimpleMaterial.prototype, "emissiveColor", {
+            get: function () { return this._emissiveColor; },
+            set: function (c) { this._emissiveColor = c; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Object.defineProperty(SimpleMaterial.prototype, "specularPower", {
+            get: function () { return this._specularPower; },
+            set: function (p) { this._specularPower = p; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        return SimpleMaterial;
+    }(MB.Material));
+    MBS.SimpleMaterial = SimpleMaterial;
+})(MBS || (MBS = {}));
 
 "use strict";
 

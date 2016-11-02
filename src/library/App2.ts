@@ -62,6 +62,13 @@ namespace MB {
         public clearColorAndDepth() {
             this._state.clearBuffers();
         };
+        public get debug(): boolean {
+            return this._debug;
+        }
+        public set debug(d: boolean) {
+            this._debug = d;
+        }
+        protected _debug: boolean = false;
         private __init__() {
             let bgColor = Color4.fromColor3(Color3.Black);
             Input.initialize();
@@ -93,6 +100,10 @@ namespace MB {
                         MB.Input.update();
 
                         dt *= 0.001; // convert to seconds
+
+                        if (self._debug === true) {
+                            self.context.gl.getError();
+                        }
 
                         MB.Timer.update();
 
