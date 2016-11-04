@@ -7638,6 +7638,11 @@ var MB;
             var gl = this._context.gl;
             gl.bindBuffer(this._type, this._handler);
         };
+        VertexBuffer.prototype.bufferSubData = function (offset, data) {
+            this.bind();
+            var gl = this._context.gl;
+            gl.bufferSubData(this._type, offset, data);
+        };
         VertexBuffer.prototype.unbind = function () {
             var gl = this._context.gl;
             gl.bindBuffer(this._type, null);
@@ -7690,6 +7695,12 @@ var MB;
             var gl = this._context.gl;
             gl.bindBufferBase(target, index, this._handler);
         };
+        ;
+        VertexBuffer.prototype.render = function (mode, size) {
+            var gl = this._context.gl;
+            gl.drawArrays(mode, 0, size);
+        };
+        ;
         return VertexBuffer;
     }());
     MB.VertexBuffer = VertexBuffer;

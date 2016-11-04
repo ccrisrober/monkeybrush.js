@@ -59,6 +59,11 @@ namespace MB {
             const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBuffer(this._type, this._handler);
         }
+        public bufferSubData(offset: number, data: Float32Array | Uint16Array) {
+            this.bind();
+            const gl: WebGL2RenderingContext = this._context.gl;
+            gl.bufferSubData(this._type, offset, data);
+        }
         /**
          * Unbind vertex buffer.
          */
@@ -126,11 +131,11 @@ namespace MB {
          * [vertexAttribPointer description]
          * @param {number}     attribLocation [description]
          * @param {number}     numElems       [description]
-         * @param {number}     type           [description]
+         * @param {MB.ctes.DataType}     type           [description]
          * @param {boolean =              false}       normalized [description]
          * @param {number  =              0}           offset     [description]
          */
-        public vertexAttribPointer(attribLocation: number, numElems: number, type: number,
+        public vertexAttribPointer(attribLocation: number, numElems: number, type: MB.ctes.DataType,
             normalized: boolean = false, offset: number = 0) {
             this.bind();
             const gl: WebGL2RenderingContext = this._context.gl;
@@ -163,6 +168,11 @@ namespace MB {
         public bindBufferBase(target: number, index: number = 0) {
             const gl: WebGL2RenderingContext = this._context.gl;
             gl.bindBufferBase(target, index, this._handler);
-        }
+        };
+
+        public render(mode: MB.ctes.RenderMode, size: number) {
+            const gl: WebGL2RenderingContext = this._context.gl;
+            gl.drawArrays(mode, 0, size);
+        };
     };
 };
