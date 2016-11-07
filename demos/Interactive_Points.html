@@ -64,7 +64,7 @@
 
                 this.bufferAttr = new MB.VertexBuffer(this.context);
                 // Unnecesary this.bufferAttr.bind();
-                this.bufferAttr.bufferData(new Float32Array(this.vertices));
+                this.bufferAttr.data(new Float32Array(this.vertices));
                 this.bufferAttr.vertexAttribPointer(0, 2, MB.ctes.DataType.Float);
                 this.bufferAttr.unbind();
 

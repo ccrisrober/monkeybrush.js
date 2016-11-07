@@ -97,16 +97,23 @@ namespace MB {
             this._handler = null;
         }
         /**
-         * [bufferData description]
+         * [data description]
          * @param {Float32Array | Uint16Array | number}          data  [description]
          * @param {ctes.UsageType =B.ctes.UsageType.StaticDraw} usage [description]
          */
-        public bufferData(data: Float32Array | Uint16Array | number,
+        public data(data: Float32Array | Uint16Array | number,
             usage: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
 
             this.bind();
             const gl: WebGL2RenderingContext = this._context.gl;
             gl.bufferData(this._type, data, usage);
+        };
+        public getSubData(size: number, offset: number = 0): ArrayBuffer {
+            this.bind();
+            const gl: WebGL2RenderingContext = this._context.gl;
+            let arrBuffer = new ArrayBuffer(size * Float32Array.BYTES_PER_ELEMENT);
+            gl.getBufferSubData(this._type, offset, arrBuffer);
+            return arrBuffer;
         };
         /**
          * [attribDivisor description]

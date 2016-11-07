@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Julia</title>
+    <title>Convolution matrix</title>
     <link rel="stylesheet" type="text/css" href="./libs/style.css" />
 </head>
 <body>
@@ -20,38 +20,53 @@
     <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
         precision highp float;
 
+        out vec4 fragColor;
         in vec2 uv;
-        uniform vec2 offset;
+
         uniform int iter;
+        uniform vec2 offset;
 
         uniform sampler2D tex;
 
-        out vec4 fragColor;
-
+        vec2 f(vec2 n) {
+            return vec2(
+                n.x*n.x*n.x - 3.0*n.x*n.y*n.y - 1.0,
+                -n.y*n.y*n.y + 3.0*n.x*n.x*n.y
+            );
+        }
+        vec2 df(vec2 n) {
+            return 3.0 * vec2(
+                n.x*n.x - n.y*n.y,
+                2.0 * n.x * n.y
+            );
+        }
+        vec2 cdiv(vec2 a, vec2 b) {
+            float d = dot(b, b);
+            if(d == 0.0) return a;
+            else return vec2(
+                (a.x*b.x + a.y*b.y) / d,
+                (a.y*b.x - a.x*b.y) / d
+            );
+        }
         void main() {
             vec2 z;
             z.x = 3.0 * (uv.x - 0.5);
             z.y = 2.0 * (uv.y - 0.5);
-
             int i;
-            for(i=0; i<iter; i++) {
-                float x = (z.x * z.x - z.y * z.y) + offset.x;
-                float y = (z.y * z.x + z.x * z.y) + offset.y;
-
-                if((x * x + y * y) > 4.0) break;
-                z.x = x;
-                z.y = y;
+            for(i = 0; i < iter; ++i) {
+                vec2 zn = z - cdiv(f(z), df(z)) + vec2(offset);
+                if(distance(zn, z) < 0.00001) break;
+                z = zn;
             }
-
-            fragColor = texture(tex, vec2((i == iter ? 0.0 : float(i)) / 100.0, 0));
+            fragColor = texture(tex, vec2((i == iter ? 0.0 : float(i)) / float(iter), 0));
         }
     </script>
     <script type="text/javascript">
         var Configuration = function () {
             return {
-                offsetX: 0.7,
-                offsetY: -0.01,
-                iter: 25
+                offsetX: 0.0,
+                offsetY: 0.0,
+                iter: 90
             }
         };
         var MyScene = (function (_super) {
@@ -70,9 +85,8 @@
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-
-                this.myProg = new MB.PostProcessMaterial(this.context, {
-                    name: "handLikePP",
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "xorShader",
                     fragmentShader: MB.Utils.readScriptShader("shader-fs"),
                     uniforms: {
                         tex: {
@@ -89,14 +103,14 @@
                 this.__resize__();
             };
             MyScene.prototype.draw = function () {
-                this.myProg.uniforms.iter.value = this.text.iter;
-                this.myProg.uniforms.offset.value = new MB.Vect2(this.text.offsetX, this.text.offsetY);
-                this.myProg.renderPP();
+                this.prog.uniforms.iter.value = this.text.iter;
+                this.prog.uniforms.offset.value = new MB.Vect2(this.text.offsetX, this.text.offsetY);
+                this.prog.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "iter", 1, 50);
-                gui.add(this.text, "offsetX", -10.0, 10.0);
-                gui.add(this.text, "offsetY", -10.0, 10.0);
+                gui.add(this.text, "iter", 1, 156);
+                gui.add(this.text, "offsetX").min(-10.0).max(10.0).step(0.1);
+                gui.add(this.text, "offsetY").min(-10.0).max(10.0).step(0.1);
             };
             return MyScene;
         }(MB.App));
