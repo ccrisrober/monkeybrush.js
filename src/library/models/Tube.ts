@@ -76,7 +76,7 @@ namespace MB {
         protected _path: MB.Path;
 
         protected _generateSegment(t: number) {
-            let point = null;
+            // let point = null;
         }
     };
 };

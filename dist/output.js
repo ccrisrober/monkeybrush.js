@@ -501,6 +501,7 @@ var MB;
             if (order === void 0) { order = RotSeq.xyz; }
             this.order = order;
             this._value = new Float32Array([x, y, z]);
+            this._order = order;
         }
         Object.defineProperty(EulerAngle.prototype, "x", {
             get: function () { return this._value[0]; },
@@ -558,10 +559,104 @@ var MB;
             for (var i = 0; i < 3; ++i) {
                 this._value[i] = 0.0;
             }
+            this._order = MB.RotSeq.xyz;
             if (this.onChange) {
                 this.onChange();
             }
         };
+        EulerAngle.createFromVec3 = function (v, order) {
+            if (order === void 0) { order = MB.RotSeq.xyz; }
+            return new MB.EulerAngle(v.x, v.y, v.x, order);
+        };
+        EulerAngle.prototype.setFromRotationMatrix = function (mat, order, update) {
+            var m11 = mat._value[0], m12 = mat._value[4], m13 = mat._value[8];
+            var m21 = mat._value[1], m22 = mat._value[5], m23 = mat._value[9];
+            var m31 = mat._value[2], m32 = mat._value[6], m33 = mat._value[10];
+            order = order || this._order;
+            if (order === MB.RotSeq.xyz) {
+                this.y = Math.asin(MB.Mathf.clamp(m13, -1, 1));
+                if (Math.abs(m13) < 0.99999) {
+                    this.x = Math.atan2(-m23, m33);
+                    this.z = Math.atan2(-m12, m11);
+                }
+                else {
+                    this.x = Math.atan2(m32, m22);
+                    this.z = 0;
+                }
+            }
+            else if (order === MB.RotSeq.yxz) {
+                this.x = Math.asin(-MB.Mathf.clamp(m23, -1, 1));
+                if (Math.abs(m23) < 0.99999) {
+                    this.y = Math.atan2(m13, m33);
+                    this.z = Math.atan2(m21, m22);
+                }
+                else {
+                    this.y = Math.atan2(-m31, m11);
+                    this.z = 0;
+                }
+            }
+            else if (order === MB.RotSeq.zxy) {
+                this.x = Math.asin(MB.Mathf.clamp(m32, -1, 1));
+                if (Math.abs(m32) < 0.99999) {
+                    this.y = Math.atan2(-m31, m33);
+                    this.z = Math.atan2(-m12, m22);
+                }
+                else {
+                    this.y = 0;
+                    this.z = Math.atan2(m21, m11);
+                }
+            }
+            else if (order === MB.RotSeq.zyx) {
+                this.y = Math.asin(-MB.Mathf.clamp(m31, -1, 1));
+                if (Math.abs(m31) < 0.99999) {
+                    this.x = Math.atan2(m32, m33);
+                    this.z = Math.atan2(m21, m11);
+                }
+                else {
+                    this.x = 0;
+                    this.z = Math.atan2(-m12, m22);
+                }
+            }
+            else if (order === MB.RotSeq.yzx) {
+                this.z = Math.asin(MB.Mathf.clamp(m21, -1, 1));
+                if (Math.abs(m21) < 0.99999) {
+                    this.x = Math.atan2(-m23, m22);
+                    this.y = Math.atan2(-m31, m11);
+                }
+                else {
+                    this.x = 0;
+                    this.y = Math.atan2(m13, m33);
+                }
+            }
+            else if (order === MB.RotSeq.xzy) {
+                this.z = Math.asin(-MB.Mathf.clamp(m12, -1, 1));
+                if (Math.abs(m12) < 0.99999) {
+                    this.x = Math.atan2(m32, m22);
+                    this.y = Math.atan2(m13, m11);
+                }
+                else {
+                    this.x = Math.atan2(-m23, m33);
+                    this.y = 0;
+                }
+            }
+            else {
+            }
+            this._order = order;
+            if (update !== false)
+                this.onChange();
+            return this;
+        };
+        ;
+        EulerAngle.prototype.setFromQuaternion = function (q, order, update) {
+            if (update === void 0) { update = false; }
+            var matrix = new MB.Mat4();
+            if (!order) {
+                order = this.order;
+            }
+            matrix.makeRotationFromQuat(q);
+            return this.setFromRotationMatrix(matrix, order, update);
+        };
+        ;
         return EulerAngle;
     }());
     MB.EulerAngle = EulerAngle;
@@ -1298,6 +1393,36 @@ var MB;
             return "matrix3d(" + str + ")";
         };
         ;
+        Mat4.prototype.decompose = function (position, quaternion, scale) {
+            var v = new MB.Vect3();
+            var m = new MB.Mat4();
+            var sx = v.set(this._value[0], this._value[1], this._value[2]).length();
+            var sy = v.set(this._value[4], this._value[5], this._value[6]).length();
+            var sz = v.set(this._value[8], this._value[9], this._value[10]).length();
+            if (this.determinant() < 0) {
+                sx = -sx;
+            }
+            position.x = this._value[12];
+            position.y = this._value[13];
+            position.z = this._value[14];
+            m._value.set(this._value);
+            var invSX = 1.0 / sx;
+            var invSY = 1.0 / sy;
+            var invSZ = 1.0 / sz;
+            m._value[0] *= invSX;
+            m._value[1] *= invSX;
+            m._value[2] *= invSX;
+            m._value[4] *= invSY;
+            m._value[5] *= invSY;
+            m._value[6] *= invSY;
+            m._value[8] *= invSZ;
+            m._value[9] *= invSZ;
+            m._value[10] *= invSZ;
+            quaternion.setFromRotationMatrix(m);
+            scale.x = sx;
+            scale.y = sy;
+            scale.z = sz;
+        };
         Mat4.prototype.compose = function (position, quaternion, scale) {
             var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
             var x2 = x + x, y2 = y + y, z2 = z + z;
@@ -1338,6 +1463,56 @@ var MB;
             this._value[12] = position.x;
             this._value[13] = position.y;
             this._value[14] = position.z;
+        };
+        ;
+        Mat4.prototype.copy = function (m) {
+            this._value.set(m._value);
+            return this;
+        };
+        ;
+        Mat4.prototype.set = function (e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44) {
+            this._value[0] = e11;
+            this._value[4] = e12;
+            this._value[8] = e13;
+            this._value[12] = e14;
+            this._value[1] = e21;
+            this._value[5] = e22;
+            this._value[9] = e23;
+            this._value[13] = e24;
+            this._value[2] = e31;
+            this._value[6] = e32;
+            this._value[10] = e33;
+            this._value[14] = e34;
+            this._value[3] = e41;
+            this._value[7] = e42;
+            this._value[11] = e43;
+            this._value[15] = e44;
+            return this;
+        };
+        ;
+        Mat4.prototype.makeRotationFromQuat = function (qt) {
+            var x = qt.x, y = qt.y, z = qt.z, w = qt.w;
+            var x2 = x + x, y2 = y + y, z2 = z + z;
+            var xx = x * x2, xy = x * y2, xz = x * z2;
+            var yy = y * y2, yz = y * z2, zz = z * z2;
+            var wx = w * x2, wy = w * y2, wz = w * z2;
+            this._value[0] = 1 - (yy + zz);
+            this._value[4] = xy - wz;
+            this._value[8] = xz + wy;
+            this._value[1] = xy + wz;
+            this._value[5] = 1 - (xx + zz);
+            this._value[9] = yz - wx;
+            this._value[2] = xz - wy;
+            this._value[6] = yz + wx;
+            this._value[10] = 1 - (xx + yy);
+            this._value[3] = 0;
+            this._value[7] = 0;
+            this._value[11] = 0;
+            this._value[12] = 0;
+            this._value[13] = 0;
+            this._value[14] = 0;
+            this._value[15] = 1;
+            return this;
         };
         Mat4.identity = Mat4.create([
             1, 0, 0, 0,
@@ -1781,6 +1956,39 @@ var MB;
             dest._value[3] = Math.cos(angle);
             return dest;
         };
+        Quat.prototype.setFromRotationMatrix = function (mat) {
+            var m00 = mat._value[0], m01 = mat._value[4], m02 = mat._value[8], m10 = mat._value[1], m11 = mat._value[5], m12 = mat._value[9], m20 = mat._value[2], m21 = mat._value[6], m22 = mat._value[10], tr = m00 + m11 + m22, s;
+            if (tr > 0) {
+                s = 0.5 / Math.sqrt(tr + 1.0);
+                this.w = 0.25 / s;
+                this.x = (m21 - m12) * s;
+                this.y = (m02 - m20) * s;
+                this.z = (m10 - m01) * s;
+            }
+            else if (m00 > m11 && m00 > m22) {
+                s = 2.0 * Math.sqrt(1.0 + m00 - m11 - m22);
+                this.w = (m21 - m12) / s;
+                this.x = 0.25 * s;
+                this.y = (m01 + m10) / s;
+                this.z = (m02 + m20) / s;
+            }
+            else if (m11 > m22) {
+                s = 2.0 * Math.sqrt(1.0 + m11 - m00 - m22);
+                this.w = (m02 - m20) / s;
+                this.x = (m01 + m10) / s;
+                this.y = 0.25 * s;
+                this.z = (m12 + m21) / s;
+            }
+            else {
+                s = 2.0 * Math.sqrt(1.0 + m22 - m00 - m11);
+                this.w = (m10 - m01) / s;
+                this.x = (m02 + m20) / s;
+                this.y = (m12 + m21) / s;
+                this.z = 0.25 * s;
+            }
+            this.onChange();
+            return this;
+        };
         Quat.prototype.setFromEuler = function (euler) {
             var s1 = Math.sin(euler.x / 2.0);
             var s2 = Math.sin(euler.y / 2.0);
@@ -1825,6 +2033,15 @@ var MB;
                 this._value[2] = c1 * c2 * s3 + s1 * s2 * c3;
                 this._value[3] = c1 * c2 * c3 + s1 * s2 * s3;
             }
+            return this;
+        };
+        Quat.prototype.setFromAxisAngle = function (axis, angle) {
+            var halfAngle = angle / 2.0, s = Math.sin(halfAngle);
+            this._value[0] = axis.x * s;
+            this._value[1] = axis.y * s;
+            this._value[2] = axis.z * s;
+            this._value[3] = Math.cos(halfAngle);
+            this.onChange();
             return this;
         };
         return Quat;
@@ -2492,6 +2709,7 @@ var MB;
             this.x = vx;
             this.y = vy;
             this.z = vz;
+            return this;
         };
         ;
         Vect3.prototype.applyQuat = function (q, dest) {
@@ -2506,6 +2724,45 @@ var MB;
             dest.y = iy * q.w + iw * -q.y + iz * -q.x - ix * -q.z;
             dest.z = iz * q.w + iw * -q.z + ix * -q.y - iy * -q.x;
             return dest;
+        };
+        ;
+        Vect3.prototype.applyMatrix3 = function (mat) {
+            var x = this.x, y = this.y, z = this.z;
+            this.x = mat._value[0] * x + mat._value[4] * y + mat._value[8] * z;
+            this.y = mat._value[1] * x + mat._value[5] * y + mat._value[9] * z;
+            this.z = mat._value[2] * x + mat._value[6] * y + mat._value[10] * z;
+            return this;
+        };
+        ;
+        Vect3.prototype.applyMat4 = function (mat) {
+            var x = this.x, y = this.y, z = this.z;
+            this.x = mat._value[0] * x + mat._value[4] * y + mat._value[8] * z + mat._value[12];
+            this.y = mat._value[1] * x + mat._value[5] * y + mat._value[9] * z + mat._value[13];
+            this.z = mat._value[2] * x + mat._value[6] * y + mat._value[10] * z + mat._value[14];
+            return this;
+        };
+        ;
+        Vect3.prototype.copy = function (v) {
+            this.x = v.x;
+            this.y = v.y;
+            this.z = v.z;
+            return this;
+        };
+        ;
+        Vect3.prototype.setFromMatrixPosition = function (mat) {
+            return this.setFromMatColumn(mat, 3);
+        };
+        ;
+        Vect3.prototype.setFromMatColumn = function (mat, idx) {
+            return this.fromArray(mat._value, idx * 4);
+        };
+        ;
+        Vect3.prototype.fromArray = function (array, offset) {
+            if (offset === void 0) { offset = 0; }
+            this.x = array[offset];
+            this.y = array[offset + 1];
+            this.z = array[offset + 2];
+            return this;
         };
         Vect3.xAxis = new Vect3(1.0, 0.0, 0.0);
         Vect3.yAxis = new Vect3(0.0, 1.0, 0.0);
@@ -3440,17 +3697,16 @@ var MB;
         Drawable.prototype.addElementArray = function (data, type) {
             if (type === void 0) { type = MB.ctes.UsageType.StaticDraw; }
             var vb = new MB.VertexBuffer(this._context, MB.ctes.BufferType.ElementArray);
-            vb.bufferData(new Uint16Array(data), type);
+            vb.data(new Uint16Array(data), type);
             this._handle.push(vb);
             return vb;
         };
         ;
         Drawable.prototype.addBufferArray = function (attribLocation, data, numElems, type) {
             if (type === void 0) { type = MB.ctes.UsageType.StaticDraw; }
-            var gl = this._context.gl;
             var vb = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
-            vb.bufferData(data, type);
-            vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
+            vb.data(data, type);
+            vb.vertexAttribPointer(attribLocation, numElems, MB.ctes.DataType.Float);
             this._handle.push(vb);
             return vb;
         };
@@ -3458,34 +3714,34 @@ var MB;
         Drawable.prototype.render = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
         Drawable.prototype.renderInstanced = function (nInstances) {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0, nInstances);
+            gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0, nInstances);
             this._vao.unbind();
         };
         Drawable.prototype.renderFan = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.TriangleFan, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.TriangleFan, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
         Drawable.prototype.render2 = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
         Drawable.prototype.render3 = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Points, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
@@ -3493,12 +3749,12 @@ var MB;
             var gl = this._context.gl;
             this._vao.bind();
             if (gl instanceof WebGL2RenderingContext) {
-                gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
+                gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0, numInstances);
             }
             else {
                 var ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
-                    ext.drawElementsInstancedANGLE(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
+                    ext.drawElementsInstancedANGLE(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0, numInstances);
                 }
                 else {
                     throw new Error("Instance array undefined");
@@ -3511,12 +3767,12 @@ var MB;
             var gl = this._context.gl;
             this._vao.bind();
             if (gl instanceof WebGL2RenderingContext) {
-                gl.drawArraysInstanced(gl.TRIANGLES, 0, this._indicesLen, numInstances);
+                gl.drawArraysInstanced(MB.ctes.RenderMode.Triangles, 0, this._indicesLen, numInstances);
             }
             else {
                 var ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
-                    ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this._indicesLen, numInstances);
+                    ext.drawArraysInstancedANGLE(MB.ctes.RenderMode.Triangles, 0, this._indicesLen, numInstances);
                 }
                 else {
                     throw new Error("Instance array undefined");
@@ -6380,7 +6636,6 @@ var MB;
             this._planeVAO = null;
             this._planeVertexVBO = null;
             this._context = context;
-            var gl = this._context.gl;
             var positions = [
                 -1.0, -1.0,
                 1.0, -1.0,
@@ -6389,8 +6644,8 @@ var MB;
             ];
             this._planeVAO = new MB.VertexArray(this._context);
             this._planeVertexVBO = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
-            this._planeVertexVBO.bufferData(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
-            this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
+            this._planeVertexVBO.data(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
+            this._planeVertexVBO.vertexAttribPointer(0, 2, MB.ctes.DataType.Float);
             this._planeVAO.unbind();
         }
         PostProcess.prototype.bind = function () {
@@ -7661,11 +7916,20 @@ var MB;
             }
             this._handler = null;
         };
-        VertexBuffer.prototype.bufferData = function (data, usage) {
+        VertexBuffer.prototype.data = function (data, usage) {
             if (usage === void 0) { usage = MB.ctes.UsageType.StaticDraw; }
             this.bind();
             var gl = this._context.gl;
             gl.bufferData(this._type, data, usage);
+        };
+        ;
+        VertexBuffer.prototype.getSubData = function (size, offset) {
+            if (offset === void 0) { offset = 0; }
+            this.bind();
+            var gl = this._context.gl;
+            var arrBuffer = new ArrayBuffer(size * Float32Array.BYTES_PER_ELEMENT);
+            gl.getBufferSubData(this._type, offset, arrBuffer);
+            return arrBuffer;
         };
         ;
         VertexBuffer.prototype.attribDivisor = function (position, length, divisor, stride) {
@@ -7673,7 +7937,7 @@ var MB;
             this.bind();
             var gl = this._context.gl;
             gl.enableVertexAttribArray(position);
-            gl.vertexAttribPointer(position, length, gl.FLOAT, false, length * Float32Array.BYTES_PER_ELEMENT, 0);
+            gl.vertexAttribPointer(position, length, MB.ctes.DataType.Float, false, length * Float32Array.BYTES_PER_ELEMENT, 0);
             gl.vertexAttribDivisor(position, divisor);
         };
         VertexBuffer.prototype.vertexAttribPointer = function (attribLocation, numElems, type, normalized, offset) {
@@ -7971,7 +8235,7 @@ var MBX;
         Axis.prototype.render = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
@@ -8492,7 +8756,6 @@ var MB;
     var PingPong = (function () {
         function PingPong(context, size) {
             this._context = context;
-            var gl = this._context.gl;
             this._flag = true;
             this._size = size;
             this._tex1 =
@@ -8502,7 +8765,7 @@ var MB;
                 }, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
-                    type: gl.FLOAT,
+                    type: MB.ctes.DataType.Float,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest
                 });
@@ -8513,7 +8776,7 @@ var MB;
                 }, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
-                    type: gl.FLOAT,
+                    type: MB.ctes.DataType.Float,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest
                 });
@@ -8626,7 +8889,6 @@ var MBX;
             faces.push(dir + "/back.jpg");
             faces.push(dir + "/front.jpg");
             this._context = context;
-            var gl = this._context.gl;
             var isWebGL2 = context instanceof MB.GLContextW2;
             var vs;
             if (isWebGL2) {
@@ -8697,8 +8959,8 @@ var MBX;
             this._VertexArray.bind();
             this._VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
             this._VertexBuffer.bind();
-            this._VertexBuffer.bufferData(skyboxVertices, MB.ctes.UsageType.StaticDraw);
-            this._VertexBuffer.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
+            this._VertexBuffer.data(skyboxVertices, MB.ctes.UsageType.StaticDraw);
+            this._VertexBuffer.vertexAttribPointer(0, 3, MB.ctes.DataType.Float, false, 0);
             this._loadCubemap(faces);
             this._VertexArray.unbind();
         }
@@ -8712,7 +8974,6 @@ var MBX;
         ;
         ;
         Skybox.prototype.render = function (view, projection) {
-            var gl = this._context.gl;
             var currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
             this._context.state.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
             var auxView = view.toMat3().toMat4();
@@ -8721,7 +8982,7 @@ var MBX;
             this._prog.use();
             this._cubeMapTexture.bind(0);
             this._VertexArray.bind();
-            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            this._VertexBuffer.render(MB.ctes.RenderMode.Triangles, 36);
             this._VertexArray.unbind();
             this._context.state.depth.setFunc(currDepthComp);
         };
@@ -10350,7 +10611,6 @@ var MB;
             }
         }
         Tube.prototype._generateSegment = function (t) {
-            var point = null;
         };
         return Tube;
     }(MB.Drawable));
@@ -12783,23 +13043,266 @@ var MBSS;
 (function (MBSS) {
     var Transform = (function () {
         function Transform() {
-            this._pos = new MB.Vect3(0.0, 0.0, 0.0);
-            this._rot = new MB.Quat(0.0, 0.0, 0.0, 1.0);
-            this._scale = new MB.Vect3(1.0, 1.0, 1.0);
-            this._parentMatrix = MB.Mat4.identity.clone();
+            var _this = this;
+            this.matrix = new MB.Mat4();
+            this.matrixWorld = new MB.Mat4();
+            this.autoUpdate = true;
+            this.matrixWorldNeedUpdate = false;
+            this._position = new MB.Vect3();
+            this._rotation = new MB.EulerAngle();
+            this._quaternion = new MB.Quat();
+            this._scale = MB.Vect3.createFromScalar(1.0);
+            this._modelViewMatrix = new MB.Mat4();
+            this._rotation.onChange = function () {
+                _this._quaternion = _this._quaternion.setFromEuler(_this._rotation);
+            };
+            this._quaternion.onChange = function () {
+                _this._rotation = _this._rotation.setFromQuaternion(_this._quaternion, _this.rotation.order, false);
+            };
         }
+        Transform.prototype.applyMatrix = function (m) {
+            this.matrix.mult(m, this.matrix);
+            this.matrix.decompose(this._position, this._quaternion, this.scale);
+        };
         ;
-        Object.defineProperty(Transform.prototype, "position", {
+        Transform.prototype.rotateOnAxis = function (axis, angle) {
+            var q1 = new MB.Quat();
+            q1.setFromAxisAngle(axis, angle);
+            this._quaternion = this._quaternion.mult(q1);
+        };
+        ;
+        Transform.prototype.rotateX = function (angle) {
+            this.rotateOnAxis(new MB.Vect3(1, 0, 0), angle);
+        };
+        ;
+        Transform.prototype.rotateY = function (angle) {
+            this.rotateOnAxis(new MB.Vect3(0, 1, 0), angle);
+        };
+        ;
+        Transform.prototype.rotateZ = function (angle) {
+            this.rotateOnAxis(new MB.Vect3(0, 0, 1), angle);
+        };
+        ;
+        Transform.prototype.translateOnAxis = function (axis, dist) {
+            var v = new MB.Vect3();
+            v.copy(axis).applyQuat(this._quaternion);
+            this._position = this._position.add(v.multByScalar(dist));
+        };
+        ;
+        Transform.prototype.translateX = function (dist) {
+            var v = new MB.Vect3(1, 0, 0);
+            this.translateOnAxis(v, dist);
+        };
+        ;
+        Transform.prototype.translateY = function (dist) {
+            var v = new MB.Vect3(0, 1, 0);
+            this.translateOnAxis(v, dist);
+        };
+        ;
+        Transform.prototype.translateZ = function (dist) {
+            var v = new MB.Vect3(0, 0, 1);
+            this.translateOnAxis(v, dist);
+        };
+        ;
+        Object.defineProperty(Transform.prototype, "worldPosition", {
             get: function () {
-                return this._pos;
+                var res = new MB.Vect3();
+                this.updateMatrixWorld(true);
+                return res.setFromMatrixPosition(this.matrixWorld);
             },
             enumerable: true,
             configurable: true
         });
         ;
+        Transform.prototype.getWorldQuaternion = function (target) {
+            if (target === void 0) { target = new MB.Quat(); }
+            var res = new MB.Quat();
+            this.updateMatrixWorld(true);
+            this.matrixWorld.decompose(this.position, res, this.scale);
+            return res;
+        };
+        ;
+        Object.defineProperty(Transform.prototype, "worldRotation", {
+            get: function () {
+                var res = new MB.EulerAngle();
+                var q = new MB.Quat();
+                this.getWorldQuaternion(q);
+                return res.setFromQuaternion(q, this.rotation.order, false);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "worldScale", {
+            get: function () {
+                var res = new MB.Vect3();
+                var p = new MB.Vect3();
+                var q = new MB.Quat();
+                this.updateMatrixWorld(true);
+                this.matrixWorld.decompose(p, q, res);
+                return res;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Transform.prototype.localWorld = function (v) {
+            return v.applyMat4(this.matrixWorld);
+        };
+        ;
+        Transform.prototype.worldToLocal = function (v) {
+            var mat = new MB.Mat4();
+            return v.applyMat4(mat.inverse(this.matrixWorld));
+        };
+        ;
+        Transform.prototype.updateMatrix = function () {
+            this.matrix.compose(this.position, this.quaternion, this.scale);
+            this.matrixWorldNeedUpdate = true;
+        };
+        ;
+        Transform.prototype.updateMatrixWorld = function (force) {
+        };
+        ;
+        Object.defineProperty(Transform.prototype, "position", {
+            get: function () {
+                return this._position;
+            },
+            set: function (p) {
+                this._position = p;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "rotation", {
+            get: function () {
+                return this._rotation;
+            },
+            set: function (r) {
+                this._rotation = r;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "quaternion", {
+            get: function () {
+                return this._quaternion;
+            },
+            set: function (q) {
+                this._quaternion = q;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "scale", {
+            get: function () {
+                return this._scale;
+            },
+            set: function (s) {
+                this._scale = s;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        ;
+        ;
+        ;
         return Transform;
     }());
     MBSS.Transform = Transform;
+    ;
+    var SuperNode = (function (_super) {
+        __extends(SuperNode, _super);
+        function SuperNode() {
+            _super.apply(this, arguments);
+        }
+        SuperNode.prototype.updateMatrixWorld = function (force) {
+            if (this.autoUpdate === true) {
+                this.updateMatrix();
+            }
+            if (this.matrixWorldNeedUpdate === true || force === true) {
+                if (this.parent == null) {
+                    this.matrixWorld.copy(this.matrix);
+                }
+                else {
+                    this.parent.matrixWorld.mult(this.matrix, this.matrixWorld);
+                }
+                this.matrixWorldNeedUpdate = false;
+                force = true;
+            }
+            var children = this._children;
+            if (children) {
+                for (var i = 0, l = children.length; i < l; ++i) {
+                    children[i].updateMatrixWorld(force);
+                }
+            }
+        };
+        ;
+        Object.defineProperty(SuperNode.prototype, "parent", {
+            get: function () {
+                return this._parentNode;
+            },
+            set: function (parent) {
+                if (this._parentNode === parent) {
+                    return;
+                }
+                if (this._parentNode) {
+                    var idx = this._parentNode._children.indexOf(this);
+                    if (idx !== -1) {
+                        this._parentNode._children.splice(idx, 1);
+                    }
+                }
+                this._parentNode = parent;
+                if (this._parentNode) {
+                    if (!this._parentNode._children) {
+                        this._parentNode._children = new Array();
+                    }
+                    this._parentNode._children.push(this);
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        SuperNode.prototype.add = function (object) {
+            if (arguments.length > 1) {
+                for (var i = 0, l = arguments.length; i < l; ++i) {
+                    this.add(arguments[i]);
+                }
+                return this;
+            }
+            if (object === this) {
+                console.error("MBS.Node.add: object can't be added as a child of itself.", object);
+                return this;
+            }
+            if (object.parent !== null) {
+                object.parent.remove(object);
+            }
+            object.parent = this;
+            return this;
+        };
+        ;
+        SuperNode.prototype.remove = function (object) {
+            if (arguments.length > 1) {
+                for (var i = 0, l = arguments.length; i < l; ++i) {
+                    this.remove(arguments[i]);
+                }
+            }
+            var index = this._children.indexOf(object);
+            if (index !== -1) {
+                object.parent = null;
+                this._children.splice(index, 1);
+            }
+        };
+        ;
+        return SuperNode;
+    }(Transform));
+    MBSS.SuperNode = SuperNode;
     ;
     var GameComponent = (function () {
         function GameComponent() {
@@ -12839,6 +13342,9 @@ var MBSS;
             this._children.push(child);
         };
         ;
+        GameObject.prototype.getChildren = function () {
+            return this._children;
+        };
         GameObject.prototype.updateAll = function (dt) {
             this.update(dt);
             for (var i = 0, l = this._children.length; i < l; ++i) {
@@ -12864,6 +13370,59 @@ var MBSS;
     }());
     MBSS.GameObject = GameObject;
     ;
+    var Node = (function () {
+        function Node() {
+        }
+        Node.prototype.update = function () {
+        };
+        return Node;
+    }());
+    MBSS.Node = Node;
+    ;
+    var Object3D = (function (_super) {
+        __extends(Object3D, _super);
+        function Object3D() {
+            _super.call(this);
+            this._components = new Array();
+        }
+        Object3D.prototype.update = function () {
+        };
+        Object3D.prototype.addComponent = function (comp) {
+            this._components.push(comp);
+        };
+        Object3D.prototype.getComponent = function (compName) {
+            return null;
+        };
+        return Object3D;
+    }(Node));
+    MBSS.Object3D = Object3D;
+    ;
+    var Group = (function (_super) {
+        __extends(Group, _super);
+        function Group() {
+            _super.call(this);
+        }
+        return Group;
+    }(Node));
+    MBSS.Group = Group;
+    ;
+    var Scene = (function () {
+        function Scene() {
+            this._root = null;
+        }
+        Object.defineProperty(Scene.prototype, "root", {
+            get: function () {
+                return this._root;
+            },
+            set: function (r) {
+                this._root = r;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Scene;
+    }());
+    MBSS.Scene = Scene;
 })(MBSS || (MBSS = {}));
 ;
 

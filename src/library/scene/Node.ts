@@ -180,11 +180,11 @@ namespace MBS {
                 return this;
             }
             // if ((object && object.isObject3D)) {
-                if ( object.parent !== null ) {
-                    object.parent.remove( object );
+                if (object.parent !== null) {
+                    object.parent.remove(object);
                 }
                 object.parent = this;
-                // this._children.push( object );
+                // this._children.push(object);
             // } else {
             //     console.error("MBS.Node.add: object not an instance of MBS.Node.", object);
             // }

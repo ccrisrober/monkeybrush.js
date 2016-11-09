@@ -113,7 +113,7 @@ namespace MB {
                     this._depth.handle(), 0);
             } else if (depth && !stencil) {
                 this._depth = new MB.SimpleTexture2D(size, {
-                    type: gl.UNSIGNED_SHORT,
+                    type: MB.ctes.DataType.UnsignedShort,
                     format: gl.DEPTH_COMPONENT
                 });
                 let target = this._depth.target;

@@ -29,7 +29,6 @@ namespace MB {
 
         constructor(context: GLContext) {
             this._context = context;
-            const gl: WebGL2RenderingContext = this._context.gl;
             const positions = [
                 -1.0, -1.0,
                  1.0, -1.0,
@@ -40,8 +39,8 @@ namespace MB {
             // Unnecesary gl.bindVertexArray(PostProcess._planeVAO);
             this._planeVertexVBO = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
             // Unnecesary gl.bindBuffer(gl.ARRAY_BUFFER, this._planeVertexVBO);
-            this._planeVertexVBO.bufferData(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
-            this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
+            this._planeVertexVBO.data(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
+            this._planeVertexVBO.vertexAttribPointer(0, 2, MB.ctes.DataType.Float);
             this._planeVAO.unbind();
         }
         /**

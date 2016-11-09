@@ -369,7 +369,7 @@ namespace MB {
                 this._value[0] * x + this._value[4] * y + this._value[8]  * z + this._value[12],
                 this._value[1] * x + this._value[5] * y + this._value[9]  * z + this._value[13],
                 this._value[2] * x + this._value[6] * y + this._value[10] * z + this._value[14]
-           );
+          );
         };
         identity(): Mat4 {
             this._value[0] = 1;
@@ -400,7 +400,7 @@ namespace MB {
                  ${this._value[4]},  ${this._value[5]},  ${this._value[6]},  ${this._value[7]},
                  ${this._value[8]},  ${this._value[9]}, ${this._value[10]}, ${this._value[11]},
                 ${this._value[12]}, ${this._value[13]}, ${this._value[14]}, ${this._value[15]},
-           )`;
+          )`;
         };*/
         static frustum(l: number, r: number, b: number, t: number, n: number, f: number): Mat4 {
             const
@@ -581,6 +581,50 @@ namespace MB {
             return `matrix3d(${str})`;
         };
 
+        public decompose(position: MB.Vect3, quaternion: MB.Quat, scale: MB.Vect3) {
+            let v = new MB.Vect3();
+            let m = new MB.Mat4();
+
+            let sx = v.set(this._value[0], this._value[1], this._value[2]).length();
+            let sy = v.set(this._value[4], this._value[5], this._value[6]).length();
+            let sz = v.set(this._value[8], this._value[9], this._value[10]).length();
+
+            // if determine is negative, we need to invert one scale
+            if (this.determinant() < 0) {
+                sx = - sx;
+            }
+
+            position.x = this._value[12];
+            position.y = this._value[13];
+            position.z = this._value[14];
+
+            // scale the rotation part
+
+            m._value.set(this._value); // at this point matrix is incomplete so we can't use .copy()
+
+            const invSX = 1.0 / sx;
+            const invSY = 1.0 / sy;
+            const invSZ = 1.0 / sz;
+
+            m._value[0] *= invSX;
+            m._value[1] *= invSX;
+            m._value[2] *= invSX;
+
+            m._value[4] *= invSY;
+            m._value[5] *= invSY;
+            m._value[6] *= invSY;
+
+            m._value[8] *= invSZ;
+            m._value[9] *= invSZ;
+            m._value[10] *= invSZ;
+
+            quaternion.setFromRotationMatrix(m);
+
+            scale.x = sx;
+            scale.y = sy;
+            scale.z = sz;
+        }
+
         public compose(position: MB.Vect3, quaternion: MB.Quat, scale: MB.Vect3) {
             /// ROTATION
             let x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
@@ -625,6 +669,71 @@ namespace MB {
             this._value[12] = position.x;
             this._value[13] = position.y;
             this._value[14] = position.z;
+        };
+        public copy(m: MB.Mat4): MB.Mat4 {
+            this._value.set(m._value);
+            return this;
+        };
+        public set(
+            e11: number, e12: number, e13: number, e14: number,
+            e21: number, e22: number, e23: number, e24: number,
+            e31: number, e32: number, e33: number, e34: number,
+            e41: number, e42: number, e43: number, e44: number): MB.Mat4 {
+
+            this._value[0] = e11; this._value[4] = e12; this._value[8] = e13; this._value[12] = e14;
+            this._value[1] = e21; this._value[5] = e22; this._value[9] = e23; this._value[13] = e24;
+            this._value[2] = e31; this._value[6] = e32; this._value[10] = e33; this._value[14] = e34;
+            this._value[3] = e41; this._value[7] = e42; this._value[11] = e43; this._value[15] = e44;
+
+            return this;
+        };
+
+        public makeRotationFromQuat(qt: MB.Quat): MB.Mat4 {
+            const x = qt.x,
+                  y = qt.y,
+                  z = qt.z,
+                  w = qt.w;
+
+            const x2 = x + x,
+                  y2 = y + y,
+                  z2 = z + z;
+
+            const xx = x * x2,
+                  xy = x * y2,
+                  xz = x * z2;
+
+            const yy = y * y2,
+                  yz = y * z2,
+                  zz = z * z2;
+
+            const wx = w * x2,
+                  wy = w * y2,
+                  wz = w * z2;
+
+            this._value[0] = 1 - (yy + zz);
+            this._value[4] = xy - wz;
+            this._value[8] = xz + wy;
+
+            this._value[1] = xy + wz;
+            this._value[5] = 1 - (xx + zz);
+            this._value[9] = yz - wx;
+
+            this._value[2] = xz - wy;
+            this._value[6] = yz + wx;
+            this._value[10] = 1 - (xx + yy);
+
+            // last column
+            this._value[3] = 0;
+            this._value[7] = 0;
+            this._value[11] = 0;
+
+            // bottom row
+            this._value[12] = 0;
+            this._value[13] = 0;
+            this._value[14] = 0;
+            this._value[15] = 1;
+
+            return this;
         }
     };
 };

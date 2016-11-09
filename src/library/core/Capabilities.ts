@@ -132,7 +132,7 @@ namespace MB {
         declare var WebGL2RenderingContext: any;
         /**
          * Returns false if gl.LINEAR is not supported as a texture
-         *     filter mode for textures of type gl.FLOAT.
+         *     filter mode for textures of type MB.ctes.DataType.Float.
          * @param {GLContext} context [description]
          * @return {boolean} [description]
          */

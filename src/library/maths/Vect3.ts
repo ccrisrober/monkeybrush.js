@@ -503,10 +503,12 @@ namespace MB {
         };
 
 
-        public set(vx: number, vy: number, vz: number) {
+        public set(vx: number, vy: number, vz: number): MB.Vect3 {
             this.x = vx;
             this.y = vy;
             this.z = vz;
+
+            return this;
         };
 
         /*public reset(v: Vect3): Vect3 {
@@ -532,6 +534,52 @@ namespace MB {
             dest.z = iz * q.w + iw * - q.z + ix * - q.y - iy * - q.x;
 
             return dest;
+        };
+
+        public applyMatrix3(mat: MB.Mat3): MB.Vect3 {
+            let x = this.x,
+                y = this.y,
+                z = this.z;
+
+            this.x = mat._value[0] * x + mat._value[4] * y + mat._value[8]  * z;
+            this.y = mat._value[1] * x + mat._value[5] * y + mat._value[9]  * z;
+            this.z = mat._value[2] * x + mat._value[6] * y + mat._value[10] * z;
+
+            return this;
+        };
+
+        public applyMat4(mat: MB.Mat4): MB.Vect3 {
+            let x = this.x,
+                y = this.y,
+                z = this.z;
+
+            this.x = mat._value[0] * x + mat._value[4] * y + mat._value[8]  * z + mat._value[12];
+            this.y = mat._value[1] * x + mat._value[5] * y + mat._value[9]  * z + mat._value[13];
+            this.z = mat._value[2] * x + mat._value[6] * y + mat._value[10] * z + mat._value[14];
+
+            return this;
+        };
+
+        public copy(v: MB.Vect3): MB.Vect3 {
+            this.x = v.x;
+            this.y = v.y;
+            this.z = v.z;
+
+            return this;
+        };
+
+        public setFromMatrixPosition(mat: MB.Mat4): MB.Vect3 {
+            return this.setFromMatColumn(mat, 3);
+        };
+        public setFromMatColumn(mat: MB.Mat4, idx: number): MB.Vect3 {
+            return this.fromArray(mat._value, idx * 4);
+        };
+        public fromArray(array: Float32Array, offset: number = 0): MB.Vect3 {
+            this.x = array[offset];
+            this.y = array[offset + 1];
+            this.z = array[offset + 2];
+
+            return this;
         }
     };
 };

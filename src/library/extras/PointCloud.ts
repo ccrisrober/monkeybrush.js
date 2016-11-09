@@ -58,8 +58,8 @@ namespace MBX {
 
             const gl: WebGL2RenderingContext = this._context.gl;
             let vb: MB.VertexBuffer = new MB.VertexBuffer(MB.ctes.BufferType.Array);
-            vb.bufferData(data, type);
-            vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
+            vb.data(data, type);
+            vb.vertexAttribPointer(attribLocation, numElems, MB.ctes.DataType.Float);
             return vb;
         };
         public addPoint(point: MB.Vect3) {
@@ -75,7 +75,7 @@ namespace MBX {
             gl.enableVertexAttribArray(0);
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
-            gl.drawArrays(gl.POINTS, 0, this._size);
+            gl.drawArrays(MB.ctes.RenderMode.Points, 0, this._size);
             this._vb.unbind();
         };*/
     };

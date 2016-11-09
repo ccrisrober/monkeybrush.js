@@ -70,8 +70,6 @@ namespace MBX {
 
             this._context = context;
 
-            const gl: WebGLRenderingContext = this._context.gl;
-
             const isWebGL2: boolean = context instanceof MB.GLContextW2;
 
             let vs: string;
@@ -186,8 +184,8 @@ namespace MBX {
 
             this._VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
             this._VertexBuffer.bind();
-            this._VertexBuffer.bufferData(skyboxVertices, MB.ctes.UsageType.StaticDraw);
-            this._VertexBuffer.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
+            this._VertexBuffer.data(skyboxVertices, MB.ctes.UsageType.StaticDraw);
+            this._VertexBuffer.vertexAttribPointer(0, 3, MB.ctes.DataType.Float, false, 0);
             this._loadCubemap(faces);
 
             this._VertexArray.unbind();
@@ -198,8 +196,6 @@ namespace MBX {
          * @param {MB.Mat4} projection Projection matrix
          */
         public render(view: MB.Mat4, projection: MB.Mat4) {
-            const gl: WebGLRenderingContext = this._context.gl;
-
             let currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
 
             this._context.state.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
@@ -214,7 +210,7 @@ namespace MBX {
             this._cubeMapTexture.bind(0);
 
             this._VertexArray.bind();
-            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            this._VertexBuffer.render(MB.ctes.RenderMode.Triangles, 36);
             this._VertexArray.unbind();
 
             this._context.state.depth.setFunc(currDepthComp);

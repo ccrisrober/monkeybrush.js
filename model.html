@@ -1,0 +1,44 @@
+<script type="text/javascript" src="dist/output.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
+
+
+<script type="text/javascript">
+function printModel(node) {
+    node.updateMatrix();
+    model = node.matrix._value;
+    for(var i = 0; i < 4; i++) {
+        console.log(
+            model[0 + i], model[4 + i], model[8 + i], model[12 + i]
+        );
+    }
+}
+function printWorldModel(node) {
+    node.updateMatrixWorld();
+    model = node.matrixWorld._value;
+    for(var i = 0; i < 4; i++) {
+        console.log(
+            model[0 + i], model[4 + i], model[8 + i], model[12 + i]
+        );
+    }
+}
+var cubeNode = new MBSS.SuperNode();
+cubeNode.position = new MB.Vect3(0.0, 2.5, 0.0);
+cubeNode.scale = new MB.Vect3(2.0, 1.0, 1.0);
+
+var sphereNode = new MBSS.SuperNode();
+sphereNode.position = new MB.Vect3(0.0, -2.0, 0.0);
+sphereNode.scale = new MB.Vect3(0.5, 1.0, 1.0);
+sphereNode.parent = cubeNode;
+
+var cylinderNode = new MBSS.SuperNode();
+cylinderNode.position = new MB.Vect3(0.0, -2.0, 2.0);
+cylinderNode.parent = cubeNode;
+
+var capsuleNode = new MBSS.SuperNode();
+capsuleNode.position = new MB.Vect3(0.0, -2.5, -2.5);
+capsuleNode.parent = sphereNode;
+
+cubeNode.updateMatrixWorld();
+sphereNode.updateMatrixWorld();
+cylinderNode.updateMatrixWorld();
+</script>

@@ -25,6 +25,7 @@ namespace MB {
     };
     export class EulerAngle {
         protected _value: Float32Array;
+        protected _order: MB.RotSeq;
 
         get x(): number { return this._value[0]; };
         get y(): number { return this._value[1]; };
@@ -67,6 +68,7 @@ namespace MB {
             for (let i = 0; i < 3; ++i) {
                 this._value[i] = 0.0;
             }
+            this._order = MB.RotSeq.xyz;
             if (this.onChange) {
                 this.onChange();
             }
@@ -82,115 +84,103 @@ namespace MB {
             public order: RotSeq = RotSeq.xyz) {
 
             this._value = new Float32Array([x, y, z]);
-        }
-        /*protected static _twoaxisrot(r11: number, r12: number, r21: number,
-            r31: number, r32: number): Vect3 {
-            let res = new Vect3();
-            res.x = Math.atan2(r11, r12);
-            res.y = Math.acos (r21);
-            res.z = Math.atan2(r31, r32);
-            return res;
+            this._order = order;
         }
 
-        protected static _threeaxisrot(r11: number, r12: number, r21: number,
-            r31: number, r32: number): Vect3 {
-            let res = new Vect3();
-            res.x = Math.atan2(r31, r32);
-            res.y = Math.asin (r21);
-            res.z = Math.atan2(r11, r12);
-            return res;
+        public static createFromVec3(v: MB.Vect3, order: MB.RotSeq = MB.RotSeq.xyz): MB.EulerAngle {
+            return new MB.EulerAngle(v.x, v.y, v.x, order);
         }
-        // Code based on http://bediyap.com/programming/convert-quaternion-to-euler-rotations/
-        public static fromQuaternion(q: Quat, order: RotSeq = RotSeq.xyz): Vect3 {
 
-            switch (order) {
-                case RotSeq.zyx:
-                    return this._threeaxisrot(2 * (q.x * q.y + q.w * q.z),
-                        q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-                        -2 * (q.x * q.z - q.w * q.y),
-                        2 * (q.y * q.z + q.w * q.x),
-                        q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z);
+        public setFromRotationMatrix(mat: MB.Mat4, order: MB.RotSeq, update: boolean) {
+            const
+                m11 = mat._value[0],
+                m12 = mat._value[4],
+                m13 = mat._value[8];
+            const
+                m21 = mat._value[1],
+                m22 = mat._value[5],
+                m23 = mat._value[9];
+            const
+                m31 = mat._value[2],
+                m32 = mat._value[6],
+                m33 = mat._value[10];
 
-                case RotSeq.zyz:
-                    return this._twoaxisrot(2 * (q.y * q.z - q.w * q.x),
-                        2 * (q.x * q.z + q.w * q.y),
-                        q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-                        2 * (q.y * q.z + q.w * q.x),
-                        -2 * (q.x * q.z - q.w * q.y));
+            order = order || this._order;
 
-                case RotSeq.zxy:
-                    return this._threeaxisrot(-2 * (q.x * q.y - q.w * q.z),
-                        q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-                        2 * (q.y * q.z + q.w * q.x),
-                        -2 * (q.x * q.z - q.w * q.y),
-                        q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z);
+            if (order === MB.RotSeq.xyz) {
+                this.y = Math.asin(MB.Mathf.clamp(m13, - 1, 1));
+                if (Math.abs(m13) < 0.99999) {
+                    this.x = Math.atan2(- m23, m33);
+                    this.z = Math.atan2(- m12, m11);
+                } else {
+                    this.x = Math.atan2(m32, m22);
+                    this.z = 0;
+                }
+            } else if (order === MB.RotSeq.yxz) {
+                this.x = Math.asin(-MB.Mathf.clamp(m23, - 1, 1));
+                if (Math.abs(m23) < 0.99999) {
+                    this.y = Math.atan2(m13, m33);
+                    this.z = Math.atan2(m21, m22);
+                } else {
+                    this.y = Math.atan2(- m31, m11);
+                    this.z = 0;
+                }
+            } else if (order === MB.RotSeq.zxy) {
+                this.x = Math.asin(MB.Mathf.clamp(m32, - 1, 1));
+                if (Math.abs(m32) < 0.99999) {
+                    this.y = Math.atan2(- m31, m33);
+                    this.z = Math.atan2(- m12, m22);
 
-                case RotSeq.zxz:
-                    return this._twoaxisrot(2 * (q.x * q.z + q.w * q.y),
-                        -2 * (q.y * q.z - q.w * q.x),
-                        q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-                        2 * (q.x * q.z - q.w * q.y),
-                        2 * (q.y * q.z + q.w * q.x));
+                } else {
+                    this.y = 0;
+                    this.z = Math.atan2(m21, m11);
+                }
+            } else if (order === MB.RotSeq.zyx) {
+                this.y = Math.asin(-MB.Mathf.clamp(m31, - 1, 1));
+                if (Math.abs(m31) < 0.99999) {
+                    this.x = Math.atan2(m32, m33);
+                    this.z = Math.atan2(m21, m11);
+                } else {
+                    this.x = 0;
+                    this.z = Math.atan2(- m12, m22);
+                }
+            } else if (order === MB.RotSeq.yzx) {
+                this.z = Math.asin(MB.Mathf.clamp(m21, - 1, 1));
+                if (Math.abs(m21) < 0.99999) {
+                    this.x = Math.atan2(- m23, m22);
+                    this.y = Math.atan2(- m31, m11);
+                } else {
+                    this.x = 0;
+                    this.y = Math.atan2(m13, m33);
+                }
 
-                case RotSeq.yxz:
-                    return this._threeaxisrot(2 * (q.x * q.z + q.w * q.y),
-                        q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-                        -2 * (q.y * q.z - q.w * q.x),
-                        2 * (q.x * q.y + q.w * q.z),
-                        q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z);
-
-                case RotSeq.yxy:
-                    return this._twoaxisrot(2 * (q.x * q.y - q.w * q.z),
-                        2 * (q.y * q.z + q.w * q.x),
-                        q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-                        2 * (q.x * q.y + q.w * q.z),
-                        -2 * (q.y * q.z - q.w * q.x));
-
-                case RotSeq.yzx:
-                    return this._threeaxisrot(-2 * (q.x * q.z - q.w * q.y),
-                        q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-                        2 * (q.x * q.y + q.w * q.z),
-                        -2 * (q.y * q.z - q.w * q.x),
-                        q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z);
-
-                case RotSeq.yzy:
-                    return this._twoaxisrot(2 * (q.y * q.z + q.w * q.x),
-                        -2 * (q.x * q.y - q.w * q.z),
-                        q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-                        2 * (q.y * q.z - q.w * q.x),
-                        2 * (q.x * q.y + q.w * q.z));
-
-                case RotSeq.xyz:
-                    return this._threeaxisrot(-2 * (q.y * q.z - q.w * q.x),
-                        q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-                        2 * (q.x * q.z + q.w * q.y),
-                        -2 * (q.x * q.y - q.w * q.z),
-                        q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z);
-
-                case RotSeq.xyx:
-                    return this._twoaxisrot(2 * (q.x * q.y + q.w * q.z),
-                        -2 * (q.x * q.z - q.w * q.y),
-                        q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-                        2 * (q.x * q.y - q.w * q.z),
-                        2 * (q.x * q.z + q.w * q.y));
-
-                case RotSeq.xzy:
-                    return this._threeaxisrot(2 * (q.y * q.z + q.w * q.x),
-                        q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-                        -2 * (q.x * q.y - q.w * q.z),
-                        2 * (q.x * q.z + q.w * q.y),
-                        q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z);
-
-                case RotSeq.xzx:
-                    return this._twoaxisrot(2 * (q.x * q.z - q.w * q.y),
-                        2 * (q.x * q.y + q.w * q.z),
-                        q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-                        2 * (q.x * q.z + q.w * q.y),
-                        -2 * (q.x * q.y - q.w * q.z));
-                default:
-                    throw new Error("Unknown rotation sequence");
+            } else if (order === MB.RotSeq.xzy) {
+                this.z = Math.asin(-MB.Mathf.clamp(m12, - 1, 1));
+                if (Math.abs(m12) < 0.99999) {
+                    this.x = Math.atan2(m32, m22);
+                    this.y = Math.atan2(m13, m11);
+                } else {
+                    this.x = Math.atan2(- m23, m33);
+                    this.y = 0;
+                }
+            } else {
+                // Order undefined
             }
 
-        }*/
+            this._order = order;
+
+            if (update !== false) this.onChange();
+
+            return this;
+        };
+
+        public setFromQuaternion(q: MB.Quat, order: MB.RotSeq, update: boolean = false) {
+            let matrix = new MB.Mat4();
+            if (!order) {
+                order = this.order;
+            }
+            matrix.makeRotationFromQuat(q);
+            return this.setFromRotationMatrix(matrix, order, update);
+        };
     };
 };

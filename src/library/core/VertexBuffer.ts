@@ -128,7 +128,7 @@ namespace MB {
             gl.enableVertexAttribArray(position);
             gl.vertexAttribPointer(position,
                 length,
-                gl.FLOAT,
+                MB.ctes.DataType.Float,
                 false,
                 length * Float32Array.BYTES_PER_ELEMENT,
                 0);

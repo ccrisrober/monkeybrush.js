@@ -53,7 +53,7 @@ namespace MB {
          */
         protected addElementArray(data: Uint16Array, type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw) {
             let vb: MB.VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.ElementArray);
-            vb.bufferData(new Uint16Array(data), type);
+            vb.data(new Uint16Array(data), type);
             this._handle.push(vb);
             return vb;
         };
@@ -70,10 +70,9 @@ namespace MB {
             data: Float32Array, numElems: number,
             type: MB.ctes.UsageType = MB.ctes.UsageType.StaticDraw): MB.VertexBuffer {
 
-            const gl: WebGL2RenderingContext = this._context.gl;
             let vb: MB.VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
-            vb.bufferData(data, type);
-            vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
+            vb.data(data, type);
+            vb.vertexAttribPointer(attribLocation, numElems, MB.ctes.DataType.Float);
             this._handle.push(vb);
             return vb;
         };
@@ -84,33 +83,38 @@ namespace MB {
         public render() {
             const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen,
+                MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         public renderInstanced(nInstances: number) {
             const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
-            gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0, nInstances);
+            gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen,
+                MB.ctes.DataType.UnsignedShort, 0, nInstances);
             this._vao.unbind();
         }
         public renderFan() {
             const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.TriangleFan, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.TriangleFan, this._indicesLen,
+                MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
 
         public render2() {
             const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen,
+                MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
 
         public render3() {
             const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Points, this._indicesLen,
+                MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
 
@@ -123,9 +127,9 @@ namespace MB {
             this._vao.bind();
             if (gl instanceof WebGL2RenderingContext) {
                 gl.drawElementsInstanced(
-                    gl.TRIANGLES,
+                    MB.ctes.RenderMode.Triangles,
                     this._indicesLen,
-                    gl.UNSIGNED_SHORT,
+                    MB.ctes.DataType.UnsignedShort,
                     0,
                     numInstances
                 );
@@ -133,9 +137,9 @@ namespace MB {
                 const ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
                     ext.drawElementsInstancedANGLE(
-                        gl.TRIANGLES,
+                        MB.ctes.RenderMode.Triangles,
                         this._indicesLen,
-                        gl.UNSIGNED_SHORT,
+                        MB.ctes.DataType.UnsignedShort,
                         0,
                         numInstances
                     );
@@ -155,7 +159,7 @@ namespace MB {
             this._vao.bind();
             if (gl instanceof WebGL2RenderingContext) {
                 gl.drawArraysInstanced(
-                    gl.TRIANGLES,
+                    MB.ctes.RenderMode.Triangles,
                     0,
                     this._indicesLen,
                     numInstances
@@ -164,7 +168,7 @@ namespace MB {
                 const ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
                     ext.drawArraysInstancedANGLE(
-                        gl.TRIANGLES,
+                        MB.ctes.RenderMode.Triangles,
                         0,
                         this._indicesLen,
                         numInstances
