@@ -31,7 +31,7 @@ namespace MB {
         fragmentShader: string;
     };
     export class TFMaterial extends MB.Material {
-        protected _uniforms: { [key: string]: MB.Uniform; } = {};
+        // protected _uniforms: { [key: string]: MB.Uniform; } = {};
         protected _program: MB.Program;
         public get program(): MB.Program {
             return this._program;

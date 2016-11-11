@@ -21,7 +21,7 @@
 
 namespace MB {
     export class VolumetricMaterial extends MB.Material {
-        protected _uniforms: { [key: string]: MB.Uniform; } = {};
+        // protected _uniforms: { [key: string]: MB.Uniform; } = {};
         protected _program: MB.Program;
         protected _tex3D: MB.Texture3D;
         constructor(context: MB.GLContext, tex3D: MB.Texture3D) {

@@ -1,44 +1,171 @@
 <script type="text/javascript" src="dist/output.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
 
+<div id='clean'></div>
+<canvas id="canvas" height="500" width="500"></canvas>
+<script type="text/javascript">
+    /**/
+    var scene = new THREE.Scene();
+    var width = 500;
+    var height = 500;
+    var camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);
+    camera.fov = 45;
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height);
+    document.getElementById('clean').appendChild(renderer.domElement);
+    var geometry = new THREE.BoxGeometry(1,1,1);
+    var material = new THREE.MeshBasicMaterial({color: "gold" });
+    var material2 = new THREE.MeshBasicMaterial({color: "blue" });
+    var cubeNodeT = new THREE.Mesh(geometry, material);
+    cubeNodeT.position.set(0.0, 2.5, 0.0);
+    cubeNodeT.scale.x = 2.0;
+    scene.add(cubeNodeT);
+
+    var sphereNodeT = new THREE.Mesh(geometry, material2);
+    sphereNodeT.position.set(0.0, -2.0, 0.0);
+    sphereNodeT.scale.set(0.5, 1.0, 1.0);
+    cubeNodeT.add(sphereNodeT);
+
+    //var cylinderNodeT = new THREE.Mesh(geometry, material2);
+    //cylinderNodeT.position.set(0.0, -2.0, 2.0);
+    //cubeNodeT.add(cylinderNodeT);
+
+    /*var capsuleNodeT = new THREE.Mesh(geometry, material);
+    capsuleNodeT.position.set(0.0, -2.5, -2.5);
+    sphereNodeT.add(capsuleNodeT);*/
+
+    camera.position.set(0.0, 0.0, 5.0);
+    //renderer.render(scene, camera);
+    var render = function () {
+        requestAnimationFrame(render);
+        cubeNodeT.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    };
+    render();
+
+    function printWM(model) {
+        for(var i = 0; i < 4; i++) {
+            console.log(
+                Math.round(model[0 + i]).toFixed(1),
+                Math.round(model[4 + i]).toFixed(1),
+                Math.round(model[8 + i]).toFixed(1),
+                Math.round(model[12 + i]).toFixed(1)
+            );
+        }
+    }
+
+    console.log("----------- THREEJS ---------");
+    console.log("CUBE: ");
+    printWM(cubeNodeT.matrix.elements);
+    console.log("SPHERE: ");
+    printWM(sphereNodeT.matrix.elements);
+    //console.log("CAPSULE: ");
+    //rintWM(capsuleNodeT.matrixWorld.elements);
+    //console.log("CYLINDER: ");
+    //printWM(cylinderNodeT.matrixWorld.elements);
+    /**/
+</script>
 
 <script type="text/javascript">
-function printModel(node) {
-    node.updateMatrix();
-    model = node.matrix._value;
-    for(var i = 0; i < 4; i++) {
-        console.log(
-            model[0 + i], model[4 + i], model[8 + i], model[12 + i]
-        );
+    function printModel(node) {
+        node.updateMatrix();
+        model = node.matrix._value;
+        for(var i = 0; i < 4; i++) {
+            console.log(
+                model[0 + i], model[4 + i], model[8 + i], model[12 + i]
+            );
+        }
     }
-}
-function printWorldModel(node) {
-    node.updateMatrixWorld();
-    model = node.matrixWorld._value;
-    for(var i = 0; i < 4; i++) {
-        console.log(
-            model[0 + i], model[4 + i], model[8 + i], model[12 + i]
-        );
+    function printWorldModel(node) {
+        node.updateMatrixWorld();
+        model = node.matrixWorld._value;
+        for(var i = 0; i < 4; i++) {
+            console.log(
+                model[0 + i], model[4 + i], model[8 + i], model[12 + i]
+            );
+        }
     }
-}
-var cubeNode = new MBSS.SuperNode();
-cubeNode.position = new MB.Vect3(0.0, 2.5, 0.0);
-cubeNode.scale = new MB.Vect3(2.0, 1.0, 1.0);
+    var cubeNode = new MBSS.SuperNode();
+    cubeNode.position = new MB.Vect3(0.0, 2.5, 0.0);
+    cubeNode.scale = new MB.Vect3(2.0, 1.0, 1.0);
 
-var sphereNode = new MBSS.SuperNode();
-sphereNode.position = new MB.Vect3(0.0, -2.0, 0.0);
-sphereNode.scale = new MB.Vect3(0.5, 1.0, 1.0);
-sphereNode.parent = cubeNode;
+    var sphereNode = new MBSS.SuperNode();
+    sphereNode.position = new MB.Vect3(0.0, -2.0, 0.0);
+    sphereNode.scale = new MB.Vect3(0.5, 1.0, 1.0);
+    sphereNode.parent = cubeNode;
 
-var cylinderNode = new MBSS.SuperNode();
-cylinderNode.position = new MB.Vect3(0.0, -2.0, 2.0);
-cylinderNode.parent = cubeNode;
+    var cylinderNode = new MBSS.SuperNode();
+    cylinderNode.position = new MB.Vect3(0.0, -2.0, 2.0);
+    cylinderNode.parent = cubeNode;
 
-var capsuleNode = new MBSS.SuperNode();
-capsuleNode.position = new MB.Vect3(0.0, -2.5, -2.5);
-capsuleNode.parent = sphereNode;
+    var capsuleNode = new MBSS.SuperNode();
+    capsuleNode.position = new MB.Vect3(0.0, -2.5, -2.5);
+    capsuleNode.parent = sphereNode;
 
-cubeNode.updateMatrixWorld();
-sphereNode.updateMatrixWorld();
-cylinderNode.updateMatrixWorld();
+    cubeNode.updateMatrixWorld();
+    sphereNode.updateMatrixWorld();
+    cylinderNode.updateMatrixWorld();
+</script>
+
+<script type="text/javascript">
+var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule;
+    window.onload = function() {
+        engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
+        scene = new MBSX.Scene("demo", engine);
+
+        var cubito = new MB.Cube(engine.context, 2.0);
+
+        var material = new MB.SimpleShadingMaterial(engine.context);
+        material.uniforms.color.value = MB.Color3.Gold._color;
+
+        var material2 = new MB.SimpleShadingMaterial(engine.context);
+        material2.uniforms.color.value = MB.Color3.Blue._color;
+
+        mbCube = new MBSX.Node();
+        mbCube.addComponent(new MBSX.MeshRenderer(cubito, material));
+        mbCube.transform.position = new MB.Vect3(0.0, 2.5, 0.0);
+        mbCube.transform.scale = new MB.Vect3(2.0, 1.0, 1.0);
+        scene.root.addChild(mbCube);
+
+
+        mbSphere = new MBSX.Node();
+        mbSphere.addComponent(new MBSX.MeshRenderer(cubito, material2));
+        mbSphere.transform.position = new MB.Vect3(0.0, -2.0, 0.0);
+        mbSphere.transform.scale = new MB.Vect3(0.5, 1.0, 1.0);
+        mbCube.addChild(mbSphere);
+
+
+        //mbCylinder = new MBSX.Node();
+        //mbCylinder.addComponent(new MBSX.MeshRenderer(cubito, material2));
+        //mbCylinder.transform.position = new MB.Vect3(0.0, -2.0, 2.0);
+        //mbCylinder.transform.scale = new MB.Vect3(1.0, 1.0, 1.0);
+        //mbCube.addChild(mbCylinder);
+
+
+        /*mbCapsule = new MBSX.Node();
+        mbCapsule.addComponent(new MBSX.MeshRenderer(cubito, material));
+        mbCapsule.transform.position = new MB.Vect3(0.0, -2.5, -2.5);
+        mbSphere.addChild(mbCapsule);*/
+
+
+        var renderLoop = function(dt) {
+            engine.context.state.clearBuffers();
+            scene.camera.update(MB.Timer.deltaTime() / 10.0, function() {});
+            scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+            scene.render();
+        };
+
+            console.log("----------- MB ------------");
+            console.log("CUBE: ");
+            printWM(mbCube.transform._matrix._value);
+            console.log("SPHERE: ");
+            printWM(mbSphere.transform._matrix._value);
+            //console.log("CYLINDER: ");
+            //printWM(mbCylinder.transform._matrixWorld._value);
+            //console.log("CAPSULE: ");
+            //printWM(mbCapsule.transform._matrixWorld._value);
+
+        renderLoop();
+        //engine.run(renderLoop);
+    };
 </script>

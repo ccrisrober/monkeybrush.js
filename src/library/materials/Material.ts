@@ -21,6 +21,8 @@
 
 namespace MB {
     export abstract class Material {
+        public _uniforms: { [key: string]: MB.Uniform; } = {}; // TODO: Aquí va bien?
+
         public id: string;
         public backFaceCull: boolean = true;
         public sideOrientation = MB.ctes.FaceDir.InvClockwise;

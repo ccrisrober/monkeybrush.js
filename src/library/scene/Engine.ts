@@ -21,7 +21,7 @@
 
 namespace MBS {
     export class Engine {
-        public _scenes: Array<Scene> = [];
+        //public _scenes: Array<Scene> = [];
         protected _context: MB.GLContext;
         private _onFullScreenChange: () => void;
         get context(): MB.GLContext {

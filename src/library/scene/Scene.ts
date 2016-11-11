@@ -62,7 +62,7 @@ namespace MBS {
         constructor(name: string, engine: Engine) {
             this._engine = engine;
             this._name = name;
-            engine._scenes.push(this);
+            //engine._scenes.push(this);
             this._sceneGraph = new MBS.Node("root", this);
 
 

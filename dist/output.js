@@ -1091,7 +1091,7 @@ var MB;
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0,
-                    0, 0, 0, 0]);
+                    0, 0, 0, 1]);
             }
         }
         ;
@@ -1490,6 +1490,36 @@ var MB;
             return this;
         };
         ;
+        Mat4.prototype.mult2 = function (a, b) {
+            var ae = a._value;
+            var be = b._value;
+            var te = this._value;
+            var a11 = ae[0], a12 = ae[4], a13 = ae[8], a14 = ae[12];
+            var a21 = ae[1], a22 = ae[5], a23 = ae[9], a24 = ae[13];
+            var a31 = ae[2], a32 = ae[6], a33 = ae[10], a34 = ae[14];
+            var a41 = ae[3], a42 = ae[7], a43 = ae[11], a44 = ae[15];
+            var b11 = be[0], b12 = be[4], b13 = be[8], b14 = be[12];
+            var b21 = be[1], b22 = be[5], b23 = be[9], b24 = be[13];
+            var b31 = be[2], b32 = be[6], b33 = be[10], b34 = be[14];
+            var b41 = be[3], b42 = be[7], b43 = be[11], b44 = be[15];
+            te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+            te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+            te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+            te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+            te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+            te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+            te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+            te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+            te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+            te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+            te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+            te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+            te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+            te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+            te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+            te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+            return this;
+        };
         Mat4.prototype.makeRotationFromQuat = function (qt) {
             var x = qt.x, y = qt.y, z = qt.z, w = qt.w;
             var x2 = x + x, y2 = y + y, z2 = z + z;
@@ -12084,6 +12114,7 @@ var MB;
 (function (MB) {
     var Material = (function () {
         function Material(context) {
+            this._uniforms = {};
             this.backFaceCull = true;
             this.sideOrientation = MB.ctes.FaceDir.InvClockwise;
             this.depthTest = true;
@@ -12130,7 +12161,6 @@ var MB;
         __extends(ShaderMaterial, _super);
         function ShaderMaterial(context, params) {
             _super.call(this, context);
-            this._uniforms = {};
             function diff2(o1, o2) {
                 var res = {};
                 for (var key in o1) {
@@ -12239,7 +12269,6 @@ var MB;
         __extends(NormalMaterial, _super);
         function NormalMaterial(context) {
             _super.call(this, context);
-            this._uniforms = {};
             var params = {
                 name: "normalShader",
                 uniforms: {
@@ -12443,7 +12472,6 @@ var MB;
         __extends(SimpleShadingMaterial, _super);
         function SimpleShadingMaterial(context) {
             _super.call(this, context);
-            this._uniforms = {};
             var params = {
                 name: "simpleShadingShader",
                 uniforms: {
@@ -12556,7 +12584,6 @@ var MB;
         __extends(SimpleTextureMaterial, _super);
         function SimpleTextureMaterial(context) {
             _super.call(this, context);
-            this._uniforms = {};
             var params = {
                 name: "simpleTextureShader",
                 uniforms: {
@@ -12669,7 +12696,6 @@ var MB;
         __extends(TFMaterial, _super);
         function TFMaterial(context, params) {
             _super.call(this, context);
-            this._uniforms = {};
             function diff2(o1, o2) {
                 var res = {};
                 for (var key in o1) {
@@ -12870,7 +12896,6 @@ var MB;
         __extends(VolumetricMaterial, _super);
         function VolumetricMaterial(context, tex3D) {
             _super.call(this, context);
-            this._uniforms = {};
             var params = {
                 name: "volumetricShader",
                 uniforms: {
@@ -12970,7 +12995,6 @@ var MBS;
     var Engine = (function () {
         function Engine(context, options) {
             if (options === void 0) { options = {}; }
-            this._scenes = [];
             this._context = context;
             MB.Input.initialize();
         }
@@ -13065,25 +13089,7 @@ var MBSS;
             this.matrix.decompose(this._position, this._quaternion, this.scale);
         };
         ;
-        Transform.prototype.rotateOnAxis = function (axis, angle) {
-            var q1 = new MB.Quat();
-            q1.setFromAxisAngle(axis, angle);
-            this._quaternion = this._quaternion.mult(q1);
-        };
-        ;
-        Transform.prototype.rotateX = function (angle) {
-            this.rotateOnAxis(new MB.Vect3(1, 0, 0), angle);
-        };
-        ;
-        Transform.prototype.rotateY = function (angle) {
-            this.rotateOnAxis(new MB.Vect3(0, 1, 0), angle);
-        };
-        ;
-        Transform.prototype.rotateZ = function (angle) {
-            this.rotateOnAxis(new MB.Vect3(0, 0, 1), angle);
-        };
-        ;
-        Transform.prototype.translateOnAxis = function (axis, dist) {
+        Transform.prototype._translateOnAxis = function (axis, dist) {
             var v = new MB.Vect3();
             v.copy(axis).applyQuat(this._quaternion);
             this._position = this._position.add(v.multByScalar(dist));
@@ -13091,17 +13097,35 @@ var MBSS;
         ;
         Transform.prototype.translateX = function (dist) {
             var v = new MB.Vect3(1, 0, 0);
-            this.translateOnAxis(v, dist);
+            this._translateOnAxis(v, dist);
         };
         ;
         Transform.prototype.translateY = function (dist) {
             var v = new MB.Vect3(0, 1, 0);
-            this.translateOnAxis(v, dist);
+            this._translateOnAxis(v, dist);
         };
         ;
         Transform.prototype.translateZ = function (dist) {
             var v = new MB.Vect3(0, 0, 1);
-            this.translateOnAxis(v, dist);
+            this._translateOnAxis(v, dist);
+        };
+        ;
+        Transform.prototype._rotateOnAxis = function (axis, angle) {
+            var q1 = new MB.Quat();
+            q1.setFromAxisAngle(axis, angle);
+            this._quaternion = this._quaternion.mult(q1);
+        };
+        ;
+        Transform.prototype.rotateX = function (angle) {
+            this._rotateOnAxis(new MB.Vect3(1, 0, 0), angle);
+        };
+        ;
+        Transform.prototype.rotateY = function (angle) {
+            this._rotateOnAxis(new MB.Vect3(0, 1, 0), angle);
+        };
+        ;
+        Transform.prototype.rotateZ = function (angle) {
+            this._rotateOnAxis(new MB.Vect3(0, 0, 1), angle);
         };
         ;
         Object.defineProperty(Transform.prototype, "worldPosition", {
@@ -13113,14 +13137,6 @@ var MBSS;
             enumerable: true,
             configurable: true
         });
-        ;
-        Transform.prototype.getWorldQuaternion = function (target) {
-            if (target === void 0) { target = new MB.Quat(); }
-            var res = new MB.Quat();
-            this.updateMatrixWorld(true);
-            this.matrixWorld.decompose(this.position, res, this.scale);
-            return res;
-        };
         ;
         Object.defineProperty(Transform.prototype, "worldRotation", {
             get: function () {
@@ -13145,6 +13161,14 @@ var MBSS;
             enumerable: true,
             configurable: true
         });
+        ;
+        Transform.prototype.getWorldQuaternion = function (target) {
+            if (target === void 0) { target = new MB.Quat(); }
+            var res = new MB.Quat();
+            this.updateMatrixWorld(true);
+            this.matrixWorld.decompose(this.position, res, this.scale);
+            return res;
+        };
         ;
         Transform.prototype.localWorld = function (v) {
             return v.applyMat4(this.matrixWorld);
@@ -13218,14 +13242,15 @@ var MBSS;
     var SuperNode = (function (_super) {
         __extends(SuperNode, _super);
         function SuperNode() {
-            _super.apply(this, arguments);
+            _super.call(this);
+            this._children = new Array();
         }
         SuperNode.prototype.updateMatrixWorld = function (force) {
             if (this.autoUpdate === true) {
                 this.updateMatrix();
             }
             if (this.matrixWorldNeedUpdate === true || force === true) {
-                if (this.parent == null) {
+                if (!this.parent) {
                     this.matrixWorld.copy(this.matrix);
                 }
                 else {
@@ -13322,6 +13347,30 @@ var MBSS;
             this._material = material;
         }
         ;
+        Object.defineProperty(MeshRenderer.prototype, "material", {
+            get: function () {
+                return this._material;
+            },
+            set: function (m) {
+                this._material = m;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Object.defineProperty(MeshRenderer.prototype, "mesh", {
+            get: function () {
+                return this._mesh;
+            },
+            set: function (m) {
+                this._mesh = m;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
         MeshRenderer.prototype.update = function (dt) {
             this._material.use();
             this._mesh.render();
@@ -13345,6 +13394,7 @@ var MBSS;
         GameObject.prototype.getChildren = function () {
             return this._children;
         };
+        ;
         GameObject.prototype.updateAll = function (dt) {
             this.update(dt);
             for (var i = 0, l = this._children.length; i < l; ++i) {
@@ -13424,6 +13474,270 @@ var MBSS;
     }());
     MBSS.Scene = Scene;
 })(MBSS || (MBSS = {}));
+;
+
+
+
+
+
+
+
+var MBSX;
+(function (MBSX) {
+    var Transform = (function () {
+        function Transform() {
+            var _this = this;
+            this._matrix = new MB.Mat4();
+            this._matrixWorld = new MB.Mat4();
+            this._autoUpdate = true;
+            this._matrixWorldNeedUpdate = false;
+            this._position = new MB.Vect3();
+            this._rotation = new MB.EulerAngle();
+            this._quaternion = new MB.Quat();
+            this._scale = MB.Vect3.createFromScalar(1.0);
+            this._rotation.onChange = function () {
+                _this._quaternion = _this._quaternion.setFromEuler(_this._rotation);
+            };
+            this._quaternion.onChange = function () {
+                _this._rotation = _this._rotation.setFromQuaternion(_this._quaternion, _this.rotation.order, false);
+            };
+        }
+        ;
+        Object.defineProperty(Transform.prototype, "position", {
+            get: function () { return this._position; },
+            set: function (p) { this._position = p; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "rotation", {
+            get: function () { return this._rotation; },
+            set: function (r) { this._rotation = r; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "quaternion", {
+            get: function () { return this._quaternion; },
+            set: function (q) { this._quaternion = q; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "scale", {
+            get: function () { return this._scale; },
+            set: function (s) { this._scale = s; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        ;
+        ;
+        ;
+        Transform.prototype._translateOnAxis = function (axis, dist) {
+            var v = new MB.Vect3();
+            v.copy(axis).applyQuat(this._quaternion);
+            this._position = this._position.add(v.multByScalar(dist));
+        };
+        ;
+        Transform.prototype.translateX = function (dist) {
+            var v = new MB.Vect3(1, 0, 0);
+            this._translateOnAxis(v, dist);
+        };
+        ;
+        Transform.prototype.translateY = function (dist) {
+            var v = new MB.Vect3(0, 1, 0);
+            this._translateOnAxis(v, dist);
+        };
+        ;
+        Transform.prototype.translateZ = function (dist) {
+            var v = new MB.Vect3(0, 0, 1);
+            this._translateOnAxis(v, dist);
+        };
+        ;
+        Transform.prototype.updateMatrix = function () {
+            this._matrix.compose(this.position, this.quaternion, this.scale);
+            this._matrixWorldNeedUpdate = true;
+        };
+        ;
+        return Transform;
+    }());
+    MBSX.Transform = Transform;
+    ;
+    var Node = (function () {
+        function Node() {
+            this._children = new Array();
+            this._components = new Array();
+            this._parent = null;
+            this._transform = new Transform();
+        }
+        ;
+        Object.defineProperty(Node.prototype, "parent", {
+            get: function () { return this._parent; },
+            set: function (p) { this._parent = p; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Node.prototype.addChild = function (n) {
+            n.parent = this;
+            this._children.push(n);
+        };
+        ;
+        Node.prototype.removeChild = function (n) {
+            var idx = this._children.indexOf(n);
+            if (idx !== -1) {
+                this._children.splice(idx, 1);
+            }
+        };
+        ;
+        Node.prototype.addComponent = function (c) {
+            c.node = this;
+            this._components.push(c);
+        };
+        Object.defineProperty(Node.prototype, "transform", {
+            get: function () { return this._transform; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Node.prototype, "children", {
+            get: function () { return this._children; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Node.prototype._updateMatrixWorld = function (force) {
+            if (force === void 0) { force = false; }
+            if (this.transform._autoUpdate === true) {
+                this.transform.updateMatrix();
+            }
+            if (this.transform._matrixWorldNeedUpdate === true || force === true) {
+                if (!this.parent) {
+                    this.transform._matrixWorld.copy(this.transform._matrix);
+                }
+                else {
+                    this._transform._matrixWorld.mult2(this.parent._transform._matrixWorld, this._transform._matrix);
+                }
+                this.transform._matrixWorldNeedUpdate = false;
+                force = true;
+            }
+            for (var i = 0, l = this._children.length; i < l; ++i) {
+                this._children[i]._updateMatrixWorld(force);
+            }
+        };
+        ;
+        return Node;
+    }());
+    MBSX.Node = Node;
+    ;
+    var Component = (function () {
+        function Component() {
+        }
+        Component.prototype.update = function (dt) {
+        };
+        return Component;
+    }());
+    MBSX.Component = Component;
+    ;
+    var MeshRenderer = (function (_super) {
+        __extends(MeshRenderer, _super);
+        function MeshRenderer(mesh, material) {
+            _super.call(this);
+            this._mesh = mesh;
+            this._material = material;
+        }
+        ;
+        Object.defineProperty(MeshRenderer.prototype, "material", {
+            get: function () {
+                return this._material;
+            },
+            set: function (m) {
+                this._material = m;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Object.defineProperty(MeshRenderer.prototype, "mesh", {
+            get: function () {
+                return this._mesh;
+            },
+            set: function (m) {
+                this._mesh = m;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        MeshRenderer.prototype.update = function (dt) {
+        };
+        ;
+        MeshRenderer.prototype.render = function () {
+            this.node._updateMatrixWorld();
+            this._material._uniforms["model"].value = this.node.transform._matrix;
+            this._material.use();
+            this._mesh.render();
+        };
+        ;
+        return MeshRenderer;
+    }(Component));
+    MBSX.MeshRenderer = MeshRenderer;
+    ;
+    var Scene = (function () {
+        function Scene(name, engine) {
+            this.camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 5.0));
+            this._name = name;
+            this._engine = engine;
+            this._sceneGraph = new Node();
+            var bgColor = MB.Color4.fromColor3(MB.Color3.Black);
+            this._engine.context.state.depth.setStatus(true);
+            this._engine.context.state.depth.setFunc(MB.ctes.ComparisonFunc.Less);
+            this._engine.context.state.culling.setStatus(true);
+            this._engine.context.state.blending.setStatus(false);
+            this._engine.context.state.color.setClearColor(bgColor);
+        }
+        Object.defineProperty(Scene.prototype, "root", {
+            get: function () { return this._sceneGraph; },
+            enumerable: true,
+            configurable: true
+        });
+        Scene.prototype.getEngine = function () {
+            return this._engine;
+        };
+        ;
+        Scene.prototype.render = function (dt) {
+            var _this = this;
+            this._engine.context.state.clearBuffers();
+            this._sceneGraph.children.forEach(function (n) {
+                _this._subRender(n, dt);
+            });
+        };
+        ;
+        Scene.prototype._subRender = function (n, dt) {
+            for (var i = 0; i < n.children.length; ++i) {
+                this._subRender(n.children[i], dt);
+            }
+            for (var i = 0; i < n._components.length; ++i) {
+                n._components[i].update(dt);
+                if (n._components[i] instanceof MeshRenderer) {
+                    var mr = n._components[i];
+                    mr.material._uniforms["viewPos"].value = this.camera.GetPos();
+                    mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);
+                    mr.material._uniforms["view"].value = this.camera.GetViewMatrix();
+                    mr.render();
+                }
+            }
+        };
+        return Scene;
+    }());
+    MBSX.Scene = Scene;
+    ;
+})(MBSX || (MBSX = {}));
 ;
 
 "use strict";
@@ -13722,7 +14036,6 @@ var MBS;
             this._afterRender = [];
             this._engine = engine;
             this._name = name;
-            engine._scenes.push(this);
             this._sceneGraph = new MBS.Node("root", this);
             var bgColor = MB.Color4.fromColor3(MB.Color3.Black);
             this._engine.context.state.depth.setStatus(true);

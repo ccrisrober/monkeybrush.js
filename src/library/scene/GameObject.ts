@@ -10,52 +10,43 @@ namespace MBSS {
             this.matrix.decompose(this._position, this._quaternion, this.scale);
         };
 
-        public rotateOnAxis(axis: MB.Vect3, angle: number) {
-            let q1 = new MB.Quat();
-            q1.setFromAxisAngle(axis, angle);
-            this._quaternion = this._quaternion.mult(q1);
-        };
-
-        public rotateX(angle: number) {
-            this.rotateOnAxis(new MB.Vect3(1, 0, 0), angle);
-        };
-        public rotateY(angle: number) {
-            this.rotateOnAxis(new MB.Vect3(0, 1, 0), angle);
-        };
-        public rotateZ(angle: number) {
-            this.rotateOnAxis(new MB.Vect3(0, 0, 1), angle);
-        };
-
-        public translateOnAxis(axis: MB.Vect3, dist: number) {
-            // translate object by distance along axis in object space
-            // axis is assumed to be normalized
+        protected _translateOnAxis(axis: MB.Vect3, dist: number) {
             let v = new MB.Vect3();
             v.copy(axis).applyQuat(this._quaternion);
             this._position = this._position.add(v.multByScalar(dist));
         };
         public translateX(dist: number) {
             let v = new MB.Vect3(1, 0, 0);
-            this.translateOnAxis(v, dist);
+            this._translateOnAxis(v, dist);
         };
         public translateY(dist: number) {
             let v = new MB.Vect3(0, 1, 0);
-            this.translateOnAxis(v, dist);
+            this._translateOnAxis(v, dist);
         };
         public translateZ(dist: number) {
             let v = new MB.Vect3(0, 0, 1);
-            this.translateOnAxis(v, dist);
+            this._translateOnAxis(v, dist);
         };
+        protected _rotateOnAxis(axis: MB.Vect3, angle: number) {
+            let q1 = new MB.Quat();
+            q1.setFromAxisAngle(axis, angle);
+            this._quaternion = this._quaternion.mult(q1);
+        };
+        public rotateX(angle: number) {
+            this._rotateOnAxis(new MB.Vect3(1, 0, 0), angle);
+        };
+        public rotateY(angle: number) {
+            this._rotateOnAxis(new MB.Vect3(0, 1, 0), angle);
+        };
+        public rotateZ(angle: number) {
+            this._rotateOnAxis(new MB.Vect3(0, 0, 1), angle);
+        };
+
 
         public get worldPosition(): MB.Vect3 {
             let res = new MB.Vect3();
             this.updateMatrixWorld(true);
             return res.setFromMatrixPosition(this.matrixWorld);
-        };
-        public getWorldQuaternion(target: MB.Quat = new MB.Quat()): MB.Quat {
-            let res = new MB.Quat();
-            this.updateMatrixWorld(true);
-            this.matrixWorld.decompose(this.position, res, this.scale);
-            return res;
         };
         public get worldRotation(): MB.EulerAngle {
             let res = new MB.EulerAngle();
@@ -69,6 +60,12 @@ namespace MBSS {
             let q = new MB.Quat();
             this.updateMatrixWorld(true);
             this.matrixWorld.decompose(p, q, res);
+            return res;
+        };
+        public getWorldQuaternion(target: MB.Quat = new MB.Quat()): MB.Quat {
+            let res = new MB.Quat();
+            this.updateMatrixWorld(true);
+            this.matrixWorld.decompose(this.position, res, this.scale);
             return res;
         };
         public localWorld(v: MB.Vect3): MB.Vect3 {
@@ -117,7 +114,7 @@ namespace MBSS {
         public set rotation(r: MB.EulerAngle) {
             this._rotation = r;
         };
-        public set quaternion(q:  MB.Quat) {
+        public set quaternion(q: MB.Quat) {
             this._quaternion = q;
         };
         public set scale(s: MB.Vect3)  {
@@ -131,13 +128,17 @@ namespace MBSS {
         protected _modelViewMatrix: MB.Mat4;
     };
     export class SuperNode extends Transform {
+        constructor() {
+            super();
+            this._children = new Array<MBSS.SuperNode>();
+        }
 
         public updateMatrixWorld(force: boolean) {
             if (this.autoUpdate === true) {
                 this.updateMatrix();
             }
             if (this.matrixWorldNeedUpdate === true || force === true) {
-                if (this.parent == null) {
+                if (!this.parent) {
                     this.matrixWorld.copy(this.matrix);
                 } else {
                     this.parent.matrixWorld.mult(this.matrix, this.matrixWorld);
@@ -219,7 +220,7 @@ namespace MBSS {
     };
     export abstract class GameComponent {
         public update(dt: number) {
-            //
+            // Override its neccesary
         };
     };
     export class MeshRenderer extends GameComponent {
@@ -229,6 +230,18 @@ namespace MBSS {
             super();
             this._mesh = mesh;
             this._material = material;
+        };
+        public get material(): MB.Material {
+            return this._material;
+        };
+        public set material(m: MB.Material) {
+            this._material = m;
+        };
+        public get mesh(): MB.Drawable {
+            return this._mesh;
+        };
+        public set mesh(m: MB.Drawable) {
+            this._mesh = m;
         };
         public update(dt: number) {
             this._material.use();
@@ -251,7 +264,7 @@ namespace MBSS {
         };
         public getChildren(): Array<MBSS.GameObject> {
             return this._children;
-        }
+        };
         public updateAll(dt: number) {
             this.update(dt);
             for (let i = 0, l = this._children.length; i < l; ++i) {

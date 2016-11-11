@@ -21,7 +21,7 @@
 
 namespace MB {
     export class NormalMaterial extends MB.Material {
-        protected _uniforms: { [key: string]: MB.Uniform; } = {};
+        // protected _uniforms: { [key: string]: MB.Uniform; } = {};
         protected _program: MB.Program;
         constructor(context: MB.GLContext) {
             super(context);

@@ -21,7 +21,7 @@
 
 namespace MB {
     export class SimpleShadingMaterial extends MB.Material {
-        protected _uniforms: { [key: string]: MB.Uniform; } = {};
+        // protected _uniforms: { [key: string]: MB.Uniform; } = {};
         protected _program: MB.Program;
         constructor(context: MB.GLContext) {
             super(context);
