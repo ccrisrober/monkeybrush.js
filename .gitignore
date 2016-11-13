@@ -92,3 +92,5 @@ tslintwarnings*
 _unused_.zip
 doc
 docs
+_help.txt
+demos/_jelp.html

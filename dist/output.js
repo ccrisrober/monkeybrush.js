@@ -13306,6 +13306,37 @@ var MBS;
             return null;
         };
         ;
+        Node.prototype.getComponents = function () {
+            var list = [];
+            var c = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                list.push(this._components[i]);
+            }
+            return list;
+        };
+        ;
+        Node.prototype.getComponentsWithType = function (type) {
+            var list = [];
+            var c = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                c = this._components[i];
+                if (c instanceof type) {
+                    list.push(c);
+                }
+            }
+            return list;
+        };
+        ;
+        Node.prototype.getComponentsInChildren = function () {
+            var list = [];
+            list = list.concat(this.getComponents());
+            for (var i = 0, lc = this._children.length; i < lc; ++i) {
+                var arr = this._children[i].getComponentsInChildren();
+                list = list.concat(arr);
+            }
+            return list;
+        };
+        ;
         return Node;
     }());
     MBS.Node = Node;

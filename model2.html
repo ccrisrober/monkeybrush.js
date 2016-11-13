@@ -21,6 +21,7 @@
 <script type="text/javascript" src="dist/output.js"></script>
 <script type="text/javascript">
 var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule, p;
+var MoveComponent, ScaleComponent, PrintMatrixComponent;
     window.onload = function() {
         engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
         scene = new MBS.Scene("demo", engine);
@@ -45,7 +46,7 @@ var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule, p;
         mbCube.transform.scale.set(2,2,1);
         scene.root.addChild(mbCube);
 
-        var MoveComponent = (function (_super) {
+        MoveComponent = (function (_super) {
             __extends(MoveComponent, _super);
             function MoveComponent() {
                 _super.call(this);
@@ -62,7 +63,7 @@ var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule, p;
             return MoveComponent;
         }(MBS.Component));
 
-        var ScaleComponent = (function (_super) {
+        ScaleComponent = (function (_super) {
             __extends(ScaleComponent, _super);
             function ScaleComponent() {
                 _super.call(this);
@@ -82,7 +83,7 @@ var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule, p;
             return ScaleComponent;
         }(MBS.Component));
 
-        var PrintMatrixComponent = (function (_super) {
+        PrintMatrixComponent = (function (_super) {
             __extends(PrintMatrixComponent, _super);
             function PrintMatrixComponent(divName) {
                 _super.call(this);
@@ -151,7 +152,7 @@ var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule, p;
         mbCube.addChild(mbCylinder);
 
 
-        mbCapsule2 = new MBS.Node("capsule");
+        mbCapsule2 = new MBS.Node("capsule2");
         mbCapsule2.addComponent(new MBS.MeshRenderer(cubito, material3));
         mbCapsule2.addComponent(new PrintMatrixComponent("capsule2matrix"));
         mbCapsule2.transform.position.set(1.44,-2.5,0.87);

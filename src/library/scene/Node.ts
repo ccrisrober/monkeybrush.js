@@ -119,7 +119,7 @@ namespace MBS {
                 }
             }
         };
-        public findByTag(tagName: string) {
+        public findByTag(tagName: string): Array<MBS.Node> {
             return this._searchTag(tagName, this, []);
         };
         protected _searchTag(name: string, elem: MBS.Node, nodes: Array<MBS.Node>): Array<MBS.Node> {
@@ -145,6 +145,35 @@ namespace MBS {
                 }
             }
             return null;
+        };
+        public getComponents(): Array<Component> {
+            let list: Array<Component> = [];
+            let c: Component = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                list.push(this._components[i]);
+            }
+            return list;
+        };
+        public getComponentsWithType<T extends Component>(type: { new(): T}): Array<T> {
+            let list: Array<T> = [];
+            let c: Component = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                c = this._components[i];
+                if (c instanceof type) {
+                    list.push(c);
+                }
+            }
+            return list;
+        };
+        public getComponentsInChildren(): Array<Component> {
+            let list: Array<Component> = [];
+            // TODO: I added owner components!! ... FAIL
+            list = list.concat(this.getComponents());
+            for (let i = 0, lc = this._children.length; i < lc; ++i) {
+                let arr = this._children[i].getComponentsInChildren();
+                list = list.concat(arr);
+            }
+            return list;
         };
     };
 };
