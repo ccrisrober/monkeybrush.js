@@ -1,4 +1,4 @@
-namespace MBSX {
+namespace MBS {
     export class Scene {
         protected _clearColor: MB.Color3 = new MB.Color3(1, 1, 1);
         protected _lights = new Array<MB.Light>();

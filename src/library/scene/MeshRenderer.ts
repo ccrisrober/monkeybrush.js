@@ -1,4 +1,4 @@
-namespace MBSX {
+namespace MBS {
     export class MeshRenderer extends Component {
         protected _mesh: MB.Drawable;
         protected _material: MB.Material;

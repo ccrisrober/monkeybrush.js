@@ -1,18 +1,13 @@
-namespace MBSX {
+namespace MBS {
     export class Node {
         protected _id: string;
-
-        protected _isEnabled: boolean = true;
-
+        protected _isEnabled: boolean;
+        protected _tag: string;
+        protected _name: string;
         public isEnabled(): boolean {
             if (!this._isEnabled) {
                 return false;
             }
-
-            if (this.parent) {
-                return this.parent.isEnabled();
-            }
-
             return true;
         };
         public hasParent(): boolean {
@@ -20,6 +15,9 @@ namespace MBSX {
         };
         public setEnabled(v: boolean) {
             this._isEnabled = v;
+            for (var i = 0, l = this._children.length; i < l; ++i) {
+                this._children[i].setEnabled(v);
+            }
         };
         protected _generateUUID(): string {
             let d = new Date().getTime();
@@ -30,16 +28,19 @@ namespace MBSX {
             });
             return uuid;
         };
-        protected _name: string;
+        public get tag(): string { return this._tag; };
+        public set tag(t: string) { this._tag = t; };
         public get name(): string { return this._name; };
         public set name(n: string) { this._name = n; };
-        constructor(name: string = "dummy") {
+        constructor(name: string = "dummy", tag: string = "SimpleTag") {
             this._name = name;
             this._id = this._generateUUID();
             this._children = new Array<Node>();
             this._components = new Array<Component>();
             this._parent = null;
             this._transform = new Transform();
+            this._tag = tag;
+            this._isEnabled = true;
         };
         public get parent(): Node { return this._parent; };
         public set parent(p: Node) {
@@ -80,7 +81,6 @@ namespace MBSX {
             this.transform._matrixWorld.decompose(p, q, res);
             return res;
         };
-
         public _updateMatrixWorld(force: boolean = false) {
             if (this.transform._autoUpdate === true) {
                 this.transform.updateMatrix();
@@ -105,20 +105,46 @@ namespace MBSX {
             this._children.length = 0;
         };
         public findByName(name: string) {
-            return this._searchElem(name, this);
-        }
-        protected _searchElem(name: string, elem: MBSX.Node): MBSX.Node {
-            if (elem._name === name) {
+            return this._searchName(name, this);
+        };
+        protected _searchName(name: string, elem: MBS.Node): MBS.Node {
+            if (elem.hasParent() && elem._name === name) {
                 return elem;
             }
             // Search in childrens
             for (let i = 0, l = elem._children.length; i < l; ++i) {
-                let children = this._searchElem(name, elem._children[i]);
+                let children = this._searchName(name, elem._children[i]);
                 if (children) {
                     return children;
                 }
             }
         };
-        // TODO: Search by tag, type, layer ...
+        public findByTag(tagName: string) {
+            return this._searchTag(tagName, this, []);
+        };
+        protected _searchTag(name: string, elem: MBS.Node, nodes: Array<MBS.Node>): Array<MBS.Node> {
+            if (name === undefined) {
+                return nodes;
+            }
+            if (elem.hasParent() && elem._tag === name) {
+                nodes.push(elem);
+            }
+            // Search in childrens
+            for (let i = 0, l = elem._children.length; i < l; ++i) {
+                let children = this._searchTag(name, elem._children[i], nodes);
+            }
+            return nodes;
+        };
+        // TODO: Search by type, layer ...
+        public getComponent<T extends Component>(type: { new (): T }): T {
+            let c: Component = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                c = this._components[i];
+                if (c instanceof type) {
+                    return c;
+                }
+            }
+            return null;
+        };
     };
 };

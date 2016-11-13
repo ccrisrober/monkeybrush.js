@@ -270,6 +270,11 @@ namespace MB {
          */
         public static Gold: Color3 = Color3.createFromHex(0xFFD700);
         /**
+         * Green color
+         * @param {Color3} 0x008000
+         */
+        public static Green: Color3 = Color3.createFromHex(0x008000);
+        /**
          * Indigo color
          * @param {Color3} 0x4B0082
          */

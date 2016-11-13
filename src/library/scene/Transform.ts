@@ -1,4 +1,4 @@
-namespace MBSX {
+namespace MBS {
     export class Transform {
         constructor() {
             this._position = new MB.Vect3();
