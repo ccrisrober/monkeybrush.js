@@ -24,9 +24,9 @@ namespace MBS {
         public _width: number = -1;
         public _height: number = -1;
         public _clearColor: MB.Color4 = null;
-        public _scene: MBS.Scene;
+        public _scene: MBSX.Scene;
 
-        constructor(scene: MBS.Scene) {
+        constructor(scene: MBSX.Scene) {
             this._scene = scene;
         }
 

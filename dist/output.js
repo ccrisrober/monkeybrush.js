@@ -12991,6 +12991,20 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+var MBSX;
+(function (MBSX) {
+    var Component = (function () {
+        function Component() {
+        }
+        Component.prototype.update = function (dt) {
+        };
+        return Component;
+    }());
+    MBSX.Component = Component;
+    ;
+})(MBSX || (MBSX = {}));
+;
+
 "use strict";
 var MBS;
 (function (MBS) {
@@ -13038,25 +13052,6 @@ var MBS;
         return Engine;
     }());
     MBS.Engine = Engine;
-})(MBS || (MBS = {}));
-
-"use strict";
-var MBS;
-(function (MBS) {
-    var EngineApp = (function () {
-        function EngineApp(context) {
-            this._engine = new MBS.Engine(context);
-            this._scene = new MBS.Scene("demo", this._engine);
-        }
-        EngineApp.prototype.run = function () {
-            var _this = this;
-            this._engine.run(function (dt) {
-                _this._scene.render(dt);
-            });
-        };
-        return EngineApp;
-    }());
-    MBS.EngineApp = EngineApp;
 })(MBS || (MBS = {}));
 
 
@@ -13486,98 +13481,110 @@ var MBSS;
 
 var MBSX;
 (function (MBSX) {
-    var Transform = (function () {
-        function Transform() {
-            var _this = this;
-            this._matrix = new MB.Mat4();
-            this._matrixWorld = new MB.Mat4();
-            this._autoUpdate = true;
-            this._matrixWorldNeedUpdate = false;
-            this._position = new MB.Vect3();
-            this._rotation = new MB.EulerAngle();
-            this._quaternion = new MB.Quat();
-            this._scale = MB.Vect3.createFromScalar(1.0);
-            this._rotation.onChange = function () {
-                _this._quaternion = _this._quaternion.setFromEuler(_this._rotation);
-            };
-            this._quaternion.onChange = function () {
-                _this._rotation = _this._rotation.setFromQuaternion(_this._quaternion, _this.rotation.order, false);
-            };
+    var MeshRenderer = (function (_super) {
+        __extends(MeshRenderer, _super);
+        function MeshRenderer(mesh, material) {
+            _super.call(this);
+            this._mesh = mesh;
+            this._material = material;
         }
         ;
-        Object.defineProperty(Transform.prototype, "position", {
-            get: function () { return this._position; },
-            set: function (p) { this._position = p; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Transform.prototype, "rotation", {
-            get: function () { return this._rotation; },
-            set: function (r) { this._rotation = r; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Transform.prototype, "quaternion", {
-            get: function () { return this._quaternion; },
-            set: function (q) { this._quaternion = q; },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Transform.prototype, "scale", {
-            get: function () { return this._scale; },
-            set: function (s) { this._scale = s; },
+        Object.defineProperty(MeshRenderer.prototype, "material", {
+            get: function () {
+                return this._material;
+            },
+            set: function (m) {
+                this._material = m;
+            },
             enumerable: true,
             configurable: true
         });
         ;
         ;
+        Object.defineProperty(MeshRenderer.prototype, "mesh", {
+            get: function () {
+                return this._mesh;
+            },
+            set: function (m) {
+                this._mesh = m;
+            },
+            enumerable: true,
+            configurable: true
+        });
         ;
         ;
-        ;
-        Transform.prototype._translateOnAxis = function (axis, dist) {
-            var v = new MB.Vect3();
-            v.copy(axis).applyQuat(this._quaternion);
-            this._position = this._position.add(v.multByScalar(dist));
+        MeshRenderer.prototype.update = function (dt) {
         };
         ;
-        Transform.prototype.translateX = function (dist) {
-            var v = new MB.Vect3(1, 0, 0);
-            this._translateOnAxis(v, dist);
+        MeshRenderer.prototype.render = function () {
+            this.node._updateMatrixWorld();
+            this._material._uniforms["model"].value = this.node.transform._matrixWorld;
+            this._material.use();
+            this._mesh.render();
         };
         ;
-        Transform.prototype.translateY = function (dist) {
-            var v = new MB.Vect3(0, 1, 0);
-            this._translateOnAxis(v, dist);
-        };
-        ;
-        Transform.prototype.translateZ = function (dist) {
-            var v = new MB.Vect3(0, 0, 1);
-            this._translateOnAxis(v, dist);
-        };
-        ;
-        Transform.prototype.updateMatrix = function () {
-            this._matrix.compose(this.position, this.quaternion, this.scale);
-            this._matrixWorldNeedUpdate = true;
-        };
-        ;
-        return Transform;
-    }());
-    MBSX.Transform = Transform;
+        return MeshRenderer;
+    }(MBSX.Component));
+    MBSX.MeshRenderer = MeshRenderer;
     ;
+})(MBSX || (MBSX = {}));
+;
+
+var MBSX;
+(function (MBSX) {
     var Node = (function () {
-        function Node() {
+        function Node(name) {
+            if (name === void 0) { name = "dummy"; }
+            this._isEnabled = true;
+            this._name = name;
+            this._id = this._generateUUID();
             this._children = new Array();
             this._components = new Array();
             this._parent = null;
-            this._transform = new Transform();
+            this._transform = new MBSX.Transform();
         }
+        Node.prototype.isEnabled = function () {
+            if (!this._isEnabled) {
+                return false;
+            }
+            if (this.parent) {
+                return this.parent.isEnabled();
+            }
+            return true;
+        };
+        ;
+        Node.prototype.hasParent = function () {
+            return this.parent !== null;
+        };
+        ;
+        Node.prototype.setEnabled = function (v) {
+            this._isEnabled = v;
+        };
+        ;
+        Node.prototype._generateUUID = function () {
+            var d = new Date().getTime();
+            var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
+        };
+        ;
+        Object.defineProperty(Node.prototype, "name", {
+            get: function () { return this._name; },
+            set: function (n) { this._name = n; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
         ;
         Object.defineProperty(Node.prototype, "parent", {
             get: function () { return this._parent; },
-            set: function (p) { this._parent = p; },
+            set: function (p) {
+                this._parent = p;
+            },
             enumerable: true,
             configurable: true
         });
@@ -13644,7 +13651,7 @@ var MBSX;
                     this.transform._matrixWorld.copy(this.transform._matrix);
                 }
                 else {
-                    this._transform._matrixWorld.mult2(this.parent._transform._matrixWorld, this._transform._matrix);
+                    this.parent.transform._matrixWorld.mult(this.transform._matrix, this.transform._matrixWorld);
                 }
                 this.transform._matrixWorldNeedUpdate = false;
                 force = true;
@@ -13654,354 +13661,19 @@ var MBSX;
             }
         };
         ;
-        return Node;
-    }());
-    MBSX.Node = Node;
-    ;
-    var Component = (function () {
-        function Component() {
-        }
-        Component.prototype.update = function (dt) {
-        };
-        return Component;
-    }());
-    MBSX.Component = Component;
-    ;
-    var MeshRenderer = (function (_super) {
-        __extends(MeshRenderer, _super);
-        function MeshRenderer(mesh, material) {
-            _super.call(this);
-            this._mesh = mesh;
-            this._material = material;
-        }
-        ;
-        Object.defineProperty(MeshRenderer.prototype, "material", {
-            get: function () {
-                return this._material;
-            },
-            set: function (m) {
-                this._material = m;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        Object.defineProperty(MeshRenderer.prototype, "mesh", {
-            get: function () {
-                return this._mesh;
-            },
-            set: function (m) {
-                this._mesh = m;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        MeshRenderer.prototype.update = function (dt) {
-        };
-        ;
-        MeshRenderer.prototype.render = function () {
-            this.node._updateMatrixWorld();
-            this._material._uniforms["model"].value = this.node.transform._matrixWorld;
-            this._material.use();
-            this._mesh.render();
-        };
-        ;
-        return MeshRenderer;
-    }(Component));
-    MBSX.MeshRenderer = MeshRenderer;
-    ;
-    var Scene = (function () {
-        function Scene(name, engine) {
-            this.camera = new MB.Camera2(new MB.Vect3(0, 0.18, 8.44));
-            this._name = name;
-            this._engine = engine;
-            this._sceneGraph = new Node();
-            var bgColor = MB.Color4.fromColor3(MB.Color3.Black);
-            this._engine.context.state.depth.setStatus(true);
-            this._engine.context.state.depth.setFunc(MB.ctes.ComparisonFunc.Less);
-            this._engine.context.state.culling.setStatus(true);
-            this._engine.context.state.blending.setStatus(false);
-            this._engine.context.state.color.setClearColor(bgColor);
-        }
-        Object.defineProperty(Scene.prototype, "root", {
-            get: function () { return this._sceneGraph; },
-            enumerable: true,
-            configurable: true
-        });
-        Scene.prototype.getEngine = function () {
-            return this._engine;
-        };
-        ;
-        Scene.prototype.render = function (dt) {
-            var _this = this;
-            this._engine.context.state.clearBuffers();
-            this._sceneGraph.children.forEach(function (n) {
-                _this._subRender(n, dt);
-            });
-        };
-        ;
-        Scene.prototype._subRender = function (n, dt) {
-            for (var i = 0; i < n.children.length; ++i) {
-                this._subRender(n.children[i], dt);
-            }
-            for (var i = 0; i < n._components.length; ++i) {
-                n._components[i].update(dt);
-                if (n._components[i] instanceof MeshRenderer) {
-                    var mr = n._components[i];
-                    mr.material._uniforms["viewPos"].value = this.camera.GetPos();
-                    mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);
-                    mr.material._uniforms["view"].value = this.camera.GetViewMatrix();
-                    mr.render();
-                }
-            }
-        };
-        return Scene;
-    }());
-    MBSX.Scene = Scene;
-    ;
-})(MBSX || (MBSX = {}));
-;
-
-"use strict";
-var MBS;
-(function (MBS) {
-    var Node = (function () {
-        function Node(name, scene) {
-            this._position = new MB.Vect3();
-            this._rotation = new MB.EulerAngle();
-            this._quaternion = new MB.Quat();
-            this._scale = new MB.Vect3(1.0, 1.0, 1.0);
-            this._isEnabled = true;
-            this._matrix = MB.Mat4.identity.clone();
-            this._name = name;
-            this._id = this._generateUUID();
-            this._scene = scene;
-            this.parent = null;
-            this._rotation.onChange = function () {
-                this._quaternion = this._quaternion.setFromEuler(this._rotation);
-            }.bind(this);
-            this._quaternion.onChange = function () {
-            }.bind(this);
-        }
-        Node.prototype.hasParent = function () {
-            return this._parentNode !== null;
-        };
-        ;
-        Node.prototype._translateFromAxis = function (axis, dist) {
-            var v1 = axis.clone();
-            v1.applyQuat(this._quaternion);
-            v1.multByScalar(dist);
-            this._position.add(v1);
-        };
-        ;
-        Node.prototype.TranslateX = function (dist) {
-            this._translateFromAxis(MB.Vect3.xAxis, dist);
-        };
-        ;
-        Node.prototype.TranslateY = function (dist) {
-            this._translateFromAxis(MB.Vect3.yAxis, dist);
-        };
-        ;
-        Node.prototype.TranslateZ = function (dist) {
-            this._translateFromAxis(MB.Vect3.zAxis, dist);
-        };
-        ;
-        Node.prototype._rotateFromAxis = function (axis, angle) {
-            var q1 = MB.Quat.fromAxis(axis, angle);
-            this._quaternion.mult(q1);
-        };
-        ;
-        Node.prototype.RotateX = function (angle) {
-            this._rotateFromAxis(MB.Vect3.xAxis, angle);
-        };
-        ;
-        Node.prototype.RotateY = function (angle) {
-            this._rotateFromAxis(MB.Vect3.yAxis, angle);
-        };
-        ;
-        Node.prototype.RotateZ = function (angle) {
-            this._rotateFromAxis(MB.Vect3.zAxis, angle);
-        };
-        ;
-        Object.defineProperty(Node.prototype, "position", {
-            get: function () {
-                return this._position;
-            },
-            set: function (p) {
-                this._position = p;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Node.prototype, "rotation", {
-            get: function () {
-                return this._rotation;
-            },
-            set: function (r) {
-                this._rotation = r;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Node.prototype, "quaternion", {
-            get: function () {
-                return this._quaternion;
-            },
-            set: function (q) {
-                this._quaternion = q;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Node.prototype, "scale", {
-            get: function () {
-                return this._scale;
-            },
-            set: function (s) {
-                this._scale = s;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        ;
-        ;
-        ;
-        Node.prototype.LocalToWorld = function (v) {
-            return null;
-        };
-        ;
-        Node.prototype.WorldToLocal = function (v) {
-            return null;
-        };
-        ;
-        Node.prototype.isEnabled = function () {
-            if (!this._isEnabled) {
-                return false;
-            }
-            if (this._parentNode) {
-                return this._parentNode.isEnabled();
-            }
-            return true;
-        };
-        ;
-        Node.prototype.setEnabled = function (v) {
-            this._isEnabled = v;
-        };
-        ;
-        Object.defineProperty(Node.prototype, "parent", {
-            get: function () {
-                return this._parentNode;
-            },
-            set: function (parent) {
-                if (this._parentNode === parent) {
-                    return;
-                }
-                if (this._parentNode) {
-                    var idx = this._parentNode._children.indexOf(this);
-                    if (idx !== -1) {
-                        this._parentNode._children.splice(idx, 1);
-                    }
-                }
-                this._parentNode = parent;
-                if (this._parentNode) {
-                    if (!this._parentNode._children) {
-                        this._parentNode._children = new Array();
-                    }
-                    this._parentNode._children.push(this);
-                }
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Node.prototype.getScene = function () {
-            return this._scene;
-        };
-        Node.prototype._generateUUID = function () {
-            var d = new Date().getTime();
-            var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-                var r = (d + Math.random() * 16) % 16 | 0;
-                d = Math.floor(d / 16);
-                return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
-            });
-            return uuid;
-        };
-        ;
-        Node.prototype.add = function (object) {
-            if (arguments.length > 1) {
-                for (var i = 0, l = arguments.length; i < l; ++i) {
-                    this.add(arguments[i]);
-                }
-                return this;
-            }
-            if (object === this) {
-                console.error("MBS.Node.add: object can't be added as a child of itself.", object);
-                return this;
-            }
-            if (object.parent !== null) {
-                object.parent.remove(object);
-            }
-            object.parent = this;
-            return this;
-        };
-        ;
-        Node.prototype.remove = function (object) {
-            if (arguments.length > 1) {
-                for (var i = 0, l = arguments.length; i < l; ++i) {
-                    this.remove(arguments[i]);
-                }
-            }
-            var index = this._children.indexOf(object);
-            if (index !== -1) {
-                object.parent = null;
-                this._children.splice(index, 1);
-            }
-        };
-        ;
-        Object.defineProperty(Node.prototype, "model", {
-            get: function () {
-                return this._matrix;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Node.prototype.updateMatrix = function () {
-            this._matrix = MB.Mat4.identity.clone();
-            this._matrix.compose(this._position, this.quaternion, this._scale);
-        };
-        ;
-        Node.prototype.addChild = function (elem) {
-            this.removeChild(elem);
-            this._children.push(elem);
-        };
-        ;
-        Node.prototype.removeChild = function (elem) {
-            this._children = this._children.filter(function (e) {
-                if (elem === e) {
-                    elem._parentNode = null;
-                }
-                return elem !== e;
-            });
-        };
-        ;
         Node.prototype.removeAll = function () {
             this._children.length = 0;
         };
         ;
-        Node.prototype.searchElem = function (name, elem) {
-            if (elem === void 0) { elem = this; }
+        Node.prototype.findByName = function (name) {
+            return this._searchElem(name, this);
+        };
+        Node.prototype._searchElem = function (name, elem) {
             if (elem._name === name) {
                 return elem;
             }
             for (var i = 0, l = elem._children.length; i < l; ++i) {
-                var children = this.searchElem(name, elem);
+                var children = this._searchElem(name, elem._children[i]);
                 if (children) {
                     return children;
                 }
@@ -14010,8 +13682,10 @@ var MBS;
         ;
         return Node;
     }());
-    MBS.Node = Node;
-})(MBS || (MBS = {}));
+    MBSX.Node = Node;
+    ;
+})(MBSX || (MBSX = {}));
+;
 
 "use strict";
 var MBS;
@@ -14039,29 +13713,27 @@ var MBS;
 })(MBS || (MBS = {}));
 ;
 
-"use strict";
-var MBS;
-(function (MBS) {
+var MBSX;
+(function (MBSX) {
     var Scene = (function () {
         function Scene(name, engine) {
             this._clearColor = new MB.Color3(1, 1, 1);
             this._lights = new Array();
-            this._fogEnabled = false;
-            this._fogColor = new MB.Color3(0.2, 0.2, 0.3);
             this._postProcess = null;
+            this.camera = new MB.Camera2(new MB.Vect3(0, 0.18, 8.44));
             this._totalMeshes = 0;
             this._totalVertices = 0;
             this._drawCalls = 0;
             this._totalIndices = 0;
+            this._beforeRender = [];
+            this._afterRender = [];
             this.autoClear = true;
             this.autoClearColor = true;
             this.autoClearDepth = true;
             this.autoClearStencil = true;
-            this._beforeRender = [];
-            this._afterRender = [];
-            this._engine = engine;
             this._name = name;
-            this._sceneGraph = new MBS.Node("root", this);
+            this._engine = engine;
+            this._sceneGraph = new MBSX.Node();
             var bgColor = MB.Color4.fromColor3(MB.Color3.Black);
             this._engine.context.state.depth.setStatus(true);
             this._engine.context.state.depth.setFunc(MB.ctes.ComparisonFunc.Less);
@@ -14070,36 +13742,6 @@ var MBS;
             this._engine.context.state.color.setClearColor(bgColor);
             this._postProcess = new MBS.PostProcess(this);
         }
-        Object.defineProperty(Scene.prototype, "fogEnabled", {
-            get: function () {
-                return this._fogEnabled;
-            },
-            set: function (b) {
-                this._fogEnabled = b;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Scene.prototype, "fogColor", {
-            get: function () {
-                return this._fogColor;
-            },
-            set: function (c) {
-                this._fogColor = c;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Scene.prototype, "root", {
-            get: function () {
-                return this._sceneGraph;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Scene.prototype.addModel = function (m) {
-        };
-        ;
         Scene.prototype.addLight = function (lg) {
             for (var i = 0, l = this._lights.length; i < l; ++i) {
                 if (this._lights[i] === lg) {
@@ -14108,13 +13750,42 @@ var MBS;
             }
             this._lights.push(lg);
         };
+        ;
+        Object.defineProperty(Scene.prototype, "root", {
+            get: function () { return this._sceneGraph; },
+            enumerable: true,
+            configurable: true
+        });
         Scene.prototype.getEngine = function () {
             return this._engine;
         };
+        ;
         Scene.prototype.render = function (dt) {
+            var _this = this;
             this._totalMeshes = this._totalVertices = this._drawCalls = this._totalIndices = 0;
             this._engine.context.state.clearBuffers();
+            this._sceneGraph.children.forEach(function (n) {
+                _this._subRender(n, dt);
+            });
         };
+        ;
+        Scene.prototype._subRender = function (n, dt) {
+            for (var i = 0; i < n.children.length; ++i) {
+                this._subRender(n.children[i], dt);
+            }
+            for (var i = 0; i < n._components.length; ++i) {
+                n._components[i].update(dt);
+                if (n._components[i] instanceof MBSX.MeshRenderer) {
+                    var mr = n._components[i];
+                    this._totalMeshes++;
+                    mr.material._uniforms["viewPos"].value = this.camera.GetPos();
+                    mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);
+                    mr.material._uniforms["view"].value = this.camera.GetViewMatrix();
+                    mr.render();
+                }
+            }
+        };
+        ;
         Object.defineProperty(Scene.prototype, "clearColor", {
             get: function () {
                 return this._clearColor;
@@ -14127,6 +13798,21 @@ var MBS;
             enumerable: true,
             configurable: true
         });
+        ;
+        ;
+        Object.defineProperty(Scene.prototype, "totalMeshes", {
+            get: function () { return this._totalMeshes; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Scene.prototype.registerBeforeRender = function (cb) {
+            this._beforeRender.push(cb);
+        };
+        ;
+        Scene.prototype.registerAfterRender = function (cb) {
+            this._afterRender.push(cb);
+        };
         ;
         Scene.prototype.clear = function (clearColor, clearDepth, clearStencil) {
             if (clearColor === void 0) { clearColor = this.autoClearColor; }
@@ -14154,15 +13840,107 @@ var MBS;
             this.clear(false, false, true);
         };
         ;
-        Scene.prototype.registerBeforeRender = function (cb) {
-            this._beforeRender.push(cb);
-        };
-        ;
-        Scene.prototype.registerAfterRender = function (cb) {
-            this._afterRender.push(cb);
-        };
-        ;
         return Scene;
     }());
-    MBS.Scene = Scene;
-})(MBS || (MBS = {}));
+    MBSX.Scene = Scene;
+    ;
+})(MBSX || (MBSX = {}));
+;
+
+var MBSX;
+(function (MBSX) {
+    var Transform = (function () {
+        function Transform() {
+            var _this = this;
+            this._matrix = new MB.Mat4();
+            this._matrixWorld = new MB.Mat4();
+            this._autoUpdate = true;
+            this._matrixWorldNeedUpdate = false;
+            this._position = new MB.Vect3();
+            this._rotation = new MB.EulerAngle();
+            this._quaternion = new MB.Quat();
+            this._scale = MB.Vect3.createFromScalar(1.0);
+            this._rotation.onChange = function () {
+                _this._quaternion = _this._quaternion.setFromEuler(_this._rotation);
+            };
+            this._quaternion.onChange = function () {
+                _this._rotation = _this._rotation.setFromQuaternion(_this._quaternion, _this.rotation.order, false);
+            };
+        }
+        ;
+        Object.defineProperty(Transform.prototype, "position", {
+            get: function () { return this._position; },
+            set: function (p) { this._position = p; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "rotation", {
+            get: function () { return this._rotation; },
+            set: function (r) { this._rotation = r; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "quaternion", {
+            get: function () { return this._quaternion; },
+            set: function (q) { this._quaternion = q; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "scale", {
+            get: function () { return this._scale; },
+            set: function (s) { this._scale = s; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        ;
+        ;
+        ;
+        Transform.prototype._translateOnAxis = function (axis, dist) {
+            var v = new MB.Vect3();
+            v.copy(axis).applyQuat(this._quaternion);
+            this._position = this._position.add(v.multByScalar(dist));
+        };
+        ;
+        Transform.prototype._rotateOnAxis = function (axis, angle) {
+            var q1 = new MB.Quat();
+            q1.setFromAxisAngle(axis, angle);
+            this._quaternion = this._quaternion.mult(q1);
+        };
+        ;
+        Transform.prototype.translateX = function (dist) { this._translateOnAxis(new MB.Vect3(1, 0, 0), dist); };
+        ;
+        Transform.prototype.translateY = function (dist) { this._translateOnAxis(new MB.Vect3(0, 1, 0), dist); };
+        ;
+        Transform.prototype.translateZ = function (dist) { this._translateOnAxis(new MB.Vect3(0, 0, 1), dist); };
+        ;
+        Transform.prototype.rotateX = function (angle) { this._rotateOnAxis(new MB.Vect3(1, 0, 0), angle); };
+        ;
+        Transform.prototype.rotateY = function (angle) { this._rotateOnAxis(new MB.Vect3(0, 1, 0), angle); };
+        ;
+        Transform.prototype.rotateZ = function (angle) { this._rotateOnAxis(new MB.Vect3(0, 0, 1), angle); };
+        ;
+        Transform.prototype.localWorld = function (v) {
+            return v.applyMat4(this._matrixWorld);
+        };
+        ;
+        Transform.prototype.worldToLocal = function (v) {
+            var mat = new MB.Mat4();
+            return v.applyMat4(mat.inverse(this._matrixWorld));
+        };
+        ;
+        Transform.prototype.updateMatrix = function () {
+            this._matrix.compose(this.position, this.quaternion, this.scale);
+            this._matrixWorldNeedUpdate = true;
+        };
+        ;
+        return Transform;
+    }());
+    MBSX.Transform = Transform;
+    ;
+})(MBSX || (MBSX = {}));
+;

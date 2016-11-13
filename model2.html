@@ -35,27 +35,27 @@ var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule;
         var material2 = new MB.SimpleShadingMaterial(engine.context);
         material2.uniforms.color.value = MB.Color3.White._color;
 
-        mbCube = new MBSX.Node();
+        mbCube = new MBSX.Node("cube");
         mbCube.addComponent(new MBSX.MeshRenderer(cubito, material));
         mbCube.transform.position.set(0,3.15,-8.98);
         mbCube.transform.scale.set(2,2,1);
         scene.root.addChild(mbCube);
 
 
-        mbSphere = new MBSX.Node();
+        mbSphere = new MBSX.Node("sphere");
         mbSphere.addComponent(new MBSX.MeshRenderer(cubito, material2));
         mbSphere.transform.position.set(-0.44,-2,2.35);
         mbSphere.transform.scale.set(0.5, 0.5, 1);
         mbCube.addChild(mbSphere);
 
 
-        mbCapsule = new MBSX.Node();
+        mbCapsule = new MBSX.Node("capsule");
         mbCapsule.addComponent(new MBSX.MeshRenderer(cubito, material));
         mbCapsule.transform.position.set(-1.44,-2.5,0.87);
         mbSphere.addChild(mbCapsule);
 
 
-        mbCylinder = new MBSX.Node();
+        mbCylinder = new MBSX.Node("cylinder");
         mbCylinder.addComponent(new MBSX.MeshRenderer(cubito, material2));
         mbCylinder.transform.position.set(1.1,-1.91,-1.08);
         mbCylinder.transform.scale.set(1, 0.5, 1);
