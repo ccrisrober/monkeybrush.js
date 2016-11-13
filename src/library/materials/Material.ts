@@ -46,3 +46,13 @@ namespace MB {
         }
     }
 }
+/**
+ * TODO (CHECK)
+ * DeptFunc
+ * DepthEnabled
+ * DepthWriteEnable
+ * ColorWriteEnable
+ * Blending
+ * CullFace
+ * SideOrientation
+ */

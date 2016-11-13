@@ -190,7 +190,7 @@ namespace MB {
         public GetProjectionMatrix(canvas: HTMLCanvasElement): MB.Mat4 {
             const w: number = canvas.clientWidth;
             const h: number = canvas.clientHeight;
-            return MB.Mat4.perspective(this._fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
+            return MB.Mat4.perspective(MB.Mathf.Deg2Rad * this._fov, w / h, this._near, this._far);
         }
 
         public _fov: number = 45.0;
@@ -200,6 +200,8 @@ namespace MB {
         public set fov(f: number) {
             this._fov = f;
         };
+        public _near: number = 0.1;
+        public _far: number = 1000.0;
 
         public updateCameraVectors() {
             const front: MB.Vect3 = new MB.Vect3(

@@ -83,6 +83,20 @@ namespace MBSX {
         public _components: Array<Component>;
         protected _transform: Transform;
 
+        public get worldPosition(): MB.Vect3 {
+            let res = new MB.Vect3();
+            this._updateMatrixWorld(true);
+            return res.setFromMatrixPosition(this.transform._matrixWorld);
+        };
+        public get worldScale(): MB.Vect3 {
+            let res = new MB.Vect3();
+            let p = new MB.Vect3();
+            let q = new MB.Quat();
+            this._updateMatrixWorld(true);
+            this.transform._matrixWorld.decompose(p, q, res);
+            return res;
+        };
+
         public _updateMatrixWorld(force: boolean = false) {
             if (this.transform._autoUpdate === true) {
                 this.transform.updateMatrix();
@@ -135,14 +149,14 @@ namespace MBSX {
         };
         public render() {
             this.node._updateMatrixWorld();
-            this._material._uniforms["model"].value = this.node.transform._matrix;
+            this._material._uniforms["model"].value = this.node.transform._matrixWorld;
             this._material.use();
             this._mesh.render();
         };
     };
     export class Scene {
         protected _name: string;
-        public camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 5.0));
+        public camera = new MB.Camera2(new MB.Vect3(0,0.18,8.44));
         constructor(name: string, engine: MBS.Engine) {
             this._name = name;
             this._engine = engine;
@@ -181,9 +195,7 @@ namespace MBSX {
                     mr.material._uniforms["viewPos"].value = this.camera.GetPos();
                     mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);
                     mr.material._uniforms["view"].value = this.camera.GetViewMatrix();
-
                     mr.render();
-                    // console.log(mr);
                 }
             }
         }

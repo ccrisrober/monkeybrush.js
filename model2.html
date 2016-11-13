@@ -1,0 +1,124 @@
+
+
+<div id='clean' style="display: inline-block;
+    float: left;">
+        <canvas id="canvas" height="500" width="500"></canvas>
+</div>
+<div id="content" style="display: inline;
+    float: left;
+    padding: 10px;
+    padding-top: 0">
+        <h5>Cube</h5>
+        <div id="cubematrix"></div>
+        <h5>Sphere</h5>
+        <div id="spherematrix"></div>
+        <h5>Capsule</h5>
+        <div id="capsulematrix"></div>
+        <h5>Cylinder</h5>
+        <div id="cylindermatrix"></div>
+        <h5>Camera</h5>
+        <div id="camera"></div>
+    </p>
+</div>
+<script type="text/javascript" src="dist/output.js"></script>
+<script type="text/javascript">
+var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule;
+    window.onload = function() {
+        engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
+        scene = new MBSX.Scene("demo", engine);
+
+        var cubito = new MB.Cube(engine.context, 1.0);
+
+        var material = new MB.SimpleShadingMaterial(engine.context);
+        material.uniforms.color.value = MB.Color3.White._color;
+
+        var material2 = new MB.SimpleShadingMaterial(engine.context);
+        material2.uniforms.color.value = MB.Color3.White._color;
+
+        mbCube = new MBSX.Node();
+        mbCube.addComponent(new MBSX.MeshRenderer(cubito, material));
+        mbCube.transform.position.set(0,3.15,-8.98);
+        mbCube.transform.scale.set(2,2,1);
+        scene.root.addChild(mbCube);
+
+
+        mbSphere = new MBSX.Node();
+        mbSphere.addComponent(new MBSX.MeshRenderer(cubito, material2));
+        mbSphere.transform.position.set(-0.44,-2,2.35);
+        mbSphere.transform.scale.set(0.5, 0.5, 1);
+        mbCube.addChild(mbSphere);
+
+
+        mbCapsule = new MBSX.Node();
+        mbCapsule.addComponent(new MBSX.MeshRenderer(cubito, material));
+        mbCapsule.transform.position.set(-1.44,-2.5,0.87);
+        mbSphere.addChild(mbCapsule);
+
+
+        mbCylinder = new MBSX.Node();
+        mbCylinder.addComponent(new MBSX.MeshRenderer(cubito, material2));
+        mbCylinder.transform.position.set(1.1,-1.91,-1.08);
+        mbCylinder.transform.scale.set(1, 0.5, 1);
+        mbCube.addChild(mbCylinder);
+
+        var delta = 0.01;
+        var sign = 1;
+
+        var renderLoop = function(dt) {
+            engine.context.state.clearBuffers();
+            scene.camera.update(MB.Timer.deltaTime() / 10.0, function() {});
+            scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+            scene.render();
+
+            if (delta > 2.5 || delta < -2.5) {
+                sign *= -1;
+            }
+            delta += 0.025 * sign;
+            mbCube.transform.position.x = delta;
+        };
+
+        function printWMText(model, name) {
+            var html = document.getElementById(name);
+            var text = "";
+            for(var i = 0; i < 4; i++) {
+                text += "<span>[";
+
+                var m = (model[0 + i]).toFixed(2);
+                if (m >= 0) {
+                    text += " ";
+                }
+                text += (model[0 + i]).toFixed(2) + ",";
+                m = (model[4 + i]).toFixed(2);
+                if (m >= 0) {
+                    text += " ";
+                }
+                text += (model[4 + i]).toFixed(2) + ",";
+                m = (model[8 + i]).toFixed(2);
+                if (m >= 0) {
+                    text += " ";
+                }
+                text += (model[8 + i]).toFixed(2) + ",";
+                m = (model[12 + i]).toFixed(2);
+                if (m >= 0) {
+                    text += " ";
+                }
+                text += (model[12 + i]).toFixed(2)
+                text += "]</span><br/>";
+            }
+            html.innerHTML = text;
+        }
+        renderLoop();
+        console.log("----------- MB ------------");
+        printWMText(mbCube.transform._matrixWorld._value, "cubematrix");
+        printWMText(mbSphere.transform._matrixWorld._value, "spherematrix");
+        printWMText(mbCapsule.transform._matrixWorld._value, "capsulematrix");
+        printWMText(mbCylinder.transform._matrixWorld._value, "cylindermatrix");
+        scene.camera.fov = 45;
+        scene.camera._near = 0.3;
+        scene.camera._far = 1000.0;
+        var proj = scene.camera.GetProjectionMatrix(engine.context.canvas)._value;
+        printWMText(proj, "camera");
+
+        engine.run(renderLoop);
+    };
+</script>

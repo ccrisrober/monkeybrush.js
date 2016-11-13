@@ -48,12 +48,6 @@ namespace MBSS {
             this.updateMatrixWorld(true);
             return res.setFromMatrixPosition(this.matrixWorld);
         };
-        public get worldRotation(): MB.EulerAngle {
-            let res = new MB.EulerAngle();
-            let q = new MB.Quat();
-            this.getWorldQuaternion(q);
-            return res.setFromQuaternion(q, this.rotation.order, false);
-        };
         public get worldScale(): MB.Vect3 {
             let res = new MB.Vect3();
             let p = new MB.Vect3();
@@ -61,6 +55,12 @@ namespace MBSS {
             this.updateMatrixWorld(true);
             this.matrixWorld.decompose(p, q, res);
             return res;
+        };
+        public get worldRotation(): MB.EulerAngle {
+            let res = new MB.EulerAngle();
+            let q = new MB.Quat();
+            this.getWorldQuaternion(q);
+            return res.setFromQuaternion(q, this.rotation.order, false);
         };
         public getWorldQuaternion(target: MB.Quat = new MB.Quat()): MB.Quat {
             let res = new MB.Quat();

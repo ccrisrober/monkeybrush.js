@@ -3248,6 +3248,8 @@ var MB;
             this._updateCamera = false;
             this._firstMouse = false;
             this._fov = 45.0;
+            this._near = 0.1;
+            this._far = 1000.0;
             this.front = new MB.Vect3(0, 0, -1);
             this.position = position;
             this.worldUp = up;
@@ -3368,7 +3370,7 @@ var MB;
         Camera2.prototype.GetProjectionMatrix = function (canvas) {
             var w = canvas.clientWidth;
             var h = canvas.clientHeight;
-            return MB.Mat4.perspective(this._fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
+            return MB.Mat4.perspective(MB.Mathf.Deg2Rad * this._fov, w / h, this._near, this._far);
         };
         Object.defineProperty(Camera2.prototype, "fov", {
             get: function () {
@@ -13138,17 +13140,6 @@ var MBSS;
             configurable: true
         });
         ;
-        Object.defineProperty(Transform.prototype, "worldRotation", {
-            get: function () {
-                var res = new MB.EulerAngle();
-                var q = new MB.Quat();
-                this.getWorldQuaternion(q);
-                return res.setFromQuaternion(q, this.rotation.order, false);
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
         Object.defineProperty(Transform.prototype, "worldScale", {
             get: function () {
                 var res = new MB.Vect3();
@@ -13157,6 +13148,17 @@ var MBSS;
                 this.updateMatrixWorld(true);
                 this.matrixWorld.decompose(p, q, res);
                 return res;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "worldRotation", {
+            get: function () {
+                var res = new MB.EulerAngle();
+                var q = new MB.Quat();
+                this.getWorldQuaternion(q);
+                return res.setFromQuaternion(q, this.rotation.order, false);
             },
             enumerable: true,
             configurable: true
@@ -13609,6 +13611,29 @@ var MBSX;
             configurable: true
         });
         ;
+        Object.defineProperty(Node.prototype, "worldPosition", {
+            get: function () {
+                var res = new MB.Vect3();
+                this._updateMatrixWorld(true);
+                return res.setFromMatrixPosition(this.transform._matrixWorld);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Node.prototype, "worldScale", {
+            get: function () {
+                var res = new MB.Vect3();
+                var p = new MB.Vect3();
+                var q = new MB.Quat();
+                this._updateMatrixWorld(true);
+                this.transform._matrixWorld.decompose(p, q, res);
+                return res;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
         Node.prototype._updateMatrixWorld = function (force) {
             if (force === void 0) { force = false; }
             if (this.transform._autoUpdate === true) {
@@ -13679,7 +13704,7 @@ var MBSX;
         ;
         MeshRenderer.prototype.render = function () {
             this.node._updateMatrixWorld();
-            this._material._uniforms["model"].value = this.node.transform._matrix;
+            this._material._uniforms["model"].value = this.node.transform._matrixWorld;
             this._material.use();
             this._mesh.render();
         };
@@ -13690,7 +13715,7 @@ var MBSX;
     ;
     var Scene = (function () {
         function Scene(name, engine) {
-            this.camera = new MB.Camera2(new MB.Vect3(0.0, 0.0, 5.0));
+            this.camera = new MB.Camera2(new MB.Vect3(0, 0.18, 8.44));
             this._name = name;
             this._engine = engine;
             this._sceneGraph = new Node();
