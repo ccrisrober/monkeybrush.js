@@ -15,7 +15,7 @@ namespace MBS {
         };
         public setEnabled(v: boolean) {
             this._isEnabled = v;
-            for (var i = 0, l = this._children.length; i < l; ++i) {
+            for (let i = 0, l = this._children.length; i < l; ++i) {
                 this._children[i].setEnabled(v);
             }
         };
@@ -131,14 +131,14 @@ namespace MBS {
             }
             // Search in childrens
             for (let i = 0, l = elem._children.length; i < l; ++i) {
-                let children = this._searchTag(name, elem._children[i], nodes);
+                this._searchTag(name, elem._children[i], nodes);
             }
             return nodes;
         };
         // TODO: Search by type, layer ...
         public getComponent<T extends Component>(type: { new (): T }): T {
             let c: Component = null;
-            for (var i = 0, l = this._components.length; i < l; ++i) {
+            for (let i = 0, l = this._components.length; i < l; ++i) {
                 c = this._components[i];
                 if (c instanceof type) {
                     return c;
@@ -148,8 +148,7 @@ namespace MBS {
         };
         public getComponents(): Array<Component> {
             let list: Array<Component> = [];
-            let c: Component = null;
-            for (var i = 0, l = this._components.length; i < l; ++i) {
+            for (let i = 0, l = this._components.length; i < l; ++i) {
                 list.push(this._components[i]);
             }
             return list;
@@ -157,7 +156,7 @@ namespace MBS {
         public getComponentsWithType<T extends Component>(type: { new(): T}): Array<T> {
             let list: Array<T> = [];
             let c: Component = null;
-            for (var i = 0, l = this._components.length; i < l; ++i) {
+            for (let i = 0, l = this._components.length; i < l; ++i) {
                 c = this._components[i];
                 if (c instanceof type) {
                     list.push(c);

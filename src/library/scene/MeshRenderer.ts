@@ -19,8 +19,6 @@ namespace MBS {
         public set mesh(m: MB.Drawable) {
             this._mesh = m;
         };
-        public update(dt: number) {
-        };
         public render() {
             this.node._updateMatrixWorld();
             this._material._uniforms["model"].value = this.node.transform._matrixWorld;

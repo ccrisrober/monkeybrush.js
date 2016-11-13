@@ -58,6 +58,10 @@ namespace MBX {
              *);
              * sprite.scale.set(4, 4, 4);
              */
-        }
+        };
+
+        public destroy() {
+            // TODO
+        };
     };
 };
