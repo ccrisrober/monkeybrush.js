@@ -65,7 +65,7 @@ namespace MB {
          * @param  {number} y:   number    The y-coordinate of the ending point.
          */
         public quadraticCurveTo(cpx: number,  cpy: number, x: number, y: number) {
-            let curve = new curves.QuadraticBezier(
+            let curve = new curves.QuadraticBezier2D(
                 this._currentPoint.clone(),
                 new Vect2(cpx, cpy),
                 new Vect2(x, y)

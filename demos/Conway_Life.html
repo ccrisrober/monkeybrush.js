@@ -114,7 +114,7 @@
                 }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
-                    type: this.context.gl.FLOAT // TODO
+                    type: MB.DataType.Float
                 });
                 this.tex2 = new MB.Texture2D(this.context, {
                     pixels: new Float32Array(pixels),
@@ -123,7 +123,7 @@
                 }, {
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest,
-                    type: this.context.gl.FLOAT // TODO
+                    type: MB.DataType.Float
                 });
                 this.fbo = new MB.Framebuffer(this.context, [this.tex], new MB.Vect2(ww, hh));
                 console.log(this.fbo.isValid());

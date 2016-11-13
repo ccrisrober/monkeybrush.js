@@ -42,13 +42,13 @@
 
         in vec2 outUV;
 
-        uniform sampler2D TexWood;
-        uniform sampler2D TexFragile;
+        uniform sampler2D tex1;
+        uniform sampler2D tex2;
 
         void main() {
-            vec4 TextureFragile = texture(TexFragile, outUV);
-            vec4 TextureWood = texture(TexWood, outUV);
-            fragColor = mix(TextureWood,TextureFragile,TextureFragile.a);
+            vec4 T0 = texture(tex2, outUV);
+            vec4 T1 = texture(tex1, outUV);
+            fragColor = mix(T1, T0, T0.a);
         }
     </script>
     <script type="text/javascript">
@@ -76,8 +76,8 @@
                         projection: { type: MB.UniformType.Matrix4 },
                         view: { type: MB.UniformType.Matrix4 },
                         model: { type: MB.UniformType.Matrix4 },
-                        TexFragile: { type: MB.UniformType.Integer },
-                        TexWood: { type: MB.UniformType.Integer }
+                        tex2: { type: MB.UniformType.Integer },
+                        tex1: { type: MB.UniformType.Integer }
                     }
                 });
 
@@ -94,9 +94,9 @@
                     magFilter: MB.ctes.TextureFilter.Linear
                 });
                 this.tex.bind(0);
-                this.myProg.uniforms.TexWood.value = 0;
+                this.myProg.uniforms.tex1.value = 0;
                 this.tex2.bind(1);
-                this.myProg.uniforms.TexFragile.value = 1;
+                this.myProg.uniforms.tex2.value = 1;
             };
             MyScene.prototype.update = function (dt) {
                 this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
@@ -107,8 +107,6 @@
                 this.clearColorAndDepth();
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 this.myProg.uniforms.model.value = this.model;

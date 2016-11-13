@@ -31,7 +31,7 @@ namespace MB {
             return this._context;
         };
         constructor(title: string = null, context: GLContext) {
-            MB.Log.info("init app");
+            console.info("init app");
             this._context = context;
             this._state = new GlobalState(context);
 
@@ -62,6 +62,13 @@ namespace MB {
         public clearColorAndDepth() {
             this._state.clearBuffers();
         };
+        public get debug(): boolean {
+            return this._debug;
+        }
+        public set debug(d: boolean) {
+            this._debug = d;
+        }
+        protected _debug: boolean = false;
         private __init__() {
             let bgColor = Color4.fromColor3(Color3.Black);
             Input.initialize();
@@ -79,7 +86,7 @@ namespace MB {
         public start() {
             let self: App2 = this;
             MB.ResourceMap.setLoadCompleteCallback(function() {
-                MB.Log.info("ALL RESOURCES LOADED!!!!");
+                console.info("ALL RESOURCES LOADED!!!!");
 
                 self.initialize();
 
@@ -94,16 +101,20 @@ namespace MB {
 
                         dt *= 0.001; // convert to seconds
 
+                        if (self._debug === true) {
+                            self.context.gl.getError();
+                        }
+
                         MB.Timer.update();
 
                         if (self._resume) {
-                            self.update(dt);
+                            self.update(MB.Timer.deltaTime());
                             self.draw();
                         }
 
                     })(0.0);
                 } catch (e) {
-                    MB.Log.error({
+                    console.error({
                         title: "Error:",
                         text: `${e}`,
                         type: "error"
@@ -115,11 +126,11 @@ namespace MB {
         };
 
         public pause() {
-            MB.Log.debug("PAUSE");
+            console.debug("PAUSE");
             this._resume = false;
         };
         public resume() {
-            MB.Log.debug("RESUME");
+            console.debug("RESUME");
             this._resume = true;
         };
         get canvas(): HTMLCanvasElement {

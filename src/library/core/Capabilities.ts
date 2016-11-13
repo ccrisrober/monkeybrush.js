@@ -132,7 +132,7 @@ namespace MB {
         declare var WebGL2RenderingContext: any;
         /**
          * Returns false if gl.LINEAR is not supported as a texture
-         *     filter mode for textures of type gl.FLOAT.
+         *     filter mode for textures of type MB.ctes.DataType.Float.
          * @param {GLContext} context [description]
          * @return {boolean} [description]
          */
@@ -180,20 +180,14 @@ namespace MB {
                 return !!Extensions.get(context, "OES_texture_half_float_linear");
             }
         };
-        /**
-        TODO
-        var logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true
-            && !! extensions.get('EXT_frag_depth');
-
-
-        MAX_COMBINED_TEXTURE_IMAGE_UNITS
-        MAX_VERTEX_TEXTURE_IMAGE_UNITS
-        MAX_TEXTURE_IMAGE_UNITS
-        MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS
-        MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS
-        MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS
-        MAX_CLIENT_WAIT_TIMEOUT_WEBGL
-         */
+        export function canUseLogarithmDepthBuffer(context: GLContext): boolean {
+            const gl = context.gl;
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            } else {
+                return !!Extensions.get(context, "EXT_frag_depth");
+            }
+        }
     };
 };
 

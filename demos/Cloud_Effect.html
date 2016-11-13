@@ -72,10 +72,12 @@
                         iGlobalTime: { type: MB.UniformType.Float }
                     }
                 });
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
-                this.prog.uniforms.iGlobalTime.value = dt;
+                this.dt += MB.Timer.deltaTime() * 0.001;
+                this.prog.uniforms.iGlobalTime.value = this.dt;
             };
             MyScene.prototype.draw = function () {
                 this.prog.renderPP();

@@ -1,0 +1,184 @@
+<div style="display: inline-block;
+    float: left;">
+        <canvas id="canvas" height="500" width="500"></canvas>
+</div>
+<div id="content" style="display: inline;
+    float: left;
+    padding: 10px;
+    padding-top: 0">
+        <h5>Cube</h5>
+        <div id="cubematrix"></div>
+        <h5>Sphere</h5>
+        <div id="spherematrix"></div>
+        <h5>Capsule</h5>
+        <div id="capsulematrix"></div>
+        <h5>Capsule2</h5>
+        <div id="capsule2matrix"></div>
+        <h5>Cylinder</h5>
+        <div id="cylindermatrix"></div>
+    </p>
+</div>
+<script type="text/javascript" src="dist/output.js"></script>
+<script type="text/javascript">
+var engine, scene, mbCube, mbSphere, mbCylinder, mbCapsule, p;
+var MoveComponent, ScaleComponent, PrintMatrixComponent;
+    window.onload = function() {
+        engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
+        scene = new MBS.Scene("demo", engine);
+
+        var cubito = new MB.Cube(engine.context, 1.0);
+
+        var material = new MB.SimpleShadingMaterial(engine.context);
+        material.uniforms.color.value = MB.Color3.Red._color;
+
+        var material2 = new MB.SimpleShadingMaterial(engine.context);
+        material2.uniforms.color.value = MB.Color3.White._color;
+
+        var material3 = new MB.SimpleShadingMaterial(engine.context);
+        material3.uniforms.color.value = MB.Color3.Blue._color;
+
+        var material4 = new MB.SimpleShadingMaterial(engine.context);
+        material4.uniforms.color.value = MB.Color3.Green._color;
+
+        mbCube = new MBS.Node("cube");
+        mbCube.addComponent(new MBS.MeshRenderer(cubito, material));
+        mbCube.transform.position.set(0,3.15,-8.98);
+        mbCube.transform.scale.set(2,2,1);
+        scene.root.addChild(mbCube);
+
+        MoveComponent = (function (_super) {
+            __extends(MoveComponent, _super);
+            function MoveComponent() {
+                _super.call(this);
+                this.delta = 0.01;
+                this.sign = 1;
+            }
+            MoveComponent.prototype.update = function (dt) {
+                if (this.delta > 2.5 || this.delta < -2.5) {
+                    this.sign *= -1;
+                }
+                this.delta += 0.025 * this.sign;
+                this.node.transform.position.x = this.delta;
+            };
+            return MoveComponent;
+        }(MBS.Component));
+
+        ScaleComponent = (function (_super) {
+            __extends(ScaleComponent, _super);
+            function ScaleComponent() {
+                _super.call(this);
+                this.inc = 0.0;
+            }
+            ScaleComponent.prototype.update = function (dt) {
+                this.node.transform.scale.set(
+                    Math.abs(Math.sin(this.inc * 0.01)),
+                    Math.abs(Math.sin(this.inc * 0.01)),
+                    Math.abs(Math.sin(this.inc * 0.01))
+                );
+                this.inc += 1.0;
+
+                //var comp = this.getComponent(PrintMatrixComponent);
+                //console.log(comp.div);
+            };
+            return ScaleComponent;
+        }(MBS.Component));
+
+        PrintMatrixComponent = (function (_super) {
+            __extends(PrintMatrixComponent, _super);
+            function PrintMatrixComponent(divName) {
+                _super.call(this);
+                this.div = document.getElementById(divName);
+            }
+            PrintMatrixComponent.prototype.update = function(dt) {
+                var html = this.div;
+                var text = "";
+                var model = this.node.transform._matrixWorld._value;
+                for(var i = 0; i < 4; i++) {
+                    text += "<span>[";
+
+                    var m = (model[0 + i]).toFixed(2);
+                    if (m >= 0) {
+                        text += " ";
+                    }
+                    text += (model[0 + i]).toFixed(2) + ",";
+                    m = (model[4 + i]).toFixed(2);
+                    if (m >= 0) {
+                        text += " ";
+                    }
+                    text += (model[4 + i]).toFixed(2) + ",";
+                    m = (model[8 + i]).toFixed(2);
+                    if (m >= 0) {
+                        text += " ";
+                    }
+                    text += (model[8 + i]).toFixed(2) + ",";
+                    m = (model[12 + i]).toFixed(2);
+                    if (m >= 0) {
+                        text += " ";
+                    }
+                    text += (model[12 + i]).toFixed(2)
+                    text += "]</span><br/>";
+                }
+                html.innerHTML = text;
+            };
+            return PrintMatrixComponent;
+        }(MBS.Component));
+
+        mbCube.addComponent(new MoveComponent());
+        mbCube.addComponent(new ScaleComponent());
+        mbCube.addComponent(new PrintMatrixComponent("cubematrix"));
+
+        mbCube.tag = "SimpleTag2";
+
+        mbSphere = new MBS.Node("sphere");
+        mbSphere.addComponent(new MBS.MeshRenderer(cubito, material2));
+        mbSphere.addComponent(new PrintMatrixComponent("spherematrix"));
+        mbSphere.transform.position.set(-0.44,-2,2.35);
+        mbSphere.transform.scale.set(0.5, 0.5, 1);
+        mbCube.addChild(mbSphere);
+
+
+        mbCapsule = new MBS.Node("capsule");
+        mbCapsule.addComponent(new MBS.MeshRenderer(cubito, material3));
+        mbCapsule.addComponent(new PrintMatrixComponent("capsulematrix"));
+        mbCapsule.transform.position.set(-1.44,-2.5,0.87);
+        mbSphere.addChild(mbCapsule);
+
+
+        mbCylinder = new MBS.Node("cylinder");
+        mbCylinder.addComponent(new MBS.MeshRenderer(cubito, material4));
+        mbCylinder.addComponent(new PrintMatrixComponent("cylindermatrix"));
+        mbCylinder.transform.position.set(1.1,-1.91,-1.08);
+        mbCylinder.transform.scale.set(1, 0.5, 1);
+        mbCube.addChild(mbCylinder);
+
+
+        mbCapsule2 = new MBS.Node("capsule2");
+        mbCapsule2.addComponent(new MBS.MeshRenderer(cubito, material3));
+        mbCapsule2.addComponent(new PrintMatrixComponent("capsule2matrix"));
+        mbCapsule2.transform.position.set(1.44,-2.5,0.87);
+        mbCapsule2.transform.scale.set(0.5, 1.0, 2.0);
+        mbCylinder.addChild(mbCapsule2);
+
+        var renderLoop = function(dt) {
+            engine.context.state.clearBuffers();
+            scene.camera.update(MB.Timer.deltaTime() / 10.0, function() {});
+            scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+            scene.render();
+
+            //printWMText(mbCube.transform._matrixWorld._value, "cubematrix");
+            //printWMText(mbSphere.transform._matrixWorld._value, "spherematrix");
+            //printWMText(mbCapsule.transform._matrixWorld._value, "capsulematrix");
+            //printWMText(mbCapsule2.transform._matrixWorld._value, "capsule2matrix");
+            //printWMText(mbCylinder.transform._matrixWorld._value, "cylindermatrix");
+        };
+
+        p = scene.root;
+
+        console.log("----------- MB ------------");
+        scene.camera.fov = 45;
+        scene.camera._near = 0.3;
+        scene.camera._far = 1000.0;
+
+        engine.run(renderLoop);
+    };
+</script>

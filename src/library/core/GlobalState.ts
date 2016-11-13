@@ -163,7 +163,7 @@ namespace MB {
             if (!(znear === this._znear && zfar === this._zfar)) {
                 const gl: WebGL2RenderingContext = this._context.gl;
                 if (znear > zfar || znear < 0.0 || zfar > 1.0) {
-                    MB.Log.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
+                    console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
                     return;
                 }
                 gl.depthRange(znear, zfar);
@@ -178,7 +178,7 @@ namespace MB {
             this._context = context;
         };
         protected _currentColorMask: Vector4<boolean>;
-        protected _currentColorClear: Color4 = new Color4(0.0, 0.0, 0.0, 1.0);
+        protected _currentColorClear: Color4 = null; // new Color4(0.0, 0.0, 0.0, 1.0);
 
         public setMask(colorMask: MB.Vector4<boolean>) {
             if (!this._currentColorMask || this._currentColorMask.isEqual(colorMask) === false) {
@@ -187,12 +187,12 @@ namespace MB {
                 this._currentColorMask = colorMask.clone();
             }
         };
+        public setClear(r: number, g: number, b: number, a: number) {
+            this.setClearColor(new MB.Color4(r, g, b, a));
+        }
         /**
-         * Set new clear color value TODO (bad text)
-         * @param {number} r Red channel value
-         * @param {number} g Green channel value
-         * @param {number} b Blue channel value
-         * @param {number = 1.0} a Alpha channel value
+         * Set new clear color value.
+         * @param {Color4} bgColor: New clear color.
          */
         public setClearColor(bgColor: Color4) {
             if (!this._currentColorClear || this._currentColorClear.isEquals(bgColor) === false) {
@@ -203,8 +203,6 @@ namespace MB {
         }
         public reset() {
             this._currentColorMask = null;
-            this.setMask(new MB.Vector4<boolean>(true, true, true, true));
-            this._currentColorClear = null;
             this.setClearColor(new MB.Color4(0.0, 0.0, 0.0, 1.0));
         };
         /**
@@ -217,11 +215,11 @@ namespace MB {
     };
     export class ScissorsState {
         protected _context: GLContext;
+        protected _scissorsEnabled: boolean = false;
+        protected _scissorsBox: MB.Box2D = new MB.Box2D();
         constructor(context: GLContext) {
             this._context = context;
         };
-        protected _scissorsEnabled: boolean = false;
-        protected _scissorsBox: MB.Box2D = new MB.Box2D();
 
         set status(enabled: boolean) {
             if (this._scissorsEnabled !== enabled) {
@@ -280,9 +278,6 @@ namespace MB {
     };
     export class StencilState {
         protected _context: GLContext;
-        constructor(context: GLContext) {
-            this._context = context;
-        };
         protected _stencilEnabled: boolean = false;
         protected _currentStencilMask: number = 0;
         protected _currentStencilFunc: MB.ctes.ComparisonFunc = null;
@@ -292,6 +287,9 @@ namespace MB {
         protected _currentStencilZFail: MB.ctes.StencilOp = null;
         protected _currentStencilZPass: MB.ctes.StencilOp = null;
         protected _currentStencilClear: number = null;
+        constructor(context: GLContext) {
+            this._context = context;
+        };
 
         public setTest(enabled: boolean) {
             if (this._stencilEnabled !== enabled) {
@@ -324,8 +322,9 @@ namespace MB {
          *    reference value and the stored stencil value when the test is done.
          */
         public setFunc(compFun: MB.ctes.ComparisonFunc, ref: number, mask: number) {
-            if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
-                && this._currentStencilFuncMask !== mask) {
+            if (this._currentStencilFunc !== compFun ||
+                this._currentStencilRef !== ref ||
+                this._currentStencilFuncMask !== mask) {
 
                 const gl: WebGL2RenderingContext = this._context.gl;
                 gl.stencilFunc(compFun, ref, mask);
@@ -344,8 +343,9 @@ namespace MB {
          *    and depth test passes.
          */
         public setOp(fail: MB.ctes.StencilOp, zfail: MB.ctes.StencilOp, zpass: MB.ctes.StencilOp) {
-            if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
-                && this._currentStencilZPass !== zpass) {
+            if (this._currentStencilFail !== fail
+                || this._currentStencilZFail !== zfail
+                || this._currentStencilZPass !== zpass) {
 
                 const gl: WebGL2RenderingContext = this._context.gl;
                 gl.stencilOp(fail, zfail, zpass);
@@ -355,16 +355,26 @@ namespace MB {
                 this._currentStencilZPass = zpass;
             }
         }
-        public getMasValue(mask: number) {
+        public getMaskValue(mask: number) {
             return this._currentStencilMask;
         }
-        public setClearValue(s: number) {
+        public setClear(s: number) {
             if (this._currentStencilClear !== s) {
                 const gl: WebGL2RenderingContext = this._context.gl;
                 gl.clearStencil(s);
                 this._currentStencilClear = s;
             }
         };
+        public reset() {
+            this._currentStencilClear = null;
+            this._currentStencilFail = null;
+            this._currentStencilFunc = null;
+            this._currentStencilMask = null;
+            this._currentStencilRef = null;
+            this._currentStencilZFail = null;
+            this._currentStencilZPass = null;
+            this._currentStencilFuncMask = null;
+        }
         /**
          * Control the front and/or back writing of individual bits in the stencil planes
          * @param {MB.ctes.FaceSide} face Specifies whether the front and/or back stencil writemask is updated
@@ -376,7 +386,7 @@ namespace MB {
             gl.stencilMaskSeparate(face, mask);
         }
         /**
-         * Get front write mask
+         * Get front write mask.
          * @return {number}
          */
         public getFrontWriteMask(): number {
@@ -384,7 +394,7 @@ namespace MB {
             return gl.getParameter(gl.STENCIL_WRITEMASK);
         }
         /**
-         * Get back write mask
+         * Get back write mask.
          * @return {number}
          */
         public getBackWriteMask(): number {
@@ -392,7 +402,7 @@ namespace MB {
             return gl.getParameter(gl.STENCIL_BACK_WRITEMASK);
         }
         /**
-         * Get stencil bits
+         * Get stencil bits.
          * @return {number}
          */
         public getBits(): number {
@@ -400,15 +410,15 @@ namespace MB {
             return gl.getParameter(gl.STENCIL_BITS);
         }
         /**
-         * Clear stencil values
+         * Clear stencil values.
          */
         public clearBuffer() {
             const gl: WebGL2RenderingContext = this._context.gl;
             gl.clear(gl.STENCIL_BUFFER_BIT);
         }
         /**
-         * Checks if stencil test is activated
-         * @return {boolean} True if activated
+         * Checks if stencil test is activated.
+         * @return {boolean} True if activated.
          */
         public isEnabled(): boolean {
             const gl: WebGL2RenderingContext = this._context.gl;
@@ -417,11 +427,13 @@ namespace MB {
     };
     export class BlendingState {
         protected _context: GLContext;
+        protected _modeRGB: MB.ctes.BlendingEq = MB.ctes.BlendingEq.Add;
+        protected _modeAlpha: MB.ctes.BlendingEq = MB.ctes.BlendingEq.Add;
+        protected _color: MB.Vect4 = null;
         constructor(context: GLContext) {
             this._context = context;
         };
         protected _blendingEnabled: boolean = false;
-        protected _blendingMode: ctes.BlendingEq;
         /**
          * Change blending status (eables or disabled)
          * @param {boolean} enabled Enable/disable blending
@@ -439,17 +451,19 @@ namespace MB {
         };
         /**
          * Specify the equation used for both the RGB blend equation and
-         *     the Alpha blend equation
+         *     the Alpha blend equation.
          * @param {MB.ctes.BlendingEq} mode Specifies how source and destination
-         *     colors are combined
+         *     colors are combined.
          */
         public setEquation(mode: MB.ctes.BlendingEq) {
-            if (mode !== this._blendingMode) {
+            if (this._modeRGB !== mode && this._modeAlpha !== mode) {
                 const gl: WebGL2RenderingContext = this._context.gl;
                 gl.blendEquation(mode);
-                this._blendingMode = mode;
+                this._modeRGB = mode;
+                this._modeAlpha = mode;
             }
         };
+
         /**
          * Set the RGB blend equation and the alpha blend equation separately
          * @param {MB.ctes.BlendingEq} modeRGB Specifies the RGB blend equation,
@@ -459,20 +473,22 @@ namespace MB {
          *      how the alpha component of the source and destination colors
          *      are combined.
          */
-        public equationSeparate(modeRGB: MB.ctes.BlendingEq, modeAlpha: MB.ctes.BlendingEq) {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            gl.blendEquationSeparate(modeRGB, modeAlpha); // TODO: Cache
+        public setEquationSeparate(modeRGB: MB.ctes.BlendingEq, modeAlpha: MB.ctes.BlendingEq) {
+            if (this._modeRGB !== modeRGB && this._modeAlpha !== modeAlpha) {
+                const gl: WebGL2RenderingContext = this._context.gl;
+                gl.blendEquationSeparate(modeRGB, modeAlpha);
+                this._modeRGB = modeRGB;
+                this._modeAlpha = modeAlpha;
+            }
         };
         public getquationRGB(): MB.ctes.BlendingEq {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            return gl.getParameter(gl.BLEND_EQUATION_RGB); // TODO: Cache
+            return this._modeRGB;
         };
         public getEquationAlpha(): MB.ctes.BlendingEq {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            return gl.getParameter(gl.BLEND_EQUATION_ALPHA); // TODO: Cache
+            return this._modeAlpha;
         };
         /**
-         * Set the blend color
+         * Set the source and destination blending factors.
          * @param {number = 0.0} red
          * @param {number = 0.0} green
          * @param {number = 0.0} blue
@@ -482,8 +498,15 @@ namespace MB {
             green: number = 0.0,
             blue: number = 0.0,
             alpha: number = 0.0) {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            gl.blendColor(red, green, blue, alpha); // TODO: Cache
+            let blendColor = new MB.Vect4(red, green, blue, alpha);
+            if (!this._color || this._color.isEquals(blendColor) === false) {
+                const gl: WebGL2RenderingContext = this._context.gl;
+                gl.blendColor(red, green, blue, alpha);
+                this._color = blendColor;
+            }
+        };
+        public getColor(): MB.Vect4 {
+            return this._color;
         };
         /**
          * Specify pixel arithmetic.
@@ -522,6 +545,48 @@ namespace MB {
         public isEnabled(): boolean {
             return this._blendingEnabled === true;
         };
+
+        protected _currentBlending = MB.ctes.BlendingMode2.None;
+        public set(blend: MB.ctes.BlendingMode2) {
+            if (blend !== MB.ctes.BlendingMode2.None) {
+                this.setStatus(true);
+            } else {
+                this.setStatus(false);
+                this._currentBlending = blend;
+            }
+            if (blend !== this._currentBlending) {
+                if (blend === MB.ctes.BlendingMode2.Additive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(
+                        MB.ctes.BlendingMode.SrcAlpha,
+                        MB.ctes.BlendingMode.One
+                    );
+                } else if (blend === MB.ctes.BlendingMode2.Substractive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(
+                        MB.ctes.BlendingMode.Zero,
+                        MB.ctes.BlendingMode.OneMinusSrcColor
+                    );
+                } else if (blend === MB.ctes.BlendingMode2.Multiply) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(
+                        MB.ctes.BlendingMode.Zero,
+                        MB.ctes.BlendingMode.SrcColor
+                    );
+                } else {
+                    this.setEquationSeparate(
+                        MB.ctes.BlendingEq.Add,
+                        MB.ctes.BlendingEq.Add
+                    );
+                    this.setFuncSeparate(
+                        MB.ctes.BlendingMode.SrcAlpha,
+                        MB.ctes.BlendingMode.OneMinusSrcAlpha,
+                        MB.ctes.BlendingMode.One,
+                        MB.ctes.BlendingMode.OneMinusSrcAlpha
+                    );
+                }
+            }
+        };
     };
     /**
      * GlobalState class
@@ -535,12 +600,25 @@ namespace MB {
         constructor(context: GLContext) {
             this._context = context;
             this.depth = new DepthState(context);
-            this.depth.reset();
             this.culling = new CullingState(context);
             this.color = new ColorState(context);
-            this.color.reset();
             this.stencil = new StencilState(context);
             this.blending = new BlendingState(context);
+
+            this.color.setClear(0.0, 0.0, 0.0, 1.0);
+            this.depth.setClear(1.0);
+            this.stencil.setClear(0.0);
+
+            this.depth.setStatus(true);
+            this.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
+
+            this.culling.setFlipSided(MB.ctes.FaceDir.InvClockwise);
+            this.culling.setMode(MB.ctes.FaceSide.Back);
+            this.culling.setStatus(true);
+
+            this.blending.set(MB.ctes.BlendingMode2.Normal);
+
+            this._capabilites = {};
         };
         public depth: DepthState;
         public culling: CullingState;
@@ -557,7 +635,10 @@ namespace MB {
             }
         };
 
-        _viewport: Vector4<number> = new Vector4<number>(0.0, 0.0, 0.0, 0.0);
+        protected _viewport: Vector4<number> = new Vector4<number>(0.0, 0.0, 0.0, 0.0);
+        protected _poligonOffsetEnable: boolean;
+        protected _currentPolygonOffsetFactor: number;
+        protected _currentPolygonOffsetUnits: number;
 
         public setViewport(viewport: Vector4<number>) {
             if (this._viewport.isEqual(viewport) === false) {
@@ -566,11 +647,6 @@ namespace MB {
                 this._viewport = viewport.clone();
             }
         };
-
-        _poligonOffsetEnable: boolean;
-        _currentPolygonOffsetFactor: number;
-        _currentPolygonOffsetUnits: number;
-
         /**
          * Specifies the scale factors and units to calculate depth values.
          * The offset is added before the depth test is performed and
@@ -604,6 +680,23 @@ namespace MB {
             const gl = this._context.gl;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BITS);
         };
+
+        public enable(cap: number) {
+            if (this._capabilites[cap] !== true) {
+                const gl = this._context.gl;
+                gl.enable(cap);
+                this._capabilites[cap] = true;
+            }
+        };
+        public disable(cap: number) {
+            if (this._capabilites[cap] !== false) {
+                const gl = this._context.gl;
+                gl.disable(cap);
+                this._capabilites[cap] = false;
+            }
+        };
+
+        protected _capabilites: { [key: number]: boolean};
 
         // Polygon offset
     };

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello Triangle</title>
+    <!--<link rel="stylesheet" type="text/css" href="./libs/style.css" />-->
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        //layout(location = 0) in vec3 position;
+        layout(location = 0) in vec2 position;
+
+        void main() {
+            //gl_Position = vec4(position, 1.0);
+            gl_Position = vec4(position, 0.0, 1.0);
+            gl_PointSize = 5.0;
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+
+        void main() {
+            fragColor = vec4(vec3(1.0), 1.0);
+        }
+    </script>
+    <script type="text/javascript">
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2());
+            };
+            MyScene.prototype.initialize = function () {
+                this.gl = this.context.gl;
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "triagleVertexColors",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                    }
+                });
+
+                this.vertices = [];
+                this.vertexCount = 5000;
+
+                for (var i = 0; i < this.vertexCount; ++i) {
+                    this.vertices.push(Math.random() * 2 - 1);
+                    this.vertices.push(Math.random() * 2 - 1);
+                }
+
+                this.bufferAttr = new MB.VertexBuffer(this.context);
+                // Unnecesary this.bufferAttr.bind();
+                this.bufferAttr.data(new Float32Array(this.vertices));
+                this.bufferAttr.vertexAttribPointer(0, 2, MB.ctes.DataType.Float);
+                this.bufferAttr.unbind();
+
+                this.mouse = { x: 0, y: 0 };
+
+                this.canvas.addEventListener("mousemove", function(event) {
+                    this.mouse.x = map(event.clientX, 0, this.canvas.width, -1, 1);
+                    this.mouse.y = map(event.clientY, 0, this.canvas.height, 1, -1);
+                }.bind(this));
+
+                function map(value, minSrc, maxSrc, minDst, maxDst) {
+                  return (value - minSrc) / (maxSrc - minSrc) * (maxDst - minDst) + minDst;
+                }
+            };
+            MyScene.prototype.update = function (dt) {
+                //this.__resize__();
+
+                for (var i = 0; i < this.vertexCount * 2; i += 2) {
+                    var dx = this.vertices[i] - this.mouse.x,
+                        dy = this.vertices[i + 1] - this.mouse.y,
+                        dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 0.1) {
+                        this.vertices[i] += this.mouse.x + dx / dist * 0.2;
+                        this.vertices[i + 1] += this.mouse.y + dy / dist * 0.2;
+                    } else {
+                        this.vertices[i] += Math.random() * 0.01 - 0.005;
+                        this.vertices[i + 1] += Math.random() * 0.01 - 0.005;
+                    }
+                }
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.myProg.use();
+                this.bufferAttr.bind();
+                this.bufferAttr.bufferSubData(0, new Float32Array(this.vertices));
+                this.bufferAttr.render(MB.ctes.RenderMode.Points, this.vertexCount);
+            };
+            return MyScene;
+        }(MB.App));
+        var myScene;
+        window.onload = function () {
+            myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

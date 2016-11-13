@@ -116,10 +116,12 @@
                         iResolution: { type: MB.UniformType.Vector2 }
                     }
                 });
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
-                this.prog.uniforms.iGlobalTime.value = dt;
+                this.dt += dt * 0.01;
+                this.prog.uniforms.iGlobalTime.value = this.dt;
                 this.prog.uniforms.iResolution.value = new MB.Vect2(this.canvas.width, this.canvas.height);
             };
             MyScene.prototype.draw = function () {

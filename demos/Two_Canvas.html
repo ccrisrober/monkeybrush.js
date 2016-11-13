@@ -49,11 +49,13 @@
                 this.color = [0.0, 0.0, 0.0];
             };
             MyScene.prototype.initialize = function () {
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
-                this.color[0] = Math.abs(Math.cos(dt));
-                this.color[1] = Math.abs(Math.sin(dt));
-                this.color[2] = Math.abs(Math.cos(dt));
+                this.dt += dt * 0.0001;
+                this.color[0] = Math.abs(Math.cos(this.dt));
+                this.color[1] = Math.abs(Math.sin(this.dt));
+                this.color[2] = Math.abs(Math.cos(this.dt));
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();

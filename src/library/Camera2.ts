@@ -108,34 +108,35 @@ namespace MB {
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(38)) {
-                this.processMouseMovement(0.0, 2.5);
+                this.processMouseMovement(0.0, 1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(40)) {
-                this.processMouseMovement(0.0, -2.5);
+                this.processMouseMovement(0.0, -1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(37)) {
                 // this.processMouseMovement(2.5, 0.0);
-                this.processMouseMovement(-2.5, 0.0);
+                this.processMouseMovement(-1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(39)) {
                 // this.processMouseMovement(-2.5, 0.0);
-                this.processMouseMovement(2.5, 0.0);
+                this.processMouseMovement(1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
+
             if (this._updateCamera && callback) {
                 callback();
             }
         }
-
+        protected _firstMouse: boolean = false;
         public processKeyboard(direction: number, speed: number = 1.0) {
             if (this.timeElapsed > 25) {
                 return;
             }
             const velocity = this.movSpeed * this.timeElapsed * speed;
-            // MB.Log.debug(direction);
+            // console.debug(direction);
             if (direction === 0) {
                 this.position = MB.Vect3.scaleAndAdd(this.position, this.front, velocity);
             } else if (direction === 1) {
@@ -189,7 +190,7 @@ namespace MB {
         public GetProjectionMatrix(canvas: HTMLCanvasElement): MB.Mat4 {
             const w: number = canvas.clientWidth;
             const h: number = canvas.clientHeight;
-            return MB.Mat4.perspective(this._fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
+            return MB.Mat4.perspective(MB.Mathf.Deg2Rad * this._fov, w / h, this._near, this._far);
         }
 
         public _fov: number = 45.0;
@@ -199,6 +200,8 @@ namespace MB {
         public set fov(f: number) {
             this._fov = f;
         };
+        public _near: number = 0.1;
+        public _far: number = 1000.0;
 
         public updateCameraVectors() {
             const front: MB.Vect3 = new MB.Vect3(

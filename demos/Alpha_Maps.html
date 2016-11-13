@@ -113,7 +113,7 @@
                     wrapS: MB.ctes.WrapMode.Clamp2Edge,
                     wrapT: MB.ctes.WrapMode.Clamp2Edge
                 });
-                this.cubito = new MB.Capsule(this.context, 15.0);
+                this.cubito = new MB.Capsule(this.context, 3.5);
 
                 this.myProg = new MB.ShaderMaterial(this.context, {
                     name: "alphaShader",
@@ -140,10 +140,7 @@
                 this.tex2d.bind(0);
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
-                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
-                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis);
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.uniforms.noiseTex.value = 0;
                 this.myProg.uniforms.Threshold.value = this.text.Threshold;

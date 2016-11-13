@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="text/javascript">
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(null, {
+                    antialias: true
+                }));
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
+                this.angle = 0;
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.initialize = function () {
+                this.cubito = new MB.Cube(this.context, 1.0);
+
+                this.myProg = new MB.SimpleShadingMaterial(this.context);
+                this.myProg.uniforms["color"].value = new MB.Vect3(1.0, 0.0, 1.0);
+                this.step = 0.0;
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.update(dt * 0.5, this.cameraUpdate.bind(this));
+                this.angle += MB.Timer.deltaTime() * 0.001;
+                this.__resize__();
+                this.step += 0.02 * dt;
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.model =
+                    this.identityMatrix.clone()
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis);
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.render(this.cubito);
+
+                this.model =
+                    this.identityMatrix.clone()
+                        .translate(new MB.Vect3(
+                            3 * Math.cos(this.step),
+                            0.75 * Math.PI / 2.0 + (6.0 * Math.abs(Math.sin(this.step))),
+                            0.0
+                        ));
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.render(this.cubito);
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                this.myProg.uniforms.viewPos.value = this.camera.GetPos();
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
+            };
+            return MyScene;
+        }(MB.App));
+        var myScene;
+        window.onload = function () {
+            myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

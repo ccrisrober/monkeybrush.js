@@ -17,43 +17,13 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-
-        layout(location = 0) in vec3 position;
-        layout(location = 1) in vec3 normal;
-        layout(location = 2) in vec2 uv;
-
-        out vec2 outUV;
-
-        uniform mat4 projection;
-        uniform mat4 view;
-        uniform mat4 model;
-
-        void main() {
-            gl_Position = projection * view * model * vec4(position, 1.0);
-            outUV = uv;
-        }
-    </script>
-    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
-        precision highp float;
-
-        in vec2 outUV;
-
-        uniform sampler2D tex;
-
-        out vec4 fragColor;
-
-        void main() {
-            fragColor = texture(tex, outUV);
-        }
-    </script>
-
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2());
+                _super.call(this, "App", new MB.GLContextW2(), {
+                    antialias: true
+                });
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -67,29 +37,7 @@
 
                 this.tex = new MBX.VideoTexture(this.context, "video");
 
-                this.myProg = new MB.ShaderMaterial(this.context, {
-                    name: "diffuseShader",
-                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
-                    fragmentShader: [
-                        "#version 300 es",
-                        "precision highp float;",
-                        "in vec2 outUV;",
-                        "uniform sampler2D tex;",
-                        "out vec4 fragColor;",
-                        "void main() {",
-                        "    fragColor = texture(tex, outUV);",
-                        "}"
-                    ].join("\n"),
-                    uniforms: {
-                        projection: { type: MB.UniformType.Matrix4 },
-                        view: { type: MB.UniformType.Matrix4 },
-                        model: { type: MB.UniformType.Matrix4 },
-                        tex: {
-                            type: MB.UniformType.Integer,
-                            value: 0
-                        }
-                    }
-                });
+                this.myProg = new MB.SimpleTextureMaterial(this.context);
 
                 this.cameraUpdate();
             };
@@ -109,7 +57,6 @@
                         this.model =
                             this.identityMatrix.clone()
                                 .translate(new MB.Vect3(i, j, 0.0))
-                                .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                                 .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                                 .scale(new MB.Vect3(0.25, 0.25, 0.25));
                         this.myProg.uniforms.model.value = this.model;

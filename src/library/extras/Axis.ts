@@ -125,7 +125,7 @@ namespace MBX {
         public render() {
             const gl: WebGL2RenderingContext = this._context.gl;
             this._vao.bind();
-            gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
     };

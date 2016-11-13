@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Model Points</title>
+   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 position;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+        uniform mat4 model;
+
+        uniform float size;
+        uniform float scale;
+        void main() {
+            vec3 outPos = vec3(view * model * vec4(position, 1.0));
+            gl_Position = projection * view * model * vec4(position, 1.0);
+            gl_PointSize = size * (scale / length(outPos));
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        uniform sampler2D tex;
+
+        //const vec3 color = vec3(0.3, 0.5, 0.2);
+
+        void main() {
+            //fragColor = vec4(color, 1.0);
+
+            fragColor = texture( tex, vec2( gl_PointCoord.x, 1.0 - gl_PointCoord.y ) );
+            if (fragColor.a < 0.6) discard;
+        }
+    </script>
+
+    <script type="text/javascript">
+        function generateSprite() {
+            var canvas = document.createElement('canvas');
+            canvas.width = 16;
+            canvas.height = 16;
+            var context = canvas.getContext('2d');
+            var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(0.2, 'rgba(0,255,0,0.5)');
+            gradient.addColorStop(0.4, 'rgba(0,25,0,0.25)');
+            gradient.addColorStop(1, 'rgba(1,1,1,0)');
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            return canvas;
+        }
+
+        var MyConfig = function () {
+            return {
+                size: 28,
+                scale: 28
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "Model Points", new MB.GLContextW2(), MyConfig());
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 1.0, 15.0));
+                this.angle = 0;
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../descarga (1).png", "tex");
+            };
+            MyScene.prototype.initialize = function () {
+                this.cubito = new MB.Mesh(this.context, "../assets/objects/teddy.json");
+                console.log(this.cubito);
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "diffuseShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        model: { type: MB.UniformType.Matrix4 },
+                        size: { type: MB.UniformType.Float },
+                        scale: { type: MB.UniformType.Float },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        }
+                    }
+                });
+
+                this.tex2d = new MBX.CanvasTexture(this.context, generateSprite(), {
+                    flipY: 1
+                });
+                this.context.state.depth.setStatus(false);
+                this.context.state.blending.setStatus(true);
+                this.context.state.blending.setFunc(MB.ctes.BlendingMode.SrcAlpha, MB.ctes.BlendingMode.One);
+                this.tex2d.bind(0);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.update(dt * 0.1, this.cameraUpdate.bind(this));
+                this.angle += MB.Timer.deltaTime() * 0.001;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.model =
+                    this.identityMatrix.clone()
+                        .rotate(this.angle * 0.5, MB.Vect3.yAxis)
+                        .scale(new MB.Vect3(0.25, 0.25, 0.25));
+                this.myProg.uniforms.model.value = this.model;
+                this.myProg.uniforms.size.value = this.text.size;
+                this.myProg.uniforms.scale.value = this.text.scale;
+                this.myProg.use();
+                this.cubito.render3();
+                //this.context.state.blending.setStatus(false);
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "size", 0.1, 100.0);
+                gui.add(this.text, "scale", 0.1, 100.0);
+            };
+            return MyScene;
+        }(MB.App));
+        var myScene;
+        window.onload = function () {
+            myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

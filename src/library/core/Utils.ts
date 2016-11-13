@@ -184,11 +184,44 @@ namespace MB {
 
             if (shaderSource === null) {
                 alert("WARNING: " + script + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
             return shaderSource;
         };
+
+        /**
+         * Recursively flatten array
+         * @param  {Array<any>}    arr [description]
+         * @return {Array<number>}     [description]
+         */
+        function _recurse(arr: Array<any>): Array<number> {
+            // Initialize result and process array
+            let result = [];
+            for (let i = 0, ii = arr.length; i !== ii; ++i) {
+                let x = arr[i];
+                if (Array.isArray(x)) {
+                    // Continue recursively processing array
+                    result = result.concat(_recurse(x));
+                }
+                else if (typeof(x) === "number") {
+                    // Push the number onto the array
+                    result.push(x);
+                }
+            }
+            // Return the flattened array component
+            return result;
+        }
+
+        /**
+         * Take input array and return flattened single-dim array
+         * @param  {Array<any>}    arr [description]
+         * @return {Array<number>}     [description]
+         */
+        export function flattenArray(arr: Array<any>): Array<number> {
+            // Kick off array processing and return the result
+            return [].concat(_recurse(arr));
+        }
     };
 };

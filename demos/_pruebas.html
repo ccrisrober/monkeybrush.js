@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Engine MBS</title>
+    <style>
+        body {
+            color: white;
+
+            font-family: Verdana;
+            font-size: 13px;
+            text-align: center;
+            font-weight: bold;
+
+            background-color: #050505;
+            margin: 0px;
+            overflow: hidden;
+        }
+        #info {
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            padding: 5px;
+        }
+        a {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="container">
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </div>
+    <div id="info"><a href="./" target="_blank">MonkeyBrush</a> - muahaha</div>
+
+    <script type="text/javascript" src="../bower_components/stats.js/build/stats.min.js"></script>
+    <script type="text/javascript" src="../bower_components/dat.gui/dat.gui.min.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="text/javascript">
+        var numPoints = 100;
+        var start = new MB.Vect3(-20.0, 0.0, 0.0);
+        var middle = new MB.Vect3(0.0, 30.0, 0.0);
+        var end = new MB.Vect3(20.0, 0.0, 0.0);
+        var curveQuad = new MB.curves.QuadraticBezier3D(start, middle, end);
+        var points = [];
+        for (var i = 0; i < numPoints; ++i) {
+            points.push(curveQuad.evaluate(i / numPoints));
+        }
+        console.log(points);
+
+        numPoints = 11;
+        var init = new MB.Vect2(0.0, 0.0);
+        var finish = new MB.Vect2(10.0, 0.0);
+        var curveLine2D = new MB.curves.Line2D(init, finish);
+        points = [];
+        for (var i = 0; i < numPoints; ++i) {
+            points.push(curveLine2D.evaluate(i / numPoints));
+        }
+        console.log(points);
+
+
+        numPoints = 5;
+        init = new MB.Vect3(0.0, 0.0, 5.0);
+        finish = new MB.Vect3(10.0, 0.0, 10.0);
+        curveLine3D = new MB.curves.Line3D(init, finish);
+        points = [];
+        for (var i = 0; i < numPoints; ++i) {
+            points.push(curveLine3D.evaluate(i / numPoints));
+        }
+        console.log(points);
+
+
+        numPoints = 300;
+        var ellipse = new MB.curves.Ellipse(
+            new MB.Vect2(110, 100),
+            new MB.Vect2(120, 150),
+            0, 2.0 * Math.PI, false);
+        points = [];
+        for (var i = 0; i < numPoints; ++i) {
+            points.push(ellipse.evaluate(i / numPoints));
+            //console.log(points[i]._value);
+        }
+        console.log(points);
+
+        numPoints = 20;
+        var spline = new MB.Spline2D("catmullRom", [
+            new MB.Vect2(0, 0),
+            new MB.Vect2(0, 200),
+            new MB.Vect2(150, 150),
+            new MB.Vect2(150, 50),
+            new MB.Vect2(250, 100),
+            new MB.Vect2(250, 300),
+            new MB.Vect2(150, 150),
+            new MB.Vect2(0, 0)
+        ]);
+        points = [];
+        for (var i = 0; i < numPoints; ++i) {
+            points.push(spline.evaluate(i / numPoints));
+            console.log(points[i]._value);
+        }
+        console.log(points);
+    </script>
+</body>
+</html>

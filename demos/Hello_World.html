@@ -16,52 +16,13 @@
 
     <script type="text/javascript" src="../dist/output.js"></script>
 
-    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
-        precision highp float;
-
-        layout(location = 0) in vec3 position;
-        layout(location = 1) in vec3 normal;
-
-        out vec3 outPosition;
-        out vec3 outNormal;
-        out vec2 outUV;
-
-        uniform mat4 projection;
-        uniform mat4 view;
-        uniform mat4 model;
-
-        void main() {
-            outPosition = vec3(model * vec4(position, 1.0));
-
-            gl_Position = projection * view * vec4(outPosition, 1.0);
-            mat3 normalMatrix = mat3(inverse(transpose(model)));
-            outNormal = normalize(normalMatrix * normal);
-        }
-    </script>
-    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
-        precision highp float;
-
-        in vec3 outPosition;
-        in vec3 outNormal;
-
-        out vec4 fragColor;
-
-        uniform vec3 viewPos;
-        uniform vec3 color;
-
-        void main() {
-            vec3 N = normalize(outNormal);
-            vec3 L = normalize(viewPos - outPosition);
-            float dif = clamp(dot(N, L), 0.0, 1.0);
-            fragColor = vec4(color * (dif + 0.15), 1.0);
-        }
-    </script>
-
     <script type="text/javascript">
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "Hello World", new MB.GLContextW2());
+                _super.call(this, "App", new MB.GLContextW2(null, {
+                    antialias: true
+                }));
                 this.camera = new MB.Camera2(new MB.Vect3(0.08, 0.16, 20.25));
                 this.angle = 0;
                 this.identityMatrix = MB.Mat4.identity.clone();
@@ -69,22 +30,8 @@
             };
             MyScene.prototype.initialize = function () {
                 this.cubito = new MB.Cube(this.context, 15.0);
-
-                this.myProg = new MB.ShaderMaterial(this.context, {
-                    name: "diffuseShader",
-                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
-                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
-                    uniforms: {
-                        projection: { type: MB.UniformType.Matrix4 },
-                        view: { type: MB.UniformType.Matrix4 },
-                        model: { type: MB.UniformType.Matrix4 },
-                        viewPos: { type: MB.UniformType.Vector3 },
-                        color: {
-                            type: MB.UniformType.Vector3,
-                            value: new MB.Vect3(1.0, 0.0, 1.0)
-                        }
-                    }
-                });
+                this.myProg = new MB.SimpleShadingMaterial(this.context);
+                this.myProg.uniforms.color.value = new MB.Vect3(1.0, 0.0, 1.0);
             };
             MyScene.prototype.update = function (dt) {
                 this.camera.update(dt * 0.5, this.cameraUpdate.bind(this));
@@ -95,8 +42,6 @@
                 this.clearColorAndDepth();
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 this.myProg.uniforms.model.value = this.model;

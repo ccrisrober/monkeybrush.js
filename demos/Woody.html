@@ -69,7 +69,6 @@
             noisevec.y = snoise(outPosition * NoiseScale * base_freq*2.0) * 4.0 * Noisiness;
             noisevec.z = snoise(outPosition * NoiseScale * base_freq*4.0) * 2.0 * Noisiness;
             noisevec.w = snoise(outPosition * NoiseScale * base_freq*8.0) * 1.0 * Noisiness;
-            // noisevec = (noisevec / 8.0 + 1.0) / 2.0;
             noisevec = noisevec / 8.0;
 
             vec3 location = outPosition + noisevec.xyz;
@@ -139,8 +138,6 @@
                 this.clearColorAndDepth();
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis)
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 this.myProg.uniforms.model.value = this.model;

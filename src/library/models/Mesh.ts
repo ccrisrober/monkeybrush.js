@@ -73,7 +73,7 @@ namespace MB {
             let self = this;
             request.onload = function () {
                 if (request.status < 200 || request.status > 299) {
-                    MB.Log.error(`Error: HTTP Status ${request.status} on resource ${url}`);
+                    console.error(`Error: HTTP Status ${request.status} on resource ${url}`);
                     return {};
                 } else {
                     let modelObj = JSON.parse(request.responseText);

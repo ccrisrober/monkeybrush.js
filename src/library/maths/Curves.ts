@@ -28,11 +28,9 @@ namespace MB {
         export abstract class Curve2D {
             public abstract evaluate(t: number): Vect2;
         };
-        /*export class CircleCurve extends Curve2D {
-            constructor() {
-                // TODO
-            }
-        };*/
+        export abstract class Curve3D {
+            public abstract evaluate(t: number): Vect3;
+        };
         /**
          * Ellipse class.
          * @class Ellipse
@@ -114,7 +112,7 @@ namespace MB {
          * @class LineCurve3D
          * Create an line from first 3D point to second.
          */
-        export class Line3D {
+        export class Line3D extends Curve3D {
             protected _p1: Vect3;
             protected _p2: Vect3;
             /**
@@ -123,6 +121,7 @@ namespace MB {
              * @param {Vect3} y Maximum point.
              */
             constructor(x: Vect3, y: Vect3) {
+                super();
                 this._p1 = x;
                 this._p2 = y;
             };
@@ -131,7 +130,7 @@ namespace MB {
              * @param  {number} t Interpolation value [0, 1].
              * @return {Vect3}    A new Vect3 interpolated position.
              */
-            public interpolate(t: number): Vect3 {
+            public evaluate(t: number): Vect3 {
                 return Vect3.add(Vect3.sub(this._p2, this._p1).multByScalar(t), (this._p1));
             };
         };
@@ -177,15 +176,44 @@ namespace MB {
                         this._list[0].y, this._list[1].y, this._list[2].y, this._list[3].y, t)
                );
             };
-            public getPoints(subdivisions: number) {
-                // TODO
+        };
+        export class CubicBezier3D extends Curve3D {
+            public _list: Array<Vect3>;
+            public _curves = [];
+            /**
+             * CubicBezier constructor
+             * @param {Vect3} cpi  Starting point
+             * @param {Vect3} cpp1 First control point
+             * @param {Vect3} cpp2 Second control point
+             * @param {Vect3} cpe  Ending point
+             */
+            constructor(cpi: Vect3, cpp1: Vect3, cpp2: Vect3, cpe: Vect3) {
+                super();
+                this._list = [cpi, cpp1, cpp2, cpe];
+            };
+            protected bezierCurveInterpolation(p0: number, p1: number,
+                p2: number, p3: number, t: number) {
+                return (p0 * Math.pow(1 - t, 3)) +
+                        (3 * p1 * Math.pow(1 - t, 2) * t) +
+                        (3 * p2 * t * t * (1 - t)) +
+                        (p3 * t * t * t);
+            };
+            /**
+             * Return interpolate position based on cubic bezier definition.
+             * @param  {number} t Interpolation value [0, 1].
+             * @return {Vect3}    A new Vect3 interpolated position.
+             */
+            public evaluate(t: number): Vect3 {
+                return new Vect3(
+                    this.bezierCurveInterpolation(
+                        this._list[0].x, this._list[1].x, this._list[2].x, this._list[3].x, t),
+                    this.bezierCurveInterpolation(
+                        this._list[0].y, this._list[1].y, this._list[2].y, this._list[3].y, t),
+                    this.bezierCurveInterpolation(
+                        this._list[0].z, this._list[1].z, this._list[2].z, this._list[3].z, t)
+               );
             };
         };
-        /*export class CatmullRomCurve {
-            constructor(points: Array<Vect3>) {
-                // TODO
-            };
-        };*/
         /**
          * QuadraticBezier class
          * @class QuadraticBezier
@@ -194,7 +222,7 @@ namespace MB {
          * It requires two points. The first point is a
          * control point and the second one is the end point.
          */
-        export class QuadraticBezier extends Curve2D {
+        export class QuadraticBezier2D extends Curve2D {
             public _list: Array<Vect2>;
             public _curves = [];
             /**
@@ -227,6 +255,42 @@ namespace MB {
                         this._list[0].y, this._list[1].y, this._list[2].y, t)
                );
             };
-        }
+        };
+        export class QuadraticBezier3D extends Curve3D {
+            public _list: Array<Vect3>;
+            public _curves = [];
+            /**
+             * QuadraticBezier constructor.
+             * @param {Vect3} cpi  Starting point.
+             * @param {Vect3} cpp  Middle control point.
+             * @param {Vect3} cpe  Ending point.
+             */
+            constructor(cpi: Vect3, cpp: Vect3, cpe: Vect3) {
+                super();
+                this._list = [cpi, cpp, cpe];
+            };
+            protected bezierCurveInterpolation(p0: number, p1: number,
+                p2: number, t: number): number {
+
+                return  (p0 * Math.pow((1 - t), 2)) +
+                        (2 * p1 * (1 - t) * t) +
+                        (p2 * Math.pow(t, 2));
+            };
+            /**
+             * Return interpolate position based on cubic bezier definition.
+             * @param  {number} t Interpolation value [0, 1].
+             * @return {Vect3}    A new Vect3 interpolated position.
+             */
+            public evaluate(t: number): Vect3 {
+                return new Vect3(
+                    this.bezierCurveInterpolation(
+                        this._list[0].x, this._list[1].x, this._list[2].x, t),
+                    this.bezierCurveInterpolation(
+                        this._list[0].y, this._list[1].y, this._list[2].y, t),
+                    this.bezierCurveInterpolation(
+                        this._list[0].z, this._list[1].z, this._list[2].z, t)
+               );
+            };
+        };
     };
 };

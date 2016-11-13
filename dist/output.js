@@ -312,6 +312,13 @@ var MB;
         }());
         curves.Curve2D = Curve2D;
         ;
+        var Curve3D = (function () {
+            function Curve3D() {
+            }
+            return Curve3D;
+        }());
+        curves.Curve3D = Curve3D;
+        ;
         var Ellipse = (function (_super) {
             __extends(Ellipse, _super);
             function Ellipse(center, radius, startAngle, endAngle, isClockwise) {
@@ -356,18 +363,20 @@ var MB;
         }(Curve2D));
         curves.Line2D = Line2D;
         ;
-        var Line3D = (function () {
+        var Line3D = (function (_super) {
+            __extends(Line3D, _super);
             function Line3D(x, y) {
+                _super.call(this);
                 this._p1 = x;
                 this._p2 = y;
             }
             ;
-            Line3D.prototype.interpolate = function (t) {
+            Line3D.prototype.evaluate = function (t) {
                 return MB.Vect3.add(MB.Vect3.sub(this._p2, this._p1).multByScalar(t), (this._p1));
             };
             ;
             return Line3D;
-        }());
+        }(Curve3D));
         curves.Line3D = Line3D;
         ;
         var CubicBezier = (function (_super) {
@@ -389,34 +398,77 @@ var MB;
                 return new MB.Vect2(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, this._list[3].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, this._list[3].y, t));
             };
             ;
-            CubicBezier.prototype.getPoints = function (subdivisions) {
-            };
-            ;
             return CubicBezier;
         }(Curve2D));
         curves.CubicBezier = CubicBezier;
         ;
-        var QuadraticBezier = (function (_super) {
-            __extends(QuadraticBezier, _super);
-            function QuadraticBezier(cpi, cpp, cpe) {
+        var CubicBezier3D = (function (_super) {
+            __extends(CubicBezier3D, _super);
+            function CubicBezier3D(cpi, cpp1, cpp2, cpe) {
+                _super.call(this);
+                this._curves = [];
+                this._list = [cpi, cpp1, cpp2, cpe];
+            }
+            ;
+            CubicBezier3D.prototype.bezierCurveInterpolation = function (p0, p1, p2, p3, t) {
+                return (p0 * Math.pow(1 - t, 3)) +
+                    (3 * p1 * Math.pow(1 - t, 2) * t) +
+                    (3 * p2 * t * t * (1 - t)) +
+                    (p3 * t * t * t);
+            };
+            ;
+            CubicBezier3D.prototype.evaluate = function (t) {
+                return new MB.Vect3(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, this._list[3].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, this._list[3].y, t), this.bezierCurveInterpolation(this._list[0].z, this._list[1].z, this._list[2].z, this._list[3].z, t));
+            };
+            ;
+            return CubicBezier3D;
+        }(Curve3D));
+        curves.CubicBezier3D = CubicBezier3D;
+        ;
+        var QuadraticBezier2D = (function (_super) {
+            __extends(QuadraticBezier2D, _super);
+            function QuadraticBezier2D(cpi, cpp, cpe) {
                 _super.call(this);
                 this._curves = [];
                 this._list = [cpi, cpp, cpe];
             }
             ;
-            QuadraticBezier.prototype.bezierCurveInterpolation = function (p0, p1, p2, t) {
+            QuadraticBezier2D.prototype.bezierCurveInterpolation = function (p0, p1, p2, t) {
                 return (p0 * Math.pow((1 - t), 2)) +
                     (2 * p1 * (1 - t) * t) +
                     (p2 * Math.pow(t, 2));
             };
             ;
-            QuadraticBezier.prototype.evaluate = function (t) {
+            QuadraticBezier2D.prototype.evaluate = function (t) {
                 return new MB.Vect2(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, t));
             };
             ;
-            return QuadraticBezier;
+            return QuadraticBezier2D;
         }(Curve2D));
-        curves.QuadraticBezier = QuadraticBezier;
+        curves.QuadraticBezier2D = QuadraticBezier2D;
+        ;
+        var QuadraticBezier3D = (function (_super) {
+            __extends(QuadraticBezier3D, _super);
+            function QuadraticBezier3D(cpi, cpp, cpe) {
+                _super.call(this);
+                this._curves = [];
+                this._list = [cpi, cpp, cpe];
+            }
+            ;
+            QuadraticBezier3D.prototype.bezierCurveInterpolation = function (p0, p1, p2, t) {
+                return (p0 * Math.pow((1 - t), 2)) +
+                    (2 * p1 * (1 - t) * t) +
+                    (p2 * Math.pow(t, 2));
+            };
+            ;
+            QuadraticBezier3D.prototype.evaluate = function (t) {
+                return new MB.Vect3(this.bezierCurveInterpolation(this._list[0].x, this._list[1].x, this._list[2].x, t), this.bezierCurveInterpolation(this._list[0].y, this._list[1].y, this._list[2].y, t), this.bezierCurveInterpolation(this._list[0].z, this._list[1].z, this._list[2].z, t));
+            };
+            ;
+            return QuadraticBezier3D;
+        }(Curve3D));
+        curves.QuadraticBezier3D = QuadraticBezier3D;
+        ;
     })(curves = MB.curves || (MB.curves = {}));
     ;
 })(MB || (MB = {}));
@@ -449,6 +501,7 @@ var MB;
             if (order === void 0) { order = RotSeq.xyz; }
             this.order = order;
             this._value = new Float32Array([x, y, z]);
+            this._order = order;
         }
         Object.defineProperty(EulerAngle.prototype, "x", {
             get: function () { return this._value[0]; },
@@ -506,10 +559,104 @@ var MB;
             for (var i = 0; i < 3; ++i) {
                 this._value[i] = 0.0;
             }
+            this._order = MB.RotSeq.xyz;
             if (this.onChange) {
                 this.onChange();
             }
         };
+        EulerAngle.createFromVec3 = function (v, order) {
+            if (order === void 0) { order = MB.RotSeq.xyz; }
+            return new MB.EulerAngle(v.x, v.y, v.x, order);
+        };
+        EulerAngle.prototype.setFromRotationMatrix = function (mat, order, update) {
+            var m11 = mat._value[0], m12 = mat._value[4], m13 = mat._value[8];
+            var m21 = mat._value[1], m22 = mat._value[5], m23 = mat._value[9];
+            var m31 = mat._value[2], m32 = mat._value[6], m33 = mat._value[10];
+            order = order || this._order;
+            if (order === MB.RotSeq.xyz) {
+                this.y = Math.asin(MB.Mathf.clamp(m13, -1, 1));
+                if (Math.abs(m13) < 0.99999) {
+                    this.x = Math.atan2(-m23, m33);
+                    this.z = Math.atan2(-m12, m11);
+                }
+                else {
+                    this.x = Math.atan2(m32, m22);
+                    this.z = 0;
+                }
+            }
+            else if (order === MB.RotSeq.yxz) {
+                this.x = Math.asin(-MB.Mathf.clamp(m23, -1, 1));
+                if (Math.abs(m23) < 0.99999) {
+                    this.y = Math.atan2(m13, m33);
+                    this.z = Math.atan2(m21, m22);
+                }
+                else {
+                    this.y = Math.atan2(-m31, m11);
+                    this.z = 0;
+                }
+            }
+            else if (order === MB.RotSeq.zxy) {
+                this.x = Math.asin(MB.Mathf.clamp(m32, -1, 1));
+                if (Math.abs(m32) < 0.99999) {
+                    this.y = Math.atan2(-m31, m33);
+                    this.z = Math.atan2(-m12, m22);
+                }
+                else {
+                    this.y = 0;
+                    this.z = Math.atan2(m21, m11);
+                }
+            }
+            else if (order === MB.RotSeq.zyx) {
+                this.y = Math.asin(-MB.Mathf.clamp(m31, -1, 1));
+                if (Math.abs(m31) < 0.99999) {
+                    this.x = Math.atan2(m32, m33);
+                    this.z = Math.atan2(m21, m11);
+                }
+                else {
+                    this.x = 0;
+                    this.z = Math.atan2(-m12, m22);
+                }
+            }
+            else if (order === MB.RotSeq.yzx) {
+                this.z = Math.asin(MB.Mathf.clamp(m21, -1, 1));
+                if (Math.abs(m21) < 0.99999) {
+                    this.x = Math.atan2(-m23, m22);
+                    this.y = Math.atan2(-m31, m11);
+                }
+                else {
+                    this.x = 0;
+                    this.y = Math.atan2(m13, m33);
+                }
+            }
+            else if (order === MB.RotSeq.xzy) {
+                this.z = Math.asin(-MB.Mathf.clamp(m12, -1, 1));
+                if (Math.abs(m12) < 0.99999) {
+                    this.x = Math.atan2(m32, m22);
+                    this.y = Math.atan2(m13, m11);
+                }
+                else {
+                    this.x = Math.atan2(-m23, m33);
+                    this.y = 0;
+                }
+            }
+            else {
+            }
+            this._order = order;
+            if (update !== false)
+                this.onChange();
+            return this;
+        };
+        ;
+        EulerAngle.prototype.setFromQuaternion = function (q, order, update) {
+            if (update === void 0) { update = false; }
+            var matrix = new MB.Mat4();
+            if (!order) {
+                order = this.order;
+            }
+            matrix.makeRotationFromQuat(q);
+            return this.setFromRotationMatrix(matrix, order, update);
+        };
+        ;
         return EulerAngle;
     }());
     MB.EulerAngle = EulerAngle;
@@ -944,7 +1091,7 @@ var MB;
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0,
-                    0, 0, 0, 0]);
+                    0, 0, 0, 1]);
             }
         }
         ;
@@ -1246,6 +1393,36 @@ var MB;
             return "matrix3d(" + str + ")";
         };
         ;
+        Mat4.prototype.decompose = function (position, quaternion, scale) {
+            var v = new MB.Vect3();
+            var m = new MB.Mat4();
+            var sx = v.set(this._value[0], this._value[1], this._value[2]).length();
+            var sy = v.set(this._value[4], this._value[5], this._value[6]).length();
+            var sz = v.set(this._value[8], this._value[9], this._value[10]).length();
+            if (this.determinant() < 0) {
+                sx = -sx;
+            }
+            position.x = this._value[12];
+            position.y = this._value[13];
+            position.z = this._value[14];
+            m._value.set(this._value);
+            var invSX = 1.0 / sx;
+            var invSY = 1.0 / sy;
+            var invSZ = 1.0 / sz;
+            m._value[0] *= invSX;
+            m._value[1] *= invSX;
+            m._value[2] *= invSX;
+            m._value[4] *= invSY;
+            m._value[5] *= invSY;
+            m._value[6] *= invSY;
+            m._value[8] *= invSZ;
+            m._value[9] *= invSZ;
+            m._value[10] *= invSZ;
+            quaternion.setFromRotationMatrix(m);
+            scale.x = sx;
+            scale.y = sy;
+            scale.z = sz;
+        };
         Mat4.prototype.compose = function (position, quaternion, scale) {
             var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
             var x2 = x + x, y2 = y + y, z2 = z + z;
@@ -1286,6 +1463,86 @@ var MB;
             this._value[12] = position.x;
             this._value[13] = position.y;
             this._value[14] = position.z;
+        };
+        ;
+        Mat4.prototype.copy = function (m) {
+            this._value.set(m._value);
+            return this;
+        };
+        ;
+        Mat4.prototype.set = function (e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44) {
+            this._value[0] = e11;
+            this._value[4] = e12;
+            this._value[8] = e13;
+            this._value[12] = e14;
+            this._value[1] = e21;
+            this._value[5] = e22;
+            this._value[9] = e23;
+            this._value[13] = e24;
+            this._value[2] = e31;
+            this._value[6] = e32;
+            this._value[10] = e33;
+            this._value[14] = e34;
+            this._value[3] = e41;
+            this._value[7] = e42;
+            this._value[11] = e43;
+            this._value[15] = e44;
+            return this;
+        };
+        ;
+        Mat4.prototype.mult2 = function (a, b) {
+            var ae = a._value;
+            var be = b._value;
+            var te = this._value;
+            var a11 = ae[0], a12 = ae[4], a13 = ae[8], a14 = ae[12];
+            var a21 = ae[1], a22 = ae[5], a23 = ae[9], a24 = ae[13];
+            var a31 = ae[2], a32 = ae[6], a33 = ae[10], a34 = ae[14];
+            var a41 = ae[3], a42 = ae[7], a43 = ae[11], a44 = ae[15];
+            var b11 = be[0], b12 = be[4], b13 = be[8], b14 = be[12];
+            var b21 = be[1], b22 = be[5], b23 = be[9], b24 = be[13];
+            var b31 = be[2], b32 = be[6], b33 = be[10], b34 = be[14];
+            var b41 = be[3], b42 = be[7], b43 = be[11], b44 = be[15];
+            te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+            te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+            te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+            te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+            te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+            te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+            te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+            te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+            te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+            te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+            te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+            te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+            te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+            te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+            te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+            te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+            return this;
+        };
+        Mat4.prototype.makeRotationFromQuat = function (qt) {
+            var x = qt.x, y = qt.y, z = qt.z, w = qt.w;
+            var x2 = x + x, y2 = y + y, z2 = z + z;
+            var xx = x * x2, xy = x * y2, xz = x * z2;
+            var yy = y * y2, yz = y * z2, zz = z * z2;
+            var wx = w * x2, wy = w * y2, wz = w * z2;
+            this._value[0] = 1 - (yy + zz);
+            this._value[4] = xy - wz;
+            this._value[8] = xz + wy;
+            this._value[1] = xy + wz;
+            this._value[5] = 1 - (xx + zz);
+            this._value[9] = yz - wx;
+            this._value[2] = xz - wy;
+            this._value[6] = yz + wx;
+            this._value[10] = 1 - (xx + yy);
+            this._value[3] = 0;
+            this._value[7] = 0;
+            this._value[11] = 0;
+            this._value[12] = 0;
+            this._value[13] = 0;
+            this._value[14] = 0;
+            this._value[15] = 1;
+            return this;
         };
         Mat4.identity = Mat4.create([
             1, 0, 0, 0,
@@ -1410,6 +1667,12 @@ var MB;
         }
         Mathf.angleBetween2DPoints = angleBetween2DPoints;
         ;
+        function euclideanModulo(m, n) {
+            return m >= 0 ?
+                m % n :
+                (n - Math.abs(m % n)) % n;
+        }
+        Mathf.euclideanModulo = euclideanModulo;
         function angleBetween3DPoints(p0, p1) {
             var delta = MB.Vect3.sub(p1, p0);
             return Math.atan2(delta.z, delta.x);
@@ -1504,7 +1767,7 @@ var MB;
         };
         ;
         Path.prototype.quadraticCurveTo = function (cpx, cpy, x, y) {
-            var curve = new MB.curves.QuadraticBezier(this._currentPoint.clone(), new MB.Vect2(cpx, cpy), new MB.Vect2(x, y));
+            var curve = new MB.curves.QuadraticBezier2D(this._currentPoint.clone(), new MB.Vect2(cpx, cpy), new MB.Vect2(x, y));
             this._curves.push(curve);
             this._currentPoint.setXY(x, y);
         };
@@ -1701,9 +1964,16 @@ var MB;
             this._value[0] = -this._value[0];
             this._value[1] = -this._value[1];
             this._value[2] = -this._value[2];
+            if (this.onChange) {
+                this.onChange();
+            }
             return this;
         };
         ;
+        Quat.prototype.exactEquals = function (other) {
+            return this.x === other.x && this.y === other.y
+                && this.z === other.z && this.w === other.w;
+        };
         Quat.fromAxis = function (axis, angle, dest) {
             if (dest === void 0) { dest = null; }
             if (!dest)
@@ -1715,6 +1985,39 @@ var MB;
             dest._value[2] = axis.z * sin;
             dest._value[3] = Math.cos(angle);
             return dest;
+        };
+        Quat.prototype.setFromRotationMatrix = function (mat) {
+            var m00 = mat._value[0], m01 = mat._value[4], m02 = mat._value[8], m10 = mat._value[1], m11 = mat._value[5], m12 = mat._value[9], m20 = mat._value[2], m21 = mat._value[6], m22 = mat._value[10], tr = m00 + m11 + m22, s;
+            if (tr > 0) {
+                s = 0.5 / Math.sqrt(tr + 1.0);
+                this.w = 0.25 / s;
+                this.x = (m21 - m12) * s;
+                this.y = (m02 - m20) * s;
+                this.z = (m10 - m01) * s;
+            }
+            else if (m00 > m11 && m00 > m22) {
+                s = 2.0 * Math.sqrt(1.0 + m00 - m11 - m22);
+                this.w = (m21 - m12) / s;
+                this.x = 0.25 * s;
+                this.y = (m01 + m10) / s;
+                this.z = (m02 + m20) / s;
+            }
+            else if (m11 > m22) {
+                s = 2.0 * Math.sqrt(1.0 + m11 - m00 - m22);
+                this.w = (m02 - m20) / s;
+                this.x = (m01 + m10) / s;
+                this.y = 0.25 * s;
+                this.z = (m12 + m21) / s;
+            }
+            else {
+                s = 2.0 * Math.sqrt(1.0 + m22 - m00 - m11);
+                this.w = (m10 - m01) / s;
+                this.x = (m02 + m20) / s;
+                this.y = (m12 + m21) / s;
+                this.z = 0.25 * s;
+            }
+            this.onChange();
+            return this;
         };
         Quat.prototype.setFromEuler = function (euler) {
             var s1 = Math.sin(euler.x / 2.0);
@@ -1760,6 +2063,15 @@ var MB;
                 this._value[2] = c1 * c2 * s3 + s1 * s2 * c3;
                 this._value[3] = c1 * c2 * c3 + s1 * s2 * s3;
             }
+            return this;
+        };
+        Quat.prototype.setFromAxisAngle = function (axis, angle) {
+            var halfAngle = angle / 2.0, s = Math.sin(halfAngle);
+            this._value[0] = axis.x * s;
+            this._value[1] = axis.y * s;
+            this._value[2] = axis.z * s;
+            this._value[3] = Math.cos(halfAngle);
+            this.onChange();
             return this;
         };
         return Quat;
@@ -2427,6 +2739,7 @@ var MB;
             this.x = vx;
             this.y = vy;
             this.z = vz;
+            return this;
         };
         ;
         Vect3.prototype.applyQuat = function (q, dest) {
@@ -2441,6 +2754,45 @@ var MB;
             dest.y = iy * q.w + iw * -q.y + iz * -q.x - ix * -q.z;
             dest.z = iz * q.w + iw * -q.z + ix * -q.y - iy * -q.x;
             return dest;
+        };
+        ;
+        Vect3.prototype.applyMatrix3 = function (mat) {
+            var x = this.x, y = this.y, z = this.z;
+            this.x = mat._value[0] * x + mat._value[4] * y + mat._value[8] * z;
+            this.y = mat._value[1] * x + mat._value[5] * y + mat._value[9] * z;
+            this.z = mat._value[2] * x + mat._value[6] * y + mat._value[10] * z;
+            return this;
+        };
+        ;
+        Vect3.prototype.applyMat4 = function (mat) {
+            var x = this.x, y = this.y, z = this.z;
+            this.x = mat._value[0] * x + mat._value[4] * y + mat._value[8] * z + mat._value[12];
+            this.y = mat._value[1] * x + mat._value[5] * y + mat._value[9] * z + mat._value[13];
+            this.z = mat._value[2] * x + mat._value[6] * y + mat._value[10] * z + mat._value[14];
+            return this;
+        };
+        ;
+        Vect3.prototype.copy = function (v) {
+            this.x = v.x;
+            this.y = v.y;
+            this.z = v.z;
+            return this;
+        };
+        ;
+        Vect3.prototype.setFromMatrixPosition = function (mat) {
+            return this.setFromMatColumn(mat, 3);
+        };
+        ;
+        Vect3.prototype.setFromMatColumn = function (mat, idx) {
+            return this.fromArray(mat._value, idx * 4);
+        };
+        ;
+        Vect3.prototype.fromArray = function (array, offset) {
+            if (offset === void 0) { offset = 0; }
+            this.x = array[offset];
+            this.y = array[offset + 1];
+            this.z = array[offset + 2];
+            return this;
         };
         Vect3.xAxis = new Vect3(1.0, 0.0, 0.0);
         Vect3.yAxis = new Vect3(0.0, 1.0, 0.0);
@@ -2894,7 +3246,10 @@ var MB;
             this.movSpeed = 0.05;
             this.mouseSensivity = 0.25;
             this._updateCamera = false;
+            this._firstMouse = false;
             this._fov = 45.0;
+            this._near = 0.1;
+            this._far = 1000.0;
             this.front = new MB.Vect3(0, 0, -1);
             this.position = position;
             this.worldUp = up;
@@ -2943,19 +3298,19 @@ var MB;
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(38)) {
-                this.processMouseMovement(0.0, 2.5);
+                this.processMouseMovement(0.0, 1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(40)) {
-                this.processMouseMovement(0.0, -2.5);
+                this.processMouseMovement(0.0, -1.0 * speed);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(37)) {
-                this.processMouseMovement(-2.5, 0.0);
+                this.processMouseMovement(-1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
             if (MB.Input.isKeyPressed(39)) {
-                this.processMouseMovement(2.5, 0.0);
+                this.processMouseMovement(1.0 * speed, 0.0);
                 this._updateCamera = true;
             }
             if (this._updateCamera && callback) {
@@ -3015,7 +3370,7 @@ var MB;
         Camera2.prototype.GetProjectionMatrix = function (canvas) {
             var w = canvas.clientWidth;
             var h = canvas.clientHeight;
-            return MB.Mat4.perspective(this._fov, (w * 1.0) / (h * 1.0), 0.1, 1000.0);
+            return MB.Mat4.perspective(MB.Mathf.Deg2Rad * this._fov, w / h, this._near, this._far);
         };
         Object.defineProperty(Camera2.prototype, "fov", {
             get: function () {
@@ -3071,7 +3426,7 @@ var MB;
             if (title === void 0) { title = null; }
             if (text === void 0) { text = {}; }
             this._resume = true;
-            MB.Log.info("init app");
+            console.info("init app");
             this._context = context;
             this._state = new MB.GlobalState(context);
             this._webglVersion = context.version;
@@ -3145,7 +3500,7 @@ var MB;
         App.prototype.start = function () {
             var self = this;
             MB.ResourceMap.setLoadCompleteCallback(function () {
-                MB.Log.info("ALL RESOURCES LOADED!!!!");
+                console.info("ALL RESOURCES LOADED!!!!");
                 self.initialize();
                 var spinner = document.getElementById("spinner");
                 if (spinner)
@@ -3158,7 +3513,7 @@ var MB;
                         dt *= 0.001;
                         MB.Timer.update();
                         if (self._resume) {
-                            self.update(dt);
+                            self.update(MB.Timer.deltaTime() * 0.1);
                             self.draw();
                         }
                         self.stats.end();
@@ -3177,12 +3532,12 @@ var MB;
         };
         ;
         App.prototype.pause = function () {
-            MB.Log.debug("PAUSE");
+            console.debug("PAUSE");
             this._resume = false;
         };
         ;
         App.prototype.resume = function () {
-            MB.Log.debug("RESUME");
+            console.debug("RESUME");
             this._resume = true;
         };
         ;
@@ -3229,8 +3584,9 @@ var MB;
     var App2 = (function () {
         function App2(title, context) {
             if (title === void 0) { title = null; }
+            this._debug = false;
             this._resume = true;
-            MB.Log.info("init app");
+            console.info("init app");
             this._context = context;
             this._state = new MB.GlobalState(context);
             this._webglVersion = context.version;
@@ -3264,6 +3620,16 @@ var MB;
             this._state.clearBuffers();
         };
         ;
+        Object.defineProperty(App2.prototype, "debug", {
+            get: function () {
+                return this._debug;
+            },
+            set: function (d) {
+                this._debug = d;
+            },
+            enumerable: true,
+            configurable: true
+        });
         App2.prototype.__init__ = function () {
             var bgColor = MB.Color4.fromColor3(MB.Color3.Black);
             MB.Input.initialize();
@@ -3277,7 +3643,7 @@ var MB;
         App2.prototype.start = function () {
             var self = this;
             MB.ResourceMap.setLoadCompleteCallback(function () {
-                MB.Log.info("ALL RESOURCES LOADED!!!!");
+                console.info("ALL RESOURCES LOADED!!!!");
                 self.initialize();
                 var spinner = document.getElementById("spinner");
                 if (spinner)
@@ -3287,15 +3653,18 @@ var MB;
                         requestAnimationFrame(__render__);
                         MB.Input.update();
                         dt *= 0.001;
+                        if (self._debug === true) {
+                            self.context.gl.getError();
+                        }
                         MB.Timer.update();
                         if (self._resume) {
-                            self.update(dt);
+                            self.update(MB.Timer.deltaTime());
                             self.draw();
                         }
                     })(0.0);
                 }
                 catch (e) {
-                    MB.Log.error({
+                    console.error({
                         title: "Error:",
                         text: "" + e,
                         type: "error"
@@ -3307,12 +3676,12 @@ var MB;
         };
         ;
         App2.prototype.pause = function () {
-            MB.Log.debug("PAUSE");
+            console.debug("PAUSE");
             this._resume = false;
         };
         ;
         App2.prototype.resume = function () {
-            MB.Log.debug("RESUME");
+            console.debug("RESUME");
             this._resume = true;
         };
         ;
@@ -3360,17 +3729,16 @@ var MB;
         Drawable.prototype.addElementArray = function (data, type) {
             if (type === void 0) { type = MB.ctes.UsageType.StaticDraw; }
             var vb = new MB.VertexBuffer(this._context, MB.ctes.BufferType.ElementArray);
-            vb.bufferData(new Uint16Array(data), type);
+            vb.data(new Uint16Array(data), type);
             this._handle.push(vb);
             return vb;
         };
         ;
         Drawable.prototype.addBufferArray = function (attribLocation, data, numElems, type) {
             if (type === void 0) { type = MB.ctes.UsageType.StaticDraw; }
-            var gl = this._context.gl;
             var vb = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
-            vb.bufferData(data, type);
-            vb.vertexAttribPointer(attribLocation, numElems, gl.FLOAT);
+            vb.data(data, type);
+            vb.vertexAttribPointer(attribLocation, numElems, MB.ctes.DataType.Float);
             this._handle.push(vb);
             return vb;
         };
@@ -3378,34 +3746,34 @@ var MB;
         Drawable.prototype.render = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
         Drawable.prototype.renderInstanced = function (nInstances) {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen, gl.UNSIGNED_SHORT, 0, nInstances);
+            gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0, nInstances);
             this._vao.unbind();
         };
         Drawable.prototype.renderFan = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.TriangleFan, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.TriangleFan, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
         Drawable.prototype.render2 = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
         Drawable.prototype.render3 = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(MB.ctes.RenderMode.Points, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Points, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
@@ -3413,12 +3781,12 @@ var MB;
             var gl = this._context.gl;
             this._vao.bind();
             if (gl instanceof WebGL2RenderingContext) {
-                gl.drawElementsInstanced(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
+                gl.drawElementsInstanced(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0, numInstances);
             }
             else {
                 var ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
-                    ext.drawElementsInstancedANGLE(gl.TRIANGLES, this._indicesLen, gl.UNSIGNED_SHORT, 0, numInstances);
+                    ext.drawElementsInstancedANGLE(MB.ctes.RenderMode.Triangles, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0, numInstances);
                 }
                 else {
                     throw new Error("Instance array undefined");
@@ -3431,12 +3799,12 @@ var MB;
             var gl = this._context.gl;
             this._vao.bind();
             if (gl instanceof WebGL2RenderingContext) {
-                gl.drawArraysInstanced(gl.TRIANGLES, 0, this._indicesLen, numInstances);
+                gl.drawArraysInstanced(MB.ctes.RenderMode.Triangles, 0, this._indicesLen, numInstances);
             }
             else {
                 var ext = MB.Extensions.get(this._context, "ANGLE_instanced_arrays");
                 if (ext) {
-                    ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this._indicesLen, numInstances);
+                    ext.drawArraysInstancedANGLE(MB.ctes.RenderMode.Triangles, 0, this._indicesLen, numInstances);
                 }
                 else {
                     throw new Error("Instance array undefined");
@@ -3445,6 +3813,21 @@ var MB;
             this._vao.unbind();
         };
         ;
+        Drawable.prototype.computeNormals = function () {
+            var vertices = this._geometry.getAttr(MB.VBType.VBVertices);
+            var indices = this._geometry.indices;
+            var normals = new MB.BufferAttribute(new Float32Array(vertices.count * 3), 3);
+            for (var i = 0, len = indices.length; i < len; i += 3) {
+                var i1 = indices[i], i2 = indices[i + 1], i3 = indices[i + 2];
+                var v1 = vertices.getXYZ(i1), v2 = vertices.getXYZ(i2), v3 = vertices.getXYZ(i3);
+                var dir1 = new MB.Vect3(v3[0] - v2[0], v3[1] - v2[1], v3[1] - v2[2]), dir2 = new MB.Vect3(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]);
+                var norm = MB.Vect3.cross(dir1, dir2).normalize();
+                normals.setXYZ(i1, norm.x, norm.y, norm.z);
+                normals.setXYZ(i2, norm.x, norm.y, norm.z);
+                normals.setXYZ(i3, norm.x, norm.y, norm.z);
+            }
+            return normals;
+        };
         return Drawable;
     }());
     MB.Drawable = Drawable;
@@ -3759,7 +4142,7 @@ var MB;
             PixelFormat[PixelFormat["UNSIGNED_INT_24_8"] = 34042] = "UNSIGNED_INT_24_8";
             PixelFormat[PixelFormat["HALF_FLOAT"] = 5131] = "HALF_FLOAT";
             PixelFormat[PixelFormat["RG"] = 33319] = "RG";
-            PixelFormat[PixelFormat["RG_INTEGER"] = 33320] = "RG_INTEGER";
+            PixelFormat[PixelFormat["RgInt"] = 33320] = "RgInt";
             PixelFormat[PixelFormat["INT_2_10_10_10_REV"] = 36255] = "INT_2_10_10_10_REV";
             PixelFormat[PixelFormat["RED"] = 6403] = "RED";
             PixelFormat[PixelFormat["RGB8"] = 32849] = "RGB8";
@@ -3983,15 +4366,15 @@ var MB;
         })(ctes.WrapMode || (ctes.WrapMode = {}));
         var WrapMode = ctes.WrapMode;
         ;
-        (function (BlendingMode) {
-            BlendingMode[BlendingMode["None"] = 0] = "None";
-            BlendingMode[BlendingMode["Normal"] = 1] = "Normal";
-            BlendingMode[BlendingMode["Additive"] = 2] = "Additive";
-            BlendingMode[BlendingMode["Substractive"] = 3] = "Substractive";
-            BlendingMode[BlendingMode["Multiply"] = 4] = "Multiply";
-            BlendingMode[BlendingMode["Custom"] = 5] = "Custom";
-        })(ctes.BlendingMode || (ctes.BlendingMode = {}));
-        var BlendingMode = ctes.BlendingMode;
+        (function (BlendingMode2) {
+            BlendingMode2[BlendingMode2["None"] = 0] = "None";
+            BlendingMode2[BlendingMode2["Normal"] = 1] = "Normal";
+            BlendingMode2[BlendingMode2["Additive"] = 2] = "Additive";
+            BlendingMode2[BlendingMode2["Substractive"] = 3] = "Substractive";
+            BlendingMode2[BlendingMode2["Multiply"] = 4] = "Multiply";
+            BlendingMode2[BlendingMode2["Custom"] = 5] = "Custom";
+        })(ctes.BlendingMode2 || (ctes.BlendingMode2 = {}));
+        var BlendingMode2 = ctes.BlendingMode2;
         ;
         (function (CompressedTex) {
             CompressedTex[CompressedTex["R11EAC"] = 37488] = "R11EAC";
@@ -4370,6 +4753,16 @@ var MB;
         }
         Capabilities.canUseHalfFloatingPointLinearFiltering = canUseHalfFloatingPointLinearFiltering;
         ;
+        function canUseLogarithmDepthBuffer(context) {
+            var gl = context.gl;
+            if (gl instanceof WebGL2RenderingContext) {
+                return true;
+            }
+            else {
+                return !!MB.Extensions.get(context, "EXT_frag_depth");
+            }
+        }
+        Capabilities.canUseLogarithmDepthBuffer = canUseLogarithmDepthBuffer;
     })(Capabilities = MB.Capabilities || (MB.Capabilities = {}));
     ;
 })(MB || (MB = {}));
@@ -4512,6 +4905,9 @@ var MB;
             return new Color3(h, s, l);
         };
         ;
+        Color3.prototype.toHSV = function () {
+            return null;
+        };
         Color3.fromColor4 = function (color) {
             return new Color3(color.r, color.g, color.b);
         };
@@ -4523,6 +4919,7 @@ var MB;
         Color3.Brown = Color3.createFromHex(0xA52A2A);
         Color3.Cyan = Color3.createFromHex(0x00FFFF);
         Color3.Gold = Color3.createFromHex(0xFFD700);
+        Color3.Green = Color3.createFromHex(0x008000);
         Color3.Indigo = Color3.createFromHex(0x4B0082);
         Color3.Lavender = Color3.createFromHex(0xE6E6FA);
         Color3.Orange = Color3.createFromHex(0xFFA500);
@@ -4760,7 +5157,7 @@ var MB;
             var gl = context.gl;
             var ext = gl.getExtension(name) || gl.getExtension("WEBKIT_" + name) || gl.getExtension("MOZ_" + name);
             if (ext === null) {
-                MB.Log.warn(name + " extension not supported.");
+                console.warn(name + " extension not supported.");
                 return;
             }
             this._extensions[name] = ext;
@@ -4966,57 +5363,7 @@ var MB;
         }
         GeometryFunctions.triangleIncenter = triangleIncenter;
         ;
-        function getConvexHull(points) {
-            points.sort(function (a, b) {
-                return a[0] === b[0] ? a[1] - b[1] : a[0] - b[0];
-            });
-            function cross(o, a, b) {
-                return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-            }
-            var lower = [];
-            for (var i = 0; i < points.length; ++i) {
-                while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0) {
-                    lower.pop();
-                }
-                lower.push(points[i]);
-            }
-            var upper = [];
-            for (var i = points.length - 1; i >= 0; --i) {
-                while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0) {
-                    upper.pop();
-                }
-                upper.push(points[i]);
-            }
-            upper.pop();
-            lower.pop();
-            return lower.concat(upper);
-        }
-        GeometryFunctions.getConvexHull = getConvexHull;
-        ;
-        function convexHull1D(points) {
-            var lo = 0;
-            var hi = 0;
-            for (var i = 0; i < points.length; ++i) {
-                if (points[i] < points[lo]) {
-                    lo = i;
-                }
-                if (points[i] > points[hi]) {
-                    hi = i;
-                }
-            }
-            if (lo < hi) {
-                return [lo, hi];
-            }
-            else if (lo > hi) {
-                return [hi, lo];
-            }
-            else {
-                return [lo];
-            }
-        }
-        GeometryFunctions.convexHull1D = convexHull1D;
-        ;
-        function removeOrphanVertices(positions, indices) {
+        function removeOrphanVertices(indices, positions) {
             var newPositions = [];
             var indexLookUp = {};
             var newIndices = indices.map(function (indice) {
@@ -5104,9 +5451,11 @@ var MB;
     ;
     var GLContext = (function () {
         function GLContext(canvas) {
+            this._vendor = null;
+            this._renderer = null;
             this.pp = null;
             if (!canvas) {
-                MB.Log.info("Not canvas. Create one ...");
+                console.info("Not canvas. Create one ...");
                 canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
                 canvas.width = 800;
                 canvas.height = 800;
@@ -5121,6 +5470,49 @@ var MB;
             enumerable: true,
             configurable: true
         });
+        ;
+        Object.defineProperty(GLContext.prototype, "vendor", {
+            get: function () {
+                if (!this._vendor) {
+                    this._vendor = this._gl.getParameter(this._gl.VENDOR);
+                }
+                return this._vendor;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GLContext.prototype, "renderer", {
+            get: function () {
+                if (!this._renderer) {
+                    this._renderer = this._gl.getParameter(this._gl.RENDERER);
+                }
+                return this._renderer;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        GLContext.isSupported = function () {
+            try {
+                var tmpcanvas = document.createElement("canvas");
+                var contexts = [
+                    "webgl2", "experimental-webgl2",
+                    "webgl", "experimental-webgl"
+                ];
+                var ctx = void 0, gl = void 0;
+                for (var i = 0; i < contexts.length; ++i) {
+                    ctx = contexts[i];
+                    gl = tmpcanvas.getContext(contexts[i]);
+                    if (gl) {
+                        break;
+                    }
+                }
+                return gl != null && !!WebGL2RenderingContext
+                    && !!WebGLRenderingContext;
+            }
+            catch (e) {
+                return false;
+            }
+        };
         ;
         GLContext.prototype._init = function (glVersion, numVersion, params) {
             if (params === void 0) { params = {}; }
@@ -5159,8 +5551,13 @@ var MB;
                 this._version = numVersion;
                 this._getVendors();
                 this._state = new MB.GlobalState(this);
-                MB.Log.info("WebGL2RenderingContext OK :)");
+                this._canvas.addEventListener("webglcontextlost", this._onContextLost, false);
+                console.info("WebGL2RenderingContext OK :)");
             }
+        };
+        ;
+        GLContext.prototype._onContextLost = function (ev) {
+            ev.preventDefault();
         };
         ;
         Object.defineProperty(GLContext.prototype, "gl", {
@@ -5227,6 +5624,10 @@ var MB;
             }
             return this.pp;
         };
+        ;
+        GLContext.prototype.forceGLLost = function () {
+            MB.Extensions.get(this, "WEBGL_lose_context").loseContext();
+        };
         return GLContext;
     }());
     MB.GLContext = GLContext;
@@ -5249,25 +5650,18 @@ var MB;
             this._init("webgl", 1, params);
             if (!(this._gl instanceof WebGL2RenderingContext)) {
                 [
-                    "OES_element_index_uint",
-                    "EXT_sRGB",
-                    "EXT_blend_minmax",
-                    "EXT_frag_depth",
                     "WEBGL_depth_texture",
-                    "WEBKIT_WEBGL_depth_texture",
-                    "EXT_shader_texture_lod",
-                    "OES_standard_derivatives",
                     "OES_texture_float",
+                    "OES_texture_float_linear",
                     "OES_texture_half_float",
                     "OES_texture_half_float_linear",
-                    "OES_vertex_array_object",
-                    "WEBGL_draw_buffers",
-                    "OES_fbo_render_mipmap",
-                    "ANGLE_instanced_arrays"
+                    "OES_standard_derivatives",
+                    "ANGLE_instanced_arrays",
+                    "OES_element_index_uint"
                 ].forEach(function (ext) {
                     MB.Extensions.get(_this, ext);
                 });
-                MB.Log.info("All WebGL1 extensions enabled");
+                console.info("All WebGL1 extensions enabled");
             }
         }
         return GLContextW1;
@@ -5426,7 +5820,7 @@ var MB;
             if (!(znear === this._znear && zfar === this._zfar)) {
                 var gl = this._context.gl;
                 if (znear > zfar || znear < 0.0 || zfar > 1.0) {
-                    MB.Log.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
+                    console.warn("Values out of range [(znear < zfar), (znear > 0), (zfar < 1)]");
                     return;
                 }
                 gl.depthRange(znear, zfar);
@@ -5441,7 +5835,7 @@ var MB;
     ;
     var ColorState = (function () {
         function ColorState(context) {
-            this._currentColorClear = new MB.Color4(0.0, 0.0, 0.0, 1.0);
+            this._currentColorClear = null;
             this._context = context;
         }
         ;
@@ -5453,6 +5847,9 @@ var MB;
             }
         };
         ;
+        ColorState.prototype.setClear = function (r, g, b, a) {
+            this.setClearColor(new MB.Color4(r, g, b, a));
+        };
         ColorState.prototype.setClearColor = function (bgColor) {
             if (!this._currentColorClear || this._currentColorClear.isEquals(bgColor) === false) {
                 var gl = this._context.gl;
@@ -5462,8 +5859,6 @@ var MB;
         };
         ColorState.prototype.reset = function () {
             this._currentColorMask = null;
-            this.setMask(new MB.Vector4(true, true, true, true));
-            this._currentColorClear = null;
             this.setClearColor(new MB.Color4(0.0, 0.0, 0.0, 1.0));
         };
         ;
@@ -5563,8 +5958,9 @@ var MB;
         };
         ;
         StencilState.prototype.setFunc = function (compFun, ref, mask) {
-            if (this._currentStencilFunc !== compFun && this._currentStencilRef !== ref
-                && this._currentStencilFuncMask !== mask) {
+            if (this._currentStencilFunc !== compFun ||
+                this._currentStencilRef !== ref ||
+                this._currentStencilFuncMask !== mask) {
                 var gl = this._context.gl;
                 gl.stencilFunc(compFun, ref, mask);
                 this._currentStencilFunc = compFun;
@@ -5574,8 +5970,9 @@ var MB;
         };
         ;
         StencilState.prototype.setOp = function (fail, zfail, zpass) {
-            if (this._currentStencilFail !== fail && this._currentStencilZFail !== zfail
-                && this._currentStencilZPass !== zpass) {
+            if (this._currentStencilFail !== fail
+                || this._currentStencilZFail !== zfail
+                || this._currentStencilZPass !== zpass) {
                 var gl = this._context.gl;
                 gl.stencilOp(fail, zfail, zpass);
                 this._currentStencilFail = fail;
@@ -5583,10 +5980,10 @@ var MB;
                 this._currentStencilZPass = zpass;
             }
         };
-        StencilState.prototype.getMasValue = function (mask) {
+        StencilState.prototype.getMaskValue = function (mask) {
             return this._currentStencilMask;
         };
-        StencilState.prototype.setClearValue = function (s) {
+        StencilState.prototype.setClear = function (s) {
             if (this._currentStencilClear !== s) {
                 var gl = this._context.gl;
                 gl.clearStencil(s);
@@ -5594,6 +5991,16 @@ var MB;
             }
         };
         ;
+        StencilState.prototype.reset = function () {
+            this._currentStencilClear = null;
+            this._currentStencilFail = null;
+            this._currentStencilFunc = null;
+            this._currentStencilMask = null;
+            this._currentStencilRef = null;
+            this._currentStencilZFail = null;
+            this._currentStencilZPass = null;
+            this._currentStencilFuncMask = null;
+        };
         StencilState.prototype.setMaskFace = function (face, mask) {
             var gl = this._context.gl;
             gl.stencilMaskSeparate(face, mask);
@@ -5624,7 +6031,11 @@ var MB;
     ;
     var BlendingState = (function () {
         function BlendingState(context) {
+            this._modeRGB = MB.ctes.BlendingEq.Add;
+            this._modeAlpha = MB.ctes.BlendingEq.Add;
+            this._color = null;
             this._blendingEnabled = false;
+            this._currentBlending = MB.ctes.BlendingMode2.None;
             this._context = context;
         }
         ;
@@ -5642,26 +6053,29 @@ var MB;
         };
         ;
         BlendingState.prototype.setEquation = function (mode) {
-            if (mode !== this._blendingMode) {
+            if (this._modeRGB !== mode && this._modeAlpha !== mode) {
                 var gl = this._context.gl;
                 gl.blendEquation(mode);
-                this._blendingMode = mode;
+                this._modeRGB = mode;
+                this._modeAlpha = mode;
             }
         };
         ;
-        BlendingState.prototype.equationSeparate = function (modeRGB, modeAlpha) {
-            var gl = this._context.gl;
-            gl.blendEquationSeparate(modeRGB, modeAlpha);
+        BlendingState.prototype.setEquationSeparate = function (modeRGB, modeAlpha) {
+            if (this._modeRGB !== modeRGB && this._modeAlpha !== modeAlpha) {
+                var gl = this._context.gl;
+                gl.blendEquationSeparate(modeRGB, modeAlpha);
+                this._modeRGB = modeRGB;
+                this._modeAlpha = modeAlpha;
+            }
         };
         ;
         BlendingState.prototype.getquationRGB = function () {
-            var gl = this._context.gl;
-            return gl.getParameter(gl.BLEND_EQUATION_RGB);
+            return this._modeRGB;
         };
         ;
         BlendingState.prototype.getEquationAlpha = function () {
-            var gl = this._context.gl;
-            return gl.getParameter(gl.BLEND_EQUATION_ALPHA);
+            return this._modeAlpha;
         };
         ;
         BlendingState.prototype.setColor = function (red, green, blue, alpha) {
@@ -5669,8 +6083,16 @@ var MB;
             if (green === void 0) { green = 0.0; }
             if (blue === void 0) { blue = 0.0; }
             if (alpha === void 0) { alpha = 0.0; }
-            var gl = this._context.gl;
-            gl.blendColor(red, green, blue, alpha);
+            var blendColor = new MB.Vect4(red, green, blue, alpha);
+            if (!this._color || this._color.isEquals(blendColor) === false) {
+                var gl = this._context.gl;
+                gl.blendColor(red, green, blue, alpha);
+                this._color = blendColor;
+            }
+        };
+        ;
+        BlendingState.prototype.getColor = function () {
+            return this._color;
         };
         ;
         BlendingState.prototype.setFunc = function (sfactor, dfactor) {
@@ -5693,6 +6115,34 @@ var MB;
             return this._blendingEnabled === true;
         };
         ;
+        BlendingState.prototype.set = function (blend) {
+            if (blend !== MB.ctes.BlendingMode2.None) {
+                this.setStatus(true);
+            }
+            else {
+                this.setStatus(false);
+                this._currentBlending = blend;
+            }
+            if (blend !== this._currentBlending) {
+                if (blend === MB.ctes.BlendingMode2.Additive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(MB.ctes.BlendingMode.SrcAlpha, MB.ctes.BlendingMode.One);
+                }
+                else if (blend === MB.ctes.BlendingMode2.Substractive) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(MB.ctes.BlendingMode.Zero, MB.ctes.BlendingMode.OneMinusSrcColor);
+                }
+                else if (blend === MB.ctes.BlendingMode2.Multiply) {
+                    this.setEquation(MB.ctes.BlendingEq.Add);
+                    this.setFunc(MB.ctes.BlendingMode.Zero, MB.ctes.BlendingMode.SrcColor);
+                }
+                else {
+                    this.setEquationSeparate(MB.ctes.BlendingEq.Add, MB.ctes.BlendingEq.Add);
+                    this.setFuncSeparate(MB.ctes.BlendingMode.SrcAlpha, MB.ctes.BlendingMode.OneMinusSrcAlpha, MB.ctes.BlendingMode.One, MB.ctes.BlendingMode.OneMinusSrcAlpha);
+                }
+            }
+        };
+        ;
         return BlendingState;
     }());
     MB.BlendingState = BlendingState;
@@ -5703,12 +6153,20 @@ var MB;
             this._viewport = new MB.Vector4(0.0, 0.0, 0.0, 0.0);
             this._context = context;
             this.depth = new DepthState(context);
-            this.depth.reset();
             this.culling = new CullingState(context);
             this.color = new ColorState(context);
-            this.color.reset();
             this.stencil = new StencilState(context);
             this.blending = new BlendingState(context);
+            this.color.setClear(0.0, 0.0, 0.0, 1.0);
+            this.depth.setClear(1.0);
+            this.stencil.setClear(0.0);
+            this.depth.setStatus(true);
+            this.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
+            this.culling.setFlipSided(MB.ctes.FaceDir.InvClockwise);
+            this.culling.setMode(MB.ctes.FaceSide.Back);
+            this.culling.setStatus(true);
+            this.blending.set(MB.ctes.BlendingMode2.Normal);
+            this._capabilites = {};
         }
         ;
         GlobalState.prototype.setLineWidth = function (width) {
@@ -5754,6 +6212,22 @@ var MB;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BITS);
         };
         ;
+        GlobalState.prototype.enable = function (cap) {
+            if (this._capabilites[cap] !== true) {
+                var gl = this._context.gl;
+                gl.enable(cap);
+                this._capabilites[cap] = true;
+            }
+        };
+        ;
+        GlobalState.prototype.disable = function (cap) {
+            if (this._capabilites[cap] !== false) {
+                var gl = this._context.gl;
+                gl.disable(cap);
+                this._capabilites[cap] = false;
+            }
+        };
+        ;
         return GlobalState;
     }());
     MB.GlobalState = GlobalState;
@@ -5781,31 +6255,32 @@ var MB;
             }
             var self = Input;
             window.addEventListener("keyup", function (ev) {
-                if (ev.keyCode === 40 || ev.keyCode === 38) {
-                    ev.preventDefault();
-                }
                 self._onKeyUp(ev);
+                ev.preventDefault();
             });
             window.addEventListener("keydown", function (ev) {
-                if (ev.keyCode === 40 || ev.keyCode === 38) {
-                    ev.preventDefault();
-                }
                 self._onKeyDown(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousedown", function (ev) {
                 self._onMouseDown(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousemove", function (ev) {
                 self._onMouseMove(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mouseup", function (ev) {
                 self._onMouseUp(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousewheel", function (ev) {
                 self._onMouseScroll(ev);
+                ev.preventDefault();
             });
             window.addEventListener("DOMMouseScroll", function (ev) {
                 self._onMouseScroll(ev);
+                ev.preventDefault();
             });
             Input._instance = this;
         }
@@ -5926,19 +6401,6 @@ var MB;
     }(MB.BufferAttribute));
     MB.InstancedInterleavedBuffer = InstancedInterleavedBuffer;
     ;
-})(MB || (MB = {}));
-;
-
-"use strict";
-var MB;
-(function (MB) {
-    MB.Log = function _log(logName) {
-        var Log = log4javascript.getLogger(logName);
-        var consoleAppender = new log4javascript.BrowserConsoleAppender();
-        Log.addAppender(consoleAppender);
-        Log.setLevel(log4javascript.Level.INFO);
-        return Log;
-    }("my_logger");
 })(MB || (MB = {}));
 ;
 
@@ -6207,7 +6669,6 @@ var MB;
             this._planeVAO = null;
             this._planeVertexVBO = null;
             this._context = context;
-            var gl = this._context.gl;
             var positions = [
                 -1.0, -1.0,
                 1.0, -1.0,
@@ -6216,8 +6677,8 @@ var MB;
             ];
             this._planeVAO = new MB.VertexArray(this._context);
             this._planeVertexVBO = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
-            this._planeVertexVBO.bufferData(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
-            this._planeVertexVBO.vertexAttribPointer(0, 2, gl.FLOAT);
+            this._planeVertexVBO.data(new Float32Array(positions), MB.ctes.UsageType.StaticDraw);
+            this._planeVertexVBO.vertexAttribPointer(0, 2, MB.ctes.DataType.Float);
             this._planeVAO.unbind();
         }
         PostProcess.prototype.bind = function () {
@@ -6310,6 +6771,15 @@ var MB;
             this.autocatching();
         };
         ;
+        Program.prototype.loadWithTF = function (vsShaderCode, fsShaderCode, varyings, mode) {
+            this.addShader(vsShaderCode, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this.addShader(fsShaderCode, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._compile();
+            this.feedbackVarying(varyings, mode);
+            this._link();
+            this.autocatching();
+        };
+        ;
         Program.prototype.id = function () {
             return this._handler;
         };
@@ -6344,8 +6814,8 @@ var MB;
             gl.linkProgram(this._handler);
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -6370,8 +6840,8 @@ var MB;
             gl.linkProgram(this._handler);
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -6393,13 +6863,13 @@ var MB;
             }
             catch (err) {
                 alert("ERROR: " + filePath);
-                MB.Log.error("ERROR: " + filePath);
+                console.error("ERROR: " + filePath);
                 return null;
             }
             var shaderSource = request.responseText;
             if (shaderSource === null) {
                 alert("WARNING: " + filePath + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return this.compileShader(shaderSource, shaderType);
@@ -6408,7 +6878,7 @@ var MB;
         Program.prototype.loadAndCompileFromText = function (shaderSource, shaderType) {
             if (shaderSource === null) {
                 alert("WARNING: " + shaderSource + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return this.compileShader(shaderSource, shaderType);
@@ -6420,7 +6890,7 @@ var MB;
             shaderSource = shaderText.firstChild.textContent;
             if (shaderSource === null) {
                 alert("WARNING: " + id + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return this.compileShader(shaderSource, shaderType);
@@ -6485,8 +6955,8 @@ var MB;
             gl.compileShader(compiledShader);
             if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
                 alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.debug({
+                console.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -6747,6 +7217,13 @@ var MB;
             }
         };
         ;
+        Program.prototype.debugShaders = function () {
+            var ext = MB.Extensions.get(this._context, "WEBGL_debug_shaders");
+            console.log({
+                "vertex": ext.getTranslatedShaderSource(this._shaders[0]),
+                "fragment": ext.getTranslatedShaderSource(this._shaders[1])
+            });
+        };
         Program.GL_TO_GLSL_TYPES = {
             "FLOAT": "float",
             "FLOAT_VEC2": "vec2",
@@ -7333,13 +7810,30 @@ var MB;
             shaderSource = shaderText.firstChild.textContent;
             if (shaderSource === null) {
                 alert("WARNING: " + script + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
             return shaderSource;
         }
         Utils.readScriptShader = readScriptShader;
         ;
+        function _recurse(arr) {
+            var result = [];
+            for (var i = 0, ii = arr.length; i !== ii; ++i) {
+                var x = arr[i];
+                if (Array.isArray(x)) {
+                    result = result.concat(_recurse(x));
+                }
+                else if (typeof (x) === "number") {
+                    result.push(x);
+                }
+            }
+            return result;
+        }
+        function flattenArray(arr) {
+            return [].concat(_recurse(arr));
+        }
+        Utils.flattenArray = flattenArray;
     })(Utils = MB.Utils || (MB.Utils = {}));
     ;
 })(MB || (MB = {}));
@@ -7432,6 +7926,11 @@ var MB;
             var gl = this._context.gl;
             gl.bindBuffer(this._type, this._handler);
         };
+        VertexBuffer.prototype.bufferSubData = function (offset, data) {
+            this.bind();
+            var gl = this._context.gl;
+            gl.bufferSubData(this._type, offset, data);
+        };
         VertexBuffer.prototype.unbind = function () {
             var gl = this._context.gl;
             gl.bindBuffer(this._type, null);
@@ -7450,11 +7949,20 @@ var MB;
             }
             this._handler = null;
         };
-        VertexBuffer.prototype.bufferData = function (data, usage) {
+        VertexBuffer.prototype.data = function (data, usage) {
             if (usage === void 0) { usage = MB.ctes.UsageType.StaticDraw; }
             this.bind();
             var gl = this._context.gl;
             gl.bufferData(this._type, data, usage);
+        };
+        ;
+        VertexBuffer.prototype.getSubData = function (size, offset) {
+            if (offset === void 0) { offset = 0; }
+            this.bind();
+            var gl = this._context.gl;
+            var arrBuffer = new ArrayBuffer(size * Float32Array.BYTES_PER_ELEMENT);
+            gl.getBufferSubData(this._type, offset, arrBuffer);
+            return arrBuffer;
         };
         ;
         VertexBuffer.prototype.attribDivisor = function (position, length, divisor, stride) {
@@ -7462,7 +7970,7 @@ var MB;
             this.bind();
             var gl = this._context.gl;
             gl.enableVertexAttribArray(position);
-            gl.vertexAttribPointer(position, length, gl.FLOAT, false, length * Float32Array.BYTES_PER_ELEMENT, 0);
+            gl.vertexAttribPointer(position, length, MB.ctes.DataType.Float, false, length * Float32Array.BYTES_PER_ELEMENT, 0);
             gl.vertexAttribDivisor(position, divisor);
         };
         VertexBuffer.prototype.vertexAttribPointer = function (attribLocation, numElems, type, normalized, offset) {
@@ -7484,6 +7992,12 @@ var MB;
             var gl = this._context.gl;
             gl.bindBufferBase(target, index, this._handler);
         };
+        ;
+        VertexBuffer.prototype.render = function (mode, size) {
+            var gl = this._context.gl;
+            gl.drawArrays(mode, 0, size);
+        };
+        ;
         return VertexBuffer;
     }());
     MB.VertexBuffer = VertexBuffer;
@@ -7754,7 +8268,7 @@ var MBX;
         Axis.prototype.render = function () {
             var gl = this._context.gl;
             this._vao.bind();
-            gl.drawElements(gl.LINES, this._indicesLen, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(MB.ctes.RenderMode.Lines, this._indicesLen, MB.ctes.DataType.UnsignedShort, 0);
             this._vao.unbind();
         };
         ;
@@ -8241,7 +8755,7 @@ var MBX;
                 new MB.Texture2D(context, dataTex, configTex),
                 new MB.Texture2D(context, dataTex, configTex)
             ], size, true, true, {});
-            MB.Log.debug("GBuffer created");
+            console.debug("GBuffer created");
         }
         ;
         GBuffer.prototype.bindForReading = function () {
@@ -8275,7 +8789,6 @@ var MB;
     var PingPong = (function () {
         function PingPong(context, size) {
             this._context = context;
-            var gl = this._context.gl;
             this._flag = true;
             this._size = size;
             this._tex1 =
@@ -8285,7 +8798,7 @@ var MB;
                 }, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
-                    type: gl.FLOAT,
+                    type: MB.ctes.DataType.Float,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest
                 });
@@ -8296,7 +8809,7 @@ var MB;
                 }, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
-                    type: gl.FLOAT,
+                    type: MB.ctes.DataType.Float,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest
                 });
@@ -8409,8 +8922,6 @@ var MBX;
             faces.push(dir + "/back.jpg");
             faces.push(dir + "/front.jpg");
             this._context = context;
-            var gl = this._context.gl;
-            this._prog = new MB.Program(this._context);
             var isWebGL2 = context instanceof MB.GLContextW2;
             var vs;
             if (isWebGL2) {
@@ -8419,17 +8930,26 @@ var MBX;
             else {
                 vs = "precision highp float;\n                attribute vec3 position;\n                varying vec3 TexCoords;\n                uniform mat4 projection;\n                uniform mat4 view;\n                void main() {\n                    vec4 pos = projection * view * vec4(position, 1.0);\n                    gl_Position = pos.xyww;\n                    TexCoords = position;\n                }";
             }
-            this._prog.addShader(vs, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-            var fg;
+            var fs;
             if (isWebGL2) {
-                fg = "#version 300 es\n                precision highp float;\n                in vec3 TexCoords;\n                out vec4 color;\n                uniform samplerCube skybox;\n                void main() {\n                    color = texture(skybox, TexCoords);\n                }";
+                fs = "#version 300 es\n                precision highp float;\n                in vec3 TexCoords;\n                out vec4 color;\n                uniform samplerCube skybox;\n                void main() {\n                    color = texture(skybox, TexCoords);\n                    color = vec4(1.0, 0.0, 0.0, 1.0);\n                }";
             }
             else {
-                fg = "precision highp float;\n                varying vec3 TexCoords;\n                uniform samplerCube skybox;\n                void main() {\n                    gl_FragColor = textureCube(skybox, TexCoords);\n                }";
+                fs = "precision highp float;\n                varying vec3 TexCoords;\n                uniform samplerCube skybox;\n                void main() {\n                    gl_FragColor = textureCube(skybox, TexCoords);\n                }";
             }
-            this._prog.addShader(fg, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
-            this._prog.compile();
-            this._prog.addUniforms(["view", "projection"]);
+            this._prog = new MB.ShaderMaterial(this._context, {
+                name: "skyboxShader",
+                vertexShader: vs,
+                fragmentShader: fs,
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    skybox: {
+                        type: MB.UniformType.Integer,
+                        value: 0
+                    },
+                }
+            });
             var skyboxVertices = new Float32Array([
                 -1.0, 1.0, -1.0,
                 -1.0, -1.0, -1.0,
@@ -8472,8 +8992,8 @@ var MBX;
             this._VertexArray.bind();
             this._VertexBuffer = new MB.VertexBuffer(this._context, MB.ctes.BufferType.Array);
             this._VertexBuffer.bind();
-            this._VertexBuffer.bufferData(skyboxVertices, MB.ctes.UsageType.StaticDraw);
-            this._VertexBuffer.vertexAttribPointer(0, 3, gl.FLOAT, false, 0);
+            this._VertexBuffer.data(skyboxVertices, MB.ctes.UsageType.StaticDraw);
+            this._VertexBuffer.vertexAttribPointer(0, 3, MB.ctes.DataType.Float, false, 0);
             this._loadCubemap(faces);
             this._VertexArray.unbind();
         }
@@ -8487,16 +9007,15 @@ var MBX;
         ;
         ;
         Skybox.prototype.render = function (view, projection) {
-            var gl = this._context.gl;
             var currDepthComp = this._context.state.depth.getCurrentComparisonFunc();
             this._context.state.depth.setFunc(MB.ctes.ComparisonFunc.LessEqual);
-            this._prog.use();
             var auxView = view.toMat3().toMat4();
-            this._prog.sendUniformMat4("view", auxView._value);
-            this._prog.sendUniformMat4("projection", projection._value);
+            this._prog.uniforms["view"].value = auxView._value;
+            this._prog.uniforms["projection"].value = projection._value;
+            this._prog.use();
             this._cubeMapTexture.bind(0);
             this._VertexArray.bind();
-            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            this._VertexBuffer.render(MB.ctes.RenderMode.Triangles, 36);
             this._VertexArray.unbind();
             this._context.state.depth.setFunc(currDepthComp);
         };
@@ -8518,29 +9037,6 @@ var MBX;
     MBX.Skybox = Skybox;
     ;
 })(MBX || (MBX = {}));
-;
-
-"use strict";
-var MB;
-(function (MB) {
-    var SourceFrags;
-    (function (SourceFrags) {
-        function parse(str) {
-            var regex = /#import +<([\w\d.]+)>/g;
-            function replace(match, include) {
-                var replace = SourceFrags[include];
-                if (replace === undefined) {
-                    throw new Error("Can not resolve #import <" + include + ">");
-                }
-                return parse(replace);
-            }
-            return str.replace(regex, replace);
-        }
-        SourceFrags.parse = parse;
-        ;
-    })(SourceFrags = MB.SourceFrags || (MB.SourceFrags = {}));
-    ;
-})(MB || (MB = {}));
 ;
 
 "use strict";
@@ -8830,6 +9326,7 @@ var MB;
             this.addBufferArray(2, this._geometry.getAttr(MB.VBType.VBTexCoord).array, 2);
             this._indicesLen = this._geometry.indices.length;
         }
+        ;
         return Box;
     }(MB.Drawable));
     MB.Box = Box;
@@ -8964,6 +9461,14 @@ var MB;
                 side2, side2, -side2,
                 -side2, side2, -side2
             ]), 3));
+            this._geometry.setIndex(new Uint16Array([
+                0, 1, 2, 0, 2, 3,
+                4, 5, 6, 4, 6, 7,
+                8, 9, 10, 8, 10, 11,
+                12, 13, 14, 12, 14, 15,
+                16, 17, 18, 16, 18, 19,
+                20, 21, 22, 20, 22, 23
+            ]));
             this._geometry.addAttr(MB.VBType.VBNormals, new MB.BufferAttribute(new Float32Array([
                 0.0, 0.0, 1.0,
                 0.0, 0.0, 1.0,
@@ -9016,14 +9521,6 @@ var MB;
                 1.0, 1.0,
                 0.0, 1.0
             ]), 2));
-            this._geometry.setIndex(new Uint16Array([
-                0, 1, 2, 0, 2, 3,
-                4, 5, 6, 4, 6, 7,
-                8, 9, 10, 8, 10, 11,
-                12, 13, 14, 12, 14, 15,
-                16, 17, 18, 16, 18, 19,
-                20, 21, 22, 20, 22, 23
-            ]));
             this._handle = [];
             this._vao.bind();
             this.addElementArray(this._geometry.indices);
@@ -9055,7 +9552,7 @@ var MB;
             if (subdivisions === void 0) { subdivisions = 1; }
             subdivisions = Math.floor(subdivisions);
             if (subdivisions > 10) {
-                MB.Log.warn("Please, don´t use more than 8 subdivisions");
+                console.warn("Please, don´t use more than 8 subdivisions");
                 return;
             }
             _super.call(this, context, [
@@ -9368,7 +9865,7 @@ var MB;
             if (subdivisions === void 0) { subdivisions = 1; }
             subdivisions = Math.floor(subdivisions);
             if (subdivisions > 10) {
-                MB.Log.warn("Please, don´t use more than 8 subdivisions");
+                console.warn("Please, don´t use more than 8 subdivisions");
                 return;
             }
             var t = (1 + Math.sqrt(5)) / 2;
@@ -9565,7 +10062,7 @@ var MB;
             var self = this;
             request.onload = function () {
                 if (request.status < 200 || request.status > 299) {
-                    MB.Log.error("Error: HTTP Status " + request.status + " on resource " + url);
+                    console.error("Error: HTTP Status " + request.status + " on resource " + url);
                     return {};
                 }
                 else {
@@ -9581,6 +10078,17 @@ var MB;
     ;
 })(MB || (MB = {}));
 ;
+
+var MB;
+(function (MB) {
+    var MyMesh = (function () {
+        function MyMesh(geom) {
+            console.log(geom);
+        }
+        return MyMesh;
+    }());
+    MB.MyMesh = MyMesh;
+})(MB || (MB = {}));
 
 "use strict";
 
@@ -9644,10 +10152,11 @@ var MB;
             var uvs = [];
             var evalVect3;
             var u, v;
+            var i, j;
             var count = slices + 1;
-            for (var i = 0; i <= stacks; ++i) {
+            for (i = 0; i <= stacks; ++i) {
                 v = i / stacks;
-                for (var j = 0; j <= slices; ++j) {
+                for (j = 0; j <= slices; ++j) {
                     u = j / slices;
                     evalVect3 = func(u, v);
                     vertices.push(new MB.Vect3(evalVect3.x, evalVect3.y, evalVect3.z));
@@ -9655,8 +10164,8 @@ var MB;
             }
             var pA, pB, pC, pD;
             var uva, uvb, uvc, uvd;
-            for (var i = 0; i < stacks; ++i) {
-                for (var j = 0; j < slices; ++j) {
+            for (i = 0; i < stacks; ++i) {
+                for (j = 0; j < slices; ++j) {
                     pA = i * count + j;
                     pB = i * count + j + 1;
                     pC = (i + 1) * count + j + 1;
@@ -9675,10 +10184,10 @@ var MB;
                     uvs.push(new MB.Vect2(uvd[0], uvd[1]));
                 }
             }
-            for (var i = 0; i < vertices.length; ++i) {
+            for (i = 0; i < vertices.length; ++i) {
                 normals.push(new MB.Vect3());
             }
-            for (var i = 0; i < indices.length; ++i) {
+            for (i = 0; i < indices.length; ++i) {
                 var ia = vertices[indices[i].x];
                 var ib = vertices[indices[i].y];
                 var ic = vertices[indices[i].z];
@@ -9689,26 +10198,26 @@ var MB;
                 normals[indices[i].y] = normals[indices[i].y].add(no);
                 normals[indices[i].z] = normals[indices[i].z].add(no);
             }
-            for (var i = 0; i < normals.length; ++i) {
+            for (i = 0; i < normals.length; ++i) {
                 normals[i] = normals[i].normalize();
             }
             var vertices2 = [];
-            for (var i = 0; i < vertices.length; ++i) {
+            for (i = 0; i < vertices.length; ++i) {
                 vertices2.push(vertices[i].x, vertices[i].y, vertices[i].z);
             }
             vertices = vertices2;
             var normals2 = [];
-            for (var i = 0; i < normals.length; ++i) {
+            for (i = 0; i < normals.length; ++i) {
                 normals2.push(normals[i].x, normals[i].y, normals[i].z);
             }
             normals = normals2;
             var indices2 = [];
-            for (var i = 0; i < indices.length; ++i) {
+            for (i = 0; i < indices.length; ++i) {
                 indices2.push(indices[i].x, indices[i].y, indices[i].z);
             }
             indices = indices2;
             var uvs2 = [];
-            for (var i = 0; i < uvs.length; ++i) {
+            for (i = 0; i < uvs.length; ++i) {
                 uvs2.push(uvs[i].x, uvs[i].y);
             }
             uvs = uvs2;
@@ -10074,6 +10583,75 @@ var MB;
 })(MB || (MB = {}));
 ;
 
+
+
+
+
+
+
+var MB;
+(function (MB) {
+    var Tube = (function (_super) {
+        __extends(Tube, _super);
+        function Tube(context, path) {
+            _super.call(this, context);
+            this._path = path;
+            var tubularSegments = 64;
+            var radialSegments = 8;
+            var radius = 1;
+            var norm = new MB.Vect3();
+            var normals = [];
+            var vertices = [];
+            var uvs = [];
+            var indices = [];
+            var i, j, p;
+            var vx, vy, vz, sin, cos, subd;
+            for (i = 0; i < tubularSegments; ++i) {
+                p = null;
+                for (var j_1 = 0; i <= radialSegments; ++j_1) {
+                    subd = j_1 / radialSegments * Math.PI * 2;
+                    sin = Math.sin(subd);
+                    cos = Math.cos(subd);
+                    norm.x = 0.0;
+                    norm.y = 0.0;
+                    norm.z = 0.0;
+                    norm = norm.normalize();
+                    normals.push(norm.x, norm.y, norm.z);
+                    vx = p.x + radius * norm.x;
+                    vy = p.y + radius * norm.y;
+                    vz = p.z + radius * norm.z;
+                    vertices.push(vx, vy, vz);
+                }
+            }
+            var u, v;
+            for (i = 0; i <= tubularSegments; ++i) {
+                for (j = 0; j <= radialSegments; ++j) {
+                    u = i / tubularSegments;
+                    v = j / radialSegments;
+                    uvs.push(u, v);
+                }
+            }
+            var pa, pb, pc, pd;
+            for (j = 1; j <= tubularSegments; ++j) {
+                for (i = 1; i <= radialSegments; ++i) {
+                    pa = (radialSegments + 1) * (j - 1) + (i - 1);
+                    pb = (radialSegments + 1) * j + (i - 1);
+                    pc = (radialSegments + 1) * j + i;
+                    pd = (radialSegments + 1) * (j - 1) + i;
+                    indices.push(pa, pb, pd);
+                    indices.push(pb, pc, pd);
+                }
+            }
+        }
+        Tube.prototype._generateSegment = function (t) {
+        };
+        return Tube;
+    }(MB.Drawable));
+    MB.Tube = Tube;
+    ;
+})(MB || (MB = {}));
+;
+
 "use strict";
 var MB;
 (function (MB) {
@@ -10352,7 +10930,7 @@ var MB;
                 req.send(null);
             }
             catch (e) {
-                MB.Log.error("Error reading file " + filename);
+                console.error("Error reading file " + filename);
             }
             return req.responseText;
         }
@@ -10362,6 +10940,16 @@ var MB;
             split.forEach(function (value) {
                 if (!isNaN(value)) {
                     values.push(parseFloat(value));
+                }
+            });
+            return values;
+        }
+        function splitLineToIntegers(line) {
+            var values = new Array();
+            var split = line.split(" ");
+            split.forEach(function (value) {
+                if (!isNaN(value)) {
+                    values.push(parseInt(value));
                 }
             });
             return values;
@@ -10379,6 +10967,50 @@ var MB;
             }
             return values;
         }
+        function loadMTL(filename) {
+            var mtl = {
+                diffuseColor: null,
+                ambientColor: null,
+                specularColor: null,
+                specPower: 0,
+                alpha: 1.0,
+                diffuseTexSrc: null,
+                ambientTexSrc: null,
+                specularTexSrc: null,
+            };
+            var lines = loadFile(filename).split("\n");
+            var aux;
+            lines.forEach(function (line) {
+                var elems = line.split(/\s+/);
+                elems.shift();
+                var type = line.substr(0, 2).trim();
+                if (type.length === 0 || type === "#") {
+                    return;
+                }
+                type = type.toLowerCase();
+                if (type === "kd") {
+                    aux = splitLineToFloats(line);
+                    mtl.diffuseColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ka") {
+                    aux = splitLineToFloats(line);
+                    mtl.ambientColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ks") {
+                    aux = splitLineToFloats(line);
+                    mtl.specularColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ns") {
+                    mtl.specPower = splitLineToIntegers(line)[0];
+                }
+                else if (type === "d") {
+                    mtl.alpha = splitLineToFloats(line)[0];
+                }
+            });
+            return mtl;
+        }
+        ObjLoader.loadMTL = loadMTL;
+        ;
         function loadObj(filename) {
             var verts = [], normals = [], textures = [], idxCache = {}, idx = 0;
             var model = {
@@ -10392,6 +11024,10 @@ var MB;
                 var elems = line.split(/\s+/);
                 elems.shift();
                 var type = line.substr(0, 2).trim();
+                if (type.length === 0 || type === "#") {
+                    return;
+                }
+                type = type.toLowerCase();
                 if (type === "v") {
                     var values = splitLineToFloats(line);
                     verts.push(values[0], values[1], values[2]);
@@ -10662,13 +11298,16 @@ function loadShader(alias, filePath) {
     }
     catch (err) {
         alert("ERROR: " + filePath);
-        MB.Log.error("ERROR: " + filePath);
+        console.error("ERROR: " + filePath);
         return null;
     }
     var shaderSource = request.responseText;
     MB.ResourceShader.add(alias, _processImports(shaderSource));
 }
 ;
+function loadShaderFromText(alias, shaderSource) {
+    MB.ResourceShader.add(alias, _processImports(shaderSource));
+}
 function _processImports(src) {
     var regex = /#import<(.+)>(\((.*)\))*/g;
     var match = regex.exec(src);
@@ -10686,8 +11325,11 @@ function _processImports(src) {
 ;
 loadShader("SimpleNoise3D", "../src/shaders/SimpleNoise3D.glsl");
 loadShader("ClassicNoise", "../src/shaders/ClassicNoise.glsl");
-loadShader("VertexPP", "../src/shaders/VertexPP.glsl");
-loadShader("MatCap", "../src/shaders/MatCap.glsl");
+loadShaderFromText("BlackAndWhite", "vec3 blackWhiteFilter(vec3 color) {\n    float avg = (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b);\n    return vec3(avg);\n}");
+loadShaderFromText("RimLighting", "vec3 rimLighting(vec3 viewDir, vec3 normal, vec3 lightColor) {\n    float rim = 1.0 - max(dot(viewDir, normal), 0.0);\n    rim = smoothstep(0.8, 1.0, rim);\n    return lightColor * vec3(rim);\n}");
+loadShaderFromText("VertexPP", "precision highp float;\nlayout(location = 0) in vec3 vertPosition;\nout vec2 uv;\nvoid main(void) {\n    uv = vec2(vertPosition.xy * 0.5) + vec2(0.5);\n    gl_Position = vec4(vertPosition, 1.0);\n}");
+loadShaderFromText("MatCap", "vec2 matcap(vec3 eye, vec3 normal) {\n    vec3 reflected = reflect(eye, normal);\n\n    float m = 2.0 * sqrt(\n        pow(reflected.x, 2.0) +\n        pow(reflected.y, 2.0) +\n        pow(reflected.z + 1.0, 2.0)\n    );\n\n    return reflected.xy / m + 0.5;\n}\n\n/*\n    vec2 uv = matcap(eyeVector, normalVector);\n    gl_FragColor = vec4(texture2D(texture, uv).rgb, 1.0);\n*/");
+loadShaderFromText("GammaCorrection", "vec3 applyGamma(float gamma, vec3 fColor) {\n    return pow(fColor, vec3(1.0, gamma));\n}");
 
 "use strict";
 var MB;
@@ -10797,6 +11439,32 @@ var MB;
             }
         }
         Loaders.loadImage = loadImage;
+        ;
+    })(Loaders = MB.Loaders || (MB.Loaders = {}));
+    ;
+})(MB || (MB = {}));
+;
+
+"use strict";
+var MB;
+(function (MB) {
+    var Loaders;
+    (function (Loaders) {
+        function loadJSON(jsonSrc, alias) {
+            if (alias === void 0) { alias = ""; }
+            alias = Loaders._getAlias(jsonSrc, alias);
+            if (!(MB.ResourceMap.isAssetLoaded(alias))) {
+                MB.ResourceMap.asyncLoadRequested(alias);
+                var request_1 = new XMLHttpRequest();
+                request_1.open("GET", jsonSrc, true);
+                request_1.responseType = "json";
+                request_1.onload = function () {
+                    MB.ResourceMap.asyncLoadCompleted(alias, JSON.parse(request_1.response));
+                }.bind(this);
+                request_1.send();
+            }
+        }
+        Loaders.loadJSON = loadJSON;
         ;
     })(Loaders = MB.Loaders || (MB.Loaders = {}));
     ;
@@ -10964,6 +11632,7 @@ var MB;
         ;
         Texture.prototype.resize = function (size) {
         };
+        ;
         return Texture;
     }());
     MB.Texture = Texture;
@@ -11197,6 +11866,18 @@ var MB;
                 else {
                     auxData = data;
                 }
+                if (context instanceof MB.GLContextW1) {
+                    if (this._wrapS !== MB.ctes.WrapMode.Clamp2Edge ||
+                        this._wrapT !== MB.ctes.WrapMode.Clamp2Edge) {
+                        console.warn("Texture is not power of two. Wrappers should be " +
+                            "set to Clamp2Edge wrapping ...");
+                    }
+                    if (this._minFilter !== MB.ctes.TextureFilter.Nearest &&
+                        this._minFilter !== MB.ctes.TextureFilter.Linear) {
+                        console.warn("Texture is not power of two. MinFilter should be " +
+                            "set to Nearest or Linear filter ...");
+                    }
+                }
                 gl.texImage2D(this._target, this._level, this._internalFormat, this._format, this._type, auxData);
             }
             else {
@@ -11213,6 +11894,19 @@ var MB;
             this.unbind();
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
         }
+        ;
+        Texture2D.prototype.setSubImage = function (offsetX, offsetY, data) {
+            var gl = this._context.gl;
+            this.bind();
+            if (data instanceof HTMLImageElement) {
+                gl.texSubImage2D(this._target, this._level, offsetX, offsetY, this._format, this._type, data);
+            }
+            else {
+                gl.texSubImage2D(this._target, this._level, offsetX, offsetY, data.width, data.height, this._format, this._type, data.pixels || null);
+            }
+            ;
+            this.unbind();
+        };
         ;
         Texture2D.prototype.update = function (data) {
             this.bind();
@@ -11307,6 +12001,14 @@ var MB;
             }
             this.unbind();
         }
+        ;
+        Texture3D.prototype.setSubImage = function (offsetX, offsetY, offsetZ, data) {
+            var gl = this._context.gl;
+            this.bind();
+            gl.texSubImage3D(this._target, this._level, offsetX, offsetY, offsetZ, data.width, data.height, data.depth, this._format, this._type, data.pixels || null);
+            this.unbind();
+        };
+        ;
         return Texture3D;
     }(MB.Texture));
     MB.Texture3D = Texture3D;
@@ -11410,16 +12112,30 @@ var MBX;
 })(MBX || (MBX = {}));
 ;
 
+"use strict";
 var MB;
 (function (MB) {
     var Material = (function () {
-        function Material() {
+        function Material(context) {
+            this._uniforms = {};
+            this.backFaceCull = true;
+            this.sideOrientation = MB.ctes.FaceDir.InvClockwise;
+            this.depthTest = true;
+            this.visible = true;
+            this._context = context;
+            this._state = this._context.state;
         }
+        Material.prototype.use = function () {
+            this._state.culling.setStatus(this.backFaceCull);
+            this._state.culling.setFlipSided(this.sideOrientation);
+            this._state.depth.setStatus(this.depthTest);
+        };
         return Material;
     }());
     MB.Material = Material;
 })(MB || (MB = {}));
 
+"use strict";
 
 
 
@@ -11447,8 +12163,7 @@ var MB;
     var ShaderMaterial = (function (_super) {
         __extends(ShaderMaterial, _super);
         function ShaderMaterial(context, params) {
-            _super.call(this);
-            this._uniforms = {};
+            _super.call(this, context);
             function diff2(o1, o2) {
                 var res = {};
                 for (var key in o1) {
@@ -11458,7 +12173,6 @@ var MB;
                 }
                 return res;
             }
-            this._context = context;
             this.id = params.name || "";
             this._program = new MB.Program(context);
             this._program.load(params.vertexShader, params.fragmentShader);
@@ -11496,6 +12210,10 @@ var MB;
         };
         ;
         ShaderMaterial.prototype.use = function () {
+            if (!this.visible) {
+                return;
+            }
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -11541,6 +12259,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 
 
 
@@ -11552,8 +12271,7 @@ var MB;
     var NormalMaterial = (function (_super) {
         __extends(NormalMaterial, _super);
         function NormalMaterial(context) {
-            _super.call(this);
-            this._uniforms = {};
+            _super.call(this, context);
             var params = {
                 name: "normalShader",
                 uniforms: {
@@ -11602,6 +12320,7 @@ var MB;
         };
         ;
         NormalMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -11647,6 +12366,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 
 
 
@@ -11678,6 +12398,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 
 
 
@@ -11688,8 +12409,8 @@ var MBS;
 (function (MBS) {
     var SimpleMaterial = (function (_super) {
         __extends(SimpleMaterial, _super);
-        function SimpleMaterial() {
-            _super.call(this);
+        function SimpleMaterial(context) {
+            _super.call(this, context);
             this._ambientColor = MB.Color3.Black.clone();
             this._diffuseColor = MB.Color3.White.clone();
             this._specularColor = MB.Color3.White.clone();
@@ -11741,6 +12462,230 @@ var MBS;
     MBS.SimpleMaterial = SimpleMaterial;
 })(MBS || (MBS = {}));
 
+"use strict";
+
+
+
+
+
+
+var MB;
+(function (MB) {
+    var SimpleShadingMaterial = (function (_super) {
+        __extends(SimpleShadingMaterial, _super);
+        function SimpleShadingMaterial(context) {
+            _super.call(this, context);
+            var params = {
+                name: "simpleShadingShader",
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 },
+                    viewPos: { type: MB.UniformType.Vector3 },
+                    color: {
+                        type: MB.UniformType.Vector3,
+                        value: new MB.Vect3(1.0, 1.0, 1.0)
+                    }
+                }
+            };
+            this.id = params.name;
+            this._program = new MB.Program(context);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n                layout(location = 1) in vec3 normal;\n\n                out vec3 outPosition;\n                out vec3 outNormal;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                void main() {\n                    outPosition = vec3(model * vec4(position, 1.0));\n\n                    gl_Position = projection * view * vec4(outPosition, 1.0);\n                    mat3 normalMatrix = mat3(inverse(transpose(model)));\n                    outNormal = normalize(normalMatrix * normal);\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                in vec3 outPosition;\n                in vec3 outNormal;\n\n                out vec4 fragColor;\n\n                uniform vec3 viewPos;\n                uniform vec3 color;\n\n                void main() {\n                    vec3 N = normalize(outNormal);\n                    vec3 L = normalize(viewPos - outPosition);\n                    float dif = dot(N, L);\n                    dif = clamp(dif, 0.0, 1.0);\n                    fragColor = vec4(color * dif, 1.0) + vec4(color * 0.3, 1.0);\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.compile();
+            this._program.autocatching();
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = params.uniforms;
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(SimpleShadingMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        SimpleShadingMaterial.prototype.render = function (model) {
+            this.use();
+            model.render();
+        };
+        ;
+        SimpleShadingMaterial.prototype.render2 = function (model) {
+            this.use();
+            model.render2();
+        };
+        ;
+        SimpleShadingMaterial.prototype.render3 = function (model) {
+            this.use();
+            model.render3();
+        };
+        ;
+        SimpleShadingMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return SimpleShadingMaterial;
+    }(MB.Material));
+    MB.SimpleShadingMaterial = SimpleShadingMaterial;
+    ;
+})(MB || (MB = {}));
+
+"use strict";
+
+
+
+
+
+
+var MB;
+(function (MB) {
+    var SimpleTextureMaterial = (function (_super) {
+        __extends(SimpleTextureMaterial, _super);
+        function SimpleTextureMaterial(context) {
+            _super.call(this, context);
+            var params = {
+                name: "simpleTextureShader",
+                uniforms: {
+                    projection: { type: MB.UniformType.Matrix4 },
+                    view: { type: MB.UniformType.Matrix4 },
+                    model: { type: MB.UniformType.Matrix4 },
+                    tex: {
+                        type: MB.UniformType.Integer,
+                        value: 0
+                    }
+                }
+            };
+            this.id = params.name;
+            this._program = new MB.Program(context);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n                layout(location = 1) in vec3 normal;\n                layout(location = 2) in vec2 uv;\n\n                out vec2 outUV;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                void main() {\n                    gl_Position = projection * view * model * vec4(position, 1.0);\n                    outUV = uv;\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                in vec2 outUV;\n\n                out vec4 fragColor;\n\n                uniform sampler2D tex;\n\n                void main() {\n                    fragColor = texture(tex, outUV);\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.compile();
+            this._program.autocatching();
+            MB.ProgramManager.add(this.id, this._program);
+            var unifs = params.uniforms;
+            this._uniforms = {};
+            var aux;
+            for (var key in unifs) {
+                aux = unifs[key];
+                this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
+            }
+        }
+        ;
+        Object.defineProperty(SimpleTextureMaterial.prototype, "uniforms", {
+            get: function () {
+                return this._uniforms;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        SimpleTextureMaterial.prototype.render = function (model) {
+            this.use();
+            model.render();
+        };
+        ;
+        SimpleTextureMaterial.prototype.render2 = function (model) {
+            this.use();
+            model.render2();
+        };
+        ;
+        SimpleTextureMaterial.prototype.render3 = function (model) {
+            this.use();
+            model.render3();
+        };
+        ;
+        SimpleTextureMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
+            this._program.use();
+            var uniform;
+            for (var key in this._uniforms) {
+                uniform = this._uniforms[key];
+                if (!uniform.isDirty)
+                    continue;
+                if (uniform.type === MB.UniformType.Float) {
+                    this._program.sendUniform1f(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Integer) {
+                    this._program.sendUniform1i(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Boolean) {
+                    this._program.sendUniform1b(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Unsigned) {
+                    this._program.sendUniform1u(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix2) {
+                    this._program.sendUniformMat2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix3) {
+                    this._program.sendUniformMat3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Matrix4) {
+                    this._program.sendUniformMat4(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector2) {
+                    this._program.sendUniformVec2(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector3) {
+                    this._program.sendUniformVec3(key, uniform.value);
+                }
+                else if (uniform.type === MB.UniformType.Vector4) {
+                    this._program.sendUniformVec4(key, uniform.value);
+                }
+                uniform.isDirty = false;
+            }
+        };
+        return SimpleTextureMaterial;
+    }(MB.Material));
+    MB.SimpleTextureMaterial = SimpleTextureMaterial;
+    ;
+})(MB || (MB = {}));
+
+"use strict";
 
 
 
@@ -11753,8 +12698,7 @@ var MB;
     var TFMaterial = (function (_super) {
         __extends(TFMaterial, _super);
         function TFMaterial(context, params) {
-            _super.call(this);
-            this._uniforms = {};
+            _super.call(this, context);
             function diff2(o1, o2) {
                 var res = {};
                 for (var key in o1) {
@@ -11764,13 +12708,9 @@ var MB;
                 }
                 return res;
             }
-            this._context = context;
             this.id = params.name || "";
             this._program = new MB.Program(context);
-            this._program.addShader(params.vertexShader, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_script);
-            this._program.addShader(params.fragmentShader, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_script);
-            this._program.compileWithTF(params.tfs.varying, params.tfs.mode);
-            this._program.autocatching();
+            this._program.loadWithTF(params.vertexShader, params.fragmentShader, params.tfs.varying, params.tfs.mode);
             MB.ProgramManager.add(this.id, this._program);
             var unifs = diff2(this._program.uniformLocations, params.uniforms);
             this._uniforms = {};
@@ -11780,6 +12720,13 @@ var MB;
                 this._uniforms[key] = new MB.Uniform(aux.type, aux.value);
             }
         }
+        Object.defineProperty(TFMaterial.prototype, "program", {
+            get: function () {
+                return this._program;
+            },
+            enumerable: true,
+            configurable: true
+        });
         ;
         Object.defineProperty(TFMaterial.prototype, "uniforms", {
             get: function () {
@@ -11805,6 +12752,7 @@ var MB;
         };
         ;
         TFMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -11850,6 +12798,7 @@ var MB;
     ;
 })(MB || (MB = {}));
 
+"use strict";
 var MB;
 (function (MB) {
     var Uniform = (function () {
@@ -11882,6 +12831,7 @@ var MB;
 })(MB || (MB = {}));
 ;
 
+"use strict";
 var MBX;
 (function (MBX) {
     var UniformMaterials;
@@ -11936,6 +12886,7 @@ var MBX;
 })(MBX || (MBX = {}));
 ;
 
+"use strict";
 
 
 
@@ -11947,8 +12898,7 @@ var MB;
     var VolumetricMaterial = (function (_super) {
         __extends(VolumetricMaterial, _super);
         function VolumetricMaterial(context, tex3D) {
-            _super.call(this);
-            this._uniforms = {};
+            _super.call(this, context);
             var params = {
                 name: "volumetricShader",
                 uniforms: {
@@ -11965,7 +12915,6 @@ var MB;
             this.id = params.name;
             this._program = new MB.Program(context);
             this._tex3D = tex3D;
-            this._context = context;
             this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n\n                out vec3 outUV;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                out vec3 viewPos;\n\n                void main() {\n                    gl_Position = projection * view * model * vec4(position, 1.0);\n                    outUV = position + vec3(0.5);\n                    mat4 MV = view * model;\n                    MV = inverse(MV);\n                    viewPos = (MV * vec4(0.0, 0.0, 0.0, 1.0)).rgb;\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
             this._program.addShader("#version 300 es\n                precision highp float;\n                precision highp sampler3D;\n\n                in vec3 outUV;\n                uniform sampler3D tex;\n\n                const int MAX_SAMPLES = 300;        // total samples for each ray march step\n                const vec3 texMin = vec3(0.0);      // minimum texture access coordinate\n                const vec3 texMax = vec3(1.0);      // maximum texture access coordinate\n\n                in vec3 viewPos;\n\n                out vec4 fragColor;\n\n                bool stop = false;\n\n                uniform float step_size;\n\n                void main() {\n                    fragColor = vec4(0.0);\n                    vec3 dataPos = outUV;\n                    vec3 geomDir = normalize((outUV-vec3(0.5)) - viewPos);\n                    vec3 dirStep = geomDir * vec3(step_size);\n\n                    for (int i = 0; i < MAX_SAMPLES; ++i) {\n                        dataPos += dirStep;\n                        stop = dot(sign(dataPos-texMin),sign(texMax-dataPos)) < 3.0;\n\n                        // If the stopping condition is true we brek out of the ray marching loop\n                        if (stop)\n                            break;\n\n                        float samp = texture(tex, dataPos).r;\n\n                        float prev_alpha = samp - (samp * fragColor.a);\n                        fragColor.rgb = prev_alpha * vec3(samp) + fragColor.rgb;\n                        fragColor.a += prev_alpha;\n\n                        if (fragColor.a > 0.99) {\n                            break;\n                        }\n                    }\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             this._program.compile();
@@ -11997,6 +12946,7 @@ var MB;
         };
         ;
         VolumetricMaterial.prototype.use = function () {
+            _super.prototype.use.call(this);
             this._program.use();
             var uniform;
             for (var key in this._uniforms) {
@@ -12044,10 +12994,29 @@ var MB;
 
 var MBS;
 (function (MBS) {
+    var Component = (function () {
+        function Component() {
+        }
+        Component.prototype.update = function (dt) {
+        };
+        ;
+        Component.prototype.getComponent = function (type) {
+            return this.node.getComponent(type);
+        };
+        ;
+        return Component;
+    }());
+    MBS.Component = Component;
+    ;
+})(MBS || (MBS = {}));
+;
+
+"use strict";
+var MBS;
+(function (MBS) {
     var Engine = (function () {
         function Engine(context, options) {
             if (options === void 0) { options = {}; }
-            this._scenes = [];
             this._context = context;
             MB.Input.initialize();
         }
@@ -12073,7 +13042,7 @@ var MBS;
                     })(0.0);
                 }
                 catch (e) {
-                    MB.Log.error({
+                    console.error({
                         title: "Error:",
                         text: "" + e,
                         type: "error"
@@ -12082,187 +13051,105 @@ var MBS;
                 }
             });
         };
+        ;
+        Engine.prototype.resize = function () {
+        };
+        ;
         return Engine;
     }());
     MBS.Engine = Engine;
 })(MBS || (MBS = {}));
 
+
+
+
+
+
+
 var MBS;
 (function (MBS) {
-    var EngineApp = (function () {
-        function EngineApp(context) {
-            this._engine = new MBS.Engine(context);
-            this._scene = new MBS.Scene("demo", this._engine);
+    var MeshRenderer = (function (_super) {
+        __extends(MeshRenderer, _super);
+        function MeshRenderer(mesh, material) {
+            _super.call(this);
+            this._mesh = mesh;
+            this._material = material;
         }
-        EngineApp.prototype.run = function () {
-            var _this = this;
-            this._engine.run(function (dt) {
-                _this._scene.render(dt);
-            });
+        ;
+        Object.defineProperty(MeshRenderer.prototype, "material", {
+            get: function () {
+                return this._material;
+            },
+            set: function (m) {
+                this._material = m;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        Object.defineProperty(MeshRenderer.prototype, "mesh", {
+            get: function () {
+                return this._mesh;
+            },
+            set: function (m) {
+                this._mesh = m;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        MeshRenderer.prototype.update = function (dt) {
         };
-        return EngineApp;
-    }());
-    MBS.EngineApp = EngineApp;
+        ;
+        MeshRenderer.prototype.render = function () {
+            this.node._updateMatrixWorld();
+            this._material._uniforms["model"].value = this.node.transform._matrixWorld;
+            this._material.use();
+            this._mesh.render();
+        };
+        ;
+        return MeshRenderer;
+    }(MBS.Component));
+    MBS.MeshRenderer = MeshRenderer;
+    ;
 })(MBS || (MBS = {}));
+;
 
 var MBS;
 (function (MBS) {
     var Node = (function () {
-        function Node(name, scene) {
-            this._position = new MB.Vect3();
-            this._rotation = new MB.EulerAngle();
-            this._quaternion = new MB.Quat();
-            this._scale = new MB.Vect3(1.0, 1.0, 1.0);
-            this._isEnabled = true;
-            this._matrix = MB.Mat4.identity.clone();
+        function Node(name, tag) {
+            if (name === void 0) { name = "dummy"; }
+            if (tag === void 0) { tag = "SimpleTag"; }
             this._name = name;
             this._id = this._generateUUID();
-            this._scene = scene;
-            this.parent = null;
-            this._rotation.onChange = function () {
-                this._quaternion = this._quaternion.setFromEuler(this._rotation);
-            }.bind(this);
-            this._quaternion.onChange = function () {
-            }.bind(this);
+            this._children = new Array();
+            this._components = new Array();
+            this._parent = null;
+            this._transform = new MBS.Transform();
+            this._tag = tag;
+            this._isEnabled = true;
         }
-        Node.prototype.hasParent = function () {
-            return this._parentNode !== null;
-        };
-        ;
-        Node.prototype._translateFromAxis = function (axis, dist) {
-            var v1 = axis.clone();
-            v1.applyQuat(this._quaternion);
-            v1.multByScalar(dist);
-            this._position.add(v1);
-        };
-        ;
-        Node.prototype.TranslateX = function (dist) {
-            this._translateFromAxis(MB.Vect3.xAxis, dist);
-        };
-        ;
-        Node.prototype.TranslateY = function (dist) {
-            this._translateFromAxis(MB.Vect3.yAxis, dist);
-        };
-        ;
-        Node.prototype.TranslateZ = function (dist) {
-            this._translateFromAxis(MB.Vect3.zAxis, dist);
-        };
-        ;
-        Node.prototype._rotateFromAxis = function (axis, angle) {
-            var q1 = MB.Quat.fromAxis(axis, angle);
-            this._quaternion.mult(q1);
-        };
-        ;
-        Node.prototype.RotateX = function (angle) {
-            this._rotateFromAxis(MB.Vect3.xAxis, angle);
-        };
-        ;
-        Node.prototype.RotateY = function (angle) {
-            this._rotateFromAxis(MB.Vect3.yAxis, angle);
-        };
-        ;
-        Node.prototype.RotateZ = function (angle) {
-            this._rotateFromAxis(MB.Vect3.zAxis, angle);
-        };
-        ;
-        Object.defineProperty(Node.prototype, "position", {
-            get: function () {
-                return this._position;
-            },
-            set: function (p) {
-                this._position = p;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Node.prototype, "rotation", {
-            get: function () {
-                return this._rotation;
-            },
-            set: function (r) {
-                this._rotation = r;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Node.prototype, "quaternion", {
-            get: function () {
-                return this._quaternion;
-            },
-            set: function (q) {
-                this._quaternion = q;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        Object.defineProperty(Node.prototype, "scale", {
-            get: function () {
-                return this._scale;
-            },
-            set: function (s) {
-                this._scale = s;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ;
-        ;
-        ;
-        ;
-        ;
-        Node.prototype.LocalToWorld = function (v) {
-            return null;
-        };
-        ;
-        Node.prototype.WorldToLocal = function (v) {
-            return null;
-        };
-        ;
         Node.prototype.isEnabled = function () {
             if (!this._isEnabled) {
                 return false;
             }
-            if (this._parentNode) {
-                return this._parentNode.isEnabled();
-            }
             return true;
+        };
+        ;
+        Node.prototype.hasParent = function () {
+            return this.parent !== null;
         };
         ;
         Node.prototype.setEnabled = function (v) {
             this._isEnabled = v;
+            for (var i = 0, l = this._children.length; i < l; ++i) {
+                this._children[i].setEnabled(v);
+            }
         };
         ;
-        Object.defineProperty(Node.prototype, "parent", {
-            get: function () {
-                return this._parentNode;
-            },
-            set: function (parent) {
-                if (this._parentNode === parent) {
-                    return;
-                }
-                if (this._parentNode) {
-                    var idx = this._parentNode._children.indexOf(this);
-                    if (idx !== -1) {
-                        this._parentNode._children.splice(idx, 1);
-                    }
-                }
-                this._parentNode = parent;
-                if (this._parentNode) {
-                    if (!this._parentNode._children) {
-                        this._parentNode._children = new Array();
-                    }
-                    this._parentNode._children.push(this);
-                }
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Node.prototype.getScene = function () {
-            return this._scene;
-        };
         Node.prototype._generateUUID = function () {
             var d = new Date().getTime();
             var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -12273,85 +13160,191 @@ var MBS;
             return uuid;
         };
         ;
-        Node.prototype.add = function (object) {
-            if (arguments.length > 1) {
-                for (var i = 0, l = arguments.length; i < l; ++i) {
-                    this.add(arguments[i]);
-                }
-                return this;
-            }
-            if (object === this) {
-                MB.Log.error("MBS.Node.add: object can't be added as a child of itself.", object);
-                return this;
-            }
-            if (object.parent !== null) {
-                object.parent.remove(object);
-            }
-            object.parent = this;
-            return this;
-        };
+        Object.defineProperty(Node.prototype, "tag", {
+            get: function () { return this._tag; },
+            set: function (t) { this._tag = t; },
+            enumerable: true,
+            configurable: true
+        });
         ;
-        Node.prototype.remove = function (object) {
-            if (arguments.length > 1) {
-                for (var i = 0, l = arguments.length; i < l; ++i) {
-                    this.remove(arguments[i]);
-                }
-            }
-            var index = this._children.indexOf(object);
-            if (index !== -1) {
-                object.parent = null;
-                this._children.splice(index, 1);
-            }
-        };
         ;
-        Object.defineProperty(Node.prototype, "model", {
-            get: function () {
-                return this._matrix;
+        Object.defineProperty(Node.prototype, "name", {
+            get: function () { return this._name; },
+            set: function (n) { this._name = n; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        ;
+        Object.defineProperty(Node.prototype, "parent", {
+            get: function () { return this._parent; },
+            set: function (p) {
+                this._parent = p;
             },
             enumerable: true,
             configurable: true
         });
-        Node.prototype.updateMatrix = function () {
-            this._matrix = MB.Mat4.identity.clone();
-            this._matrix.compose(this._position, this.quaternion, this._scale);
+        ;
+        ;
+        Node.prototype.addChild = function (n) {
+            n.parent = this;
+            this._children.push(n);
         };
         ;
-        Node.prototype.addChild = function (elem) {
-            this.removeChild(elem);
-            this._children.push(elem);
+        Node.prototype.removeChild = function (n) {
+            var idx = this._children.indexOf(n);
+            if (idx !== -1) {
+                this._children.splice(idx, 1);
+            }
         };
         ;
-        Node.prototype.removeChild = function (elem) {
-            this._children = this._children.filter(function (e) {
-                if (elem === e) {
-                    elem._parentNode = null;
+        Node.prototype.addComponent = function (c) {
+            c.node = this;
+            this._components.push(c);
+        };
+        Object.defineProperty(Node.prototype, "transform", {
+            get: function () { return this._transform; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Node.prototype, "children", {
+            get: function () { return this._children; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Node.prototype, "worldPosition", {
+            get: function () {
+                var res = new MB.Vect3();
+                this._updateMatrixWorld(true);
+                return res.setFromMatrixPosition(this.transform._matrixWorld);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Node.prototype, "worldScale", {
+            get: function () {
+                var res = new MB.Vect3();
+                var p = new MB.Vect3();
+                var q = new MB.Quat();
+                this._updateMatrixWorld(true);
+                this.transform._matrixWorld.decompose(p, q, res);
+                return res;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Node.prototype._updateMatrixWorld = function (force) {
+            if (force === void 0) { force = false; }
+            if (this.transform._autoUpdate === true) {
+                this.transform.updateMatrix();
+            }
+            if (this.transform._matrixWorldNeedUpdate === true || force === true) {
+                if (!this.parent) {
+                    this.transform._matrixWorld.copy(this.transform._matrix);
                 }
-                return elem !== e;
-            });
+                else {
+                    this.parent.transform._matrixWorld.mult(this.transform._matrix, this.transform._matrixWorld);
+                }
+                this.transform._matrixWorldNeedUpdate = false;
+                force = true;
+            }
+            for (var i = 0, l = this._children.length; i < l; ++i) {
+                this._children[i]._updateMatrixWorld(force);
+            }
         };
         ;
         Node.prototype.removeAll = function () {
             this._children.length = 0;
         };
         ;
-        Node.prototype.searchElem = function (name, elem) {
-            if (elem === void 0) { elem = this; }
-            if (elem._name === name) {
+        Node.prototype.findByName = function (name) {
+            return this._searchName(name, this);
+        };
+        ;
+        Node.prototype._searchName = function (name, elem) {
+            if (elem.hasParent() && elem._name === name) {
                 return elem;
             }
             for (var i = 0, l = elem._children.length; i < l; ++i) {
-                var children = this.searchElem(name, elem);
+                var children = this._searchName(name, elem._children[i]);
                 if (children) {
                     return children;
                 }
             }
         };
         ;
+        Node.prototype.findByTag = function (tagName) {
+            return this._searchTag(tagName, this, []);
+        };
+        ;
+        Node.prototype._searchTag = function (name, elem, nodes) {
+            if (name === undefined) {
+                return nodes;
+            }
+            if (elem.hasParent() && elem._tag === name) {
+                nodes.push(elem);
+            }
+            for (var i = 0, l = elem._children.length; i < l; ++i) {
+                var children = this._searchTag(name, elem._children[i], nodes);
+            }
+            return nodes;
+        };
+        ;
+        Node.prototype.getComponent = function (type) {
+            var c = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                c = this._components[i];
+                if (c instanceof type) {
+                    return c;
+                }
+            }
+            return null;
+        };
+        ;
+        Node.prototype.getComponents = function () {
+            var list = [];
+            var c = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                list.push(this._components[i]);
+            }
+            return list;
+        };
+        ;
+        Node.prototype.getComponentsWithType = function (type) {
+            var list = [];
+            var c = null;
+            for (var i = 0, l = this._components.length; i < l; ++i) {
+                c = this._components[i];
+                if (c instanceof type) {
+                    list.push(c);
+                }
+            }
+            return list;
+        };
+        ;
+        Node.prototype.getComponentsInChildren = function () {
+            var list = [];
+            list = list.concat(this.getComponents());
+            for (var i = 0, lc = this._children.length; i < lc; ++i) {
+                var arr = this._children[i].getComponentsInChildren();
+                list = list.concat(arr);
+            }
+            return list;
+        };
+        ;
         return Node;
     }());
     MBS.Node = Node;
+    ;
 })(MBS || (MBS = {}));
+;
 
+"use strict";
 var MBS;
 (function (MBS) {
     var PostProcess = (function () {
@@ -12383,17 +13376,21 @@ var MBS;
         function Scene(name, engine) {
             this._clearColor = new MB.Color3(1, 1, 1);
             this._lights = new Array();
-            this._fogEnabled = false;
-            this._fogColor = new MB.Color3(0.2, 0.2, 0.3);
             this._postProcess = null;
+            this.camera = new MB.Camera2(new MB.Vect3(0, 0.18, 8.44));
             this._totalMeshes = 0;
             this._totalVertices = 0;
             this._drawCalls = 0;
             this._totalIndices = 0;
-            this._engine = engine;
+            this._beforeRender = [];
+            this._afterRender = [];
+            this.autoClear = true;
+            this.autoClearColor = true;
+            this.autoClearDepth = true;
+            this.autoClearStencil = true;
             this._name = name;
-            engine._scenes.push(this);
-            this._sceneGraph = new MBS.Node("root", this);
+            this._engine = engine;
+            this._sceneGraph = new MBS.Node();
             var bgColor = MB.Color4.fromColor3(MB.Color3.Black);
             this._engine.context.state.depth.setStatus(true);
             this._engine.context.state.depth.setFunc(MB.ctes.ComparisonFunc.Less);
@@ -12402,36 +13399,6 @@ var MBS;
             this._engine.context.state.color.setClearColor(bgColor);
             this._postProcess = new MBS.PostProcess(this);
         }
-        Object.defineProperty(Scene.prototype, "fogEnabled", {
-            get: function () {
-                return this._fogEnabled;
-            },
-            set: function (b) {
-                this._fogEnabled = b;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Scene.prototype, "fogColor", {
-            get: function () {
-                return this._fogColor;
-            },
-            set: function (c) {
-                this._fogColor = c;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Scene.prototype, "root", {
-            get: function () {
-                return this._sceneGraph;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Scene.prototype.addModel = function (m) {
-        };
-        ;
         Scene.prototype.addLight = function (lg) {
             for (var i = 0, l = this._lights.length; i < l; ++i) {
                 if (this._lights[i] === lg) {
@@ -12440,13 +13407,42 @@ var MBS;
             }
             this._lights.push(lg);
         };
+        ;
+        Object.defineProperty(Scene.prototype, "root", {
+            get: function () { return this._sceneGraph; },
+            enumerable: true,
+            configurable: true
+        });
         Scene.prototype.getEngine = function () {
             return this._engine;
         };
+        ;
         Scene.prototype.render = function (dt) {
+            var _this = this;
             this._totalMeshes = this._totalVertices = this._drawCalls = this._totalIndices = 0;
             this._engine.context.state.clearBuffers();
+            this._sceneGraph.children.forEach(function (n) {
+                _this._subRender(n, dt);
+            });
         };
+        ;
+        Scene.prototype._subRender = function (n, dt) {
+            for (var i = 0; i < n.children.length; ++i) {
+                this._subRender(n.children[i], dt);
+            }
+            for (var i = 0; i < n._components.length; ++i) {
+                n._components[i].update(dt);
+                if (n._components[i] instanceof MBS.MeshRenderer) {
+                    var mr = n._components[i];
+                    this._totalMeshes++;
+                    mr.material._uniforms["viewPos"].value = this.camera.GetPos();
+                    mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);
+                    mr.material._uniforms["view"].value = this.camera.GetViewMatrix();
+                    mr.render();
+                }
+            }
+        };
+        ;
         Object.defineProperty(Scene.prototype, "clearColor", {
             get: function () {
                 return this._clearColor;
@@ -12460,7 +13456,170 @@ var MBS;
             configurable: true
         });
         ;
+        ;
+        Object.defineProperty(Scene.prototype, "totalMeshes", {
+            get: function () { return this._totalMeshes; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Scene.prototype.registerBeforeRender = function (cb) {
+            this._beforeRender.push(cb);
+        };
+        ;
+        Scene.prototype.registerAfterRender = function (cb) {
+            this._afterRender.push(cb);
+        };
+        ;
+        Scene.prototype.clear = function (clearColor, clearDepth, clearStencil) {
+            if (clearColor === void 0) { clearColor = this.autoClearColor; }
+            if (clearDepth === void 0) { clearDepth = this.autoClearDepth; }
+            if (clearStencil === void 0) { clearStencil = this.autoClearStencil; }
+            var bits = 0;
+            var gl = this._engine.context.gl;
+            if (clearDepth === undefined || clearDepth)
+                bits |= gl.COLOR_BUFFER_BIT;
+            if (clearDepth === undefined || clearDepth)
+                bits |= gl.DEPTH_BUFFER_BIT;
+            if (clearStencil === undefined || clearStencil)
+                bits |= gl.STENCIL_BUFFER_BIT;
+            gl.clear(bits);
+        };
+        Scene.prototype.clearColor_ = function () {
+            this.clear(true, false, false);
+        };
+        ;
+        Scene.prototype.clearDepth_ = function () {
+            this.clear(false, true, false);
+        };
+        ;
+        Scene.prototype.clearStencil_ = function () {
+            this.clear(false, false, true);
+        };
+        ;
         return Scene;
     }());
     MBS.Scene = Scene;
+    ;
 })(MBS || (MBS = {}));
+;
+
+var MBS;
+(function (MBS) {
+    var Tags = (function () {
+        function Tags() {
+        }
+        Tags.HasTag = function (o) {
+            if (!o.tag) {
+                return false;
+            }
+            return o.tag.length > 0;
+        };
+        ;
+        Tags.GetTag = function (o) {
+            return o.tag;
+        };
+        return Tags;
+    }());
+    MBS.Tags = Tags;
+    ;
+})(MBS || (MBS = {}));
+;
+
+var MBS;
+(function (MBS) {
+    var Transform = (function () {
+        function Transform() {
+            var _this = this;
+            this._matrix = new MB.Mat4();
+            this._matrixWorld = new MB.Mat4();
+            this._autoUpdate = true;
+            this._matrixWorldNeedUpdate = false;
+            this._position = new MB.Vect3();
+            this._rotation = new MB.EulerAngle();
+            this._quaternion = new MB.Quat();
+            this._scale = MB.Vect3.createFromScalar(1.0);
+            this._rotation.onChange = function () {
+                _this._quaternion = _this._quaternion.setFromEuler(_this._rotation);
+            };
+            this._quaternion.onChange = function () {
+                _this._rotation = _this._rotation.setFromQuaternion(_this._quaternion, _this.rotation.order, false);
+            };
+        }
+        ;
+        Object.defineProperty(Transform.prototype, "position", {
+            get: function () { return this._position; },
+            set: function (p) { this._position = p; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "rotation", {
+            get: function () { return this._rotation; },
+            set: function (r) { this._rotation = r; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "quaternion", {
+            get: function () { return this._quaternion; },
+            set: function (q) { this._quaternion = q; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        Object.defineProperty(Transform.prototype, "scale", {
+            get: function () { return this._scale; },
+            set: function (s) { this._scale = s; },
+            enumerable: true,
+            configurable: true
+        });
+        ;
+        ;
+        ;
+        ;
+        ;
+        Transform.prototype._translateOnAxis = function (axis, dist) {
+            var v = new MB.Vect3();
+            v.copy(axis).applyQuat(this._quaternion);
+            this._position = this._position.add(v.multByScalar(dist));
+        };
+        ;
+        Transform.prototype._rotateOnAxis = function (axis, angle) {
+            var q1 = new MB.Quat();
+            q1.setFromAxisAngle(axis, angle);
+            this._quaternion = this._quaternion.mult(q1);
+        };
+        ;
+        Transform.prototype.translateX = function (dist) { this._translateOnAxis(new MB.Vect3(1, 0, 0), dist); };
+        ;
+        Transform.prototype.translateY = function (dist) { this._translateOnAxis(new MB.Vect3(0, 1, 0), dist); };
+        ;
+        Transform.prototype.translateZ = function (dist) { this._translateOnAxis(new MB.Vect3(0, 0, 1), dist); };
+        ;
+        Transform.prototype.rotateX = function (angle) { this._rotateOnAxis(new MB.Vect3(1, 0, 0), angle); };
+        ;
+        Transform.prototype.rotateY = function (angle) { this._rotateOnAxis(new MB.Vect3(0, 1, 0), angle); };
+        ;
+        Transform.prototype.rotateZ = function (angle) { this._rotateOnAxis(new MB.Vect3(0, 0, 1), angle); };
+        ;
+        Transform.prototype.localWorld = function (v) {
+            return v.applyMat4(this._matrixWorld);
+        };
+        ;
+        Transform.prototype.worldToLocal = function (v) {
+            var mat = new MB.Mat4();
+            return v.applyMat4(mat.inverse(this._matrixWorld));
+        };
+        ;
+        Transform.prototype.updateMatrix = function () {
+            this._matrix.compose(this.position, this.quaternion, this.scale);
+            this._matrixWorldNeedUpdate = true;
+        };
+        ;
+        return Transform;
+    }());
+    MBS.Transform = Transform;
+    ;
+})(MBS || (MBS = {}));
+;

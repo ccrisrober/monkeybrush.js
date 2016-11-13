@@ -72,7 +72,9 @@ namespace MB {
             this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
 
             this._indicesLen = this._geometry.indices.length;
-        }
+        };
+
+        // TODO
     };
 };
 

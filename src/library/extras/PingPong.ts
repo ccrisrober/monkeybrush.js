@@ -40,7 +40,6 @@ namespace MB {
         // TOOD: DOC
         constructor(context: GLContext, size: MB.Vect2) {
             this._context = context;
-            const gl: WebGL2RenderingContext = this._context.gl;
             this._flag = true;
             this._size = size;
 
@@ -51,7 +50,7 @@ namespace MB {
                 }, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
-                    type: gl.FLOAT,
+                    type: MB.ctes.DataType.Float,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest
                 });
@@ -63,7 +62,7 @@ namespace MB {
                 }, {
                     internalFormat: MB.ctes.PixelFormat.RGBA,
                     format: MB.ctes.PixelFormat.RGBA,
-                    type: gl.FLOAT,
+                    type: MB.ctes.DataType.Float,
                     minFilter: MB.ctes.TextureFilter.Nearest,
                     magFilter: MB.ctes.TextureFilter.Nearest
                 });

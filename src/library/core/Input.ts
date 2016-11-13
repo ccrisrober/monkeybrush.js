@@ -46,31 +46,32 @@ namespace MB {
 
             // Register handles
             window.addEventListener("keyup", function(ev: KeyboardEvent) {
-                if (ev.keyCode === 40 || ev.keyCode === 38) {
-                    ev.preventDefault();
-                }
                 self._onKeyUp(ev);
+                ev.preventDefault();
             });
             window.addEventListener("keydown", function(ev: KeyboardEvent) {
-                if (ev.keyCode === 40 || ev.keyCode === 38) {
-                    ev.preventDefault();
-                }
                 self._onKeyDown(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousedown", function(ev: MouseEvent) {
                 self._onMouseDown(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousemove", function(ev: MouseEvent) {
                 self._onMouseMove(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mouseup", function(ev: MouseEvent) {
                 self._onMouseUp(ev);
+                ev.preventDefault();
             });
             window.addEventListener("mousewheel", function(ev: MouseEvent) {
                 self._onMouseScroll(ev);
+                ev.preventDefault();
             });
             window.addEventListener("DOMMouseScroll", function(ev: MouseEvent) {
                 self._onMouseScroll(ev);
+                ev.preventDefault();
             });
 
             Input._instance = this;

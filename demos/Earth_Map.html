@@ -157,7 +157,6 @@
                 }
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
                         .scale(new MB.Vect3(0.25, 0.25, 0.25));
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.uniforms.heightFactor.value = this.text.heightFactor;

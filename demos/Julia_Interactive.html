@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Julia</title>
+    <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <div id="samplesPassed"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec2 uv;
+
+        uniform int iter;
+        uniform float iGlobalTime;
+        uniform vec2 mousePos;
+
+        uniform sampler2D tex;
+
+        out vec4 fragColor;
+
+        struct WindowSpace {
+            float x;
+            float y;
+            float w;
+            float h;
+        };
+
+        vec2 createComplex(in WindowSpace win, in vec2 uv) {
+            return vec2(uv.x * win.w + win.x,
+                        uv.y * win.h + win.y);
+        }
+
+        vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d) {
+            return a + b * cos(6.28318*(c*t+d));
+        }
+
+        vec3 juliaPalette(in float t) {
+            return palette(t, vec3(0.5), vec3(0.5),
+                              vec3(1.0, 1.0, 0.5), vec3(0.80, 0.90, 0.30));
+        }
+
+        int i;
+        float julia(in vec2 c, in vec2 z, in vec2 target) {
+            float x, y;
+            float d = 1e20;
+            for(i = 0; i < iter; ++i) {
+                x = (z.x * z.x - z.y * z.y) + c.x;
+                y = (z.y * z.x + z.x * z.y) + c.y;
+
+                if((x * x + y * y) > 4.0) break;
+                z.x = x;
+                z.y = y;
+
+                d = min(d, length(z - target));
+            }
+            return d;
+        }
+
+        void main() {
+            i = 0;
+            WindowSpace win = WindowSpace(-1.5, -1.0, 3.0, 2.0);
+
+            vec2 z = createComplex(win, uv);
+            vec2 c = createComplex(win, mousePos / vec2(1.0));
+
+            vec2 t = vec2(sin(iGlobalTime) + 0.1 * sin(iGlobalTime * 2.0),
+                          cos(iGlobalTime) + 0.1 * cos(iGlobalTime * 2.0));
+
+            t *= cos(iGlobalTime * 0.1) * 0.75;
+
+            vec3 j = juliaPalette(pow(julia(c, z, t), 0.5));
+            float amt = 0.35 + 0.65 * cos(iGlobalTime * 0.5);
+
+            fragColor.rgb = texture(tex, vec2((i == iter ? 0.0 : float(i)) / 100.0, 0)).rgb;
+            fragColor.rgb = mix(j, fragColor.rgb, amt);
+            fragColor.a = 1.0;
+        }
+    </script>
+    <script type="text/javascript">
+        var Configuration = function () {
+            return {
+                iter: 25
+            }
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(), Configuration());
+                this.debug = true;
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/pal.png", "1DTex");
+            };
+            MyScene.prototype.initialize = function () {
+                this.tex = new MB.Texture2D(this.context, "1DTex", {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+
+                this.myProg = new MB.PostProcessMaterial(this.context, {
+                    name: "handLikePP",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        iter: { type: MB.UniformType.Integer },
+                        iGlobalTime: { type: MB.UniformType.Float },
+                        mousePos: { type: MB.UniformType.Vector2 }
+                    }
+                });
+                this.dt = 0;
+                this.tex.bind(0);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.__resize__();
+                this.dt += dt * 0.01;
+                this.myProg.uniforms.iGlobalTime.value = this.dt;
+                this.myProg.uniforms.mousePos.value = new MB.Vect2(MB.Input.getMousePosY()/this.canvas.width, MB.Input.getMousePosY()/this.canvas.height);
+            };
+            MyScene.prototype.draw = function () {
+                this.myProg.uniforms.iter.value = this.text.iter;
+                this.myProg.renderPP();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "iter", 1, 100);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

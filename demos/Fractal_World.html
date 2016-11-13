@@ -156,10 +156,12 @@
                         iGlobalTime: { type: MB.UniformType.Float }
                     }
                 });
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
                 this.__resize__();
-                this.prog.uniforms.iGlobalTime.value = dt;
+                this.dt += dt * 0.01;
+                this.prog.uniforms.iGlobalTime.value = this.dt;
             };
             MyScene.prototype.draw = function () {
                 this.prog.renderPP();

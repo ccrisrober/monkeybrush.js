@@ -40,7 +40,7 @@
     <script type="text/javascript">
         var MyConfig = function () {
             return {
-                BlockCount: 128
+                BlockCount: 64
             };
         };
         var MyScene = (function (_super) {
@@ -83,7 +83,7 @@
                 this.prog.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "BlockCount").min(64).max(512).step(1);
+                gui.add(this.text, "BlockCount").min(2).max(512).step(1);
             };
             return MyScene;
         }(MB.App));

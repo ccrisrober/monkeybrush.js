@@ -190,18 +190,18 @@
                 });
                 this.skybox.texture.bind(0);
                 this.cameraUpdate();
+                this.dt = 0;
             };
             MyScene.prototype.update = function (dt) {
                 this.camera.update(MB.Timer.deltaTime() / 10.0, this.cameraUpdate.bind(this));
-                this.angle += MB.Timer.deltaTime() * 0.001;
                 this.__resize__();
-                this.myProg.uniforms.iGlobalTime.value = dt;
+                this.dt += dt * 0.01;
+                this.myProg.uniforms.iGlobalTime.value = this.dt;
             };
             MyScene.prototype.draw = function () {
                 this.clearColorAndDepth();
                 this.model =
-                    this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0));
+                    this.identityMatrix.clone();
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.use();
                 this.plane.render();

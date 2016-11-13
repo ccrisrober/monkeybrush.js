@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alien Procedural</title>
+   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        out vec4 fragColor;
+        in vec2 uv;
+
+        precision mediump float;
+
+        uniform sampler2D tex;
+
+        uniform int side;
+
+        void main() {
+            vec2 p = uv;
+            if (side == 0){
+                if (p.x > 0.5)
+                    p.x = 1.0 - p.x;
+            } else if (side == 1) {
+                if (p.x < 0.5)
+                    p.x = 1.0 - p.x;
+            } else if (side == 2) {
+                if (p.y < 0.5)
+                    p.y = 1.0 - p.y;
+            } else if (side == 3) {
+                if (p.y > 0.5)
+                    p.y = 1.0 - p.y;
+            }
+            vec4 color = texture(tex, p);
+            fragColor = color;
+        }
+    </script>
+    <script type="text/javascript">
+        var MyConfig = function () {
+            return {
+                Side: 0
+            };
+        };
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "App", new MB.GLContextW2(), MyConfig());
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Dundus_Square.jpg", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+
+                this.prog = new MB.PostProcessMaterial(this.context, {
+                    name: "pixelizationShader",
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        side: { type: MB.UniformType.Integer }
+                    }
+                });
+                this.tex2d.bind(0);
+            };
+            MyScene.prototype.update = function (dt) {
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.prog.uniforms.side.value = this.text.Side;
+                this.prog.renderPP();
+            };
+            MyScene.prototype.textCB = function (gui) {
+                gui.add(this.text, "Side").min(0).max(4).step(1);
+            };
+            return MyScene;
+        }(MB.App));
+        window.onload = function () {
+            var myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>

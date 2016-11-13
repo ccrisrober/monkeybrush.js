@@ -148,6 +148,14 @@ namespace MB {
             this.compile();
             this.autocatching();
         };
+        public loadWithTF(vsShaderCode: string, fsShaderCode: string, varyings: Array<string>, mode: MB.ctes.TFMode) {
+            this.addShader(vsShaderCode, MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
+            this.addShader(fsShaderCode, MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._compile();
+            this.feedbackVarying(varyings, mode);
+            this._link();
+            this.autocatching();
+        };
         /**
          * Return internal program identifier
          * @return {WebGLProgram} [description]
@@ -197,8 +205,8 @@ namespace MB {
             // Checkin errors
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -228,8 +236,8 @@ namespace MB {
             // Checkin errors
             if (!gl.getProgramParameter(this._handler, gl.LINK_STATUS)) {
                 alert("ERROR");
-                MB.Log.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
-                MB.Log.debug({
+                console.warn("Error in Program linking:" + gl.getProgramInfoLog(this._handler));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -255,13 +263,13 @@ namespace MB {
                 request.send();
             } catch (err) {
                 alert("ERROR: " + filePath);
-                MB.Log.error("ERROR: " + filePath);
+                console.error("ERROR: " + filePath);
                 return null;
             }
             let shaderSource: string = request.responseText;
             if (shaderSource === null) {
                 alert("WARNING: " + filePath + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -275,7 +283,7 @@ namespace MB {
         private loadAndCompileFromText(shaderSource: string, shaderType: number) {
             if (shaderSource === null) {
                 alert("WARNING: " + shaderSource + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -295,7 +303,7 @@ namespace MB {
 
             if (shaderSource === null) {
                 alert("WARNING: " + id + " failed");
-                MB.Log.warn(this._fragmentSource);
+                console.warn(this._fragmentSource);
                 throw "SHADER ERROR";
             }
 
@@ -338,7 +346,6 @@ namespace MB {
                     }
                     ret = ret.replace(match[0], this._processImports(content));
                 } else {
-                    // TODO: let includeShaderUrl = "";
                     // ...
                     ret = ret.replace(match[0], "FAIL");
                 }
@@ -374,8 +381,8 @@ namespace MB {
             // Check errors
             if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
                 alert("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
-                MB.Log.debug({
+                console.error("ERROR: " + gl.getShaderInfoLog(compiledShader));
+                console.warn({
                     vertex: this._vertexSource,
                     fragment: this._fragmentSource
                 });
@@ -767,5 +774,13 @@ namespace MB {
                     MB.ctes.ReadMode.read_text);
             }
         };
+        // --enable-privileged-webgl-extension
+        public debugShaders() {
+            const ext = MB.Extensions.get(this._context, "WEBGL_debug_shaders");
+            console.log({
+                "vertex": ext.getTranslatedShaderSource(this._shaders[0]),
+                "fragment": ext.getTranslatedShaderSource(this._shaders[1])
+            });
+        }
     };
 };

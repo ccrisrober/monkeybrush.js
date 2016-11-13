@@ -221,6 +221,11 @@ namespace MB {
             const delta = Vect2.sub(p1, p0);
             return Math.atan2(delta.y, delta.x);
         };
+        export function euclideanModulo(m: number, n: number): number {
+            return m >= 0 ?
+                m % n :
+                (n - Math.abs(m % n)) % n;
+        }
         /**
          * Return angle between two 3D points
          * @param  {Vect3}  p0 First 3D point.

@@ -20,17 +20,30 @@
 "use strict";
 
 namespace MB {
-    export namespace SourceFrags {
-        export function parse(str: string): string {
-            const regex = /#import +<([\w\d.]+)>/g;
-            function replace(match: string, include: string): string {
-                const replace = SourceFrags[include];
-                if (replace === undefined) {
-                    throw new Error(`Can not resolve #import <${include}>`);
-                }
-                return parse(replace);
+    export namespace Loaders {
+        /**
+         * [loadJSON description]
+         * @param {string}    jsonSrc [description]
+         * @param {string =        ""}          alias [description]
+         */
+        export function loadJSON(jsonSrc: string, alias: string = "") {
+            alias = _getAlias(jsonSrc, alias);
+            if (!(ResourceMap.isAssetLoaded(alias))) {
+                // Update resources in load counter
+                ResourceMap.asyncLoadRequested(alias);
+
+                // Async request the data from server
+                let request = new XMLHttpRequest();
+                request.open("GET", jsonSrc, true);
+
+                // Specify that the request retrieves json data.
+                request.responseType = "json";
+
+                request.onload = function () {
+                    ResourceMap.asyncLoadCompleted(alias, JSON.parse(request.response));
+                }.bind(this);
+                request.send();
             }
-            return str.replace(regex, replace);
         };
     };
 };

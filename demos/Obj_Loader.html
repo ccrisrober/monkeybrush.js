@@ -78,7 +78,9 @@
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
-                _super.call(this, "App", new MB.GLContextW2());
+                _super.call(this, "App", new MB.GLContextW2(null, {
+                    antialias: true
+                }));
                 this.camera = new MB.Camera2(new MB.Vect3(2.66, 3.58, 20.25));
                 this.angle = 0;
                 this.pos = 0;
@@ -115,8 +117,6 @@
                 this.clearColorAndDepth();
                 this.model =
                     this.identityMatrix.clone()
-                        .translate(new MB.Vect3(0.0, 0.0, 0.0))
-                        .rotate(90.0 * Math.PI / 180, MB.Vect3.yAxis)
                         .rotate(this.angle * 0.5, MB.Vect3.yAxis);
                 this.myProg.uniforms.model.value = this.model;
                 this.myProg.render(this.cubito);
@@ -130,8 +130,9 @@
             };
             return MyScene;
         }(MB.App));
+        var myScene;
         window.onload = function () {
-            var myScene = new MyScene();
+            myScene = new MyScene();
             myScene.start();
         };
     </script>

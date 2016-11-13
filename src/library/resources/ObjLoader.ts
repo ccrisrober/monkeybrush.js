@@ -30,7 +30,7 @@ namespace MB {
             try {
                 req.send(null);
             } catch (e) {
-                MB.Log.error(`Error reading file ${filename}`);
+                console.error(`Error reading file ${filename}`);
             }
             return req.responseText;
         }
@@ -41,6 +41,18 @@ namespace MB {
             split.forEach((value: any) => {
                 if (!isNaN(value)) {
                     values.push(parseFloat(value));
+                }
+            });
+
+            return values;
+        }
+        function splitLineToIntegers(line: string): Array<number> {
+            let values = new Array();
+
+            let split = line.split(" ");
+            split.forEach((value: any) => {
+                if (!isNaN(value)) {
+                    values.push(parseInt(value));
                 }
             });
 
@@ -59,6 +71,64 @@ namespace MB {
             }
             return values;
         }
+        export function loadMTL(filename: string): Object {
+            let mtl = {
+                diffuseColor: null,
+                ambientColor: null,
+                specularColor: null,
+                specPower: 0,
+                alpha: 1.0,
+                diffuseTexSrc: null,
+                ambientTexSrc: null,
+                specularTexSrc: null,
+            };
+
+            let lines = loadFile(filename).split("\n");
+            let aux;
+
+            lines.forEach((line: string) => {
+                let elems = line.split(/\s+/);
+                elems.shift();
+
+                let type: string = line.substr(0, 2).trim();
+
+                // Blank line or comment
+                if (type.length === 0 || type === "#") {
+                    return;
+                }
+                type = type.toLowerCase();
+                if (type === "kd") {
+                    aux = splitLineToFloats(line);
+                    mtl.diffuseColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ka") {
+                    aux = splitLineToFloats(line);
+                    mtl.ambientColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ks") {
+                    aux = splitLineToFloats(line);
+                    mtl.specularColor = new MB.Color3(aux[0], aux[1], aux[2]);
+                }
+                else if (type === "ns") {
+                    mtl.specPower = splitLineToIntegers(line)[0];
+                }
+                else if (type === "d") {
+                    mtl.alpha = splitLineToFloats(line)[0];
+                }
+
+                // map_Ka -s 1 1 1 -o 0 0 0 -mm 0 1 chrome.mpc
+                // map_Kd -s 1 1 1 -o 0 0 0 -mm 0 1 chrome.mpc
+                // map_Ks -s 1 1 1 -o 0 0 0 -mm 0 1 chrome.mpc
+                // map_Ns -s 1 1 1 -o 0 0 0 -mm 0 1 wisp.mps
+                // map_d -s 1 1 1 -o 0 0 0 -mm 0 1 wisp.mps
+                // disp -s 1 1 .5 wisp.mps
+                // decal -s 1 1 1 -o 0 0 0 -mm 0 1 sand.mps
+                // bump -s 1 1 1 -o 0 0 0 -bm 1 sand.mpb
+
+            });
+
+            return mtl;
+        };
         export function loadObj(filename: string): Object {
             let verts = [],
                 normals = [],
@@ -80,6 +150,12 @@ namespace MB {
                 elems.shift();
 
                 let type: string = line.substr(0, 2).trim();
+
+                // Blank line or comment
+                if (type.length === 0 || type === "#") {
+                    return;
+                }
+                type = type.toLowerCase();
 
                 // if (/^v\s/.test(line)) {
                 if (type === "v") {

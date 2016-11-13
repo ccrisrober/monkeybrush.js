@@ -154,7 +154,7 @@ namespace MB {
                 this._value[1],
                 this._value[2],
                 this._value[3]
-           );
+          );
         }
         /**
          * Calculate dot product with another quaternion
@@ -243,8 +243,22 @@ namespace MB {
             this._value[1] = -this._value[1];
             this._value[2] = -this._value[2];
 
+            if (this.onChange) {
+                this.onChange();
+            }
+
             return this;
         };
+        /**
+         * Returns whether or not current Quat and another Quat have exactly the same elements
+         *     in the same position.
+         * @param  {Vect2}   other The second vector
+         * @return {boolean} True if the quaternions are equals, false otherwise
+         */
+        public exactEquals(other: MB.Quat): boolean {
+            return this.x === other.x && this.y === other.y
+                && this.z === other.z && this.w === other.w;
+        }
         static fromAxis(axis: Vect3, angle: number, dest: Quat = null): Quat {
             if (!dest) dest = new Quat();
 
@@ -260,6 +274,47 @@ namespace MB {
         }
 
         public onChange: Function;
+
+        public setFromRotationMatrix(mat: MB.Mat4): MB.Quat {
+            // Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
+            let m00 = mat._value[0], m01 = mat._value[4], m02 = mat._value[8],
+                m10 = mat._value[1], m11 = mat._value[5], m12 = mat._value[9],
+                m20 = mat._value[2], m21 = mat._value[6], m22 = mat._value[10],
+
+            tr = m00 + m11 + m22,
+            s;
+
+            if (tr > 0) {
+                s = 0.5 / Math.sqrt(tr + 1.0);
+                this.w = 0.25 / s;
+                this.x = (m21 - m12) * s;
+                this.y = (m02 - m20) * s;
+                this.z = (m10 - m01) * s;
+            } else if (m00 > m11 && m00 > m22) {
+                s = 2.0 * Math.sqrt(1.0 + m00 - m11 - m22);
+                this.w = (m21 - m12) / s;
+                this.x = 0.25 * s;
+                this.y = (m01 + m10) / s;
+                this.z = (m02 + m20) / s;
+            } else if (m11 > m22) {
+                s = 2.0 * Math.sqrt(1.0 + m11 - m00 - m22);
+                this.w = (m02 - m20) / s;
+                this.x = (m01 + m10) / s;
+                this.y = 0.25 * s;
+                this.z = (m12 + m21) / s;
+
+            } else {
+                s = 2.0 * Math.sqrt(1.0 + m22 - m00 - m11);
+                this.w = (m10 - m01) / s;
+                this.x = (m02 + m20) / s;
+                this.y = (m12 + m21) / s;
+                this.z = 0.25 * s;
+            }
+
+            this.onChange();
+
+            return this;
+        }
 
         public setFromEuler (euler: MB.EulerAngle): MB.Quat {
             // Based on http://www.mathworks.com/matlabcentral/fileexchange/
@@ -305,6 +360,23 @@ namespace MB {
                 this._value[2] = c1 * c2 * s3 + s1 * s2 * c3;
                 this._value[3] = c1 * c2 * c3 + s1 * s2 * s3;
             }
+            return this;
+        }
+
+        public setFromAxisAngle(axis: MB.Vect3, angle: number): MB.Quat {
+            // http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+            //     Assumes axis is normalized
+            const
+                halfAngle = angle / 2.0,
+                s = Math.sin(halfAngle);
+
+            this._value[0] = axis.x * s;
+            this._value[1] = axis.y * s;
+            this._value[2] = axis.z * s;
+            this._value[3] = Math.cos(halfAngle);
+
+            this.onChange();
+
             return this;
         }
     };

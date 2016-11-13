@@ -223,6 +223,14 @@ namespace MB {
             }
             return new Color3(h, s, l);
         };
+        public toHSV(): Color3 {
+            // let h = MB.Mathf.euclideanModulo(h, 1);
+            // let s = MB.Mathf.clamp01(s);
+            // let v = MB.Mathf.clamp01(v);
+            // TODO
+            return null;
+            // return this.setHSL(h, (s * v) / ((h = (2 - s) * v) < 1 ? h : (2 - h)), h * 0.5);
+        }
         public static fromColor4(color: Color4): Color3 {
             return new Color3(color.r, color.g, color.b);
         };
@@ -261,6 +269,11 @@ namespace MB {
          * @param {Color3} 0xFFD700
          */
         public static Gold: Color3 = Color3.createFromHex(0xFFD700);
+        /**
+         * Green color
+         * @param {Color3} 0x008000
+         */
+        public static Green: Color3 = Color3.createFromHex(0x008000);
         /**
          * Indigo color
          * @param {Color3} 0x4B0082

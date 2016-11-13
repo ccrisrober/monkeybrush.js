@@ -235,7 +235,7 @@ namespace MB {
             UNSIGNED_INT_24_8 = 0x84FA,
             HALF_FLOAT = 0x140B,
             RG = 0x8227,
-            RG_INTEGER = 0x8228,
+            RgInt = 0x8228,
             INT_2_10_10_10_REV = 0x8D9f,
 
             RED = 0x1903,
@@ -459,11 +459,24 @@ namespace MB {
             TextureCubeMap = 0x8513
         };
         export enum TextureFilter {
+            // Returns the texel that is nearest to the center of the pixel begin renderer
             Nearest = 0x2600,
+            // Returns the weighted average of the four texture elements that are closest
+            //   to the center of the pixel being rendered.
             Linear = 0x2601,
+            // Choose the mipmap that most closely matches the size of the pixel being
+            //  textured and then apply the GL_NEAREST method to produce the sampled texture value.
             NearestMMNearest = 0x2700,
+            // Choose the mipmap that most closely matches the size of the pixel being textured
+            //  and then apply the GL_LINEAR method to produce the sampled texture value.
             LinearMMNearest = 0x2701,
+            // Choose the two mipmaps that most closely matches the size of the pixel being textured.
+            // Each of the two textures are sampled using the GL_NEAREST method and the weighted
+            //   average of the two samples are used to produce the final value.
             NearestMMLinear = 0x2702,
+            // Choose the two mipmaps that most closely matches the size of the pixel being textured.
+            // Each of the two textures are sampled using the GL_LINEAR method and the weighted average
+            //  of the two samples are used to produce the final value.
             LinearMMLinear = 0x2703,
         };
         export enum TFMode {
@@ -500,7 +513,7 @@ namespace MB {
 
 
 
-        export enum BlendingMode {
+        export enum BlendingMode2 {
             // gl.disable(gl.BLEND);
             None,
             // gl.enable(BLEND)
