@@ -25,40 +25,96 @@ namespace MBX {
      * @class Sprite
      */
     export class Sprite {
-        protected _geometry: MB.VertexBufferGeometry;
+        protected _customGeometry: MB.CustomModel;
 
-        constructor() {
-            this._geometry = new MB.VertexBufferGeometry();
-            this._geometry.addAttr("position",
-                new MB.BufferAttribute(new Float32Array([
+        public position: MB.Vect3;
+        public color: MB.Color4 = MB.Color4.fromColor3(MB.Color3.White);
+        public width: number = 1.0;
+        public height: number = 1.0;
+        public angle: number = 0.0;
+        public invertU: boolean = false;
+        public invertV: boolean = false;
+        protected _name: string;
+
+        public setSize(s: number) {
+            this.width = this.height = s;
+        }
+
+        protected _texture: MB.Texture2D;
+        protected _context: MB.GLContext;
+
+        constructor(context: MB.GLContext, name: string, texture: MB.Texture2D) {
+            this._context = context;
+            this._name = name;
+            this._texture = texture;
+            this.position = MB.Vect3.createFromScalar(0.0);
+
+            this._customGeometry = new MB.CustomModel(context, {
+                vertices: [
                     -0.5, -0.5, 0.0,
                      0.5, -0.5, 0.0,
                      0.5,  0.5, 0.0,
                     -0.5,  0.5, 0.0
-                ]), 3));
-            this._geometry.addAttr("uv",
-                new MB.BufferAttribute(new Float32Array([
+                ],
+                texCoords: [
                     0, 0,
                     1, 0,
                     1, 1,
                     0, 1
-                ]), 2));
-            this._geometry.setIndex(new Uint16Array([
-                0, 1, 2,
-                0, 2, 3
-            ]));
-        }
-
-        public setPosition(pos: MB.Vect3) {
-            /**
-             * sprite.position.set(
-             *         Math.random() * range - range / 2,
-             *         Math.random() * range - range / 2,
-             *         Math.random() * range - range / 2
-             *);
-             * sprite.scale.set(4, 4, 4);
-             */
+                ],
+                indices: [
+                    0, 1, 2,
+                    0, 2, 3
+                ]
+            })
         };
+        protected _animationStarted: boolean = false;
+        protected _loop: boolean = false;
+        protected _fromIndex: number = 0;
+        protected _toIndex: number = 0;
+        protected _delay: number = 0;
+        protected _time: number = 0;
+        protected _currentIndex: number = 0;
+        protected _onFinish: Function;
+        public playAnimation(from: number, to: number, delay: number,
+            onFinish: Function = null) {
+            this._onFinish = onFinish;
+            this._fromIndex = from;
+            this._toIndex = to;
+            this._delay = delay;
+            this._animationStarted = true;
+            this._time = 0;
+            this._currentIndex = this._fromIndex;
+        };
+        public stopAnimation(): void {
+            this._animationStarted = false;
+        }
+        public get loop(): boolean { return this._loop; };
+        public set loop(l: boolean) { this._loop = l; };
+        public animate(dt: number) {
+            if (this._animationStarted) {
+                this._time += dt;
+                if (this._time > this._delay) {
+                    this._time = this._time % this._delay;
+                    this._currentIndex++;
+                    if (this._currentIndex === this._toIndex) {
+                        if (this._loop) {
+                            this._currentIndex = this._fromIndex;
+                        } else {
+                            this._animationStarted = false;
+                            if (this._onFinish) {
+                                this._onFinish();
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        public render() {
+            this._texture.bind(0);
+            this._customGeometry.render();
+        }
 
         public destroy() {
             // TODO

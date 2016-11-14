@@ -12,7 +12,7 @@ namespace MBS {
             }
             this._lights.push(lg);
         };
-        public camera = new MB.Camera2(new MB.Vect3(0,0.18,8.44));
+        public camera = new MB.Camera2(new MB.Vect3(0.0, 0.18, 8.44));
         constructor(name: string, engine: MBS.Engine) {
             this._name = name;
             this._engine = engine;
@@ -52,7 +52,8 @@ namespace MBS {
                     let mr: MeshRenderer = <MeshRenderer>n._components[i];
                     this._totalMeshes++;
                     mr.material._uniforms["viewPos"].value = this.camera.GetPos();
-                    mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);
+                    mr.material._uniforms["projection"].value =
+                        this.camera.GetProjectionMatrix(this._engine.context.canvas);
                     mr.material._uniforms["view"].value = this.camera.GetViewMatrix();
                     mr.render();
                 }

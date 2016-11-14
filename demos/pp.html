@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alien Procedural</title>
+   <link rel="stylesheet" type="text/css" href="./libs/style.css" />
+</head>
+<body>
+    <div class="spinner" id="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div id="stats"></div>
+    <script type="text/javascript" src="./libs/libraries.js"></script>
+
+    <script type="text/javascript" src="../dist/output.js"></script>
+
+    <script type="x-shader/x-vertex" id="shader-vs">#version 300 es
+        precision highp float;
+
+        layout(location = 0) in vec3 inPosition;
+        layout(location = 1) in vec2 inUV;
+
+        out vec2 uv;
+
+        uniform mat4 projection;
+        uniform mat4 view;
+
+        void main() {
+            gl_Position = projection * view * vec4(inPosition, 1.0);
+            uv = inUV;
+        }
+    </script>
+    <script type="x-shader/x-fragment" id="shader-fs">#version 300 es
+        precision highp float;
+
+        in vec2 uv;
+
+        uniform sampler2D tex;
+        out vec4 fragColor;
+        uniform vec4 color;
+
+        void main() {
+            fragColor = color * vec4(uv, 0.0, 1.0);
+            fragColor = color * texture(tex, uv);
+        }
+    </script>
+
+    <script type="text/javascript">
+        var MyScene = (function (_super) {
+            __extends(MyScene, _super);
+            function MyScene() {
+                _super.call(this, "Alien Procedural", new MB.GLContextW2(document.getElementById("canvas")));
+                this.camera = new MB.Camera2(new MB.Vect3(0.08, 1.0, 5.0));
+                this.angle = 0;
+                this.identityMatrix = MB.Mat4.identity.clone();
+                this.model = new MB.Mat4();
+            };
+            MyScene.prototype.loadAssets = function () {
+                MB.Loaders.loadImage("../assets/images/Trey-Ratcliff-HDR.png", "myTex");
+            };
+            MyScene.prototype.initialize = function () {
+                this.tex2d = new MB.Texture2D(this.context, "myTex", {
+                    flipY: 1,
+                    minFilter: MB.ctes.TextureFilter.Nearest,
+                    magFilter: MB.ctes.TextureFilter.Nearest,
+                    wrapS: MB.ctes.WrapMode.Clamp2Edge,
+                    wrapT: MB.ctes.WrapMode.Clamp2Edge
+                });
+
+                this.sprite = new MBX.Sprite(this.context, "nombre", this.tex2d);
+
+                this.myProg = new MB.ShaderMaterial(this.context, {
+                    name: "spriteShader",
+                    vertexShader: MB.Utils.readScriptShader("shader-vs"),
+                    fragmentShader: MB.Utils.readScriptShader("shader-fs"),
+                    uniforms: {
+                        projection: { type: MB.UniformType.Matrix4 },
+                        view: { type: MB.UniformType.Matrix4 },
+                        tex: {
+                            type: MB.UniformType.Integer,
+                            value: 0
+                        },
+                        color: {
+                            type: MB.UniformType.Vector4
+                        }
+                    }
+                });
+            };
+            MyScene.prototype.update = function (dt) {
+                this.camera.update(dt * 0.1, this.cameraUpdate.bind(this));
+                this.angle += MB.Timer.deltaTime() * 0.001;
+                this.__resize__();
+            };
+            MyScene.prototype.draw = function () {
+                this.clearColorAndDepth();
+                this.myProg.uniforms["color"].value = new MB.Vect4(
+                    this.sprite.color.r,
+                    this.sprite.color.g,
+                    this.sprite.color.b,
+                    this.sprite.color.a
+                );
+                this.myProg.use();
+                this.sprite.render();
+            };
+            MyScene.prototype.cameraUpdate = function () {
+                this.myProg.uniforms.projection.value = this.camera.GetProjectionMatrix(this.canvas);
+                this.myProg.uniforms.view.value = this.camera.GetViewMatrix();
+            };
+            return MyScene;
+        }(MB.App));
+        var myScene;
+        window.onload = function () {
+            myScene = new MyScene();
+            myScene.start();
+        };
+    </script>
+</body>
+</html>
