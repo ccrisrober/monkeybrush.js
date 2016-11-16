@@ -75,6 +75,9 @@ namespace MBS {
         protected _totalIndices: number = 0;
 
 
+        // TODO: UNUSED
+        // TODO: Estaría bien tener funciones que solo se ejecuten una vez o indefinida
+        // TODO: cola de prioridad??
         protected _beforeRender: Array<Function> = [];
         protected _afterRender: Array<Function> = [];
         public registerBeforeRender(cb: Function) {

@@ -304,104 +304,6 @@ namespace MB {
             }
             return dest;
         };
-        // TODO:
-        //     - rotateX
-        //     - rotateY
-        //     - rotateZ
-
-
-
-
-
-
-
-
-        /*toMat3(): Mat3 {
-            return new Mat3([
-                this._value[0],
-                this._value[1],
-                this._value[2],
-                this._value[4],
-                this._value[5],
-                this._value[6],
-                this._value[8],
-                this._value[9],
-                this._value[10]
-            ]);
-        }
-        reset(): Mat4 {
-            return this.identity();
-        }
-        isEquals(mat: Mat4, threshold: boolean = false): boolean {
-            for (let i = 0; i < 16; ++i) {
-                if (threshold) {
-                    if (Math.abs(this._value[i] - mat._value[i]) > 0.00001) {
-                        return false;
-                    }
-                } else {
-                    if (Math.abs(this._value[i] - mat._value[i]) !== 0) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        };
-        add(m: Mat4): Mat4 {
-            for (let i = 0; i < 16; ++i) {
-                this._value[i] += m._value[i];
-            }
-            return this;
-        };
-        sub(m: Mat4): Mat4 {
-            for (let i = 0; i < 16; ++i) {
-                this._value[i] -= m._value[i];
-            }
-            return this;
-        };
-        multVec3(v: Vect3): Vect3 {
-            const
-                x = v.x,
-                y = v.y,
-                z = v.z;
-
-            return new Vect3(
-                this._value[0] * x + this._value[4] * y + this._value[8]  * z + this._value[12],
-                this._value[1] * x + this._value[5] * y + this._value[9]  * z + this._value[13],
-                this._value[2] * x + this._value[6] * y + this._value[10] * z + this._value[14]
-          );
-        };
-        identity(): Mat4 {
-            this._value[0] = 1;
-            this._value[1] = 0;
-            this._value[2] = 0;
-            this._value[3] = 0;
-
-            this._value[4] = 0;
-            this._value[5] = 1;
-            this._value[6] = 0;
-            this._value[7] = 0;
-
-            this._value[8] = 0;
-            this._value[9] = 0;
-            this._value[10] = 1;
-            this._value[11] = 0;
-
-            this._value[12] = 0;
-            this._value[13] = 0;
-            this._value[14] = 0;
-            this._value[15] = 1;
-
-            return this;
-        };
-        toString(): string {
-            return `Mat4(
-                 ${this._value[0]},  ${this._value[1]},  ${this._value[2]},  ${this._value[3]},
-                 ${this._value[4]},  ${this._value[5]},  ${this._value[6]},  ${this._value[7]},
-                 ${this._value[8]},  ${this._value[9]}, ${this._value[10]}, ${this._value[11]},
-                ${this._value[12]}, ${this._value[13]}, ${this._value[14]}, ${this._value[15]},
-          )`;
-        };*/
         static frustum(l: number, r: number, b: number, t: number, n: number, f: number): Mat4 {
             const
                 rl = (r - l),
@@ -416,25 +318,25 @@ namespace MB {
             ]);
         };
         static perspective(fovy: number, aspect: number, near: number, far: number): Mat4 {
-            const f = 1.0 / Math.tan(fovy / 2),
-                nf = 1 / (near - far);
+            const f = 1.0 / Math.tan(fovy / 2.0),
+                nf = 1.0 / (near - far);
             let out = new Float32Array(16);
             out[0] = f / aspect;
-            out[1] = 0;
-            out[2] = 0;
-            out[3] = 0;
-            out[4] = 0;
+            out[1] = 0.0;
+            out[2] = 0.0;
+            out[3] = 0.0;
+            out[4] = 0.0;
             out[5] = f;
-            out[6] = 0;
-            out[7] = 0;
-            out[8] = 0;
-            out[9] = 0;
+            out[6] = 0.0;
+            out[7] = 0.0;
+            out[8] = 0.0;
+            out[9] = 0.0;
             out[10] = (far + near) * nf;
-            out[11] = -1;
-            out[12] = 0;
-            out[13] = 0;
-            out[14] = (2 * far * near) * nf;
-            out[15] = 0;
+            out[11] = -1.0;
+            out[12] = 0.0;
+            out[13] = 0.0;
+            out[14] = (2.0 * far * near) * nf;
+            out[15] = 0.0;
             return new Mat4(out);
             /*const
                 top = near * Math.tan(fovy * Math.PI / 360.0),
@@ -633,12 +535,12 @@ namespace MB {
             let yy = y * y2, yz = y * z2, zz = z * z2;
             let wx = w * x2, wy = w * y2, wz = w * z2;
 
-            this._value[0] = 1 - (yy + zz);
+            this._value[0] = 1.0 - (yy + zz);
             this._value[4] = xy - wz;
             this._value[8] = xz + wy;
 
             this._value[1] = xy + wz;
-            this._value[5] = 1 - (xx + zz);
+            this._value[5] = 1.0 - (xx + zz);
             this._value[9] = yz - wx;
 
             this._value[2] = xz - wy;

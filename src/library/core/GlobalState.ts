@@ -291,7 +291,7 @@ namespace MB {
             this._context = context;
         };
 
-        public setTest(enabled: boolean) {
+        public setStatus(enabled: boolean) {
             if (this._stencilEnabled !== enabled) {
                 const gl: WebGL2RenderingContext = this._context.gl;
                 if (enabled === true) {

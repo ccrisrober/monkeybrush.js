@@ -123,15 +123,6 @@ namespace MB {
 
             return dest;
         }
-        public roll(): number {
-            const
-                x = this.x,
-                y = this.y,
-                z = this.z,
-                w = this.w;
-
-            return Math.atan2(2.0 * (x * y + w * z), w * w + x * x - y * y - z * z);
-        }
         public pitch(): number {
             const
                 x = this.x,
@@ -143,6 +134,15 @@ namespace MB {
         }
         public yaw(): number {
             return Math.asin(2.0 * (this.x * this.z - this.w * this.y));
+        }
+        public roll(): number {
+            const
+                x = this.x,
+                y = this.y,
+                z = this.z,
+                w = this.w;
+
+            return Math.atan2(2.0 * (x * y + w * z), w * w + x * x - y * y - z * z);
         }
         /**
          * Create a copy of this quaternion
@@ -229,7 +229,7 @@ namespace MB {
                 return this;
             }
 
-            const invDot = dot ? 1.0 / dot : 0;
+            const invDot = dot ? 1.0 / dot : 0.0;
 
             this.x *= -invDot;
             this.y *= -invDot;

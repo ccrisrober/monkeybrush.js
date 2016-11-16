@@ -25,11 +25,11 @@ namespace MB {
             super(context, size, format, attachment);
 
             const gl: WebGL2RenderingContext = this._context.gl;
-            gl.bindRenderbuffer(gl.RENDERBUFFER, this._handler);
+            this.bind();
             gl.renderbufferStorage(gl.RENDERBUFFER, this._format, this._size.x, this._size.y);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, this._attachment,
                 gl.RENDERBUFFER, this._handler);
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+            this.unbind();
         };
         /**
          * Resize renderbuffer size
