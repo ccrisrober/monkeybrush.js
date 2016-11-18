@@ -89,9 +89,9 @@ namespace MB {
          * [destroy description]
          */
         public destroy() {
-            const gl: WebGL2RenderingContext = this._context.gl;
-            gl.bindBuffer(this._type, 0);
+            this.unbind();
             if (!this._handler) {
+                const gl: WebGL2RenderingContext = this._context.gl;
                 gl.deleteBuffer(this._handler);
             }
             this._handler = null;

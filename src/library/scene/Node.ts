@@ -69,6 +69,9 @@ namespace MBS {
             this._parent = p;
         };
         public addChild(n: Node) {
+            if (n == this) {
+                throw "TODO: ERROR";
+            }
             n.parent = this;
             this._children.push(n);
         };
@@ -86,6 +89,7 @@ namespace MBS {
         public get children(): Array<Node> { return this._children; };
         protected _parent: Node;
         protected _children: Array<Node>;
+        // TODO: Componentes con prioridad??
         public _components: Array<Component>;
         protected _transform: Transform;
 
@@ -107,7 +111,7 @@ namespace MBS {
                 this.transform.updateMatrix();
             }
             if (this.transform._matrixWorldNeedUpdate === true || force === true) {
-                if (!this.parent) {
+                if (!this.hasParent()) {
                     this.transform._matrixWorld.copy(this.transform._matrix);
                 } else {
                     this.parent.transform._matrixWorld.mult(this.transform._matrix, this.transform._matrixWorld);
@@ -134,9 +138,9 @@ namespace MBS {
             }
             // Search in childrens
             for (let i = 0, l = elem._children.length; i < l; ++i) {
-                let children = this._searchName(name, elem._children[i]);
-                if (children) {
-                    return children;
+                let child = this._searchName(name, elem._children[i]);
+                if (child) {
+                    return child;
                 }
             }
         };

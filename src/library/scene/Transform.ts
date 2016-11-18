@@ -52,12 +52,12 @@ namespace MBS {
             q1.setFromAxisAngle(axis, angle);
             this._quaternion = this._quaternion.mult(q1);
         };
-        public translateX(dist: number) { this._translateOnAxis(new MB.Vect3(1, 0, 0), dist); };
-        public translateY(dist: number) { this._translateOnAxis(new MB.Vect3(0, 1, 0), dist); };
-        public translateZ(dist: number) { this._translateOnAxis(new MB.Vect3(0, 0, 1), dist); };
-        public rotateX(angle: number) { this._rotateOnAxis(new MB.Vect3(1, 0, 0), angle); };
-        public rotateY(angle: number) { this._rotateOnAxis(new MB.Vect3(0, 1, 0), angle); };
-        public rotateZ(angle: number) { this._rotateOnAxis(new MB.Vect3(0, 0, 1), angle); };
+        public translateX(dist: number) { this._translateOnAxis(MB.Vect3.xAxis, dist); };
+        public translateY(dist: number) { this._translateOnAxis(MB.Vect3.yAxis, dist); };
+        public translateZ(dist: number) { this._translateOnAxis(MB.Vect3.zAxis, dist); };
+        public rotateX(angle: number) { this._rotateOnAxis(MB.Vect3.xAxis, angle); };
+        public rotateY(angle: number) { this._rotateOnAxis(MB.Vect3.yAxis, angle); };
+        public rotateZ(angle: number) { this._rotateOnAxis(MB.Vect3.zAxis, angle); };
         public localWorld(v: MB.Vect3): MB.Vect3 {
             return v.applyMat4(this._matrixWorld);
         };

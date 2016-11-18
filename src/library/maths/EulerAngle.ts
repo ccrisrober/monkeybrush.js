@@ -91,7 +91,7 @@ namespace MB {
             return new MB.EulerAngle(v.x, v.y, v.x, order);
         }
 
-        public setFromRotationMatrix(mat: MB.Mat4, order: MB.RotSeq, update: boolean) {
+        public setFromRotationMatrix(mat: MB.Mat4, order: MB.RotSeq, update: boolean): EulerAngle {
             const
                 m11 = mat._value[0],
                 m12 = mat._value[4],
@@ -114,7 +114,7 @@ namespace MB {
                     this.z = Math.atan2(- m12, m11);
                 } else {
                     this.x = Math.atan2(m32, m22);
-                    this.z = 0;
+                    this.z = 0.0;
                 }
             } else if (order === MB.RotSeq.yxz) {
                 this.x = Math.asin(-MB.Mathf.clamp(m23, - 1, 1));
@@ -123,7 +123,7 @@ namespace MB {
                     this.z = Math.atan2(m21, m22);
                 } else {
                     this.y = Math.atan2(- m31, m11);
-                    this.z = 0;
+                    this.z = 0.0;
                 }
             } else if (order === MB.RotSeq.zxy) {
                 this.x = Math.asin(MB.Mathf.clamp(m32, - 1, 1));
@@ -132,7 +132,7 @@ namespace MB {
                     this.z = Math.atan2(- m12, m22);
 
                 } else {
-                    this.y = 0;
+                    this.y = 0.0;
                     this.z = Math.atan2(m21, m11);
                 }
             } else if (order === MB.RotSeq.zyx) {
@@ -141,7 +141,7 @@ namespace MB {
                     this.x = Math.atan2(m32, m33);
                     this.z = Math.atan2(m21, m11);
                 } else {
-                    this.x = 0;
+                    this.x = 0.0;
                     this.z = Math.atan2(- m12, m22);
                 }
             } else if (order === MB.RotSeq.yzx) {
@@ -150,7 +150,7 @@ namespace MB {
                     this.x = Math.atan2(- m23, m22);
                     this.y = Math.atan2(- m31, m11);
                 } else {
-                    this.x = 0;
+                    this.x = 0.0;
                     this.y = Math.atan2(m13, m33);
                 }
 
@@ -161,7 +161,7 @@ namespace MB {
                     this.y = Math.atan2(m13, m11);
                 } else {
                     this.x = Math.atan2(- m23, m33);
-                    this.y = 0;
+                    this.y = 0.0;
                 }
             } else {
                 // Order undefined
@@ -174,7 +174,7 @@ namespace MB {
             return this;
         };
 
-        public setFromQuaternion(q: MB.Quat, order: MB.RotSeq, update: boolean = false) {
+        public setFromQuaternion(q: MB.Quat, order: MB.RotSeq, update: boolean = false): EulerAngle {
             let matrix = new MB.Mat4();
             if (!order) {
                 order = this.order;
