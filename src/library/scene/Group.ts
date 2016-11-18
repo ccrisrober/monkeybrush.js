@@ -20,16 +20,9 @@
 "use strict";
 
 namespace MBS {
-    export class Tags {
-        // TODO: USES!
-        public static HasTag(o: MBS.Node): boolean {
-            if (!o.tag) {
-                return false;
-            }
-            return o.tag.length > 0;
-        };
-        public static GetTag(o: MBS.Node): string {
-            return o.tag;
+    export class Group extends Node {
+        constructor(name: string = "dummy", tag: string = "SimpleTag") {
+            super(name, tag);
         }
     };
 };

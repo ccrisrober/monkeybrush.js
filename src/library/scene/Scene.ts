@@ -1,3 +1,24 @@
+/// Copyright (C) 2016 [MonkeyBrush.js]
+///
+/// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+/// software and associated documentation files (the "Software"), to deal in the Software
+/// without restriction, including without limitation the rights to use, copy, modify,
+/// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+/// permit persons to whom the Software is furnished to do so, subject to the following
+/// conditions:
+///
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+///
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+/// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+/// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+/// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+/// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+"use strict";
+
 namespace MBS {
     export class Scene {
         protected _clearColor: MB.Color3 = new MB.Color3(1, 1, 1);
@@ -37,7 +58,7 @@ namespace MBS {
         };
         public render(dt: number) {
             this._totalMeshes = this._totalVertices = this._drawCalls = this._totalIndices = 0;
-            this._engine.context.state.clearBuffers();
+            // this._engine.context.state.clearBuffers();
             this._sceneGraph.children.forEach((n: Node) => {
                 this._subRender(n, dt);
             });
@@ -50,6 +71,9 @@ namespace MBS {
                 n._components[i].update(dt);
                 if (n._components[i] instanceof MeshRenderer) {
                     let mr: MeshRenderer = <MeshRenderer>n._components[i];
+
+                    this._totalVertices += (<any>mr)._geometry._attrs.vertices.count;
+
                     this._totalMeshes++;
                     mr.material._uniforms["viewPos"].value = this.camera.GetPos();
                     mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);

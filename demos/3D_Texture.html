@@ -35,9 +35,10 @@
     <script type="text/javascript">
         var Configuration = function () {
             return {
-                layer: 32
+                layer: 0
             };
         };
+        var size = 12;
         var MyScene = (function (_super) {
             __extends(MyScene, _super);
             function MyScene() {
@@ -56,15 +57,100 @@
                         layer: { type: MB.UniformType.Float }
                     }
                 });
-                var size = 64;
+                /*var ladrillo_size = 1;
                 var data = new Uint8Array(Math.pow(size, 3));
+
+                var currentValue = 255;
+                var n = 0;
+
                 for (var k = 0; k < size; ++k) {
                     for (var j = 0; j < size; ++j) {
                         for (var i = 0; i < size; ++i) {
-                            data[i + j * size + k * size * size] = MB.RandomGenerator.random() * 255; //Math.floor(MB.Noise.worley.Euclidean(i, j, k)[0] * 255);
+                            if
+                            (
+                                (
+                                    ((i/ladrillo_size)%2)&& ((k/ladrillo_size)%2)
+                                )
+                                ||
+                                (
+                                    !((i/ladrillo_size)%2) && !((k/ladrillo_size)%2)
+                                )
+                            )
+                            {
+                                currentValue = currentValue === 255 ? 128: 255;
+                            }
+                            data[n] = currentValue;
+                            n++;
+
+
+                            //MB.RandomGenerator.random() * 255; //Math.floor(MB.Noise.worley.Euclidean(i, j, k)[0] * 255);
                         }
                     }
+                }*/
+                var data = new Uint8Array(Math.pow(size, 3));
+
+                var arrX = [
+                    10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140
+                ];
+
+                var nn = 0;
+
+                for (var i = 0; i < arrX.length; ++i)
+                {
+                    data[nn++] = arrX[i];
+                    data[nn++] = arrX[i];
+                    data[nn++] = arrX[i];
+
+                    data[nn++] = arrX[i];
+                    data[nn++] = arrX[i];
+                    data[nn++] = arrX[i];
+
+                    data[nn++] = arrX[i];
+                    data[nn++] = arrX[i];
+                    data[nn++] = arrX[i];
                 }
+
+                /*data[nn++] = 0;
+                data[nn++] = 0;
+                data[nn++] = 32;
+
+                data[nn++] = 0;
+                data[nn++] = 64;
+                data[nn++] = 0;
+
+                data[nn++] = 0;
+                data[nn++] = 0;
+                data[nn++] = 128;
+
+
+
+                data[nn++] = 100;
+                data[nn++] = 0;
+                data[nn++] = 0;
+
+                data[nn++] = 0;
+                data[nn++] = 255;
+                data[nn++] = 0;
+
+                data[nn++] = 0;
+                data[nn++] = 0;
+                data[nn++] = 50;
+
+
+
+                data[nn++] = 0;
+                data[nn++] = 0;
+                data[nn++] = 200;
+
+                data[nn++] = 0;
+                data[nn++] = 128;
+                data[nn++] = 0;
+
+                data[nn++] = 100;
+                data[nn++] = 0;
+                data[nn++] = 0;*/
+
+                console.log(data);
                 this.tex3d = new MB.Texture3D(this.context, {
                     pixels: data,
                     width: size,
@@ -90,7 +176,7 @@
                 this.prog.renderPP();
             };
             MyScene.prototype.textCB = function (gui) {
-                gui.add(this.text, "layer", 0, 64);
+                gui.add(this.text, "layer", 0, size);
             };
             return MyScene;
         }(MB.App));

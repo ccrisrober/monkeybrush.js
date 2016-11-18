@@ -1,0 +1,153 @@
+<div id="container" style="display: inline-block;
+    float: left;">
+        <canvas id="canvas" height="750" width="750"></canvas>
+</div>
+<div style="display: inline-block;
+    float: left;" id="currentData">
+</div>
+<script type="text/javascript" src="dist/output.js"></script>
+
+<script type="text/javascript" src="bower_components/stats.js/build/stats.min.js"></script>
+<script type="text/javascript" src="bower_components/dat.gui/dat.gui.min.js"></script>
+<script type="text/javascript">
+var engine, scene, p;
+    window.onload = function() {
+        engine = new MBS.Engine(new MB.GLContextW2(document.getElementById("canvas")));
+        scene = new MBS.Scene("demo", engine);
+
+        var cubito = new MB.Cube(engine.context, 1.0);
+
+        var data = {
+            "color": [
+                "Blue", "White", "Brown", "Cyan", "Pink", "Orange", "Gold", "Purple", "Aqua", "Red",
+                "Yellow", "Blue", "Pink", "White", "Purple", "Aqua", "Brown", "Cyan", "Orange", "Red"
+            ],
+            "data": [
+                {
+                    "data": [1, 5, 1, 3, 8, 2, 1, 3, 1, 8, 3, 4, 3, 3, 5, 1, 3, 8, 3, 8, 2, 1, 3, 1, 8, 3, 4, 3, 3, 5, 1, 3, 8, 2, 1, 3, 1, 8, 4, 3, 4, 3, 6]
+                },
+                {
+                    "data": [5, 3, 2, 4, 4, 3, 1, 2, 1, 3, 8, 2, 1, 3, 1, 8, 3, 4, 3, 3, 5, 1, 3, 8, 5, 5, 1, 8, 2, 1, 6, 1, 5, 5, 1, 8, 2, 1, 6, 4, 7, 6, 2]
+                }
+            ]
+        };
+
+
+        var Configuration = function() {
+            this.resume = true;
+            this.velocity = 0.025;
+            this.cantidad = data.data.length;
+        };
+
+        var cubes = [];
+        var materials = [];
+        for (var i = 0; i < data.data[0].data.length; ++i) {
+            var mbCube = new MBS.Node("cube");
+            cubes.push(mbCube);
+
+            var material = new MB.SimpleShadingMaterial(engine.context);
+            material.uniforms.color.value = MB.Color3[data.color[i % data.color.length]]._color;
+            materials.push(material);
+
+            mbCube.addComponent(new MBS.MeshRenderer(cubito, material));
+            mbCube.transform.position.set(i,0,-10);
+            mbCube.transform.scale.set(1,data.data[0].data[i],1);
+            scene.root.addChild(mbCube);
+        }
+
+        var inc = 0.0;
+
+        var pos = 0;
+        var currentData = document.getElementById("currentData");
+
+        function showData(p) {
+            var info = data.data[p].data;
+            var aa = "<ul>";
+            for(var i = 0; i < info.length; ++i) {
+                aa += "<li>" + info[i] + "</li>";
+            }
+            aa += "</ul>";
+            currentData.innerHTML = aa;
+        }
+
+        function updateData(p) {
+            var info = data.data[p].data;
+            for(var i = 0; i < info.length; ++i) {
+                cubes[i].transform.scale.set(1, info[i],1);
+            }
+        }
+        showData(pos);
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        var stats = new Stats();
+
+        var container = document.getElementById("container");
+        container.appendChild(stats.dom);
+
+        var config = new Configuration();
+        var gui = new dat.GUI();
+        gui.add(config, "resume", true);
+        gui.add(config, "velocity", 0.01, 0.5);
+        gui.add(config, "cantidad").min(2).max(150).step(1);
+
+        function addNew() {
+            var last_data = data.data[data.data.length-1];
+            var new_data = new Array(last_data.data.length);
+            for (var i = 0; i < new_data.length; ++i) {
+                new_data[i] = last_data.data[i];
+                new_data[i] += getRandomInt(-2, 2);
+                if (new_data[i] < 0) new_data[i] = 0;
+                if (new_data[i] > 10) new_data[i] = 10;
+            }
+            data.data.push({
+                data: new_data
+            });
+        }
+
+        var renderLoop = function(dt) {
+            while (data.data.length < config.cantidad) {
+                addNew();
+            }
+
+            if (config.resume === true)
+            {
+                inc += config.velocity;
+                if (inc > 1.0) {
+                    showData(pos);
+                    data.data.shift();
+                    addNew();
+                    pos++;
+                    if (pos >= data.data.length) pos = 0;
+                    inc = 0.0;
+                }
+            }
+
+            engine.context.state.clearBuffers();
+            scene.camera.update(MB.Timer.deltaTime() / 10.0, function() {});
+            scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
+
+            for(var it = 0; it < config.cantidad/*data.data.length*/; ++it) {
+                var info = data.data[it].data;
+                updateData(it);
+                for(var i = 0; i < info.length; ++i) {
+                    cubes[i].transform.position.set(i,0,-10 + it);
+
+                }
+                scene.render();
+            }
+
+            stats.update();
+        };
+
+        p = scene.root;
+
+        console.log("----------- MB ------------");
+        scene.camera.fov = 45;
+        scene.camera._near = 0.3;
+        scene.camera._far = 1000.0;
+
+        engine.run(renderLoop);
+    };
+</script>

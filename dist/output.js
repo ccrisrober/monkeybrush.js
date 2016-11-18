@@ -9434,7 +9434,34 @@ var MB;
             if (side === void 0) { side = 1.0; }
             _super.call(this, context);
             this._side = side;
-            var side2 = side / 2.0;
+            var side2 = side;
+            this._geometry.addAttr(MB.VBType.VBVertices, new MB.BufferAttribute(new Float32Array([
+                0.0, 0.0, side2,
+                side2, 0.0, side2,
+                side2, side2, side2,
+                0.0, side2, side2,
+                side2, 0.0, side2,
+                side2, 0.0, 0.0,
+                side2, side2, 0.0,
+                side2, side2, side2,
+                0.0, 0.0, 0.0,
+                0.0, side2, 0.0,
+                side2, side2, 0.0,
+                side2, 0.0, 0.0,
+                0.0, 0.0, side2,
+                0.0, side2, side2,
+                0.0, side2, 0.0,
+                0.0, 0.0, 0.0,
+                0.0, 0.0, side2,
+                0.0, 0.0, 0.0,
+                side2, 0.0, 0.0,
+                side2, 0.0, side2,
+                0.0, side2, side2,
+                side2, side2, side2,
+                side2, side2, 0.0,
+                0.0, side2, 0.0
+            ]), 3));
+            /*var side2 = side/2.0;
             this._geometry.addAttr(MB.VBType.VBVertices, new MB.BufferAttribute(new Float32Array([
                 -side2, -side2, side2,
                 side2, -side2, side2,
@@ -9460,7 +9487,7 @@ var MB;
                 side2, side2, side2,
                 side2, side2, -side2,
                 -side2, side2, -side2
-            ]), 3));
+            ]), 3));*/
             this._geometry.setIndex(new Uint16Array([
                 0, 1, 2, 0, 2, 3,
                 4, 5, 6, 4, 6, 7,
@@ -12491,7 +12518,7 @@ var MB;
             this.id = params.name;
             this._program = new MB.Program(context);
             this._program.addShader("#version 300 es\n                precision highp float;\n\n                layout(location = 0) in vec3 position;\n                layout(location = 1) in vec3 normal;\n\n                out vec3 outPosition;\n                out vec3 outNormal;\n\n                uniform mat4 projection;\n                uniform mat4 view;\n                uniform mat4 model;\n\n                void main() {\n                    outPosition = vec3(model * vec4(position, 1.0));\n\n                    gl_Position = projection * view * vec4(outPosition, 1.0);\n                    mat3 normalMatrix = mat3(inverse(transpose(model)));\n                    outNormal = normalize(normalMatrix * normal);\n                }", MB.ctes.ShaderType.vertex, MB.ctes.ReadMode.read_text);
-            this._program.addShader("#version 300 es\n                precision highp float;\n\n                in vec3 outPosition;\n                in vec3 outNormal;\n\n                out vec4 fragColor;\n\n                uniform vec3 viewPos;\n                uniform vec3 color;\n\n                void main() {\n                    vec3 N = normalize(outNormal);\n                    vec3 L = normalize(viewPos - outPosition);\n                    float dif = dot(N, L);\n                    dif = clamp(dif, 0.0, 1.0);\n                    fragColor = vec4(color * dif, 1.0) + vec4(color * 0.3, 1.0);\n                }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
+            this._program.addShader("#version 300 es\n                precision highp float;\n\n                in vec3 outPosition;\n                in vec3 outNormal;\n\n                out vec4 fragColor;\n\n                uniform vec3 viewPos;\n                uniform vec3 color;\n\n                void main() {\n                    vec3 N = normalize(outNormal);\n                    vec3 L = normalize(viewPos - outPosition);\n                    float dif = dot(N, L);\n                    dif = clamp(dif, 0.0, 1.0);\n                    fragColor = vec4(color * dif, 1.0) + vec4(color * 0.3, 1.0);\n               }", MB.ctes.ShaderType.fragment, MB.ctes.ReadMode.read_text);
             this._program.compile();
             this._program.autocatching();
             MB.ProgramManager.add(this.id, this._program);
@@ -13420,7 +13447,7 @@ var MBS;
         Scene.prototype.render = function (dt) {
             var _this = this;
             this._totalMeshes = this._totalVertices = this._drawCalls = this._totalIndices = 0;
-            this._engine.context.state.clearBuffers();
+            // this._engine.context.state.clearBuffers();
             this._sceneGraph.children.forEach(function (n) {
                 _this._subRender(n, dt);
             });
@@ -13435,7 +13462,8 @@ var MBS;
                 if (n._components[i] instanceof MBS.MeshRenderer) {
                     var mr = n._components[i];
                     this._totalMeshes++;
-                    mr.material._uniforms["viewPos"].value = this.camera.GetPos();
+                    if (mr.material._uniforms["viewPos"])
+                        mr.material._uniforms["viewPos"].value = this.camera.GetPos();
                     mr.material._uniforms["projection"].value = this.camera.GetProjectionMatrix(this._engine.context.canvas);
                     mr.material._uniforms["view"].value = this.camera.GetViewMatrix();
                     mr.render();

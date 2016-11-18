@@ -85,7 +85,7 @@ namespace MBX {
              */
 
             export function easeInOut(t: number): number {
-                return t < 0.5 ? 2.0 * t * t : t * (4.0 - 2.0 * t) - 1;
+                return t < 0.5 ? 2.0 * t * t : t * (4.0 - 2.0 * t) - 1.0;
             };
         };
 
@@ -107,7 +107,7 @@ namespace MBX {
              * @return {number}
              */
             export function easeOut(t: number): number {
-                return 1 + (--t) * t * t;
+                return 1.0 + (--t) * t * t;
             };
             /**
              * Easing equation for a cubic (t^3) ease-in/out,
@@ -195,7 +195,7 @@ namespace MBX {
                     return 16.0 * t * t2 * t2;
                 } else {
                     t2 = (--t) * t;
-                    return 1 + 16 * t * t2 * t2;
+                    return 1.0 + 16.0 * t * t2 * t2;
                 }
             };
         };
