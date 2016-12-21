@@ -33,10 +33,10 @@ namespace MB {
          */
         constructor(context: GLContext, radius: number, subdivisions: number) {
             super(context, [
-                 1,  1,  1,
-                -1, -1,  1,
-                -1,  1, -1,
-                 1, -1, -1
+                 1.0,  1.0,  1.0,
+                -1.0, -1.0,  1.0,
+                -1.0,  1.0, -1.0,
+                 1.0, -1.0, -1.0
             ], [
                  2,  1,  0,
                  0,  3,  2,

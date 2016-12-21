@@ -35,8 +35,8 @@ namespace MB {
          * @param {boolean = true} createTopBase: Create top base
          * @param {boolean = true} createBottomBase: Create bottom base
          */
-        constructor(context: GLContext, radius: number, height: number, radialSubDiv: number = 15.0,
-            heightSubDiv: number = 1.0, createTopBase: boolean = true, createBottomBase: boolean = true) {
+        constructor(context: GLContext, radius: number, height: number, radialSubDiv: number = 15,
+            heightSubDiv: number = 1, createTopBase: boolean = true, createBottomBase: boolean = true) {
             if (radialSubDiv < 15) {
                 throw Error("radialSubDiv must be 15 or greater");
             }

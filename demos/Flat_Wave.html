@@ -92,8 +92,8 @@
                 var pixels = new Int32Array(2 * n * n);
                 for (var i = 0; i < n; ++i) {
                     for (var j = 0; j < n; ++j) {
-                        var x = h*(j-n/2),  y = h*(i-n/2),  w = m*Math.exp(-5000*(x*x + y*y))
-                        pixels[t++] = w;  pixels[t++] = w
+                        var x = h*(j-n/2),  y = h*(i-n/2),  w = m*Math.exp(-5000*(x*x + y*y));
+                        pixels[t++] = w;  pixels[t++] = w;
                     }
                 }
                 // TODO: PING PONG

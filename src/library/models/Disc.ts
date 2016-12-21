@@ -30,11 +30,11 @@ namespace MB {
          * @param {GLContext} context [description]
          * @param {number} radius: Disc radius
          * @param {number} divisions: Disc base subdivison (num. of triangles)
-         * @param {number = 1.0} stacks: Radial subdivisions around disc.
+         * @param {number = 1} stacks: Radial subdivisions around disc.
          * @param {number = 0.0} innerRadius: Inner radius of disc
          * @param {number = 0.0} stackInc: Width inc/dec around center.
          */
-        constructor(context: GLContext, radius: number, divisions: number, stacks: number = 1.0,
+        constructor(context: GLContext, radius: number, divisions: number, stacks: number = 1,
             innerRadius: number = 0.0, stackInc: number = 0.0) {
 
             super(context);
@@ -46,12 +46,12 @@ namespace MB {
             divisions = Math["trunc"](divisions);
             stacks = Math["trunc"](stacks);
 
-            const nv = 0;
+            const nv = stacks * divisions;
 
             let verts = new Array(3 * nv);
             let norms = new Array(3 * nv);
             let tex = new Array(2 * nv);
-            let el = new Array(3 * stacks * divisions * 2);
+            let cells = new Array(3 * stacks * divisions * 2);
 
             let idx = 0;
             const radiusSpan = radius - innerRadius;
@@ -69,14 +69,14 @@ namespace MB {
                     const theta = 2.0 * Math.PI * i / divisions;
 
                     verts[vv++] = stackRadius * Math.cos(theta);
-                    verts[vv++] = 0;
+                    verts[vv++] = 0.0;
                     verts[vv++] = stackRadius * Math.sin(theta);
 
-                    norms[nn++] = 0;
-                    norms[nn++] = 1;
-                    norms[nn++] = 0;
+                    norms[nn++] = 0.0;
+                    norms[nn++] = 1.0;
+                    norms[nn++] = 0.0;
 
-                    tex[tt++] = 1 - (i / divisions);
+                    tex[tt++] = 1.0 - (i / divisions);
                     tex[tt++] = stack / stacks;
 
                     if (stack > 0 && i !== divisions) {
@@ -86,13 +86,13 @@ namespace MB {
                         const d = idx + (i + 1) - pointsPerStack;
 
                         // Create two triangles (quad)
-                        el[ii++] = a;
-                        el[ii++] = b;
-                        el[ii++] = c;
+                        cells[ii++] = a;
+                        cells[ii++] = b;
+                        cells[ii++] = c;
 
-                        el[ii++] = a;
-                        el[ii++] = c;
-                        el[ii++] = d;
+                        cells[ii++] = a;
+                        cells[ii++] = c;
+                        cells[ii++] = d;
                     }
                 }
 
@@ -102,13 +102,13 @@ namespace MB {
             this._handle = [];
             this._vao.bind();
 
-            this.addElementArray(new Uint16Array(el));
+            this.addElementArray(new Uint16Array(cells));
 
             this.addBufferArray(0, new Float32Array(verts), 3);
             this.addBufferArray(1, new Float32Array(norms), 3);
             this.addBufferArray(2, new Float32Array(tex), 2);
 
-            this._indicesLen = el.length;
+            this._indicesLen = cells.length;
         }
     };
 };

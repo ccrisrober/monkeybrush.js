@@ -61,7 +61,7 @@ namespace MB {
             this._topRadius = topRadius;
             this._height = height;
             this._radialSubDiv = radialSubDiv;
-            this. _heightSubDiv = heightSubDiv;
+            this._heightSubDiv = heightSubDiv;
             this._createTopBase = createTopBase;
             this._createBottomBase = createBottomBase;
 
@@ -73,7 +73,7 @@ namespace MB {
             this._geometry.addAttr(VBType.VBVertices, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
             this._geometry.addAttr(VBType.VBNormals, new MB.BufferAttribute(new Float32Array(3 * nv), 3));
             this._geometry.addAttr(VBType.VBTexCoord, new MB.BufferAttribute(new Float32Array(2 * nv), 2));
-            let el = new Uint16Array(3 * radialSubDiv * (heightSubDiv + extra) * 2);
+            let cells = new Uint16Array(3 * radialSubDiv * (heightSubDiv + extra) * 2);
 
             const vertsAroundEdge = radialSubDiv + 1;
 
@@ -127,26 +127,26 @@ namespace MB {
             let idx = 0;
             for (let yy = 0; yy < heightSubDiv + extra; ++yy) {
                 for (let ii = 0; ii < radialSubDiv; ++ii) {
-                    el[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
-                    el[idx++] = vertsAroundEdge * (yy + 0) + 1 + ii;
-                    el[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
+                    cells[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
+                    cells[idx++] = vertsAroundEdge * (yy + 0) + 1 + ii;
+                    cells[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
 
-                    el[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
-                    el[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
-                    el[idx++] = vertsAroundEdge * (yy + 1) + 0 + ii;
+                    cells[idx++] = vertsAroundEdge * (yy + 0) + 0 + ii;
+                    cells[idx++] = vertsAroundEdge * (yy + 1) + 1 + ii;
+                    cells[idx++] = vertsAroundEdge * (yy + 1) + 0 + ii;
                 }
             }
 
             this._handle = [];
             this._vao.bind();
 
-            this.addElementArray(el);
+            this.addElementArray(cells);
 
             this.addBufferArray(0, <Float32Array>this._geometry.getAttr(VBType.VBVertices).array, 3);
             this.addBufferArray(1, <Float32Array>this._geometry.getAttr(VBType.VBNormals).array, 3);
             this.addBufferArray(2, <Float32Array>this._geometry.getAttr(VBType.VBTexCoord).array, 2);
 
-            this._indicesLen = el.length;
+            this._indicesLen = cells.length;
         }
     };
 };

@@ -68,11 +68,11 @@ namespace MB {
              * @return {Vect2}    A new Vect2 interpolated position.
              */
             public evaluate(t: number): Vect2 {
-                const TWOPI = Math.PI * 2;
+                const TWOPI = Math.PI * 2.0;
                 let deltaAngle = this._endAngle - this._startAngle;
-                if (deltaAngle < 0) deltaAngle += TWOPI;
+                if (deltaAngle < 0.0) deltaAngle += TWOPI;
                 if (deltaAngle > TWOPI) deltaAngle -= TWOPI;
-                let angle = this._isClockwise ? this._endAngle + (1 - t) *
+                let angle = this._isClockwise ? this._endAngle + (1.0 - t) *
                     (TWOPI - deltaAngle) : this._startAngle + t * deltaAngle;
 
                 const tx = this._center.x + this._radius.x * Math.cos(angle);
@@ -144,7 +144,6 @@ namespace MB {
          */
         export class CubicBezier extends Curve2D {
             public _list: Array<Vect2>;
-            public _curves = [];
             /**
              * CubicBezier constructor
              * @param {Vect2} cpi  Starting point
@@ -157,10 +156,10 @@ namespace MB {
                 this._list = [cpi, cpp1, cpp2, cpe];
             };
             protected bezierCurveInterpolation(p0: number, p1: number,
-                p2: number, p3: number, t: number) {
-                return (p0 * Math.pow(1 - t, 3)) +
-                        (3 * p1 * Math.pow(1 - t, 2) * t) +
-                        (3 * p2 * t * t * (1 - t)) +
+                p2: number, p3: number, t: number): number {
+                return (p0 * Math.pow(1.0 - t, 3.0)) +
+                        (3.0 * p1 * Math.pow(1.0 - t, 2.0) * t) +
+                        (3.0 * p2 * t * t * (1.0 - t)) +
                         (p3 * t * t * t);
             };
             /**
@@ -179,7 +178,6 @@ namespace MB {
         };
         export class CubicBezier3D extends Curve3D {
             public _list: Array<Vect3>;
-            public _curves = [];
             /**
              * CubicBezier constructor
              * @param {Vect3} cpi  Starting point
@@ -192,10 +190,10 @@ namespace MB {
                 this._list = [cpi, cpp1, cpp2, cpe];
             };
             protected bezierCurveInterpolation(p0: number, p1: number,
-                p2: number, p3: number, t: number) {
-                return (p0 * Math.pow(1 - t, 3)) +
-                        (3 * p1 * Math.pow(1 - t, 2) * t) +
-                        (3 * p2 * t * t * (1 - t)) +
+                p2: number, p3: number, t: number): number {
+                return (p0 * Math.pow(1.0 - t, 3.0)) +
+                        (3.0 * p1 * Math.pow(1.0 - t, 2.0) * t) +
+                        (3.0 * p2 * t * t * (1.0 - t)) +
                         (p3 * t * t * t);
             };
             /**
@@ -224,7 +222,6 @@ namespace MB {
          */
         export class QuadraticBezier2D extends Curve2D {
             public _list: Array<Vect2>;
-            public _curves = [];
             /**
              * QuadraticBezier constructor.
              * @param {Vect2} cpi  Starting point.
@@ -238,9 +235,9 @@ namespace MB {
             protected bezierCurveInterpolation(p0: number, p1: number,
                 p2: number, t: number): number {
 
-                return  (p0 * Math.pow((1 - t), 2)) +
-                        (2 * p1 * (1 - t) * t) +
-                        (p2 * Math.pow(t, 2));
+                return  (p0 * Math.pow((1.0 - t), 2.0)) +
+                        (2.0 * p1 * (1.0 - t) * t) +
+                        (p2 * Math.pow(t, 2.0));
             };
             /**
              * Return interpolate position based on cubic bezier definition.
@@ -258,7 +255,6 @@ namespace MB {
         };
         export class QuadraticBezier3D extends Curve3D {
             public _list: Array<Vect3>;
-            public _curves = [];
             /**
              * QuadraticBezier constructor.
              * @param {Vect3} cpi  Starting point.
@@ -272,9 +268,9 @@ namespace MB {
             protected bezierCurveInterpolation(p0: number, p1: number,
                 p2: number, t: number): number {
 
-                return  (p0 * Math.pow((1 - t), 2)) +
-                        (2 * p1 * (1 - t) * t) +
-                        (p2 * Math.pow(t, 2));
+                return  (p0 * Math.pow((1.0 - t), 2.0)) +
+                        (2.0 * p1 * (1.0 - t) * t) +
+                        (p2 * Math.pow(t, 2.0));
             };
             /**
              * Return interpolate position based on cubic bezier definition.

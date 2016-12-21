@@ -32,16 +32,16 @@ namespace MB {
          * @param {number} subdivisions: Octahedron subdivisions from base octahedron.
          */
         constructor(context: GLContext, radius: number, subdivisions: number) {
-            const a: number = 1 / (2 * Math.sqrt(2));
-            const b: number = 1 / 2;
+            const a: number = 1.0 / (2.0 * Math.sqrt(2.0));
+            const b: number = 1.0 / 2.0;
 
             super(context, [
-                 a,  0,  0,
-                -a,  0,  0,
-                 0,  b,  0,
-                 0, -b,  0,
-                 0,  0,  a,
-                 0,  0, -a
+                   a,  0.0,  0.0,
+                  -a,  0.0,  0.0,
+                 0.0,    b,  0.0,
+                 0.0,   -b,  0.0,
+                 0.0,  0.0,    a,
+                 0.0,  0.0,   -a
             ], [
                 0, 2, 4,
                 0, 4, 3,

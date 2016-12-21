@@ -43,6 +43,8 @@ namespace MBS {
             });
         };
         protected _subRender(n: Node, dt: number) {
+            if (!n.isEnabled())
+                return;
             for (let i = 0; i < n.children.length; ++i) {
                 this._subRender(n.children[i], dt);
             }

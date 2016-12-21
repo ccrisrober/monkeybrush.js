@@ -39,9 +39,9 @@ namespace MB {
             smax: number = 1.0, tmax: number = 1.0) {
             super(context);
 
-            let verts = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
-            let norms = new Array(3.0 * (xdivs + 1.0) * (zdivs + 1.0));
-            let tex = new Array(2.0 * (xdivs + 1.0) * (zdivs + 1.0));
+            let verts = new Array(3 * (xdivs + 1) * (zdivs + 1));
+            let norms = new Array(3 * (xdivs + 1) * (zdivs + 1));
+            let tex = new Array(2 * (xdivs + 1) * (zdivs + 1));
             let el = new Array(6 * xdivs * zdivs);
 
             let x2 = xsize / 2.0;

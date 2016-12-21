@@ -24,28 +24,28 @@
 namespace MB {
     export namespace ResourceMap {
         export class MapEntry {
-            protected _asset: string;
+            protected _asset: any;
             protected _refCount: number;
             /**
              * MapEntry constructor
              * @param {string} resName Resource name
              */
-            constructor(resName: string) {
-                this._asset = resName;
+            constructor() {
+                this._asset = null;
                 this._refCount = 1;
             };
             /**
              * Return asset name
-             * @return {string} [description]
+             * @return {any} [description]
              */
-            public getAsset(): string {
+            public getAsset(): any {
                 return this._asset;
             };
             /**
              * Set asset name
-             * @param {string} name New asset name
+             * @param {any} name New asset name
              */
-            public setAsset(name: string) {
+            public setAsset(name: any) {
                 this._asset = name;
             };
             /**
@@ -88,7 +88,7 @@ namespace MB {
          * @param {string} resName Resource name.
          */
         export function asyncLoadRequested(resName: string) {
-            _ResourceMap[resName] = new MapEntry(resName);
+            _ResourceMap[resName] = new MapEntry();
             ++_numOutstandingLoads;
         };
         /**
@@ -97,7 +97,7 @@ namespace MB {
          */
         export function asyncLoadFailed(resName: string) {
             VanillaToasts.create({
-                title: `${resName} completed`,
+                title: `${resName} error`,
                 text: "",
                 type: "error",
                 timeout: 2500

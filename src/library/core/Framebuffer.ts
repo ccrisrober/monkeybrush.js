@@ -56,7 +56,7 @@ namespace MB {
             this._context = context;
             let numColors = textures.length;
             const gl: WebGL2RenderingContext = this._context.gl;
-            if (numColors < 0) {
+            if (numColors < 1) {
                 throw new Error("must specify >= 0 color attachments");
             } else if (numColors > 1) {
                 if (numColors > gl.getParameter(MB.ctes.DrawBuffer.MaxColorAttch)) {
@@ -165,9 +165,10 @@ namespace MB {
             if (attach > this._attachments.length) {
                 throw new Error("Attachment undefined");
             }
+            this._attachments[attach] = tex;
             const gl: WebGL2RenderingContext = this._context.gl;
             // gl.bindTexture(gl.TEXTURE_2D, texture2);
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + attach,
                 gl.TEXTURE_2D, tex.handler, 0);
         };
         /**
@@ -212,7 +213,7 @@ namespace MB {
          */
         public onlyBindTextures() {
             const gl: WebGL2RenderingContext = this._context.gl;
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            this.unbind();
             this._attachments.forEach((tex: MB.Texture, idx: number) => {
                 tex.bind(idx);
             });

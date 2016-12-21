@@ -164,12 +164,6 @@ var MoveComponent, ScaleComponent, PrintMatrixComponent;
             scene.camera.update(MB.Timer.deltaTime() / 10.0, function() {});
             scene.camera.timeElapsed = MB.Timer.deltaTime() / 10.0;
             scene.render();
-
-            //printWMText(mbCube.transform._matrixWorld._value, "cubematrix");
-            //printWMText(mbSphere.transform._matrixWorld._value, "spherematrix");
-            //printWMText(mbCapsule.transform._matrixWorld._value, "capsulematrix");
-            //printWMText(mbCapsule2.transform._matrixWorld._value, "capsule2matrix");
-            //printWMText(mbCylinder.transform._matrixWorld._value, "cylindermatrix");
         };
 
         p = scene.root;

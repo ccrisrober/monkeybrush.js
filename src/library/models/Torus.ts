@@ -62,11 +62,11 @@ namespace MB {
             let ringFactor = (Math.PI * 2.0) / rings;
             let sideFactor = (Math.PI * 2.0) / sides;
             let norms = new Array(3);
-            for (let ring = 0; ring <= rings; ring++) {
+            for (let ring = 0; ring <= rings; ++ring) {
                 let u = ring * ringFactor;
                 let cu = Math.cos(u);
                 let su = Math.sin(u);
-                for (let side = 0; side < sides; side++) {
+                for (let side = 0; side < sides; ++side) {
                     let v = side * sideFactor;
                     let cv = Math.cos(v);
                     let sv = Math.sin(v);
@@ -92,10 +92,10 @@ namespace MB {
             }
 
             let idx = 0;
-            for (let ring = 0; ring < rings; ring++) {
+            for (let ring = 0; ring < rings; ++ring) {
                 let ringStart = ring * sides;
                 let nextRingStart = (ring + 1) * sides;
-                for (let side = 0; side < sides; side++) {
+                for (let side = 0; side < sides; ++side) {
                     let nextSide = (side + 1) % sides;
                     // The quad
                     el[idx] = (ringStart + side);

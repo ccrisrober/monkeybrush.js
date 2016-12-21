@@ -66,9 +66,9 @@ namespace MB {
          */
         public update(data: Float32Array) {
             const gl: WebGL2RenderingContext = this._context.gl;
-            gl.bindBuffer(gl.UNIFORM_BUFFER, this._handle);
+            this.bind();
             gl.bufferData(gl.UNIFORM_BUFFER, data, gl.STATIC_DRAW);
-            gl.bindBuffer(gl.UNIFORM_BUFFER, null);
+            this.unbind();
             gl.bindBufferBase(gl.UNIFORM_BUFFER, this._index, this._handle);
         };
         /**

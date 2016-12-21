@@ -37,7 +37,7 @@ namespace MB {
          * @param {number = 12} subHeight Capsule height subdivision
          * @param {number = 12} numSegm Capsule num segments
          */
-        constructor(context: GLContext, radius: number = 0.5, height: number = radius * 2,
+        constructor(context: GLContext, radius: number = 0.5, height: number = radius * 2.0,
             subHeight: number = 12, numSegm: number = 12) {
 
             super(context);
@@ -68,7 +68,7 @@ namespace MB {
                 let segIncr = 1.0 / (segments - 1);
 
                 for (let s = 0; s < segments; ++s) {
-                    const val: number = (Math.PI * 2) * s * segIncr;
+                    const val: number = (Math.PI * 2.0) * s * segIncr;
                     const x = Math.cos(val) * r;
                     const z = Math.sin(val) * r;
 

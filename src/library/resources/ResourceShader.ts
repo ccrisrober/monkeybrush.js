@@ -62,6 +62,10 @@ namespace MB {
     };
 };
 
+function loadShaderFromText(alias: string, shaderSource: string) {
+    MB.ResourceShader.add(alias, _processImports(shaderSource));
+};
+
 function loadShader(alias: string, filePath: string) {
     let request: XMLHttpRequest = new XMLHttpRequest();
     request.open("GET", filePath, false);
@@ -73,12 +77,8 @@ function loadShader(alias: string, filePath: string) {
         return null;
     }
     let shaderSource: string = request.responseText;
-    MB.ResourceShader.add(alias, _processImports(shaderSource));
+    loadShaderFromText(alias, shaderSource);
 };
-
-function loadShaderFromText(alias: string, shaderSource: string) {
-    MB.ResourceShader.add(alias, _processImports(shaderSource));
-}
 
 function _processImports(src: string): string {
     const regex = /#import<(.+)>(\((.*)\))*/g;

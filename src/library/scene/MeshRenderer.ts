@@ -27,3 +27,5 @@ namespace MBS {
         };
     };
 };
+
+// TODO: Add mode (with getter and setter). Send in this._mesh.render(_mode)

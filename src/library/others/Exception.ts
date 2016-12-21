@@ -21,11 +21,9 @@
 "use strict";
 
 namespace MB {
-    export namespace exceptions {
-        export class MBException extends Error {
-            constructor(message: string) {
-                super(message);
-            };
-        }
+    export class MBException extends Error {
+        constructor(message: string) {
+            super(message);
+        };
     }
 }
